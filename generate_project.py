@@ -1,0 +1,328 @@
+import os
+
+pbxproj_content = """// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AA000001001 /* StamerleeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002001 /* StamerleeApp.swift */; };
+		AA000001002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002002 /* ContentView.swift */; };
+		AA000001003 /* ColorTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002003 /* ColorTheme.swift */; };
+		AA000001004 /* AppScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002004 /* AppScreen.swift */; };
+		AA000001005 /* LaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002005 /* LaunchView.swift */; };
+		AA000001006 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002006 /* LoginView.swift */; };
+		AA000001007 /* OnboardingStepOneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002007 /* OnboardingStepOneView.swift */; };
+		AA000001008 /* OnboardingStepTwoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002008 /* OnboardingStepTwoView.swift */; };
+		AA000001009 /* ChallengingSoundsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002009 /* ChallengingSoundsView.swift */; };
+		AA000001010 /* PlanReadyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002010 /* PlanReadyView.swift */; };
+		AA000001011 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002011 /* Components.swift */; };
+		AA000001012 /* Illustrations.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002012 /* Illustrations.swift */; };
+		AA000001013 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA000002013 /* Assets.xcassets */; };
+		AA000001014 /* OnboardingHero1.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002014 /* OnboardingHero1.png */; };
+		AA000001015 /* OnboardingHero2.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002015 /* OnboardingHero2.png */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		AA000002001 /* StamerleeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StamerleeApp.swift; sourceTree = "<group>"; };
+		AA000002002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		AA000002003 /* ColorTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorTheme.swift; sourceTree = "<group>"; };
+		AA000002004 /* AppScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppScreen.swift; sourceTree = "<group>"; };
+		AA000002005 /* LaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchView.swift; sourceTree = "<group>"; };
+		AA000002006 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		AA000002007 /* OnboardingStepOneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingStepOneView.swift; sourceTree = "<group>"; };
+		AA000002008 /* OnboardingStepTwoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingStepTwoView.swift; sourceTree = "<group>"; };
+		AA000002009 /* ChallengingSoundsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengingSoundsView.swift; sourceTree = "<group>"; };
+		AA000002010 /* PlanReadyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanReadyView.swift; sourceTree = "<group>"; };
+		AA000002011 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		AA000002012 /* Illustrations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Illustrations.swift; sourceTree = "<group>"; };
+		AA000002013 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AA000002014 /* OnboardingHero1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OnboardingHero1.png; sourceTree = "<group>"; };
+		AA000002015 /* OnboardingHero2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OnboardingHero2.png; sourceTree = "<group>"; };
+		AA000003001 /* Stamerlee.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stamerlee.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AA000004001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AA000005001 = {
+			isa = PBXGroup;
+			children = (
+				AA000005002 /* Stamerlee */,
+				AA000005003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AA000005002 /* Stamerlee */ = {
+			isa = PBXGroup;
+			children = (
+				AA000002001 /* StamerleeApp.swift */,
+				AA000002002 /* ContentView.swift */,
+				AA000002003 /* ColorTheme.swift */,
+				AA000002004 /* AppScreen.swift */,
+				AA000002005 /* LaunchView.swift */,
+				AA000002006 /* LoginView.swift */,
+				AA000002007 /* OnboardingStepOneView.swift */,
+				AA000002008 /* OnboardingStepTwoView.swift */,
+				AA000002009 /* ChallengingSoundsView.swift */,
+				AA000002010 /* PlanReadyView.swift */,
+				AA000002011 /* Components.swift */,
+				AA000002012 /* Illustrations.swift */,
+				AA000002013 /* Assets.xcassets */,
+				AA000002014 /* OnboardingHero1.png */,
+				AA000002015 /* OnboardingHero2.png */,
+			);
+			path = Stamerlee;
+			sourceTree = "<group>";
+		};
+		AA000005003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA000003001 /* Stamerlee.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AA000006001 /* Stamerlee */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA000007001 /* Build configuration list for PBXNativeTarget "Stamerlee" */;
+			buildPhases = (
+				AA000008001 /* Sources */,
+				AA000004001 /* Frameworks */,
+				AA000009001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Stamerlee;
+			productName = Stamerlee;
+			productReference = AA000003001 /* Stamerlee.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AA000010001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					AA000006001 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+				};
+			};
+			buildConfigurationList = AA000007002 /* Build configuration list for PBXProject "Stamerlee" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AA000005001;
+			productRefGroup = AA000005003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AA000006001 /* Stamerlee */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AA000009001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000001013 /* Assets.xcassets in Resources */,
+				AA000001014 /* OnboardingHero1.png in Resources */,
+				AA000001015 /* OnboardingHero2.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AA000008001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000001001 /* StamerleeApp.swift in Sources */,
+				AA000001002 /* ContentView.swift in Sources */,
+				AA000001003 /* ColorTheme.swift in Sources */,
+				AA000001004 /* AppScreen.swift in Sources */,
+				AA000001005 /* LaunchView.swift in Sources */,
+				AA000001006 /* LoginView.swift in Sources */,
+				AA000001007 /* OnboardingStepOneView.swift in Sources */,
+				AA000001008 /* OnboardingStepTwoView.swift in Sources */,
+				AA000001009 /* ChallengingSoundsView.swift in Sources */,
+				AA000001010 /* PlanReadyView.swift in Sources */,
+				AA000001011 /* Components.swift in Sources */,
+				AA000001012 /* Illustrations.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		AA000011001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		AA000011002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		AA000011003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Stamerlee;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stamerlee.app;
+				PRODUCT_NAME = Stamerlee;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		AA000011004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Stamerlee;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stamerlee.app;
+				PRODUCT_NAME = Stamerlee;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AA000007001 /* Build configuration list for PBXNativeTarget "Stamerlee" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA000011003 /* Debug */,
+				AA000011004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA000007002 /* Build configuration list for PBXProject "Stamerlee" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA000011001 /* Debug */,
+				AA000011002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AA000010001 /* Project object */;
+}
+"""
+
+os.makedirs("Stamerlee.xcodeproj", exist_ok=True)
+with open("Stamerlee.xcodeproj/project.pbxproj", "w") as f:
+    f.write(pbxproj_content)
+
+print("Updated Stamerlee.xcodeproj/project.pbxproj with image assets and bundle resources")
