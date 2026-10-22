@@ -1,7 +1,7 @@
 import SwiftUI
 
 // MARK: - Root Content View
-/// Master container managing transitions between all onboarding & auth screens.
+/// Master container managing transitions across all onboarding, exploration, and practice screens.
 public struct ContentView: View {
     @State private var appState = AppState()
     @State private var showScreenPicker: Bool = false
@@ -28,14 +28,23 @@ public struct ContentView: View {
                 case .challengingSounds:
                     ChallengingSoundsView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
-                case .planReady:
-                    PlanReadyView(state: appState)
+                case .exploreActivities:
+                    ExploreActivitiesView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
+                case .homeDashboard:
+                    HomeDashboardView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
+                case .prolongedSpeechIntro:
+                    ProlongedSpeechIntroView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
+                case .prolongedSpeechDifficulty:
+                    ProlongedSpeechDifficultyView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
                 }
             }
             .animation(.spring(response: 0.45, dampingFraction: 0.85), value: appState.currentScreen)
             
-            // Quick Screen Navigation Pill (for easy previewing & testing of all 5 screens)
+            // Quick Screen Navigation Pill (for easy previewing & testing)
             if showScreenPicker {
                 screenPickerOverlay
             }
@@ -77,12 +86,15 @@ public struct ContentView: View {
             
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
-                    jumpButton(title: "1. Launch", screen: .launch)
-                    jumpButton(title: "2. Login", screen: .login)
-                    jumpButton(title: "3. Info 1", screen: .onboarding1)
-                    jumpButton(title: "4. Info 2", screen: .onboarding2)
-                    jumpButton(title: "5. Sounds", screen: .challengingSounds)
-                    jumpButton(title: "6. Done", screen: .planReady)
+                    jumpButton(title: "Launch", screen: .launch)
+                    jumpButton(title: "Login", screen: .login)
+                    jumpButton(title: "Info 1", screen: .onboarding1)
+                    jumpButton(title: "Info 2", screen: .onboarding2)
+                    jumpButton(title: "Sounds", screen: .challengingSounds)
+                    jumpButton(title: "Explore", screen: .exploreActivities)
+                    jumpButton(title: "Home", screen: .homeDashboard)
+                    jumpButton(title: "Pro Speech", screen: .prolongedSpeechIntro)
+                    jumpButton(title: "Difficulty", screen: .prolongedSpeechDifficulty)
                 }
             }
         }

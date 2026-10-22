@@ -99,7 +99,7 @@ public struct ChallengingSoundsView: View {
                         title: "Continue",
                         isEnabled: !state.selectedSoundIds.isEmpty
                     ) {
-                        state.navigate(to: .planReady)
+                        state.navigate(to: .exploreActivities)
                     }
                 }
                 .padding(.horizontal, 24)

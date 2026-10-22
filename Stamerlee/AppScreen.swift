@@ -8,7 +8,10 @@ public enum AppScreen: Hashable, CaseIterable {
     case onboarding1
     case onboarding2
     case challengingSounds
-    case planReady
+    case exploreActivities
+    case homeDashboard
+    case prolongedSpeechIntro
+    case prolongedSpeechDifficulty
 }
 
 // MARK: - Sound Option Model
@@ -59,6 +62,17 @@ public final class AppState {
     public var selectedSoundIds: Set<String> = ["td"] // Default "T, D" selected as in screenshot
     public var customSoundInput: String = ""
     
+    // Dashboard & Tab State
+    public var selectedTab: Int = 0 // 0: Home, 1: Insights, 2: Profile
+    public var dailyPracticeMinutes: Int = 10
+    public var currentStreakDays: Int = 3
+    
+    // Practice & Difficulty State
+    public var selectedDifficulty: String = "Easy"
+    public var isAudioPracticing: Bool = false
+    public var practiceAudioSeconds: Int = 0
+    public var showPracticeModal: Bool = false
+    
     // UI Feedback States
     public var showEmailSheet: Bool = false
     public var showTermsSheet: Bool = false
@@ -85,12 +99,6 @@ public final class AppState {
         }
     }
     
-    public func selectSingleSound(id: String) {
-        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-            selectedSoundIds = [id]
-        }
-    }
-    
     public func isSoundSelected(id: String) -> Bool {
         selectedSoundIds.contains(id)
     }
@@ -102,6 +110,7 @@ public final class AppState {
             self.customSoundInput = ""
             self.isAuthenticated = false
             self.userEmail = ""
+            self.selectedTab = 0
         }
     }
 }

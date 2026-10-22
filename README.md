@@ -1,17 +1,17 @@
 # Stamerlee iOS App (SwiftUI)
 
-A modern, high-fidelity iOS frontend implementation of **Stamerlee** built with modern Swift and SwiftUI (iOS 17+ / Swift 6), faithfully reproducing the UI from the design screenshots with fully functional navigation, interactive states, and sound selections.
+A modern, high-fidelity iOS frontend implementation of **Stamerlee** built with modern Swift and SwiftUI (iOS 17+ / Swift 6), faithfully reproducing all screens from the design screenshots with fully functional navigation, interactive states, and sound selections.
 
 ---
 
-## 📱 Included Screens & Functional Flows
+## 📱 Flow & Implemented Screens
 
 1. **Launch Screen** (`LaunchView.swift`)
    - Deep midnight background (`#0B0C1E`) with bold centered "Stamerlee" typography and gentle breathing glow.
    - **Functional**: Automatically transitions after 1.8s or tap anywhere to enter immediately.
 
 2. **Login / Get Started Screen** (`LoginView.swift`)
-   - Dark top section with brand title + curved light lavender/periwinkle bottom sheet.
+   - Dark top section with brand title + curved light periwinkle/lavender bottom sheet.
    - **Functional Buttons**:
      - `Continue with Apple`: Authenticates with haptic feedback & navigates to onboarding.
      - `Continue with Google`: Authenticates with Google branding & navigates to onboarding.
@@ -21,12 +21,12 @@ A modern, high-fidelity iOS frontend implementation of **Stamerlee** built with 
 3. **Onboarding Info 1: "Small steps, stronger speech"** (`OnboardingStepOneView.swift`)
    - Page dots indicator (Step 1 active).
    - Dynamic headline with purple accent gradient text.
-   - Custom native SwiftUI vector illustration: serene listener with headphones and floating microphone badge with animated pulse rings.
+   - Uses uploaded image (`OnboardingHero1.png`).
    - **Functional**: "Begin" button advances to Onboarding Step 2.
 
 4. **Onboarding Info 2: "Support on your schedule"** (`OnboardingStepTwoView.swift`)
    - Page dots indicator (Step 2 active).
-   - Custom native SwiftUI vector illustration: Video call card with speech coach waving, speech bubble quote: *"You don't have to rush. Take your time, one word at a time."*, and call audio controls.
+   - Speech coach video call card illustration with quote bubble (`OnboardingHero2.png`).
    - **Functional**:
      - Circular back button `<` returns to Step 1.
      - "Continue" button advances to Challenging Sounds screen.
@@ -34,48 +34,74 @@ A modern, high-fidelity iOS frontend implementation of **Stamerlee** built with 
 5. **Challenging Sounds** (`ChallengingSoundsView.swift`)
    - Circular back button `<` to return to previous step.
    - White card container with question: *"What are the sounds you stutter on?"*
-   - **Functional Interactive Options**:
-     - `P, B (Please, book)`
-     - `T, D (Today, do)` (selected by default with active radio checkmark)
-     - `K, G (Come, go)`
-     - `Something else`: selecting this reveals a smooth animated custom text field for typing custom sounds/phonemes.
-   - **Functional**: "Continue" button is enabled based on selection and advances to the plan completion view.
+   - Options: `P, B`, `T, D`, `K, G`, and `Something else` (reveals smooth custom sound input field).
+   - **Functional**: "Continue" button advances to **Explore Activities**.
 
-6. **Plan Ready Screen** (`PlanReadyView.swift`)
-   - Celebratory completion view presenting the user's customized daily fluency plan.
-   - Displays dynamic tags for the selected sounds.
-   - Includes an interactive practice simulator with live timer and a "Restart" button to test the flow again.
+6. **Explore Activities** (`ExploreActivitiesView.swift`) *(Screenshot 1)*
+   - Circular back button `<` returns to Challenging Sounds.
+   - Title: *"Explore activities designed for your stutter"*
+   - 4 activity cards using uploaded images:
+     - **Prolonged Speech**: *"Learn smooth pacing with prolonged speech and continuous airflow exercises"*
+     - **Picture Description**: *"Build spontaneous fluency with picture description"*
+     - **Dial Scene**: *"Simulate phone calls using dial scene to build conversational confidence"*
+     - **Mirror Narration**: *"Monitor your physical tension during narration with mirror exercises"*
+   - **Functional**: "Continue" button navigates to **Home / Welcome**.
+
+7. **Home / Welcome Dashboard** (`HomeDashboardView.swift`) *(Screenshot 2)*
+   - Title: *"Welcome"*
+   - **Daily Goal Banner**: Uses uploaded `ClockIllustration.png` with *"Practice for 10 minutes"* goal.
+   - **Exercises Section**:
+     - `Prolonged Speech` (Unlocked, chevron `>`): Tapping navigates to **Prolonged Speech Intro**.
+     - `Picture Description`, `Dial Scene`, `Narration` (Locked with blue lock badge): Tapping displays unlock requirement alerts.
+   - **Practice Section**:
+     - `Beat Buddy` (Locked with blue lock badge).
+   - **Floating Tab Bar**: Interactive Home, Insights, and Profile tabs.
+
+8. **Prolonged Speech Intro** (`ProlongedSpeechIntroView.swift`) *(Screenshot 3)*
+   - Circular back button `<` returns to Home.
+   - Title: *"Let's start with Prolonged Speech"*
+   - Subtitle: *"Learn to gently stretch sounds and connect words smoothly. This technique can help reduce speech tension and improve fluency with practice"*
+   - Hero Illustration: Uses uploaded `ProlongedSpeechHero.png` (girl practicing stretching speech).
+   - **Functional**: "Continue" button navigates to **Difficulty Selection**.
+
+9. **Prolonged Speech Difficulty Selection** (`ProlongedSpeechDifficultyView.swift`) *(Screenshot 4)*
+   - Circular back button `<` returns to Prolonged Speech Intro.
+   - Title: *"Prolonged Speech"*
+   - Subtitle: *"Practice stretching sounds for smoother,more fluent speech."*
+   - Cards:
+     - `Easy` (Unlocked): Tapping opens the interactive audio speech practice session sheet with live waveform and mic recording!
+     - `Medium` (Locked with blue lock badge).
+     - `Hard` (Locked with blue lock badge).
 
 ---
 
 ## 🛠 Project Structure
 
 ```
-├── Stamerlee.xcodeproj/        # Xcode Project (Open directly in Xcode)
+├── Stamerlee.xcodeproj/                # Xcode Project (Double-click to open in Xcode)
 └── Stamerlee/
-    ├── StamerleeApp.swift      # Modern @main entry point
-    ├── ContentView.swift       # Navigation host with directional slide animations
-    ├── ColorTheme.swift        # Palette matching screenshots (Dark #0B0C1E, #0A84FF, etc.)
-    ├── AppScreen.swift         # @Observable state manager & data models
-    ├── Components.swift        # PrimaryActionButton, SocialAuthRow, PageIndicatorView, OptionSelectRow
-    ├── Illustrations.swift     # Vector illustrations for headphone listener & speech coach
-    ├── LaunchView.swift        # Screenshot 1 (Launch Screen)
-    ├── LoginView.swift         # Screenshot 2 (Login Screen)
-    ├── OnboardingStepOneView.swift # Screenshot 3 (Onboarding 1)
-    ├── OnboardingStepTwoView.swift # Screenshot 4 (Onboarding 2)
-    ├── ChallengingSoundsView.swift # Screenshot 5 (Challenging Sounds)
-    └── PlanReadyView.swift     # Final personalized plan & practice simulator
+    ├── StamerleeApp.swift              # Modern @main entry point
+    ├── ContentView.swift               # Root navigation host with slide transitions
+    ├── ColorTheme.swift                # Design system color tokens
+    ├── AppScreen.swift                 # @Observable state manager
+    ├── Components.swift                # Reusable buttons, cards, tab bar, indicators
+    ├── Illustrations.swift             # Safe asset loaders with local fallbacks
+    ├── LaunchView.swift                # Screen 1 (Launch)
+    ├── LoginView.swift                 # Screen 2 (Login / Get Started)
+    ├── OnboardingStepOneView.swift     # Screen 3 (Onboarding 1)
+    ├── OnboardingStepTwoView.swift     # Screen 4 (Onboarding 2)
+    ├── ChallengingSoundsView.swift     # Screen 5 (Challenging Sounds)
+    ├── ExploreActivitiesView.swift     # Screen 6 (Explore Activities)
+    ├── HomeDashboardView.swift         # Screen 7 (Home / Welcome)
+    ├── ProlongedSpeechIntroView.swift  # Screen 8 (Prolonged Speech Intro)
+    └── ProlongedSpeechDifficultyView.swift # Screen 9 (Difficulty Selection)
 ```
 
 ---
 
 ## 🚀 How to Run
 
-### In Xcode:
-1. Double-click [Stamerlee.xcodeproj](file:///Users/user89/Documents/bitch/Stamerlee.xcodeproj) to open it in Xcode.
-2. Select any iOS Simulator (e.g., iPhone 15 / iPhone 16) or a connected iPhone.
+1. Open [Stamerlee.xcodeproj](file:///Users/user89/Documents/bitch/Stamerlee.xcodeproj) in Xcode.
+2. Select any iPhone simulator (e.g. iPhone 15 / 16) or a connected iPhone.
 3. Press **Cmd + R** to run.
-4. You can also view interactive previews in Xcode Previews using `#Preview`.
-
-### Quick Screen Jump (Testing):
-- While running the app, **double-tap anywhere with two fingers** to reveal the quick screen jump bar to instantly switch between any of the 5 screens!
+4. **Quick Screen Jump**: Double-tap anywhere with two fingers to reveal the screen switcher pill and jump directly to any screen!
