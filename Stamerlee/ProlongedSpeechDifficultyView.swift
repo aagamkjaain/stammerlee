@@ -53,7 +53,7 @@ public struct ProlongedSpeechDifficultyView: View {
                         isLocked: false
                     ) {
                         state.selectedDifficulty = "Easy"
-                        showPracticeSheet = true
+                        state.navigate(to: .prolongedPractice)
                     }
                     
                     // 2. Medium (LOCKED)
@@ -70,7 +70,8 @@ public struct ProlongedSpeechDifficultyView: View {
                         title: "Hard",
                         isLocked: true
                     ) {
-                        lockedAlertText = "Complete Medium practice sessions to unlock Hard difficulty."
+                        locke
+                        dAlertText = "Complete Medium practice sessions to unlock Hard difficulty."
                         showLockedAlert = true
                     }
                 }

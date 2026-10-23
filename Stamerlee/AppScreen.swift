@@ -12,6 +12,8 @@ public enum AppScreen: Hashable, CaseIterable {
     case homeDashboard
     case prolongedSpeechIntro
     case prolongedSpeechDifficulty
+    case prolongedPractice
+    case prolongedAnalysis
 }
 
 // MARK: - Sound Option Model

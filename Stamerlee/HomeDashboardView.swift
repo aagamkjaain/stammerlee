@@ -136,7 +136,7 @@ public struct HomeDashboardView: View {
                 if let uiImage = StamerleeImageLoader.loadHeroImage(name: "ClockIllustration", fallbackPath: "/Users/user89/Documents/bitch/clock illustration.png") {
                     Image(uiImage: uiImage)
                         .resizable()
-                        .scaledToFit()
+                        .scaledToFill()
                         .frame(width: 68, height: 68)
                 } else {
                     Circle()
@@ -197,10 +197,10 @@ public struct HomeDashboardView: View {
                     ZStack {
                         Circle()
                             .fill(Color(red: 90 / 255, green: 105 / 255, blue: 180 / 255))
-                            .frame(width: 38, height: 38)
+                            .frame(width: 40, height: 50)
                         
                         Image(systemName: "lock.fill")
-                            .font(.system(size: 14, weight: .bold))
+                            .font(.system(size: 19, weight: .bold))
                             .foregroundColor(.white)
                     }
                 } else if let iconName = iconName, let fallbackPath = fallbackPath {
@@ -208,16 +208,8 @@ public struct HomeDashboardView: View {
                     if let uiImage = StamerleeImageLoader.loadHeroImage(name: iconName, fallbackPath: fallbackPath) {
                         Image(uiImage: uiImage)
                             .resizable()
-                            .scaledToFit()
-                            .frame(width: 38, height: 38)
-                    } else {
-                        Circle()
-                            .fill(StamerleeTheme.primaryBlue.opacity(0.15))
-                            .frame(width: 38, height: 38)
-                            .overlay(
-                                Image(systemName: "book.fill")
-                                    .foregroundColor(StamerleeTheme.primaryBlue)
-                            )
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 75, height: 75)
                     }
                 }
                 

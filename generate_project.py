@@ -13,26 +13,22 @@ pbxproj_content = """// !$*UTF8*$!
 		AA000001002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002002 /* ContentView.swift */; };
 		AA000001003 /* ColorTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002003 /* ColorTheme.swift */; };
 		AA000001004 /* AppScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002004 /* AppScreen.swift */; };
-		AA000001005 /* LaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002005 /* LaunchView.swift */; };
-		AA000001006 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002006 /* LoginView.swift */; };
-		AA000001007 /* OnboardingStepOneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002007 /* OnboardingStepOneView.swift */; };
-		AA000001008 /* OnboardingStepTwoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002008 /* OnboardingStepTwoView.swift */; };
-		AA000001009 /* ChallengingSoundsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002009 /* ChallengingSoundsView.swift */; };
-		AA000001010 /* ExploreActivitiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002010 /* ExploreActivitiesView.swift */; };
-		AA000001011 /* HomeDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002011 /* HomeDashboardView.swift */; };
-		AA000001012 /* ProlongedSpeechIntroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002012 /* ProlongedSpeechIntroView.swift */; };
-		AA000001013 /* ProlongedSpeechDifficultyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002013 /* ProlongedSpeechDifficultyView.swift */; };
-		AA000001014 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002014 /* Components.swift */; };
-		AA000001015 /* Illustrations.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002015 /* Illustrations.swift */; };
-		AA000001016 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA000002016 /* Assets.xcassets */; };
-		AA000001017 /* OnboardingHero1.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002017 /* OnboardingHero1.png */; };
-		AA000001018 /* OnboardingHero2.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002018 /* OnboardingHero2.png */; };
-		AA000001019 /* ClockIllustration.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002019 /* ClockIllustration.png */; };
-		AA000001020 /* IconDialScene.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002020 /* IconDialScene.png */; };
-		AA000001021 /* IconMirrorNarration.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002021 /* IconMirrorNarration.png */; };
-		AA000001022 /* IconPictureDesc.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002022 /* IconPictureDesc.png */; };
-		AA000001023 /* IconProlongedSpeech.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002023 /* IconProlongedSpeech.png */; };
-		AA000001024 /* ProlongedSpeechHero.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002024 /* ProlongedSpeechHero.png */; };
+		AA000001005 /* OnboardingViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002005 /* OnboardingViews.swift */; };
+		AA000001006 /* HomeDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002006 /* HomeDashboardView.swift */; };
+		AA000001007 /* ProlongedSpeechIntroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002007 /* ProlongedSpeechIntroView.swift */; };
+		AA000001008 /* ProlongedSpeechDifficultyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002008 /* ProlongedSpeechDifficultyView.swift */; };
+		AA000001009 /* ProlongedPracticeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002009 /* ProlongedPracticeView.swift */; };
+		AA000001010 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002010 /* Components.swift */; };
+		AA000001011 /* Illustrations.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002011 /* Illustrations.swift */; };
+		AA000001012 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA000002012 /* Assets.xcassets */; };
+		AA000001013 /* OnboardingHero1.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002013 /* OnboardingHero1.png */; };
+		AA000001014 /* OnboardingHero2.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002014 /* OnboardingHero2.png */; };
+		AA000001015 /* ClockIllustration.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002015 /* ClockIllustration.png */; };
+		AA000001016 /* IconDialScene.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002016 /* IconDialScene.png */; };
+		AA000001017 /* IconMirrorNarration.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002017 /* IconMirrorNarration.png */; };
+		AA000001018 /* IconPictureDesc.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002018 /* IconPictureDesc.png */; };
+		AA000001019 /* IconProlongedSpeech.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002019 /* IconProlongedSpeech.png */; };
+		AA000001020 /* ProlongedSpeechHero.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002020 /* ProlongedSpeechHero.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,26 +36,22 @@ pbxproj_content = """// !$*UTF8*$!
 		AA000002002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		AA000002003 /* ColorTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorTheme.swift; sourceTree = "<group>"; };
 		AA000002004 /* AppScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppScreen.swift; sourceTree = "<group>"; };
-		AA000002005 /* LaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchView.swift; sourceTree = "<group>"; };
-		AA000002006 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
-		AA000002007 /* OnboardingStepOneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingStepOneView.swift; sourceTree = "<group>"; };
-		AA000002008 /* OnboardingStepTwoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingStepTwoView.swift; sourceTree = "<group>"; };
-		AA000002009 /* ChallengingSoundsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengingSoundsView.swift; sourceTree = "<group>"; };
-		AA000002010 /* ExploreActivitiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreActivitiesView.swift; sourceTree = "<group>"; };
-		AA000002011 /* HomeDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeDashboardView.swift; sourceTree = "<group>"; };
-		AA000002012 /* ProlongedSpeechIntroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProlongedSpeechIntroView.swift; sourceTree = "<group>"; };
-		AA000002013 /* ProlongedSpeechDifficultyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProlongedSpeechDifficultyView.swift; sourceTree = "<group>"; };
-		AA000002014 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
-		AA000002015 /* Illustrations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Illustrations.swift; sourceTree = "<group>"; };
-		AA000002016 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		AA000002017 /* OnboardingHero1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OnboardingHero1.png; sourceTree = "<group>"; };
-		AA000002018 /* OnboardingHero2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OnboardingHero2.png; sourceTree = "<group>"; };
-		AA000002019 /* ClockIllustration.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ClockIllustration.png; sourceTree = "<group>"; };
-		AA000002020 /* IconDialScene.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IconDialScene.png; sourceTree = "<group>"; };
-		AA000002021 /* IconMirrorNarration.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IconMirrorNarration.png; sourceTree = "<group>"; };
-		AA000002022 /* IconPictureDesc.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IconPictureDesc.png; sourceTree = "<group>"; };
-		AA000002023 /* IconProlongedSpeech.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IconProlongedSpeech.png; sourceTree = "<group>"; };
-		AA000002024 /* ProlongedSpeechHero.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ProlongedSpeechHero.png; sourceTree = "<group>"; };
+		AA000002005 /* OnboardingViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViews.swift; sourceTree = "<group>"; };
+		AA000002006 /* HomeDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeDashboardView.swift; sourceTree = "<group>"; };
+		AA000002007 /* ProlongedSpeechIntroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProlongedSpeechIntroView.swift; sourceTree = "<group>"; };
+		AA000002008 /* ProlongedSpeechDifficultyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProlongedSpeechDifficultyView.swift; sourceTree = "<group>"; };
+		AA000002009 /* ProlongedPracticeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProlongedPracticeView.swift; sourceTree = "<group>"; };
+		AA000002010 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		AA000002011 /* Illustrations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Illustrations.swift; sourceTree = "<group>"; };
+		AA000002012 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AA000002013 /* OnboardingHero1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OnboardingHero1.png; sourceTree = "<group>"; };
+		AA000002014 /* OnboardingHero2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OnboardingHero2.png; sourceTree = "<group>"; };
+		AA000002015 /* ClockIllustration.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ClockIllustration.png; sourceTree = "<group>"; };
+		AA000002016 /* IconDialScene.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IconDialScene.png; sourceTree = "<group>"; };
+		AA000002017 /* IconMirrorNarration.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IconMirrorNarration.png; sourceTree = "<group>"; };
+		AA000002018 /* IconPictureDesc.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IconPictureDesc.png; sourceTree = "<group>"; };
+		AA000002019 /* IconProlongedSpeech.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IconProlongedSpeech.png; sourceTree = "<group>"; };
+		AA000002020 /* ProlongedSpeechHero.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ProlongedSpeechHero.png; sourceTree = "<group>"; };
 		AA000003001 /* Stamerlee.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stamerlee.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -89,26 +81,22 @@ pbxproj_content = """// !$*UTF8*$!
 				AA000002002 /* ContentView.swift */,
 				AA000002003 /* ColorTheme.swift */,
 				AA000002004 /* AppScreen.swift */,
-				AA000002005 /* LaunchView.swift */,
-				AA000002006 /* LoginView.swift */,
-				AA000002007 /* OnboardingStepOneView.swift */,
-				AA000002008 /* OnboardingStepTwoView.swift */,
-				AA000002009 /* ChallengingSoundsView.swift */,
-				AA000002010 /* ExploreActivitiesView.swift */,
-				AA000002011 /* HomeDashboardView.swift */,
-				AA000002012 /* ProlongedSpeechIntroView.swift */,
-				AA000002013 /* ProlongedSpeechDifficultyView.swift */,
-				AA000002014 /* Components.swift */,
-				AA000002015 /* Illustrations.swift */,
-				AA000002016 /* Assets.xcassets */,
-				AA000002017 /* OnboardingHero1.png */,
-				AA000002018 /* OnboardingHero2.png */,
-				AA000002019 /* ClockIllustration.png */,
-				AA000002020 /* IconDialScene.png */,
-				AA000002021 /* IconMirrorNarration.png */,
-				AA000002022 /* IconPictureDesc.png */,
-				AA000002023 /* IconProlongedSpeech.png */,
-				AA000002024 /* ProlongedSpeechHero.png */,
+				AA000002005 /* OnboardingViews.swift */,
+				AA000002006 /* HomeDashboardView.swift */,
+				AA000002007 /* ProlongedSpeechIntroView.swift */,
+				AA000002008 /* ProlongedSpeechDifficultyView.swift */,
+				AA000002009 /* ProlongedPracticeView.swift */,
+				AA000002010 /* Components.swift */,
+				AA000002011 /* Illustrations.swift */,
+				AA000002012 /* Assets.xcassets */,
+				AA000002013 /* OnboardingHero1.png */,
+				AA000002014 /* OnboardingHero2.png */,
+				AA000002015 /* ClockIllustration.png */,
+				AA000002016 /* IconDialScene.png */,
+				AA000002017 /* IconMirrorNarration.png */,
+				AA000002018 /* IconPictureDesc.png */,
+				AA000002019 /* IconProlongedSpeech.png */,
+				AA000002020 /* ProlongedSpeechHero.png */,
 			);
 			path = Stamerlee;
 			sourceTree = "<group>";
@@ -178,15 +166,15 @@ pbxproj_content = """// !$*UTF8*$!
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AA000001016 /* Assets.xcassets in Resources */,
-				AA000001017 /* OnboardingHero1.png in Resources */,
-				AA000001018 /* OnboardingHero2.png in Resources */,
-				AA000001019 /* ClockIllustration.png in Resources */,
-				AA000001020 /* IconDialScene.png in Resources */,
-				AA000001021 /* IconMirrorNarration.png in Resources */,
-				AA000001022 /* IconPictureDesc.png in Resources */,
-				AA000001023 /* IconProlongedSpeech.png in Resources */,
-				AA000001024 /* ProlongedSpeechHero.png in Resources */,
+				AA000001012 /* Assets.xcassets in Resources */,
+				AA000001013 /* OnboardingHero1.png in Resources */,
+				AA000001014 /* OnboardingHero2.png in Resources */,
+				AA000001015 /* ClockIllustration.png in Resources */,
+				AA000001016 /* IconDialScene.png in Resources */,
+				AA000001017 /* IconMirrorNarration.png in Resources */,
+				AA000001018 /* IconPictureDesc.png in Resources */,
+				AA000001019 /* IconProlongedSpeech.png in Resources */,
+				AA000001020 /* ProlongedSpeechHero.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -201,17 +189,13 @@ pbxproj_content = """// !$*UTF8*$!
 				AA000001002 /* ContentView.swift in Sources */,
 				AA000001003 /* ColorTheme.swift in Sources */,
 				AA000001004 /* AppScreen.swift in Sources */,
-				AA000001005 /* LaunchView.swift in Sources */,
-				AA000001006 /* LoginView.swift in Sources */,
-				AA000001007 /* OnboardingStepOneView.swift in Sources */,
-				AA000001008 /* OnboardingStepTwoView.swift in Sources */,
-				AA000001009 /* ChallengingSoundsView.swift in Sources */,
-				AA000001010 /* ExploreActivitiesView.swift in Sources */,
-				AA000001011 /* HomeDashboardView.swift in Sources */,
-				AA000001012 /* ProlongedSpeechIntroView.swift in Sources */,
-				AA000001013 /* ProlongedSpeechDifficultyView.swift in Sources */,
-				AA000001014 /* Components.swift in Sources */,
-				AA000001015 /* Illustrations.swift in Sources */,
+				AA000001005 /* OnboardingViews.swift in Sources */,
+				AA000001006 /* HomeDashboardView.swift in Sources */,
+				AA000001007 /* ProlongedSpeechIntroView.swift in Sources */,
+				AA000001008 /* ProlongedSpeechDifficultyView.swift in Sources */,
+				AA000001009 /* ProlongedPracticeView.swift in Sources */,
+				AA000001010 /* Components.swift in Sources */,
+				AA000001011 /* Illustrations.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -361,4 +345,4 @@ os.makedirs("Stamerlee.xcodeproj", exist_ok=True)
 with open("Stamerlee.xcodeproj/project.pbxproj", "w") as f:
     f.write(pbxproj_content)
 
-print("Regenerated Stamerlee.xcodeproj with all new screens and assets")
+print("Regenerated Stamerlee.xcodeproj with consolidated OnboardingViews and ProlongedPracticeView")

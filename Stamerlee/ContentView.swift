@@ -40,6 +40,12 @@ public struct ContentView: View {
                 case .prolongedSpeechDifficulty:
                     ProlongedSpeechDifficultyView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
+                case .prolongedPractice:
+                    ProlongedPracticeView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
+                case .prolongedAnalysis:
+                    ProlongedAnalysisView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
                 }
             }
             .animation(.spring(response: 0.45, dampingFraction: 0.85), value: appState.currentScreen)
@@ -95,6 +101,8 @@ public struct ContentView: View {
                     jumpButton(title: "Home", screen: .homeDashboard)
                     jumpButton(title: "Pro Speech", screen: .prolongedSpeechIntro)
                     jumpButton(title: "Difficulty", screen: .prolongedSpeechDifficulty)
+                    jumpButton(title: "Practice", screen: .prolongedPractice)
+                    jumpButton(title: "Analysis", screen: .prolongedAnalysis)
                 }
             }
         }
