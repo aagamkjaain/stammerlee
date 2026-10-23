@@ -55,6 +55,12 @@ public struct ContentView: View {
                 case .dialScene:
                     DialSceneView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
+                case .narrationDifficulty:
+                    NarrationDifficultyView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
+                case .narrationPractice:
+                    NarrationPracticeView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
                 }
             }
             .animation(.spring(response: 0.45, dampingFraction: 0.85), value: appState.currentScreen)

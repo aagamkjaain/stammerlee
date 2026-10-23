@@ -30,6 +30,8 @@
 		AA000001021 /* PictureDescriptionEasyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002021 /* PictureDescriptionEasyView.swift */; };
 		AA000001024 /* PictureDescriptionDifficultyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002024 /* PictureDescriptionDifficultyView.swift */; };
 		AA000001027 /* DialSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002027 /* DialSceneView.swift */; };
+		AA000001028 /* NarrationDifficultyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002028 /* NarrationDifficultyView.swift */; };
+		AA000001029 /* NarrationPracticeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002029 /* NarrationPracticeView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,6 +58,8 @@
 		AA000002021 /* PictureDescriptionEasyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureDescriptionEasyView.swift; sourceTree = "<group>"; };
 		AA000002024 /* PictureDescriptionDifficultyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureDescriptionDifficultyView.swift; sourceTree = "<group>"; };
 		AA000002027 /* DialSceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DialSceneView.swift; sourceTree = "<group>"; };
+		AA000002028 /* NarrationDifficultyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NarrationDifficultyView.swift; sourceTree = "<group>"; };
+		AA000002029 /* NarrationPracticeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NarrationPracticeView.swift; sourceTree = "<group>"; };
 		AA000003001 /* Stamerlee.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stamerlee.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -111,6 +115,8 @@
 				AA000002021 /* PictureDescriptionEasyView.swift */,
 				AA000002024 /* PictureDescriptionDifficultyView.swift */,
 				AA000002027 /* DialSceneView.swift */,
+				AA000002028 /* NarrationDifficultyView.swift */,
+				AA000002029 /* NarrationPracticeView.swift */,
 				23730120308B673B00C14980 /* pictures */,
 			);
 			path = Stamerlee;
@@ -212,6 +218,8 @@
 				AA000001021 /* PictureDescriptionEasyView.swift in Sources */,
 				AA000001024 /* PictureDescriptionDifficultyView.swift in Sources */,
 				AA000001027 /* DialSceneView.swift in Sources */,
+				AA000001028 /* NarrationDifficultyView.swift in Sources */,
+				AA000001029 /* NarrationPracticeView.swift in Sources */,
 				AA000001010 /* Components.swift in Sources */,
 				AA000001011 /* Illustrations.swift in Sources */,
 			);

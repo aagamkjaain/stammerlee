@@ -100,15 +100,19 @@ public struct HomeDashboardView: View {
                                 }
                             }
                             
-                            // 4. Narration
+                            // 4. Narration (unlocked after one completed Dial Scene)
                             exerciseRow(
                                 title: "Narration",
                                 subtitle: "Narrate a story one sentence at a time.",
-                                isLocked: true,
+                                isLocked: !state.isNarrationUnlocked,
                                 iconName: "IconMirrorNarration",
                                 fallbackPath: "/Users/user89/Documents/bitch/Stamerlee/IconMirrorNarration.png"
                             ) {
-                                triggerLockedAlert(title: "Narration")
+                                if state.isNarrationUnlocked {
+                                    state.navigate(to: .narrationDifficulty)
+                                } else {
+                                    triggerLockedAlert(title: "Narration")
+                                }
                             }
                         }
                         
@@ -118,15 +122,17 @@ public struct HomeDashboardView: View {
                                 .font(.system(size: 17, weight: .bold, design: .rounded))
                                 .foregroundColor(StamerleeTheme.textPrimaryDark)
                             
-                            // Beat Buddy
+                            // Beat Buddy (unlocked after Prolonged Speech Easy)
                             exerciseRow(
                                 title: "Beat Buddy",
                                 subtitle: "Narrate a story one sentence at a time.",
-                                isLocked: true,
-                                iconName: "IconMirrorNarration",
+                                isLocked: !state.isBeatBuddyUnlocked,
+                                iconName: "BeatBuddyLogo",
                                 fallbackPath: "/Users/user89/Documents/bitch/Stamerlee/IconMirrorNarration.png"
                             ) {
-                                triggerLockedAlert(title: "Beat Buddy")
+                                if !state.isBeatBuddyUnlocked {
+                                    triggerLockedAlert(title: "Beat Buddy")
+                                }
                             }
                         }
                         

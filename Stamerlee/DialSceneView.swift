@@ -156,6 +156,7 @@ public struct DialSceneView: View {
             Spacer()
 
             Button {
+                state.hasCompletedDialScene = true
                 stage = .analysis
             } label: {
                 ZStack {
@@ -167,6 +168,7 @@ public struct DialSceneView: View {
             .frame(maxWidth: .infinity)
             .padding(.bottom, 24)
             PrimaryActionButton(title: "Finish") {
+                state.hasCompletedDialScene = true
                 stage = .analysis
             }
             .padding(.horizontal, 24)
