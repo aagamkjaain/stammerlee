@@ -1,7 +1,7 @@
 import SwiftUI
 
-// MARK: - Picture Description Easy
-/// Easy picture-description exercise unlocked after completing Prolonged Speech Easy.
+// MARK: - Picture Description Practice
+/// Picture-description practice for the selected difficulty.
 public struct PictureDescriptionEasyView: View {
     @Bindable public var state: AppState
     @State private var isAnalysisVisible = false
@@ -13,6 +13,10 @@ public struct PictureDescriptionEasyView: View {
         "Blocks": ["Bench", "Purple", "Golden", "Pet", "White", "Shoes"],
         "Repetitions": ["People", "Talking", "Dog", "Building", "Friends", "Campus"]
     ]
+
+    private var difficulty: String {
+        state.selectedPictureDescriptionDifficulty
+    }
 
     public init(state: AppState) {
         self.state = state
@@ -52,13 +56,13 @@ public struct PictureDescriptionEasyView: View {
             .padding(.horizontal, 24)
             .padding(.top, 16)
 
-            Text("Easy")
+            Text(difficulty)
                 .font(.system(size: 30, weight: .bold, design: .rounded))
                 .foregroundColor(.white)
                 .padding(.horizontal, 24)
                 .padding(.top, 20)
 
-            Text("Describe simple pictures using words and\nshort sentences")
+            Text(description)
                 .font(.system(size: 14, design: .rounded))
                 .foregroundColor(StamerleeTheme.textSecondaryDark)
                 .padding(.horizontal, 24)
@@ -93,6 +97,7 @@ public struct PictureDescriptionEasyView: View {
             .padding(.bottom, 28)
 
             PrimaryActionButton(title: "Finish") {
+                state.completedPictureDescriptionDifficulties.insert(difficulty)
                 withAnimation(.easeInOut(duration: 0.25)) {
                     isAnalysisVisible = true
                 }
@@ -181,8 +186,8 @@ public struct PictureDescriptionEasyView: View {
     @ViewBuilder
     private var pictureAsset: some View {
         if let image = StamerleeImageLoader.loadHeroImage(
-            name: "picturedeseasy",
-            fallbackPath: "/Users/user89/Documents/bitch/Stamerlee/picturedeseasy.png"
+            name: difficulty == "Easy" ? "picturedeseasy" : "picturedes",
+            fallbackPath: "/Users/user89/Documents/bitch/Stamerlee/\(difficulty == "Easy" ? "picturedeseasy" : "picturedes").png"
         ) ?? StamerleeImageLoader.loadHeroImage(
             name: "picturedes",
             fallbackPath: "/Users/user89/Documents/bitch/Stamerlee/picturedes.png"
@@ -203,6 +208,17 @@ public struct PictureDescriptionEasyView: View {
                     }
                     .foregroundColor(StamerleeTheme.textSecondaryDark)
                 }
+        }
+    }
+
+    private var description: String {
+        switch difficulty {
+        case "Hard":
+            return "Describe pictures with connected ideas,\ncomplete sentences, and natural detail"
+        case "Medium":
+            return "Describe pictures using longer phrases\nand clear sentence connections"
+        default:
+            return "Describe simple pictures using words and\nshort sentences"
         }
     }
 }

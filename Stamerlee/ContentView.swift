@@ -46,7 +46,10 @@ public struct ContentView: View {
                 case .prolongedAnalysis:
                     ProlongedAnalysisView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
-                case .pictureDescriptionEasy:
+                case .pictureDescriptionDifficulty:
+                    PictureDescriptionDifficultyView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
+                case .pictureDescriptionPractice:
                     PictureDescriptionEasyView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
                 }

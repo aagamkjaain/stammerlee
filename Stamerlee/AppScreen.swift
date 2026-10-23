@@ -14,7 +14,8 @@ public enum AppScreen: Hashable, CaseIterable {
     case prolongedSpeechDifficulty
     case prolongedPractice
     case prolongedAnalysis
-    case pictureDescriptionEasy
+    case pictureDescriptionDifficulty
+    case pictureDescriptionPractice
 }
 
 // MARK: - Sound Option Model
@@ -74,6 +75,8 @@ public final class AppState {
     public var selectedDifficulty: String = "Easy"
     public var completedProlongedDifficulties: Set<String> = []
     public var hasSeenProlongedSpeechIntro: Bool = false
+    public var selectedPictureDescriptionDifficulty: String = "Easy"
+    public var completedPictureDescriptionDifficulties: Set<String> = []
     public var isAudioPracticing: Bool = false
     public var practiceAudioSeconds: Int = 0
     public var showPracticeModal: Bool = false
@@ -125,8 +128,21 @@ public final class AppState {
         completedProlongedDifficulties.insert(difficulty)
     }
 
-    public var isPictureDescriptionEasyUnlocked: Bool {
-        completedProlongedDifficulties.contains("Easy")
+    public var isPictureDescriptionUnlocked: Bool {
+        completedProlongedDifficulties.contains("Hard")
+    }
+
+    public func isPictureDescriptionDifficultyUnlocked(_ difficulty: String) -> Bool {
+        switch difficulty {
+        case "Easy":
+            return isPictureDescriptionUnlocked
+        case "Medium":
+            return completedPictureDescriptionDifficulties.contains("Easy")
+        case "Hard":
+            return completedPictureDescriptionDifficulties.contains("Medium")
+        default:
+            return false
+        }
     }
     
     public func restartFlow() {
@@ -139,6 +155,8 @@ public final class AppState {
             self.selectedTab = 0
             self.completedProlongedDifficulties = []
             self.hasSeenProlongedSpeechIntro = false
+            self.selectedPictureDescriptionDifficulty = "Easy"
+            self.completedPictureDescriptionDifficulties = []
         }
     }
 }

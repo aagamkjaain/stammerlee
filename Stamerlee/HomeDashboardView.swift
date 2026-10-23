@@ -70,15 +70,15 @@ public struct HomeDashboardView: View {
                                 )
                             }
                             
-                            // 2. Picture Description (unlocked after Prolonged Speech Easy)
+                            // 2. Picture Description (unlocked after Prolonged Speech Hard)
                             exerciseRow(
                                 title: "Picture Description",
                                 subtitle: "Describe what you see using simple words",
-                                isLocked: !state.isPictureDescriptionEasyUnlocked,
+                                isLocked: !state.isPictureDescriptionUnlocked,
                                 iconName: "IconPictureDesc"
                             ) {
-                                if state.isPictureDescriptionEasyUnlocked {
-                                    state.navigate(to: .pictureDescriptionEasy)
+                                if state.isPictureDescriptionUnlocked {
+                                    state.navigate(to: .pictureDescriptionDifficulty)
                                 } else {
                                     triggerLockedAlert(title: "Picture Description")
                                 }

@@ -30,6 +30,7 @@
 		AA000001021 /* PictureDescriptionEasyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002021 /* PictureDescriptionEasyView.swift */; };
 		AA000001022 /* picturedes.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002022 /* picturedes.png */; };
 		AA000001023 /* picturedeseasy.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002023 /* picturedeseasy.png */; };
+		AA000001024 /* PictureDescriptionDifficultyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002024 /* PictureDescriptionDifficultyView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,6 +57,7 @@
 		AA000002021 /* PictureDescriptionEasyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureDescriptionEasyView.swift; sourceTree = "<group>"; };
 		AA000002022 /* picturedes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = picturedes.png; sourceTree = "<group>"; };
 		AA000002023 /* picturedeseasy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = picturedeseasy.png; sourceTree = "<group>"; };
+		AA000002024 /* PictureDescriptionDifficultyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureDescriptionDifficultyView.swift; sourceTree = "<group>"; };
 		AA000003001 /* Stamerlee.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stamerlee.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -104,6 +106,7 @@
 				AA000002021 /* PictureDescriptionEasyView.swift */,
 				AA000002022 /* picturedes.png */,
 				AA000002023 /* picturedeseasy.png */,
+				AA000002024 /* PictureDescriptionDifficultyView.swift */,
 			);
 			path = Stamerlee;
 			sourceTree = "<group>";
@@ -204,6 +207,7 @@
 				AA000001008 /* ProlongedSpeechDifficultyView.swift in Sources */,
 				AA000001009 /* ProlongedPracticeView.swift in Sources */,
 				AA000001021 /* PictureDescriptionEasyView.swift in Sources */,
+				AA000001024 /* PictureDescriptionDifficultyView.swift in Sources */,
 				AA000001010 /* Components.swift in Sources */,
 				AA000001011 /* Illustrations.swift in Sources */,
 			);
