@@ -291,31 +291,31 @@ public struct HomeDashboardView: View {
     @available(iOS 26.0, *)
     private var liquidGlassTabBar: some View {
         GlassEffectContainer(spacing: 10) {
-            HStack(spacing: 6) {
-                tabItem(title: "Home", icon: "house.fill", index: 0)
-                tabItem(title: "Insights", icon: "chart.bar.xaxis", index: 1)
-                tabItem(title: "Profile", icon: "person.crop.circle", index: 2)
+            HStack(spacing: 4) {
+                tabItem(title: "Home", icon: "house.fill", index: 0, isCenter: false)
+                tabItem(title: "Insights", icon: "bolt.fill", index: 1, isCenter: true)
+                tabItem(title: "Profile", icon: "person.crop.circle.fill", index: 2, isCenter: false)
             }
-            .padding(8)
+            .padding(7)
         }
-        .padding(.horizontal, 12)
-        .shadow(color: .black.opacity(0.35), radius: 18, x: 0, y: 9)
+        .padding(.horizontal, 14)
+        .shadow(color: .black.opacity(0.4), radius: 20, x: 0, y: 10)
     }
 
     private var legacyGlassTabBar: some View {
-        HStack(spacing: 8) {
-            tabItem(title: "Home", icon: "house.fill", index: 0)
-            tabItem(title: "Insights", icon: "chart.bar.xaxis", index: 1)
-            tabItem(title: "Profile", icon: "person.crop.circle", index: 2)
+        HStack(spacing: 4) {
+            tabItem(title: "Home", icon: "house.fill", index: 0, isCenter: false)
+            tabItem(title: "Insights", icon: "bolt.fill", index: 1, isCenter: true)
+            tabItem(title: "Profile", icon: "person.crop.circle.fill", index: 2, isCenter: false)
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 8)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 7)
         .background(
             Capsule()
                 .fill(.ultraThinMaterial)
                 .overlay(
                     Capsule()
-                        .fill(Color.white.opacity(0.08))
+                        .fill(Color.white.opacity(0.1))
                 )
         )
         .clipShape(Capsule())
@@ -331,38 +331,50 @@ public struct HomeDashboardView: View {
                 )
         )
         .shadow(color: Color.black.opacity(0.32), radius: 16, x: 0, y: 8)
-        .padding(.horizontal, 12)
+        .padding(.horizontal, 14)
     }
     
-    private func tabItem(title: String, icon: String, index: Int) -> some View {
+    private func tabItem(title: String, icon: String, index: Int, isCenter: Bool) -> some View {
         Button(action: {
             let impact = UIImpactFeedbackGenerator(style: .light)
             impact.impactOccurred()
-            state.selectedTab = index
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.78)) {
+                state.selectedTab = index
+            }
         }) {
             VStack(spacing: 3) {
                 Image(systemName: icon)
-                    .font(.system(size: 26, weight: state.selectedTab == index ? .bold : .medium))
+                    .font(.system(size: isCenter ? 29 : 25, weight: .bold))
                 
                 Text(title)
-                    .font(.system(size: 13, weight: state.selectedTab == index ? .semibold : .regular, design: .rounded))
+                    .font(.system(size: 13, weight: .semibold, design: .rounded))
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
+            .frame(height: isCenter ? 78 : 62)
+            .padding(.horizontal, isCenter ? 22 : 14)
             .background(
                 Capsule()
-                    .fill(state.selectedTab == index ? Color.white.opacity(0.16) : Color.clear)
+                    .fill(isCenter ? Color.white.opacity(0.13) : Color.clear)
             )
             .overlay {
-                if #available(iOS 26.0, *), state.selectedTab == index {
+                if #available(iOS 26.0, *), isCenter {
                     Capsule()
                         .fill(.clear)
                         .glassEffect(.regular.interactive(), in: .capsule)
+                        .overlay {
+                            Capsule()
+                                .stroke(Color.white.opacity(0.3), lineWidth: 0.8)
+                        }
+                } else if !isCenter {
+                    Capsule()
+                        .stroke(Color.white.opacity(0.08), lineWidth: 0.6)
                 }
             }
-            .foregroundColor(state.selectedTab == index ? Color.black : Color.white.opacity(0.68))
+            .foregroundColor(isCenter ? Color.cyan : Color.white)
+            .scaleEffect(state.selectedTab == index ? 1.02 : 1)
         }
         .frame(maxWidth: .infinity)
+        .buttonStyle(.plain)
     }
     
     private func triggerLockedAlert(title: String) {
