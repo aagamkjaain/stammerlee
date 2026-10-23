@@ -1,15 +1,18 @@
 import SwiftUI
+import UIKit
 
 // MARK: - Home Dashboard View (Screenshot 2: "Welcome")
 /// Main application hub with daily goals, exercise modules, and bottom tab bar.
 public struct HomeDashboardView: View {
     @Bindable public var state: AppState
+    private let showsTabBar: Bool
     
     @State private var showLockedAlert: Bool = false
     @State private var lockedAlertMessage: String = ""
     
-    public init(state: AppState) {
+    public init(state: AppState, showsTabBar: Bool = true) {
         self.state = state
+        self.showsTabBar = showsTabBar
     }
     
     public var body: some View {
@@ -148,8 +151,11 @@ public struct HomeDashboardView: View {
                     .ignoresSafeArea()
             }
             
-            nativeTabBar
+            if showsTabBar {
+                nativeTabView
+            }
         }
+
         .alert("Module Locked", isPresented: $showLockedAlert) {
             Button("OK", role: .cancel) {}
         } message: {
@@ -277,57 +283,93 @@ public struct HomeDashboardView: View {
     }
     
     // MARK: - Native Tab Bar
-    private var nativeTabBar: some View {
-        HStack(spacing: 2) {
-            nativeTabItem(title: "Home", icon: "house.fill", tag: 0)
-            nativeTabItem(title: "Insights", icon: "chart.bar.xaxis", tag: 1)
-            nativeTabItem(title: "Profile", icon: "person.crop.circle.fill", tag: 2)
-        }
-        .padding(6)
-        .background(.ultraThinMaterial, in: Capsule())
-        .overlay {
-            Capsule()
-                .stroke(Color.white.opacity(0.18), lineWidth: 0.8)
-        }
-        .padding(.horizontal, 12)
-        .padding(.bottom, 8)
-    }
-
-    private func nativeTabItem(title: String, icon: String, tag: Int) -> some View {
-        let isSelected = state.selectedTab == tag
-
-        return Button {
-            let impact = UIImpactFeedbackGenerator(style: .light)
-            impact.impactOccurred()
-            withAnimation(.easeInOut(duration: 0.22)) {
-                state.selectedTab = tag
-            }
-        } label: {
-            VStack(spacing: 3) {
-                Image(systemName: icon)
-                    .font(.system(size: 22, weight: isSelected ? .semibold : .regular))
-                Text(title)
-                    .font(.system(size: 11, weight: isSelected ? .semibold : .regular, design: .rounded))
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 58)
-            .foregroundColor(isSelected ? StamerleeTheme.primaryBlue : .white.opacity(0.82))
-            .background {
-                if #available(iOS 26.0, *), isSelected {
-                    Capsule()
-                        .fill(.clear)
-                        .glassEffect(.regular.tint(StamerleeTheme.primaryBlue.opacity(0.25)).interactive(), in: .capsule)
-                } else if isSelected {
-                    Capsule()
-                        .fill(StamerleeTheme.primaryBlue.opacity(0.22))
+    @ViewBuilder
+    private var nativeTabView: some View {
+        if #available(iOS 18.0, *) {
+            TabView(selection: tabSelectionBinding) {
+                Tab("Home", systemImage: "house.fill", value: 0) {
+                    Color.clear
+                }
+                Tab("Insights", systemImage: "chart.bar.fill", value: 1) {
+                    Color.clear
+                }
+                Tab("Profile", systemImage: "person.crop.circle.fill", value: 2) {
+                    Color.clear
                 }
             }
+        } else {
+            TabView(selection: tabSelectionBinding) {
+                Color.clear
+                    .tabItem { Label("Home", systemImage: "house.fill") }
+                    .tag(0)
+                Color.clear
+                    .tabItem { Label("Insights", systemImage: "chart.bar.fill") }
+                    .tag(1)
+                Color.clear
+                    .tabItem { Label("Profile", systemImage: "person.crop.circle.fill") }
+                    .tag(2)
+            }
         }
-        .buttonStyle(.plain)
+    }
+
+    private var tabSelectionBinding: Binding<Int> {
+        Binding(
+            get: { state.selectedTab },
+            set: { newValue in
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                withAnimation(.easeInOut(duration: 0.22)) {
+                    state.selectedTab = newValue
+                }
+            }
+        )
     }
     
     private func triggerLockedAlert(title: String) {
         lockedAlertMessage = "\(title) will unlock as you complete the Prolonged Speech foundation exercises!"
         showLockedAlert = true
+    }
+}
+
+public struct DashboardTabView: View {
+    @Bindable public var state: AppState
+
+    public init(state: AppState) {
+        self.state = state
+    }
+
+    public var body: some View {
+        TabView(selection: tabSelectionBinding) {
+            HomeDashboardView(state: state, showsTabBar: false)
+                .tabItem {
+                    Label("Home", systemImage: "house.fill")
+                }
+                .tag(0)
+
+            Color.white
+                .ignoresSafeArea()
+                .tabItem {
+                    Label("Insights", systemImage: "chart.bar.fill")
+                }
+                .tag(1)
+
+            Color.white
+                .ignoresSafeArea()
+                .tabItem {
+                    Label("Profile", systemImage: "person.crop.circle.fill")
+                }
+                .tag(2)
+        }
+    }
+
+    private var tabSelectionBinding: Binding<Int> {
+        Binding(
+            get: { state.selectedTab },
+            set: { newValue in
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                withAnimation(.easeInOut(duration: 0.22)) {
+                    state.selectedTab = newValue
+                }
+            }
+        )
     }
 }

@@ -32,7 +32,7 @@ public struct ContentView: View {
                     ExploreActivitiesView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
                 case .homeDashboard:
-                    HomeDashboardView(state: appState)
+                    DashboardTabView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
                 case .prolongedSpeechIntro:
                     ProlongedSpeechIntroView(state: appState)
