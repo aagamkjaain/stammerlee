@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 // MARK: - Home Dashboard View (Screenshot 2: "Welcome")
 /// Main application hub with daily goals, exercise modules, and bottom tab bar.
@@ -313,6 +314,20 @@ public struct HomeDashboardView: View {
         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         .padding(.horizontal, 12)
         .padding(.bottom, 8)
+        .onAppear {
+            let appearance = UITabBarAppearance()
+            appearance.configureWithTransparentBackground()
+            appearance.backgroundColor = .clear
+            appearance.shadowColor = .clear
+
+            let tabBar = UITabBar.appearance()
+            tabBar.standardAppearance = appearance
+            tabBar.scrollEdgeAppearance = appearance
+            tabBar.isTranslucent = true
+            tabBar.backgroundImage = UIImage()
+            tabBar.shadowImage = UIImage()
+            tabBar.backgroundColor = .clear
+        }
     }
     
     private func triggerLockedAlert(title: String) {
