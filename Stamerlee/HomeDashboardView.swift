@@ -148,9 +148,7 @@ public struct HomeDashboardView: View {
                     .ignoresSafeArea()
             }
             
-            // Bottom Floating Tab Bar
-            floatingTabBar
-                .padding(.bottom, 16)
+            nativeTabBar
         }
         .alert("Module Locked", isPresented: $showLockedAlert) {
             Button("OK", role: .cancel) {}
@@ -278,82 +276,41 @@ public struct HomeDashboardView: View {
         .buttonStyle(.plain)
     }
     
-    // MARK: - Floating Tab Bar
-    @ViewBuilder
-    private var floatingTabBar: some View {
-        if #available(iOS 26.0, *) {
-            liquidGlassTabBar
-        } else {
-            legacyGlassTabBar
-        }
-    }
-
-    @available(iOS 26.0, *)
-    private var liquidGlassTabBar: some View {
-        GlassEffectContainer(spacing: 8) {
-            HStack(spacing: 2) {
-                tabItem(title: "Home", icon: "house.fill", index: 0)
-                tabItem(title: "Insights", icon: "chart.bar.xaxis", index: 1)
-                tabItem(title: "Profile", icon: "person.crop.circle.fill", index: 2)
-            }
-            .padding(6)
-        }
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .stroke(Color.white.opacity(0.2), lineWidth: 0.8)
-        }
-        .padding(.horizontal, 22)
-        .shadow(color: .black.opacity(0.3), radius: 16, x: 0, y: 8)
-    }
-
-    private var legacyGlassTabBar: some View {
-        HStack(spacing: 2) {
-            tabItem(title: "Home", icon: "house.fill", index: 0)
-            tabItem(title: "Insights", icon: "chart.bar.xaxis", index: 1)
-            tabItem(title: "Profile", icon: "person.crop.circle.fill", index: 2)
-        }
-        .padding(6)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .stroke(Color.white.opacity(0.2), lineWidth: 0.8)
-        }
-        .shadow(color: Color.black.opacity(0.32), radius: 16, x: 0, y: 8)
-        .padding(.horizontal, 22)
-    }
-    
-    private func tabItem(title: String, icon: String, index: Int) -> some View {
-        let isSelected = state.selectedTab == index
-
-        return Button(action: {
-            let impact = UIImpactFeedbackGenerator(style: .light)
-            impact.impactOccurred()
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.78)) {
-                state.selectedTab = index
-            }
-        }) {
-            VStack(spacing: 3) {
-                Image(systemName: icon)
-                    .font(.system(size: 22, weight: isSelected ? .semibold : .regular))
-                
-                Text(title)
-                    .font(.system(size: 11, weight: isSelected ? .semibold : .regular, design: .rounded))
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 58)
-            .contentShape(Rectangle())
-            .overlay {
-                if #available(iOS 26.0, *), isSelected {
-                    Capsule()
-                        .fill(.clear)
-                        .glassEffect(.regular.tint(StamerleeTheme.primaryBlue.opacity(0.28)).interactive(), in: .capsule)
+    // MARK: - Native Tab Bar
+    private var nativeTabBar: some View {
+        TabView(selection: Binding(
+            get: { state.selectedTab },
+            set: { newValue in
+                let impact = UIImpactFeedbackGenerator(style: .light)
+                impact.impactOccurred()
+                withAnimation(.easeInOut(duration: 0.22)) {
+                    state.selectedTab = newValue
                 }
             }
-            .foregroundColor(isSelected ? StamerleeTheme.primaryBlue : Color.white.opacity(0.78))
+        )) {
+            Color.clear
+                .tabItem {
+                    Label("Home", systemImage: "house.fill")
+                }
+                .tag(0)
+
+            Color.clear
+                .tabItem {
+                    Label("Insights", systemImage: "chart.bar.xaxis")
+                }
+                .tag(1)
+
+            Color.clear
+                .tabItem {
+                    Label("Profile", systemImage: "person.crop.circle.fill")
+                }
+                .tag(2)
         }
-        .frame(maxWidth: .infinity)
-        .buttonStyle(.plain)
+        .frame(height: 70)
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .padding(.horizontal, 12)
+        .padding(.bottom, 8)
     }
     
     private func triggerLockedAlert(title: String) {
