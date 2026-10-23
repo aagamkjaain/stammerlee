@@ -1,5 +1,4 @@
 import SwiftUI
-import UIKit
 
 // MARK: - Home Dashboard View (Screenshot 2: "Welcome")
 /// Main application hub with daily goals, exercise modules, and bottom tab bar.
@@ -279,55 +278,52 @@ public struct HomeDashboardView: View {
     
     // MARK: - Native Tab Bar
     private var nativeTabBar: some View {
-        TabView(selection: Binding(
-            get: { state.selectedTab },
-            set: { newValue in
-                let impact = UIImpactFeedbackGenerator(style: .light)
-                impact.impactOccurred()
-                withAnimation(.easeInOut(duration: 0.22)) {
-                    state.selectedTab = newValue
-                }
-            }
-        )) {
-            Color.clear
-                .tabItem {
-                    Label("Home", systemImage: "house.fill")
-                }
-                .tag(0)
-
-            Color.clear
-                .tabItem {
-                    Label("Insights", systemImage: "chart.bar.xaxis")
-                }
-                .tag(1)
-
-            Color.clear
-                .tabItem {
-                    Label("Profile", systemImage: "person.crop.circle.fill")
-                }
-                .tag(2)
+        HStack(spacing: 2) {
+            nativeTabItem(title: "Home", icon: "house.fill", tag: 0)
+            nativeTabItem(title: "Insights", icon: "chart.bar.xaxis", tag: 1)
+            nativeTabItem(title: "Profile", icon: "person.crop.circle.fill", tag: 2)
         }
-        .frame(height: 70)
-        .background(Color.clear)
-        .toolbarBackground(.hidden, for: .tabBar)
-        .toolbarBackground(.clear, for: .tabBar)
-        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .padding(6)
+        .background(.ultraThinMaterial, in: Capsule())
+        .overlay {
+            Capsule()
+                .stroke(Color.white.opacity(0.18), lineWidth: 0.8)
+        }
         .padding(.horizontal, 12)
         .padding(.bottom, 8)
-        .onAppear {
-            let appearance = UITabBarAppearance()
-            appearance.configureWithTransparentBackground()
-            appearance.backgroundColor = .clear
-            appearance.shadowColor = .clear
+    }
 
-            let tabBar = UITabBar.appearance()
-            tabBar.standardAppearance = appearance
-            tabBar.scrollEdgeAppearance = appearance
-            tabBar.isTranslucent = true
-            tabBar.backgroundImage = UIImage()
-            tabBar.shadowImage = UIImage()
-            tabBar.backgroundColor = .clear
+    private func nativeTabItem(title: String, icon: String, tag: Int) -> some View {
+        let isSelected = state.selectedTab == tag
+
+        return Button {
+            let impact = UIImpactFeedbackGenerator(style: .light)
+            impact.impactOccurred()
+            withAnimation(.easeInOut(duration: 0.22)) {
+                state.selectedTab = tag
+            }
+        } label: {
+            VStack(spacing: 3) {
+                Image(systemName: icon)
+                    .font(.system(size: 22, weight: isSelected ? .semibold : .regular))
+                Text(title)
+                    .font(.system(size: 11, weight: isSelected ? .semibold : .regular, design: .rounded))
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 58)
+            .foregroundColor(isSelected ? StamerleeTheme.primaryBlue : .white.opacity(0.82))
+            .background {
+                if #available(iOS 26.0, *), isSelected {
+                    Capsule()
+                        .fill(.clear)
+                        .glassEffect(.regular.tint(StamerleeTheme.primaryBlue.opacity(0.25)).interactive(), in: .capsule)
+                } else if isSelected {
+                    Capsule()
+                        .fill(StamerleeTheme.primaryBlue.opacity(0.22))
+                }
+            }
         }
+        .buttonStyle(.plain)
     }
     
     private func triggerLockedAlert(title: String) {
