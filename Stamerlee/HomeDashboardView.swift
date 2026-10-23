@@ -18,7 +18,8 @@ public struct HomeDashboardView: View {
             StamerleeTheme.backgroundDark
                 .ignoresSafeArea()
             
-            VStack(alignment: .leading, spacing: 0) {
+            if state.selectedTab == 0 {
+                VStack(alignment: .leading, spacing: 0) {
                 // Header Bar
                 HStack {
                     Text("Welcome")
@@ -141,6 +142,10 @@ public struct HomeDashboardView: View {
                     }
                     .padding(.horizontal, 20)
                 }
+                }
+            } else {
+                Color.white
+                    .ignoresSafeArea()
             }
             
             // Bottom Floating Tab Bar
@@ -275,22 +280,35 @@ public struct HomeDashboardView: View {
     
     // MARK: - Floating Tab Bar
     private var floatingTabBar: some View {
-        HStack(spacing: 40) {
+        HStack(spacing: 8) {
             tabItem(title: "Home", icon: "house.fill", index: 0)
             tabItem(title: "Insights", icon: "chart.bar.xaxis", index: 1)
             tabItem(title: "Profile", icon: "person.crop.circle", index: 2)
         }
-        .padding(.horizontal, 28)
-        .padding(.vertical, 10)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
         .background(
-            Color(red: 25 / 255, green: 30 / 255, blue: 60 / 255).opacity(0.92)
+            Capsule()
+                .fill(.ultraThinMaterial)
+                .overlay(
+                    Capsule()
+                        .fill(Color.white.opacity(0.08))
+                )
         )
         .clipShape(Capsule())
         .overlay(
             Capsule()
-                .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                .stroke(
+                    LinearGradient(
+                        colors: [.white.opacity(0.58), .white.opacity(0.12), .white.opacity(0.42)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1.5
+                )
         )
-        .shadow(color: Color.black.opacity(0.35), radius: 12, x: 0, y: 6)
+        .shadow(color: Color.black.opacity(0.32), radius: 16, x: 0, y: 8)
+        .padding(.horizontal, 12)
     }
     
     private func tabItem(title: String, icon: String, index: Int) -> some View {
@@ -301,13 +319,20 @@ public struct HomeDashboardView: View {
         }) {
             VStack(spacing: 3) {
                 Image(systemName: icon)
-                    .font(.system(size: 17, weight: state.selectedTab == index ? .bold : .medium))
+                    .font(.system(size: 26, weight: state.selectedTab == index ? .bold : .medium))
                 
                 Text(title)
-                    .font(.system(size: 10, weight: state.selectedTab == index ? .bold : .regular))
+                    .font(.system(size: 13, weight: state.selectedTab == index ? .semibold : .regular, design: .rounded))
             }
-            .foregroundColor(state.selectedTab == index ? .white : Color.gray.opacity(0.7))
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 12)
+            .background(
+                Capsule()
+                    .fill(state.selectedTab == index ? Color.white.opacity(0.72) : Color.clear)
+            )
+            .foregroundColor(state.selectedTab == index ? Color.black : Color.white.opacity(0.68))
         }
+        .frame(maxWidth: .infinity)
     }
     
     private func triggerLockedAlert(title: String) {
