@@ -1,0 +1,6 @@
+# Xcode user-specific state
+*.xcuserstate
+xcuserdata/
+
+# macOS
+.DS_Store
