@@ -63,16 +63,25 @@ public struct HomeDashboardView: View {
                                 iconName: "IconProlongedSpeech",
                                 fallbackPath: "/Users/user89/Documents/bitch/Screenshot_2026-10-21_at_11.26.10_PM-removebg-preview 2.png"
                             ) {
-                                state.navigate(to: .prolongedSpeechIntro)
+                                state.navigate(
+                                    to: state.hasSeenProlongedSpeechIntro
+                                        ? .prolongedSpeechDifficulty
+                                        : .prolongedSpeechIntro
+                                )
                             }
                             
-                            // 2. Picture Description (LOCKED)
+                            // 2. Picture Description (unlocked after Prolonged Speech Easy)
                             exerciseRow(
                                 title: "Picture Description",
                                 subtitle: "Describe what you see using simple words",
-                                isLocked: true
+                                isLocked: !state.isPictureDescriptionEasyUnlocked,
+                                iconName: "IconPictureDesc"
                             ) {
-                                triggerLockedAlert(title: "Picture Description")
+                                if state.isPictureDescriptionEasyUnlocked {
+                                    state.navigate(to: .pictureDescriptionEasy)
+                                } else {
+                                    triggerLockedAlert(title: "Picture Description")
+                                }
                             }
                             
                             // 3. Dial Scene (LOCKED)

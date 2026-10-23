@@ -46,6 +46,9 @@ public struct ContentView: View {
                 case .prolongedAnalysis:
                     ProlongedAnalysisView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
+                case .pictureDescriptionEasy:
+                    PictureDescriptionEasyView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
                 }
             }
             .animation(.spring(response: 0.45, dampingFraction: 0.85), value: appState.currentScreen)

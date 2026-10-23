@@ -14,6 +14,7 @@ public enum AppScreen: Hashable, CaseIterable {
     case prolongedSpeechDifficulty
     case prolongedPractice
     case prolongedAnalysis
+    case pictureDescriptionEasy
 }
 
 // MARK: - Sound Option Model
@@ -71,6 +72,8 @@ public final class AppState {
     
     // Practice & Difficulty State
     public var selectedDifficulty: String = "Easy"
+    public var completedProlongedDifficulties: Set<String> = []
+    public var hasSeenProlongedSpeechIntro: Bool = false
     public var isAudioPracticing: Bool = false
     public var practiceAudioSeconds: Int = 0
     public var showPracticeModal: Bool = false
@@ -104,6 +107,27 @@ public final class AppState {
     public func isSoundSelected(id: String) -> Bool {
         selectedSoundIds.contains(id)
     }
+
+    public func isProlongedDifficultyUnlocked(_ difficulty: String) -> Bool {
+        switch difficulty {
+        case "Easy":
+            return true
+        case "Medium":
+            return completedProlongedDifficulties.contains("Easy")
+        case "Hard":
+            return completedProlongedDifficulties.contains("Medium")
+        default:
+            return false
+        }
+    }
+
+    public func completeProlongedDifficulty(_ difficulty: String) {
+        completedProlongedDifficulties.insert(difficulty)
+    }
+
+    public var isPictureDescriptionEasyUnlocked: Bool {
+        completedProlongedDifficulties.contains("Easy")
+    }
     
     public func restartFlow() {
         withAnimation(.easeInOut(duration: 0.35)) {
@@ -113,6 +137,8 @@ public final class AppState {
             self.isAuthenticated = false
             self.userEmail = ""
             self.selectedTab = 0
+            self.completedProlongedDifficulties = []
+            self.hasSeenProlongedSpeechIntro = false
         }
     }
 }

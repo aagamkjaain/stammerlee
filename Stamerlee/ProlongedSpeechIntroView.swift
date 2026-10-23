@@ -77,6 +77,7 @@ public struct ProlongedSpeechIntroView: View {
                 // Bottom CTA Button ("Continue")
                 VStack {
                     PrimaryActionButton(title: "Continue") {
+                        state.hasSeenProlongedSpeechIntro = true
                         state.navigate(to: .prolongedSpeechDifficulty)
                     }
                 }
