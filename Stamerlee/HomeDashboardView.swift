@@ -134,7 +134,9 @@ public struct HomeDashboardView: View {
                                 iconName: "BeatBuddyLogo",
                                 fallbackPath: "/Users/user89/Documents/bitch/Stamerlee/IconMirrorNarration.png"
                             ) {
-                                if !state.isBeatBuddyUnlocked {
+                                if state.isBeatBuddyUnlocked {
+                                    state.navigate(to: .beatBuddyWords)
+                                } else {
                                     triggerLockedAlert(title: "Beat Buddy")
                                 }
                             }

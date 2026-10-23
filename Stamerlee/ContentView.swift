@@ -61,6 +61,15 @@ public struct ContentView: View {
                 case .narrationPractice:
                     NarrationPracticeView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
+                case .beatBuddyWords:
+                    BeatBuddyWordsView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
+                case .beatBuddyBPM:
+                    BeatBuddyBPMView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
+                case .beatBuddyPractice:
+                    BeatBuddyPracticeView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
                 }
             }
             .animation(.spring(response: 0.45, dampingFraction: 0.85), value: appState.currentScreen)

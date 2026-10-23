@@ -19,6 +19,9 @@ public enum AppScreen: Hashable, CaseIterable {
     case dialScene
     case narrationDifficulty
     case narrationPractice
+    case beatBuddyWords
+    case beatBuddyBPM
+    case beatBuddyPractice
 }
 
 // MARK: - Sound Option Model
@@ -83,6 +86,8 @@ public final class AppState {
     public var hasCompletedDialScene: Bool = false
     public var selectedNarrationDifficulty: String = "Easy"
     public var completedNarrationDifficulties: Set<String> = []
+    public var beatBuddySelectedWords: Set<String> = ["Water", "University"]
+    public var beatBuddyBPM: Int = 120
     public var isAudioPracticing: Bool = false
     public var practiceAudioSeconds: Int = 0
     public var showPracticeModal: Bool = false
