@@ -45,7 +45,12 @@ public struct ContentView: View {
                         .transition(slideTransition(for: appState.navigationDirection))
                 case .prolongedAnalysis:
                     ProlongedAnalysisView(state: appState)
-                        .transition(slideTransition(for: appState.navigationDirection))
+                        .transition(
+                            .asymmetric(
+                                insertion: .opacity.combined(with: .scale(scale: 0.98)),
+                                removal: .opacity
+                            )
+                        )
                 case .pictureDescriptionDifficulty:
                     PictureDescriptionDifficultyView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
@@ -72,7 +77,7 @@ public struct ContentView: View {
                         .transition(slideTransition(for: appState.navigationDirection))
                 }
             }
-            .animation(.spring(response: 0.45, dampingFraction: 0.85), value: appState.currentScreen)
+            .animation(.easeInOut(duration: 0.24), value: appState.currentScreen)
             
             // Quick Screen Navigation Pill (for easy previewing & testing)
             if showScreenPicker {
