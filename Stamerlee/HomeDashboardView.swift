@@ -279,7 +279,30 @@ public struct HomeDashboardView: View {
     }
     
     // MARK: - Floating Tab Bar
+    @ViewBuilder
     private var floatingTabBar: some View {
+        if #available(iOS 26.0, *) {
+            liquidGlassTabBar
+        } else {
+            legacyGlassTabBar
+        }
+    }
+
+    @available(iOS 26.0, *)
+    private var liquidGlassTabBar: some View {
+        GlassEffectContainer(spacing: 10) {
+            HStack(spacing: 6) {
+                tabItem(title: "Home", icon: "house.fill", index: 0)
+                tabItem(title: "Insights", icon: "chart.bar.xaxis", index: 1)
+                tabItem(title: "Profile", icon: "person.crop.circle", index: 2)
+            }
+            .padding(8)
+        }
+        .padding(.horizontal, 12)
+        .shadow(color: .black.opacity(0.35), radius: 18, x: 0, y: 9)
+    }
+
+    private var legacyGlassTabBar: some View {
         HStack(spacing: 8) {
             tabItem(title: "Home", icon: "house.fill", index: 0)
             tabItem(title: "Insights", icon: "chart.bar.xaxis", index: 1)
@@ -328,8 +351,15 @@ public struct HomeDashboardView: View {
             .padding(.vertical, 12)
             .background(
                 Capsule()
-                    .fill(state.selectedTab == index ? Color.white.opacity(0.72) : Color.clear)
+                    .fill(state.selectedTab == index ? Color.white.opacity(0.16) : Color.clear)
             )
+            .overlay {
+                if #available(iOS 26.0, *), state.selectedTab == index {
+                    Capsule()
+                        .fill(.clear)
+                        .glassEffect(.regular.interactive(), in: .capsule)
+                }
+            }
             .foregroundColor(state.selectedTab == index ? Color.black : Color.white.opacity(0.68))
         }
         .frame(maxWidth: .infinity)
