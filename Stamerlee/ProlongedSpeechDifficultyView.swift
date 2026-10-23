@@ -70,8 +70,7 @@ public struct ProlongedSpeechDifficultyView: View {
                         title: "Hard",
                         isLocked: true
                     ) {
-                        locke
-                        dAlertText = "Complete Medium practice sessions to unlock Hard difficulty."
+                        lockedAlertText = "Complete Medium practice sessions to unlock Hard difficulty."
                         showLockedAlert = true
                     }
                 }
@@ -79,9 +78,6 @@ public struct ProlongedSpeechDifficultyView: View {
                 
                 Spacer()
             }
-        }
-        .sheet(isPresented: $showPracticeSheet) {
-            EasyPracticeSessionSheet(state: state)
         }
         .alert("Level Locked", isPresented: $showLockedAlert) {
             Button("Got it", role: .cancel) {}
