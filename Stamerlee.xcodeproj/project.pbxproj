@@ -27,6 +27,9 @@
 		AA000001018 /* IconPictureDesc.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002018 /* IconPictureDesc.png */; };
 		AA000001019 /* IconProlongedSpeech.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002019 /* IconProlongedSpeech.png */; };
 		AA000001020 /* ProlongedSpeechHero.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002020 /* ProlongedSpeechHero.png */; };
+		AA000001021 /* PictureDescriptionEasyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002021 /* PictureDescriptionEasyView.swift */; };
+		AA000001022 /* picturedes.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002022 /* picturedes.png */; };
+		AA000001023 /* picturedeseasy.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002023 /* picturedeseasy.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +53,9 @@
 		AA000002018 /* IconPictureDesc.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IconPictureDesc.png; sourceTree = "<group>"; };
 		AA000002019 /* IconProlongedSpeech.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IconProlongedSpeech.png; sourceTree = "<group>"; };
 		AA000002020 /* ProlongedSpeechHero.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ProlongedSpeechHero.png; sourceTree = "<group>"; };
+		AA000002021 /* PictureDescriptionEasyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureDescriptionEasyView.swift; sourceTree = "<group>"; };
+		AA000002022 /* picturedes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = picturedes.png; sourceTree = "<group>"; };
+		AA000002023 /* picturedeseasy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = picturedeseasy.png; sourceTree = "<group>"; };
 		AA000003001 /* Stamerlee.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stamerlee.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -95,6 +101,9 @@
 				AA000002018 /* IconPictureDesc.png */,
 				AA000002019 /* IconProlongedSpeech.png */,
 				AA000002020 /* ProlongedSpeechHero.png */,
+				AA000002021 /* PictureDescriptionEasyView.swift */,
+				AA000002022 /* picturedes.png */,
+				AA000002023 /* picturedeseasy.png */,
 			);
 			path = Stamerlee;
 			sourceTree = "<group>";
@@ -173,6 +182,8 @@
 				AA000001018 /* IconPictureDesc.png in Resources */,
 				AA000001019 /* IconProlongedSpeech.png in Resources */,
 				AA000001020 /* ProlongedSpeechHero.png in Resources */,
+				AA000001022 /* picturedes.png in Resources */,
+				AA000001023 /* picturedeseasy.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -192,6 +203,7 @@
 				AA000001007 /* ProlongedSpeechIntroView.swift in Sources */,
 				AA000001008 /* ProlongedSpeechDifficultyView.swift in Sources */,
 				AA000001009 /* ProlongedPracticeView.swift in Sources */,
+				AA000001021 /* PictureDescriptionEasyView.swift in Sources */,
 				AA000001010 /* Components.swift in Sources */,
 				AA000001011 /* Illustrations.swift in Sources */,
 			);
