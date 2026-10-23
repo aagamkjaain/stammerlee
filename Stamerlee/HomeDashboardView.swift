@@ -307,7 +307,9 @@ public struct HomeDashboardView: View {
                 .tag(2)
         }
         .frame(height: 70)
-        .background(.ultraThinMaterial)
+        .background(Color.clear)
+        .toolbarBackground(.hidden, for: .tabBar)
+        .toolbarBackground(.clear, for: .tabBar)
         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         .padding(.horizontal, 12)
         .padding(.bottom, 8)
