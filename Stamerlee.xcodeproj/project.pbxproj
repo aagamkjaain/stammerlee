@@ -31,6 +31,8 @@
 		AA000001022 /* picturedes.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002022 /* picturedes.png */; };
 		AA000001023 /* picturedeseasy.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002023 /* picturedeseasy.png */; };
 		AA000001024 /* PictureDescriptionDifficultyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002024 /* PictureDescriptionDifficultyView.swift */; };
+		AA000001025 /* picdesmedium.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002025 /* picdesmedium.png */; };
+		AA000001026 /* picdeshard.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002026 /* picdeshard.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -58,6 +60,8 @@
 		AA000002022 /* picturedes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = picturedes.png; sourceTree = "<group>"; };
 		AA000002023 /* picturedeseasy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = picturedeseasy.png; sourceTree = "<group>"; };
 		AA000002024 /* PictureDescriptionDifficultyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureDescriptionDifficultyView.swift; sourceTree = "<group>"; };
+		AA000002025 /* picdesmedium.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = picdesmedium.png; sourceTree = "<group>"; };
+		AA000002026 /* picdeshard.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = picdeshard.png; sourceTree = "<group>"; };
 		AA000003001 /* Stamerlee.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stamerlee.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -107,6 +111,8 @@
 				AA000002022 /* picturedes.png */,
 				AA000002023 /* picturedeseasy.png */,
 				AA000002024 /* PictureDescriptionDifficultyView.swift */,
+				AA000002025 /* picdesmedium.png */,
+				AA000002026 /* picdeshard.png */,
 			);
 			path = Stamerlee;
 			sourceTree = "<group>";
@@ -187,6 +193,8 @@
 				AA000001020 /* ProlongedSpeechHero.png in Resources */,
 				AA000001022 /* picturedes.png in Resources */,
 				AA000001023 /* picturedeseasy.png in Resources */,
+				AA000001025 /* picdesmedium.png in Resources */,
+				AA000001026 /* picdeshard.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

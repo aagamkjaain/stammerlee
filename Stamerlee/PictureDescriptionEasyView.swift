@@ -18,6 +18,17 @@ public struct PictureDescriptionEasyView: View {
         state.selectedPictureDescriptionDifficulty
     }
 
+    private var pictureAssetName: String {
+        switch difficulty {
+        case "Medium":
+            return "picdesmedium"
+        case "Hard":
+            return "picdeshard"
+        default:
+            return "picturedeseasy"
+        }
+    }
+
     public init(state: AppState) {
         self.state = state
     }
@@ -186,8 +197,8 @@ public struct PictureDescriptionEasyView: View {
     @ViewBuilder
     private var pictureAsset: some View {
         if let image = StamerleeImageLoader.loadHeroImage(
-            name: difficulty == "Easy" ? "picturedeseasy" : "picturedes",
-            fallbackPath: "/Users/user89/Documents/bitch/Stamerlee/\(difficulty == "Easy" ? "picturedeseasy" : "picturedes").png"
+            name: pictureAssetName,
+            fallbackPath: "/Users/user89/Documents/bitch/Stamerlee/\(pictureAssetName).png"
         ) ?? StamerleeImageLoader.loadHeroImage(
             name: "picturedes",
             fallbackPath: "/Users/user89/Documents/bitch/Stamerlee/picturedes.png"

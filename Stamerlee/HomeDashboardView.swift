@@ -75,7 +75,8 @@ public struct HomeDashboardView: View {
                                 title: "Picture Description",
                                 subtitle: "Describe what you see using simple words",
                                 isLocked: !state.isPictureDescriptionUnlocked,
-                                iconName: "IconPictureDesc"
+                                iconName: "IconPictureDesc",
+                                fallbackPath: "/Users/user89/Documents/bitch/Stamerlee/IconPictureDesc.png"
                             ) {
                                 if state.isPictureDescriptionUnlocked {
                                     state.navigate(to: .pictureDescriptionDifficulty)
@@ -84,20 +85,24 @@ public struct HomeDashboardView: View {
                                 }
                             }
                             
-                            // 3. Dial Scene (LOCKED)
+                            // 3. Dial Scene
                             exerciseRow(
                                 title: "Dial Scene",
                                 subtitle: "Practice speaking through everyday conversations.",
-                                isLocked: true
+                                isLocked: true,
+                                iconName: "IconDialScene",
+                                fallbackPath: "/Users/user89/Documents/bitch/Stamerlee/IconDialScene.png"
                             ) {
                                 triggerLockedAlert(title: "Dial Scene")
                             }
                             
-                            // 4. Narration (LOCKED)
+                            // 4. Narration
                             exerciseRow(
                                 title: "Narration",
                                 subtitle: "Narrate a story one sentence at a time.",
-                                isLocked: true
+                                isLocked: true,
+                                iconName: "IconMirrorNarration",
+                                fallbackPath: "/Users/user89/Documents/bitch/Stamerlee/IconMirrorNarration.png"
                             ) {
                                 triggerLockedAlert(title: "Narration")
                             }
@@ -109,11 +114,13 @@ public struct HomeDashboardView: View {
                                 .font(.system(size: 17, weight: .bold, design: .rounded))
                                 .foregroundColor(StamerleeTheme.textPrimaryDark)
                             
-                            // Beat Buddy (LOCKED)
+                            // Beat Buddy
                             exerciseRow(
                                 title: "Beat Buddy",
                                 subtitle: "Narrate a story one sentence at a time.",
-                                isLocked: true
+                                isLocked: true,
+                                iconName: "IconMirrorNarration",
+                                fallbackPath: "/Users/user89/Documents/bitch/Stamerlee/IconMirrorNarration.png"
                             ) {
                                 triggerLockedAlert(title: "Beat Buddy")
                             }
@@ -212,12 +219,18 @@ public struct HomeDashboardView: View {
                             .font(.system(size: 19, weight: .bold))
                             .foregroundColor(.white)
                     }
-                } else if let iconName = iconName, let fallbackPath = fallbackPath {
-                    // Unlocked Custom Asset
-                    if let uiImage = StamerleeImageLoader.loadHeroImage(name: iconName, fallbackPath: fallbackPath) {
+                } else {
+                    // Every unlocked exercise uses the same fixed icon treatment.
+                    if let iconName, let fallbackPath,
+                       let uiImage = StamerleeImageLoader.loadHeroImage(name: iconName, fallbackPath: fallbackPath) {
                         Image(uiImage: uiImage)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
+                            .frame(width: 75, height: 75)
+                    } else {
+                        Image(systemName: "waveform.and.mic")
+                            .font(.system(size: 28, weight: .semibold))
+                            .foregroundColor(StamerleeTheme.primaryBlue)
                             .frame(width: 75, height: 75)
                     }
                 }
