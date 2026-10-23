@@ -45,24 +45,28 @@ public struct BeatBuddyWordsView: View {
         BeatBuddyShell(state: state) {
             VStack(alignment: .leading, spacing: 0) {
                 Text("Select Words")
-                    .font(.system(size: 25, weight: .bold, design: .rounded))
+                    .font(.system(size: 30, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
                     .padding(.horizontal, 24)
-                    .padding(.top, 22)
+                    .padding(.top, 24)
                 Text("Choose the words you want to practice")
-                    .font(.system(size: 12, design: .rounded))
+                    .font(.system(size: 14, design: .rounded))
                     .foregroundColor(StamerleeTheme.textSecondaryDark)
                     .padding(.horizontal, 24)
-                    .padding(.top, 8)
+                    .padding(.top, 10)
 
                 TextField("Search words...", text: $searchText)
-                    .padding(.horizontal, 14)
-                    .frame(height: 42)
-                    .background(Color.white.opacity(0.9), in: RoundedRectangle(cornerRadius: 12))
+                    .font(.system(size: 14, design: .rounded))
+                    .padding(.horizontal, 16)
+                    .frame(height: 52)
+                    .background(Color.white.opacity(0.92), in: RoundedRectangle(cornerRadius: 14))
                     .padding(.horizontal, 24)
-                    .padding(.top, 22)
+                    .padding(.top, 26)
 
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
+                LazyVGrid(
+                    columns: [GridItem(.flexible(), spacing: 14), GridItem(.flexible(), spacing: 14)],
+                    spacing: 14
+                ) {
                     ForEach(filteredWords, id: \.self) { word in
                         Button {
                             if state.beatBuddySelectedWords.contains(word) {
@@ -72,10 +76,10 @@ public struct BeatBuddyWordsView: View {
                             }
                         } label: {
                             Text(word)
-                                .font(.system(size: 11, weight: .medium, design: .rounded))
+                                .font(.system(size: 14, weight: .semibold, design: .rounded))
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
-                                .frame(height: 32)
+                                .frame(height: 48)
                                 .background(
                                     Capsule().fill(
                                         state.beatBuddySelectedWords.contains(word)
@@ -94,14 +98,14 @@ public struct BeatBuddyWordsView: View {
                     }
                 }
                 .padding(.horizontal, 24)
-                .padding(.top, 18)
+                .padding(.top, 24)
 
                 Spacer()
                 PrimaryActionButton(title: "Done") {
                     state.navigate(to: .beatBuddyBPM)
                 }
                 .padding(.horizontal, 24)
-                .padding(.bottom, 24)
+                .padding(.bottom, 28)
             }
         }
     }
