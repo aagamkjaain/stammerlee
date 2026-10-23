@@ -40,6 +40,12 @@ public enum StamerleeTheme {
     public static let illustrationLilac = Color(red: 202 / 255, green: 206 / 255, blue: 244 / 255)
     public static let illustrationPurple = Color(red: 147 / 255, green: 140 / 255, blue: 220 / 255)
     public static let illustrationCardBg = Color(red: 24 / 255, green: 30 / 255, blue: 68 / 255)
+
+    /// Profile screen colors sampled from the profile reference.
+    public static let profileCard = Color(red: 23 / 255, green: 24 / 255, blue: 73 / 255)
+    public static let profileHeaderBase = Color(red: 29 / 255, green: 43 / 255, blue: 116 / 255)
+    public static let profileHeaderHighlight = Color(red: 54 / 255, green: 71 / 255, blue: 162 / 255)
+    public static let profileAvatarBlue = Color(red: 44 / 255, green: 170 / 255, blue: 237 / 255)
 }
 
 // MARK: - Color Hex Initializer Extension
@@ -71,4 +77,3 @@ extension Color {
 
 
 // testing 
-

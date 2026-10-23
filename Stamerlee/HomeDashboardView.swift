@@ -297,7 +297,7 @@ public struct HomeDashboardView: View {
                     Color.clear
                 }
                 Tab("Profile", systemImage: "person.crop.circle.fill", value: 2) {
-                    Color.clear
+                    ProfileView(state: state)
                 }
             }
         } else {
@@ -308,7 +308,7 @@ public struct HomeDashboardView: View {
                 Color.clear
                     .tabItem { Label("Insights", systemImage: "chart.bar.fill") }
                     .tag(1)
-                Color.clear
+                ProfileView(state: state)
                     .tabItem { Label("Profile", systemImage: "person.crop.circle.fill") }
                     .tag(2)
             }
@@ -355,8 +355,7 @@ public struct DashboardTabView: View {
                 }
                 .tag(1)
 
-            Color.white
-                .ignoresSafeArea()
+            ProfileView(state: state)
                 .tabItem {
                     Label("Profile", systemImage: "person.crop.circle.fill")
                 }
