@@ -216,7 +216,7 @@ public struct HomeDashboardView: View {
         fallbackPath: String? = nil,
         action: @escaping () -> Void
     ) -> some View {
-        Button(action: {
+        return Button(action: {
             let impact = UIImpactFeedbackGenerator(style: isLocked ? .light : .medium)
             impact.impactOccurred()
             action()
@@ -290,52 +290,43 @@ public struct HomeDashboardView: View {
 
     @available(iOS 26.0, *)
     private var liquidGlassTabBar: some View {
-        GlassEffectContainer(spacing: 10) {
-            HStack(spacing: 4) {
-                tabItem(title: "Home", icon: "house.fill", index: 0, isCenter: false)
-                tabItem(title: "Insights", icon: "bolt.fill", index: 1, isCenter: true)
-                tabItem(title: "Profile", icon: "person.crop.circle.fill", index: 2, isCenter: false)
+        GlassEffectContainer(spacing: 8) {
+            HStack(spacing: 2) {
+                tabItem(title: "Home", icon: "house.fill", index: 0)
+                tabItem(title: "Insights", icon: "chart.bar.xaxis", index: 1)
+                tabItem(title: "Profile", icon: "person.crop.circle.fill", index: 2)
             }
-            .padding(7)
+            .padding(6)
         }
-        .padding(.horizontal, 14)
-        .shadow(color: .black.opacity(0.4), radius: 20, x: 0, y: 10)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .stroke(Color.white.opacity(0.2), lineWidth: 0.8)
+        }
+        .padding(.horizontal, 22)
+        .shadow(color: .black.opacity(0.3), radius: 16, x: 0, y: 8)
     }
 
     private var legacyGlassTabBar: some View {
-        HStack(spacing: 4) {
-            tabItem(title: "Home", icon: "house.fill", index: 0, isCenter: false)
-            tabItem(title: "Insights", icon: "bolt.fill", index: 1, isCenter: true)
-            tabItem(title: "Profile", icon: "person.crop.circle.fill", index: 2, isCenter: false)
+        HStack(spacing: 2) {
+            tabItem(title: "Home", icon: "house.fill", index: 0)
+            tabItem(title: "Insights", icon: "chart.bar.xaxis", index: 1)
+            tabItem(title: "Profile", icon: "person.crop.circle.fill", index: 2)
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 7)
-        .background(
-            Capsule()
-                .fill(.ultraThinMaterial)
-                .overlay(
-                    Capsule()
-                        .fill(Color.white.opacity(0.1))
-                )
-        )
-        .clipShape(Capsule())
-        .overlay(
-            Capsule()
-                .stroke(
-                    LinearGradient(
-                        colors: [.white.opacity(0.58), .white.opacity(0.12), .white.opacity(0.42)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    lineWidth: 1.5
-                )
-        )
+        .padding(6)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .stroke(Color.white.opacity(0.2), lineWidth: 0.8)
+        }
         .shadow(color: Color.black.opacity(0.32), radius: 16, x: 0, y: 8)
-        .padding(.horizontal, 14)
+        .padding(.horizontal, 22)
     }
     
-    private func tabItem(title: String, icon: String, index: Int, isCenter: Bool) -> some View {
-        Button(action: {
+    private func tabItem(title: String, icon: String, index: Int) -> some View {
+        let isSelected = state.selectedTab == index
+
+        return Button(action: {
             let impact = UIImpactFeedbackGenerator(style: .light)
             impact.impactOccurred()
             withAnimation(.spring(response: 0.4, dampingFraction: 0.78)) {
@@ -344,34 +335,22 @@ public struct HomeDashboardView: View {
         }) {
             VStack(spacing: 3) {
                 Image(systemName: icon)
-                    .font(.system(size: isCenter ? 29 : 25, weight: .bold))
+                    .font(.system(size: 22, weight: isSelected ? .semibold : .regular))
                 
                 Text(title)
-                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    .font(.system(size: 11, weight: isSelected ? .semibold : .regular, design: .rounded))
             }
             .frame(maxWidth: .infinity)
-            .frame(height: isCenter ? 78 : 62)
-            .padding(.horizontal, isCenter ? 22 : 14)
-            .background(
-                Capsule()
-                    .fill(isCenter ? Color.white.opacity(0.13) : Color.clear)
-            )
+            .frame(height: 58)
+            .contentShape(Rectangle())
             .overlay {
-                if #available(iOS 26.0, *), isCenter {
+                if #available(iOS 26.0, *), isSelected {
                     Capsule()
                         .fill(.clear)
-                        .glassEffect(.regular.interactive(), in: .capsule)
-                        .overlay {
-                            Capsule()
-                                .stroke(Color.white.opacity(0.3), lineWidth: 0.8)
-                        }
-                } else if !isCenter {
-                    Capsule()
-                        .stroke(Color.white.opacity(0.08), lineWidth: 0.6)
+                        .glassEffect(.regular.tint(StamerleeTheme.primaryBlue.opacity(0.28)).interactive(), in: .capsule)
                 }
             }
-            .foregroundColor(isCenter ? Color.cyan : Color.white)
-            .scaleEffect(state.selectedTab == index ? 1.02 : 1)
+            .foregroundColor(isSelected ? StamerleeTheme.primaryBlue : Color.white.opacity(0.78))
         }
         .frame(maxWidth: .infinity)
         .buttonStyle(.plain)
