@@ -85,15 +85,19 @@ public struct HomeDashboardView: View {
                                 }
                             }
                             
-                            // 3. Dial Scene
+                            // 3. Dial Scene (unlocked with Picture Description)
                             exerciseRow(
                                 title: "Dial Scene",
                                 subtitle: "Practice speaking through everyday conversations.",
-                                isLocked: true,
+                                isLocked: !state.isPictureDescriptionUnlocked,
                                 iconName: "IconDialScene",
                                 fallbackPath: "/Users/user89/Documents/bitch/Stamerlee/IconDialScene.png"
                             ) {
-                                triggerLockedAlert(title: "Dial Scene")
+                                if state.isPictureDescriptionUnlocked {
+                                    state.navigate(to: .dialScene)
+                                } else {
+                                    triggerLockedAlert(title: "Dial Scene")
+                                }
                             }
                             
                             // 4. Narration
