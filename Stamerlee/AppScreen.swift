@@ -138,6 +138,10 @@ public final class AppState {
         completedProlongedDifficulties.contains("Hard")
     }
 
+    public var isDialSceneUnlocked: Bool {
+        completedPictureDescriptionDifficulties.contains("Hard")
+    }
+
     public func isPictureDescriptionDifficultyUnlocked(_ difficulty: String) -> Bool {
         switch difficulty {
         case "Easy":
