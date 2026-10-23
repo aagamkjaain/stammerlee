@@ -28,11 +28,7 @@
 		AA000001019 /* IconProlongedSpeech.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002019 /* IconProlongedSpeech.png */; };
 		AA000001020 /* ProlongedSpeechHero.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002020 /* ProlongedSpeechHero.png */; };
 		AA000001021 /* PictureDescriptionEasyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002021 /* PictureDescriptionEasyView.swift */; };
-		AA000001022 /* picturedes.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002022 /* picturedes.png */; };
-		AA000001023 /* picturedeseasy.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002023 /* picturedeseasy.png */; };
 		AA000001024 /* PictureDescriptionDifficultyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002024 /* PictureDescriptionDifficultyView.swift */; };
-		AA000001025 /* picdesmedium.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002025 /* picdesmedium.png */; };
-		AA000001026 /* picdeshard.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002026 /* picdeshard.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -57,11 +53,7 @@
 		AA000002019 /* IconProlongedSpeech.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IconProlongedSpeech.png; sourceTree = "<group>"; };
 		AA000002020 /* ProlongedSpeechHero.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ProlongedSpeechHero.png; sourceTree = "<group>"; };
 		AA000002021 /* PictureDescriptionEasyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureDescriptionEasyView.swift; sourceTree = "<group>"; };
-		AA000002022 /* picturedes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = picturedes.png; sourceTree = "<group>"; };
-		AA000002023 /* picturedeseasy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = picturedeseasy.png; sourceTree = "<group>"; };
 		AA000002024 /* PictureDescriptionDifficultyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureDescriptionDifficultyView.swift; sourceTree = "<group>"; };
-		AA000002025 /* picdesmedium.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = picdesmedium.png; sourceTree = "<group>"; };
-		AA000002026 /* picdeshard.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = picdeshard.png; sourceTree = "<group>"; };
 		AA000003001 /* Stamerlee.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stamerlee.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -76,6 +68,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		23730120308B673B00C14980 /* pictures */ = {
+			isa = PBXGroup;
+			children = (
+				AA000002013 /* OnboardingHero1.png */,
+				AA000002014 /* OnboardingHero2.png */,
+				AA000002016 /* IconDialScene.png */,
+				AA000002017 /* IconMirrorNarration.png */,
+				AA000002018 /* IconPictureDesc.png */,
+				AA000002019 /* IconProlongedSpeech.png */,
+				AA000002020 /* ProlongedSpeechHero.png */,
+				AA000002015 /* ClockIllustration.png */,
+			);
+			path = pictures;
+			sourceTree = "<group>";
+		};
 		AA000005001 = {
 			isa = PBXGroup;
 			children = (
@@ -99,20 +106,9 @@
 				AA000002010 /* Components.swift */,
 				AA000002011 /* Illustrations.swift */,
 				AA000002012 /* Assets.xcassets */,
-				AA000002013 /* OnboardingHero1.png */,
-				AA000002014 /* OnboardingHero2.png */,
-				AA000002015 /* ClockIllustration.png */,
-				AA000002016 /* IconDialScene.png */,
-				AA000002017 /* IconMirrorNarration.png */,
-				AA000002018 /* IconPictureDesc.png */,
-				AA000002019 /* IconProlongedSpeech.png */,
-				AA000002020 /* ProlongedSpeechHero.png */,
+				23730120308B673B00C14980 /* pictures */,
 				AA000002021 /* PictureDescriptionEasyView.swift */,
-				AA000002022 /* picturedes.png */,
-				AA000002023 /* picturedeseasy.png */,
 				AA000002024 /* PictureDescriptionDifficultyView.swift */,
-				AA000002025 /* picdesmedium.png */,
-				AA000002026 /* picdeshard.png */,
 			);
 			path = Stamerlee;
 			sourceTree = "<group>";
@@ -191,10 +187,6 @@
 				AA000001018 /* IconPictureDesc.png in Resources */,
 				AA000001019 /* IconProlongedSpeech.png in Resources */,
 				AA000001020 /* ProlongedSpeechHero.png in Resources */,
-				AA000001022 /* picturedes.png in Resources */,
-				AA000001023 /* picturedeseasy.png in Resources */,
-				AA000001025 /* picdesmedium.png in Resources */,
-				AA000001026 /* picdeshard.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -297,7 +289,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -322,7 +314,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -21,11 +21,11 @@ public struct PictureDescriptionEasyView: View {
     private var pictureAssetName: String {
         switch difficulty {
         case "Medium":
-            return "picdesmedium"
+            return "PictureDescriptionMedium"
         case "Hard":
-            return "picdeshard"
+            return "PictureDescriptionHard"
         default:
-            return "picturedeseasy"
+            return "PictureDescriptionEasy"
         }
     }
 
@@ -88,6 +88,7 @@ public struct PictureDescriptionEasyView: View {
             Spacer()
 
             Button {
+                completeCurrentDifficulty()
                 withAnimation(.easeInOut(duration: 0.25)) {
                     isAnalysisVisible = true
                 }
@@ -108,7 +109,7 @@ public struct PictureDescriptionEasyView: View {
             .padding(.bottom, 28)
 
             PrimaryActionButton(title: "Finish") {
-                state.completedPictureDescriptionDifficulties.insert(difficulty)
+                completeCurrentDifficulty()
                 withAnimation(.easeInOut(duration: 0.25)) {
                     isAnalysisVisible = true
                 }
@@ -220,6 +221,11 @@ public struct PictureDescriptionEasyView: View {
                     .foregroundColor(StamerleeTheme.textSecondaryDark)
                 }
         }
+
+    }
+
+    private func completeCurrentDifficulty() {
+        state.completedPictureDescriptionDifficulties.insert(difficulty)
     }
 
     private var description: String {
