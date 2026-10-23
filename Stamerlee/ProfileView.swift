@@ -34,14 +34,12 @@ public struct ProfileView: View {
 
     private var profileHeader: some View {
         ZStack(alignment: .topTrailing) {
-            ProfileHeaderWaves()
-                .fill(StamerleeTheme.profileHeaderBase)
-                .frame(height: 178)
-                .overlay {
-                    ProfileHeaderWaves()
-                        .stroke(StamerleeTheme.profileHeaderHighlight, lineWidth: 1)
-                        .opacity(0.28)
-                }
+            ZStack {
+                StamerleeTheme.profileHeaderBase
+                ProfileArc(fill: StamerleeTheme.profileHeaderHighlight, height: 160, yOffset: 22)
+                ProfileArc(fill: StamerleeTheme.profileArcDark, height: 132, yOffset: 54)
+            }
+            .frame(height: 178)
 
             // The reference uses this as a visual settings affordance. Settings
             // navigation is intentionally left out until that destination exists.
@@ -58,11 +56,12 @@ public struct ProfileView: View {
                 ProfileAvatar()
 
                 Text("John doe")
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundStyle(StamerleeTheme.textPrimaryDark)
+                    .minimumScaleFactor(0.8)
 
                 Text("Joined in October 2026")
-                    .font(.system(size: 16, weight: .regular, design: .rounded))
+                    .font(.system(size: 14, weight: .regular, design: .rounded))
                     .foregroundStyle(StamerleeTheme.textSecondaryDark)
             }
             .frame(maxWidth: .infinity)
@@ -96,15 +95,15 @@ public struct ProfileView: View {
                         .frame(width: 66, height: 63)
 
                     Text("\(state.currentStreakDays) days")
-                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                        .font(.system(size: 14, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
                 }
                 .frame(width: 66)
 
                 Text("You've got this. All you need is a few\nminutes a day to get your streak\ngoing.")
-                    .font(.system(size: 17, weight: .regular, design: .rounded))
+                    .font(.system(size: 15, weight: .regular, design: .rounded))
                     .foregroundStyle(StamerleeTheme.textSecondaryDark)
-                    .lineSpacing(7)
+                    .lineSpacing(4)
 
                 Spacer(minLength: 0)
             }
@@ -112,32 +111,45 @@ public struct ProfileView: View {
     }
 
     private var dailyGoalCard: some View {
-        HStack {
+        VStack(alignment: .leading, spacing: 12) {
             Text("Daily goal")
-                .font(.system(size: 22, weight: .bold, design: .rounded))
+                .font(.system(size: 18, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
 
-            Spacer()
+            Picker("Daily practice time", selection: $state.dailyPracticeMinutes) {
+                ForEach([5, 10, 15, 20, 30], id: \.self) { minutes in
+                    Text("\(minutes) minutes")
+                        .tag(minutes)
+                }
+            }
+            .pickerStyle(.menu)
+            .tint(StamerleeTheme.primaryBlue)
+            .font(.system(size: 15, weight: .semibold, design: .rounded))
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 12)
+            .frame(height: 40)
+            .background(Color.white.opacity(0.08))
+            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
         }
-        .padding(.horizontal, 24)
-        .frame(height: 145)
+        .padding(.horizontal, 20)
+        .frame(height: 128)
         .background(StamerleeTheme.profileCard)
         .clipShape(RoundedRectangle(cornerRadius: 17, style: .continuous))
     }
 
     private func sectionTitle(_ title: String) -> some View {
         Text(title)
-            .font(.system(size: 20, weight: .bold, design: .rounded))
+            .font(.system(size: 18, weight: .bold, design: .rounded))
             .foregroundStyle(.white.opacity(0.9))
     }
 
     private func stat(title: String, subtitle: String) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
-                .font(.system(size: 19, weight: .semibold, design: .rounded))
+                .font(.system(size: 17, weight: .semibold, design: .rounded))
                 .foregroundStyle(.white.opacity(0.9))
             Text(subtitle)
-                .font(.system(size: 15, weight: .regular, design: .rounded))
+                .font(.system(size: 13, weight: .regular, design: .rounded))
                 .foregroundStyle(StamerleeTheme.textSecondaryDark)
         }
     }
@@ -185,17 +197,29 @@ private struct StreakSpark: View {
     }
 }
 
-private struct ProfileHeaderWaves: Shape {
+private struct ProfileArc: View {
+    let fill: Color
+    let height: CGFloat
+    let yOffset: CGFloat
+
+    var body: some View {
+        ProfileArcShape()
+            .fill(fill)
+            .frame(height: height)
+            .offset(y: yOffset)
+    }
+}
+
+private struct ProfileArcShape: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
-        path.move(to: .zero)
-        path.addLine(to: CGPoint(x: rect.width, y: 0))
-        path.addLine(to: CGPoint(x: rect.width, y: rect.height * 0.25))
+        path.move(to: CGPoint(x: 0, y: rect.height * 0.38))
         path.addCurve(
-            to: CGPoint(x: 0, y: rect.height * 0.25),
-            control1: CGPoint(x: rect.width * 0.67, y: -rect.height * 0.04),
-            control2: CGPoint(x: rect.width * 0.3, y: -rect.height * 0.04)
+            to: CGPoint(x: rect.width, y: rect.height * 0.38),
+            control1: CGPoint(x: rect.width * 0.28, y: -rect.height * 0.02),
+            control2: CGPoint(x: rect.width * 0.72, y: -rect.height * 0.02)
         )
+        path.addLine(to: CGPoint(x: rect.width, y: rect.height))
         path.addLine(to: CGPoint(x: 0, y: rect.height))
         path.closeSubpath()
         return path

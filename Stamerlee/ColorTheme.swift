@@ -45,6 +45,7 @@ public enum StamerleeTheme {
     public static let profileCard = Color(red: 23 / 255, green: 24 / 255, blue: 73 / 255)
     public static let profileHeaderBase = Color(red: 29 / 255, green: 43 / 255, blue: 116 / 255)
     public static let profileHeaderHighlight = Color(red: 54 / 255, green: 71 / 255, blue: 162 / 255)
+    public static let profileArcDark = Color(red: 9 / 255, green: 17 / 255, blue: 64 / 255)
     public static let profileAvatarBlue = Color(red: 44 / 255, green: 170 / 255, blue: 237 / 255)
 }
 
