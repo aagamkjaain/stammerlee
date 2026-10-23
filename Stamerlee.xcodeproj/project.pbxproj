@@ -94,6 +94,7 @@
 		AA000005002 /* Stamerlee */ = {
 			isa = PBXGroup;
 			children = (
+				AA000002012 /* Assets.xcassets */,
 				AA000002001 /* StamerleeApp.swift */,
 				AA000002002 /* ContentView.swift */,
 				AA000002003 /* ColorTheme.swift */,
@@ -105,10 +106,9 @@
 				AA000002009 /* ProlongedPracticeView.swift */,
 				AA000002010 /* Components.swift */,
 				AA000002011 /* Illustrations.swift */,
-				AA000002012 /* Assets.xcassets */,
-				23730120308B673B00C14980 /* pictures */,
 				AA000002021 /* PictureDescriptionEasyView.swift */,
 				AA000002024 /* PictureDescriptionDifficultyView.swift */,
+				23730120308B673B00C14980 /* pictures */,
 			);
 			path = Stamerlee;
 			sourceTree = "<group>";
