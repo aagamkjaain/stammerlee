@@ -99,7 +99,8 @@ public final class AppState {
 
     public var dailyGoalProgress: Double {
         let goalSeconds = max(dailyPracticeMinutes, 1) * 60
-        return min(max(Double(practiceAudioSeconds) / Double(goalSeconds), 0), 1)
+        let recordedProgress = Double(practiceAudioSeconds) / Double(goalSeconds)
+        return min(max(recordedProgress, 0.2), 1)
     }
     
     // UI Feedback States

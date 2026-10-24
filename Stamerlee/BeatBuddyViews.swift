@@ -55,13 +55,29 @@ public struct BeatBuddyWordsView: View {
                     .padding(.horizontal, 24)
                     .padding(.top, 10)
 
-                TextField("Search words...", text: $searchText)
-                    .font(.system(size: 14, design: .rounded))
-                    .padding(.horizontal, 16)
-                    .frame(height: 52)
-                    .background(Color.white.opacity(0.92), in: RoundedRectangle(cornerRadius: 14))
-                    .padding(.horizontal, 24)
-                    .padding(.top, 26)
+                HStack(spacing: 12) {
+                    Image(systemName: "magnifyingglass")
+                        .font(.system(size: 22, weight: .medium))
+                        .foregroundStyle(.black)
+
+                    TextField("Search", text: $searchText)
+                        .font(.system(size: 17, design: .rounded))
+                        .foregroundStyle(.black)
+                        .tint(.black)
+
+                    Image(systemName: "mic")
+                        .font(.system(size: 22, weight: .medium))
+                        .foregroundStyle(.black.opacity(0.65))
+                }
+                .padding(.horizontal, 20)
+                .frame(height: 64)
+                .searchGlassBackground()
+                .overlay {
+                    RoundedRectangle(cornerRadius: 32)
+                        .stroke(Color.black.opacity(0.22), lineWidth: 1)
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 26)
 
                 LazyVGrid(
                     columns: [GridItem(.flexible(), spacing: 14), GridItem(.flexible(), spacing: 14)],
@@ -74,6 +90,7 @@ public struct BeatBuddyWordsView: View {
                             } else {
                                 state.beatBuddySelectedWords.insert(word)
                             }
+
                         } label: {
                             Text(word)
                                 .font(.system(size: 14, weight: .semibold, design: .rounded))
@@ -107,6 +124,17 @@ public struct BeatBuddyWordsView: View {
                 .padding(.horizontal, 24)
                 .padding(.bottom, 28)
             }
+        }
+    }
+}
+
+private extension View {
+    @ViewBuilder
+    func searchGlassBackground() -> some View {
+        if #available(iOS 26.0, *) {
+            glassEffect(.regular, in: RoundedRectangle(cornerRadius: 14))
+        } else {
+            background(Color.white.opacity(0.92), in: RoundedRectangle(cornerRadius: 14))
         }
     }
 }

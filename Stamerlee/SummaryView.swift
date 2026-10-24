@@ -1,12 +1,14 @@
 import SwiftUI
+import UIKit
 
 // MARK: - Summary
 /// Progress overview shown in the Summary tab.
 public struct SummaryView: View {
     @Bindable public var state: AppState
+    @State private var showingCalendar = false
 
-    private let lavender = Color(red: 230 / 255, green: 229 / 255, blue: 255 / 255)
-    private let rowBackground = Color.white.opacity(0.48)
+    private let lavender = StamerleeTheme.profileCard
+    private let rowBackground = Color.white.opacity(0.62)
     private let summaryBlue = Color(red: 73 / 255, green: 111 / 255, blue: 245 / 255)
 
     public init(state: AppState) {
@@ -33,6 +35,11 @@ public struct SummaryView: View {
             }
         }
         .preferredColorScheme(.dark)
+        .sheet(isPresented: $showingCalendar) {
+            PracticeCalendarSheet(streakDays: state.currentStreakDays)
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+        }
     }
 
     private var practiceStreakCard: some View {
@@ -47,12 +54,21 @@ public struct SummaryView: View {
                     .font(.system(size: 21, weight: .bold, design: .rounded))
                     .foregroundStyle(StamerleeTheme.textPrimaryLight)
                 Spacer()
-                Text("Apr 24 - Apr 28 ⌄")
+                Button {
+                    showingCalendar = true
+                } label: {
+                    HStack(spacing: 4) {
+                        Text("This month")
+                        Image(systemName: "chevron.down")
+                            .font(.system(size: 8, weight: .bold))
+                    }
                     .font(.system(size: 10, weight: .semibold, design: .rounded))
                     .foregroundStyle(StamerleeTheme.textPrimaryLight)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
                     .background(Color.white.opacity(0.38), in: Capsule())
+                }
+                .buttonStyle(.plain)
             }
 
             HStack(spacing: 14) {
@@ -135,10 +151,10 @@ public struct SummaryView: View {
                 .font(.system(size: 16, weight: .medium, design: .rounded))
                 .foregroundStyle(summaryBlue.opacity(0.7))
                 .padding(.bottom, 4)
-            masteryRow(icon: "📖", title: "Prolonged Speech", score: state.completedProlongedDifficulties.count * 33)
-            masteryRow(icon: "🖼️", title: "Picture Description", score: state.completedPictureDescriptionDifficulties.count * 33)
-            masteryRow(icon: "📞", title: "Dial Scene", score: state.hasCompletedDialScene ? 74 : 0)
-            masteryRow(icon: "💜", title: "Narration with Mirror", score: state.completedNarrationDifficulties.count * 33)
+            masteryRow(assetName: "IconProlongedSpeech", title: "Prolonged Speech", score: state.completedProlongedDifficulties.count * 33)
+            masteryRow(assetName: "IconPictureDesc", title: "Picture Description", score: state.completedPictureDescriptionDifficulties.count * 33)
+            masteryRow(assetName: "IconDialScene", title: "Dial Scene", score: state.hasCompletedDialScene ? 74 : 0)
+            masteryRow(assetName: "IconMirrorNarration", title: "Narration with Mirror", score: state.completedNarrationDifficulties.count * 33)
             Text("Smooth speech percentages based on level performance.")
                 .font(.system(size: 10, weight: .medium, design: .rounded))
                 .foregroundStyle(summaryBlue.opacity(0.7))
@@ -149,9 +165,10 @@ public struct SummaryView: View {
         .background(lavender, in: RoundedRectangle(cornerRadius: 16))
     }
 
-    private func masteryRow(icon: String, title: String, score: Int) -> some View {
+    private func masteryRow(assetName: String, title: String, score: Int) -> some View {
         HStack(spacing: 12) {
-            Text(icon).font(.system(size: 24)).frame(width: 36)
+            summaryAssetImage(named: assetName)
+                .frame(width: 36)
             Text(title)
                 .font(.system(size: 15, weight: .medium, design: .rounded))
                 .foregroundStyle(StamerleeTheme.textPrimaryLight)
@@ -166,6 +183,130 @@ public struct SummaryView: View {
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
         .background(rowBackground, in: RoundedRectangle(cornerRadius: 14))
+    }
+
+    private func summaryAssetImage(named name: String) -> some View {
+        Group {
+            if let image = StamerleeImageLoader.loadHeroImage(
+                name: name,
+                fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/\(name).png"
+            ) {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 28, height: 28)
+            } else {
+                Image(systemName: "photo")
+                    .font(.system(size: 20))
+                    .foregroundStyle(summaryBlue)
+            }
+        }
+    }
+}
+
+private struct PracticeCalendarSheet: View {
+    let streakDays: Int
+    @State private var selectedDate = Date()
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Practice calendar")
+                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .foregroundStyle(.black)
+                    Text("Your practice days are marked below")
+                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .foregroundStyle(.black.opacity(0.55))
+                }
+                Spacer()
+                Image(systemName: "calendar")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(.black.opacity(0.65))
+            }
+
+            NativePracticeCalendar(streakDays: streakDays, selectedDate: $selectedDate)
+                .frame(height: 300)
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 22)
+        .padding(.bottom, 18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.white)
+        .presentationBackground(Color.white)
+    }
+
+}
+
+private struct NativePracticeCalendar: UIViewRepresentable {
+    let streakDays: Int
+    @Binding var selectedDate: Date
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(streakDays: streakDays, selectedDate: $selectedDate)
+    }
+
+    func makeUIView(context: Context) -> UICalendarView {
+        let calendarView = UICalendarView()
+        calendarView.calendar = Calendar.current
+        calendarView.locale = Locale.current
+        calendarView.fontDesign = .rounded
+        calendarView.wantsDateDecorations = true
+        calendarView.delegate = context.coordinator
+        calendarView.overrideUserInterfaceStyle = .light
+        calendarView.backgroundColor = .clear
+        return calendarView
+    }
+
+    func updateUIView(_ calendarView: UICalendarView, context: Context) {
+        context.coordinator.streakDays = streakDays
+        calendarView.reloadDecorations(forDateComponents: context.coordinator.practiceDateComponents(), animated: true)
+    }
+
+    final class Coordinator: NSObject, UICalendarViewDelegate {
+        var streakDays: Int
+        var selectedDate: Binding<Date>
+
+        init(streakDays: Int, selectedDate: Binding<Date>) {
+            self.streakDays = streakDays
+            self.selectedDate = selectedDate
+        }
+
+        func calendarView(
+            _ calendarView: UICalendarView,
+            decorationFor dateComponents: DateComponents
+        ) -> UICalendarView.Decoration? {
+            guard let date = calendarView.calendar.date(from: dateComponents),
+                  isPracticeDay(date, calendar: calendarView.calendar) else {
+                return nil
+            }
+
+            return .image(
+                UIImage(systemName: "checkmark.circle.fill"),
+                color: .systemGreen,
+                size: .medium
+            )
+        }
+
+        func practiceDateComponents() -> [DateComponents] {
+            let calendar = Calendar.current
+            return (0..<max(streakDays, 0)).compactMap { offset in
+                guard let date = calendar.date(byAdding: .day, value: -offset, to: Date()) else {
+                    return nil
+                }
+                return calendar.dateComponents([.year, .month, .day], from: date)
+            }
+        }
+
+        private func isPracticeDay(_ date: Date, calendar: Calendar) -> Bool {
+            let today = calendar.startOfDay(for: Date())
+            let dayOffset = calendar.dateComponents(
+                [.day],
+                from: calendar.startOfDay(for: date),
+                to: today
+            ).day ?? Int.max
+            return dayOffset >= 0 && dayOffset < max(streakDays, 0)
+        }
     }
 }
 

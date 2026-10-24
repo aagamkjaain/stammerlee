@@ -167,7 +167,7 @@ public struct HomeDashboardView: View {
     // MARK: - Daily Goal Card
     private var dailyGoalCard: some View {
         HStack(spacing: 14) {
-            DailyGoalProgressRing(progress: state.dailyGoalProgress)
+            DailyGoalActivityRing()
 
             VStack(alignment: .leading, spacing: 3) {
                 Text("YOUR DAILY GOAL")
@@ -304,64 +304,64 @@ public struct HomeDashboardView: View {
     }
 }
 
-private struct DailyGoalProgressRing: View {
-    let progress: Double
 
-    private let ringSize: CGFloat = 68
-    private let lineWidth: CGFloat = 15
+private struct DailyGoalActivityRing: View {
+    private let ringSize: CGFloat = 60
+    private let lineWidth: CGFloat = 10
+    private let progress: Double = 0.25
+
+    @State private var animatedProgress: Double = 0
+
+    private let trackColor = Color(
+        red: 70.0 / 255.0,
+        green: 0.0,
+        blue: 8.0 / 255.0
+    )
+
+    private let progressColor = Color(
+        red: 245.0 / 255.0,
+        green: 0.0,
+        blue: 35.0 / 255.0
+    )
 
     var body: some View {
         ZStack {
+            // Background track
             Circle()
-                .fill(StamerleeTheme.profileCard)
+                .stroke(trackColor, lineWidth: lineWidth)
 
+            // Progress arc
             Circle()
-                .stroke(Color(red: 192 / 255, green: 196 / 255, blue: 220 / 255), lineWidth: lineWidth)
-
-            Circle()
-                .trim(from: 0, to: progress)
+                .trim(from: 0, to: animatedProgress)
                 .stroke(
-                    AngularGradient(
-                        colors: [
-                            Color(red: 92 / 255, green: 125 / 255, blue: 255 / 255),
-                            Color(red: 164 / 255, green: 153 / 255, blue: 255 / 255),
-                            Color(red: 255 / 255, green: 214 / 255, blue: 74 / 255),
-                            Color(red: 92 / 255, green: 125 / 255, blue: 255 / 255)
-                        ],
-                        center: .center,
-                        startAngle: .degrees(-90),
-                        endAngle: .degrees(270)
-                    ),
-                    style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
+                    progressColor,
+                    style: StrokeStyle(
+                        lineWidth: lineWidth,
+                        lineCap: .round
+                    )
                 )
                 .rotationEffect(.degrees(-90))
-                .animation(.easeInOut(duration: 0.35), value: progress)
 
-            if progress > 0 {
-                Circle()
-                    .fill(Color(red: 255 / 255, green: 219 / 255, blue: 91 / 255))
-                    .frame(width: 20, height: 20)
-                    .shadow(color: Color.yellow.opacity(0.75), radius: 8)
-                    .offset(endpointOffset)
-                    .animation(.easeInOut(duration: 0.35), value: progress)
-            }
+            // Inner circle
+            Circle()
+                .fill(StamerleeTheme.profileCard)
+                .padding(lineWidth)
         }
         .frame(width: ringSize, height: ringSize)
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.8)) {
+                animatedProgress = min(max(progress, 0), 1)
+            }
+        }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Daily goal progress")
-        .accessibilityValue("\(Int(progress * 100)) percent")
-    }
-
-    private var endpointOffset: CGSize {
-        let angle = (progress * 360) - 90
-        let radians = angle * .pi / 180
-        let radius = (ringSize - lineWidth) / 2
-        return CGSize(
-            width: cos(radians) * radius,
-            height: sin(radians) * radius
+        .accessibilityValue(
+            "\(Int(progress * 100)) percent"
         )
     }
 }
+
+
 
 public struct DashboardTabView: View {
     @Bindable public var state: AppState
