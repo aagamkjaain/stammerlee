@@ -4,6 +4,7 @@ import SwiftUI
 /// Personal progress screen presented from the dashboard's Profile tab.
 public struct ProfileView: View {
     @Bindable public var state: AppState
+    @State private var isEditingProfile = false
 
     public init(state: AppState) {
         self.state = state
@@ -45,12 +46,30 @@ public struct ProfileView: View {
             // navigation is intentionally left out until that destination exists.
 
             VStack(spacing: 9) {
-                ProfileAvatar()
+                ProfileAvatar(style: state.profileAvatarStyle)
 
-                Text("John doe")
-                    .font(.system(size: 28, weight: .bold, design: .rounded))
-                    .foregroundStyle(StamerleeTheme.textPrimaryDark)
-                    .minimumScaleFactor(0.8)
+                if isEditingProfile {
+                    avatarStylePicker
+                }
+
+                if isEditingProfile {
+                    TextField("Username", text: $state.profileName)
+                        .font(.system(size: 22, weight: .bold, design: .rounded))
+                        .foregroundStyle(StamerleeTheme.textPrimaryLight)
+                        .multilineTextAlignment(.center)
+                        .textInputAutocapitalization(.words)
+                        .autocorrectionDisabled()
+                        .padding(.horizontal, 14)
+                        .frame(height: 38)
+                        .background(StamerleeTheme.profileCard)
+                        .clipShape(Capsule())
+                        .padding(.horizontal, 48)
+                } else {
+                    Text(state.profileName)
+                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .foregroundStyle(StamerleeTheme.textPrimaryDark)
+                        .minimumScaleFactor(0.8)
+                }
 
                 Text("Joined in October 2026")
                     .font(.system(size: 14, weight: .regular, design: .rounded))
@@ -58,7 +77,48 @@ public struct ProfileView: View {
             }
             .frame(maxWidth: .infinity)
             .padding(.top, 44)
+
+            Button {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    isEditingProfile.toggle()
+                }
+            } label: {
+                Image(systemName: isEditingProfile ? "checkmark" : "pencil")
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundStyle(StamerleeTheme.textPrimaryLight)
+                    .frame(width: 38, height: 38)
+                    .background(StamerleeTheme.profileCard)
+                    .clipShape(Circle())
+            }
+            .padding(.top, 18)
+            .padding(.trailing, 20)
+            .accessibilityLabel(isEditingProfile ? "Save profile" : "Edit profile")
         }
+    }
+
+    private var avatarStylePicker: some View {
+        HStack(spacing: 10) {
+            ForEach(0..<3, id: \.self) { style in
+                Button {
+                    state.profileAvatarStyle = style
+                } label: {
+                    ProfileAvatar(style: style)
+                        .scaleEffect(0.42)
+                        .frame(width: 42, height: 42)
+                        .background(
+                            Circle()
+                                .stroke(
+                                    state.profileAvatarStyle == style
+                                        ? StamerleeTheme.primaryBlue
+                                        : Color.clear,
+                                    lineWidth: 3
+                                )
+                        )
+                }
+                .accessibilityLabel("Avatar style \(style + 1)")
+            }
+        }
+        .frame(height: 42)
     }
 
     private var statsSection: some View {
@@ -106,7 +166,7 @@ public struct ProfileView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Daily goal")
                 .font(.system(size: 18, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
+                .foregroundStyle(StamerleeTheme.textPrimaryLight)
 
             Picker("Daily practice time", selection: $state.dailyPracticeMinutes) {
                 ForEach([5, 10, 15, 20, 30], id: \.self) { minutes in
@@ -115,12 +175,12 @@ public struct ProfileView: View {
                 }
             }
             .pickerStyle(.menu)
-            .tint(StamerleeTheme.textSecondaryDark)
+            .tint(StamerleeTheme.textSecondaryLight)
             .font(.system(size: 15, weight: .semibold, design: .rounded))
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 12)
             .frame(height: 40)
-            .background(Color.white.opacity(0.08))
+            .background(Color.white.opacity(0.72))
             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
         }
         .padding(.horizontal, 18)
@@ -139,35 +199,49 @@ public struct ProfileView: View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
                 .font(.system(size: 17, weight: .semibold, design: .rounded))
-                .foregroundStyle(.white.opacity(0.9))
+                .foregroundStyle(StamerleeTheme.textPrimaryLight)
             Text(subtitle)
                 .font(.system(size: 13, weight: .regular, design: .rounded))
-                .foregroundStyle(StamerleeTheme.textSecondaryDark)
+                .foregroundStyle(StamerleeTheme.textSecondaryLight)
         }
     }
 }
 
 private struct ProfileAvatar: View {
+    let style: Int
+
     var body: some View {
         ZStack {
             Circle()
-                .fill(StamerleeTheme.profileAvatarDark)
+                .fill(backgroundColor)
                 .padding(8)
 
             Circle()
-                .fill(Color.black)
+                .fill(foregroundColor)
                 .frame(width: 22, height: 22)
                 .offset(y: -13)
 
             Capsule()
-                .fill(Color.black)
+                .fill(foregroundColor)
                 .frame(width: 59, height: 33)
                 .offset(y: 25)
         }
         .frame(width: 84, height: 84)
         .background(Color.black)
         .clipShape(Circle())
-        .overlay(Circle().stroke(Color.black.opacity(0.55), lineWidth: 7))
+        .overlay(Circle().stroke(StamerleeTheme.profileCard))
+    }
+
+    private var backgroundColor: Color {
+        switch style {
+        case 1: return StamerleeTheme.accentPurple
+        case 2: return StamerleeTheme.primaryBlue
+        default: return StamerleeTheme.profileAvatarDark
+        }
+    }
+
+    private var foregroundColor: Color {
+        style == 2 ? StamerleeTheme.profileCard : StamerleeTheme.backgroundDark
     }
 }
 

@@ -27,7 +27,7 @@ public struct HomeDashboardView: View {
                 // Header Bar
                 HStack {
                     Text("Welcome")
-                        .font(.system(size: 30, weight: .bold, design: .rounded))
+                        .font(.system(size: 32, weight: .bold, design: .rounded))
                         .foregroundColor(StamerleeTheme.textPrimaryDark)
                     
                     Spacer()
@@ -63,7 +63,7 @@ public struct HomeDashboardView: View {
                             // 1. Prolonged Speech (UNLOCKED - Primary action)
                             exerciseRow(
                                 title: "Prolonged Speech",
-                                subtitle: "Practice gently stretching sounds while speaking slowly.",
+                                subtitle: "Practice gently stretching sounds while speaking slowly",
                                 isLocked: false,
                                 iconName: "IconProlongedSpeech",
                                 fallbackPath: "/Users/user89/Documents/bitch/Screenshot_2026-10-21_at_11.26.10_PM-removebg-preview 2.png"
@@ -78,7 +78,7 @@ public struct HomeDashboardView: View {
                             // 2. Picture Description (unlocked after Prolonged Speech Hard)
                             exerciseRow(
                                 title: "Picture Description",
-                                subtitle: "Describe what you see using simple words",
+                                subtitle: "Describe real-world scenes in detail to practice spontaneous speech flow",
                                 isLocked: !state.isPictureDescriptionUnlocked,
                                 iconName: "IconPictureDesc",
                                 fallbackPath: "/Users/user89/Documents/bitch/Stamerlee/IconPictureDesc.png"
@@ -93,7 +93,7 @@ public struct HomeDashboardView: View {
                             // 3. Dial Scene (unlocked after Picture Description Hard)
                             exerciseRow(
                                 title: "Dial Scene",
-                                subtitle: "Practice speaking through everyday conversations.",
+                                subtitle: "Practice interactive scenario-based phone calls and service counter chats",
                                 isLocked: !state.isDialSceneUnlocked,
                                 iconName: "IconDialScene",
                                 fallbackPath: "/Users/user89/Documents/bitch/Stamerlee/IconDialScene.png"
@@ -108,7 +108,7 @@ public struct HomeDashboardView: View {
                             // 4. Narration (unlocked after one completed Dial Scene)
                             exerciseRow(
                                 title: "Narration",
-                                subtitle: "Narrate a story one sentence at a time.",
+                                subtitle: "Practice reading and telling longer stories while watching yourself in the mirror",
                                 isLocked: !state.isNarrationUnlocked,
                                 iconName: "IconMirrorNarration",
                                 fallbackPath: "/Users/user89/Documents/bitch/Stamerlee/IconMirrorNarration.png"
@@ -130,7 +130,7 @@ public struct HomeDashboardView: View {
                             // Beat Buddy (unlocked after Prolonged Speech Easy)
                             exerciseRow(
                                 title: "Beat Buddy",
-                                subtitle: "Narrate a story one sentence at a time.",
+                                subtitle: "Practice speaking to a steady, rhythmic beat using an interactive metronome",
                                 isLocked: !state.isBeatBuddyUnlocked,
                                 iconName: "BeatBuddyLogo",
                                 fallbackPath: "/Users/user89/Documents/bitch/Stamerlee/IconMirrorNarration.png"
@@ -169,48 +169,29 @@ public struct HomeDashboardView: View {
     // MARK: - Daily Goal Card
     private var dailyGoalCard: some View {
         HStack(spacing: 14) {
-            // Clock Illustration Asset
-            Group {
-                if let uiImage = StamerleeImageLoader.loadHeroImage(name: "ClockIllustration", fallbackPath: "/Users/user89/Documents/bitch/clock illustration.png") {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 68, height: 68)
-                } else {
-                    Circle()
-                        .fill(Color(red: 254 / 255, green: 220 / 255, blue: 90 / 255))
-                        .frame(width: 58, height: 58)
-                        .overlay(
-                            Image(systemName: "clock.badge.checkmark")
-                                .font(.system(size: 26))
-                                .foregroundColor(.black)
-                        )
-                }
-            }
-            .frame(width: 72, height: 72)
-            
-            // Goal Text Details
+            DailyGoalProgressRing(progress: state.dailyGoalProgress)
+
             VStack(alignment: .leading, spacing: 3) {
                 Text("YOUR DAILY GOAL")
                     .font(.system(size: 10, weight: .bold, design: .rounded))
                     .foregroundColor(StamerleeTheme.textSecondaryLight)
-                    .tracking(0.6)
+                    .tracking(1.2)
                 
-                Text("Practice for 10 minutes")
-                    .font(.system(size: 15, weight: .bold, design: .rounded))
+                Text("Practice for \(state.dailyPracticeMinutes) minutes")
+                    .font(.system(size: 16, weight: .bold, design: .rounded))
                     .foregroundColor(StamerleeTheme.textPrimaryLight)
                 
-                Text("Small steps build big progress.")
-                    .font(.system(size: 12, weight: .regular, design: .rounded))
+                Text("Your daily fluency goal.")
+                    .font(.system(size: 13, weight: .regular, design: .rounded))
                     .foregroundColor(StamerleeTheme.textSecondaryLight)
             }
             
             Spacer()
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 14)
+        .padding(.horizontal, 22)
+        .padding(.vertical, 20)
         .background(Color(red: 238 / 255, green: 240 / 255, blue: 250 / 255))
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
     }
     
@@ -251,6 +232,7 @@ public struct HomeDashboardView: View {
                             .frame(width: 75, height: 75)
                      
                     }
+
                 }
                 
                 // Title and Subtitle
@@ -262,7 +244,7 @@ public struct HomeDashboardView: View {
                     Text(subtitle)
                         .font(.system(size: 12, weight: .regular, design: .rounded))
                         .foregroundColor(StamerleeTheme.textSecondaryLight)
-                        .lineLimit(2)
+                        .lineLimit(3)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 
@@ -327,6 +309,65 @@ public struct HomeDashboardView: View {
     private func triggerLockedAlert(title: String) {
         lockedAlertMessage = "\(title) will unlock as you complete the Prolonged Speech foundation exercises!"
         showLockedAlert = true
+    }
+}
+
+private struct DailyGoalProgressRing: View {
+    let progress: Double
+
+    private let ringSize: CGFloat = 68
+    private let lineWidth: CGFloat = 15
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(StamerleeTheme.profileCard)
+
+            Circle()
+                .stroke(Color(red: 192 / 255, green: 196 / 255, blue: 220 / 255), lineWidth: lineWidth)
+
+            Circle()
+                .trim(from: 0, to: progress)
+                .stroke(
+                    AngularGradient(
+                        colors: [
+                            Color(red: 92 / 255, green: 125 / 255, blue: 255 / 255),
+                            Color(red: 164 / 255, green: 153 / 255, blue: 255 / 255),
+                            Color(red: 255 / 255, green: 214 / 255, blue: 74 / 255),
+                            Color(red: 92 / 255, green: 125 / 255, blue: 255 / 255)
+                        ],
+                        center: .center,
+                        startAngle: .degrees(-90),
+                        endAngle: .degrees(270)
+                    ),
+                    style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
+                )
+                .rotationEffect(.degrees(-90))
+                .animation(.easeInOut(duration: 0.35), value: progress)
+
+            if progress > 0 {
+                Circle()
+                    .fill(Color(red: 255 / 255, green: 219 / 255, blue: 91 / 255))
+                    .frame(width: 20, height: 20)
+                    .shadow(color: Color.yellow.opacity(0.75), radius: 8)
+                    .offset(endpointOffset)
+                    .animation(.easeInOut(duration: 0.35), value: progress)
+            }
+        }
+        .frame(width: ringSize, height: ringSize)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Daily goal progress")
+        .accessibilityValue("\(Int(progress * 100)) percent")
+    }
+
+    private var endpointOffset: CGSize {
+        let angle = (progress * 360) - 90
+        let radians = angle * .pi / 180
+        let radius = (ringSize - lineWidth) / 2
+        return CGSize(
+            width: cos(radians) * radius,
+            height: sin(radians) * radius
+        )
     }
 }
 

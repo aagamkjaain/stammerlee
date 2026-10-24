@@ -7,7 +7,7 @@ public enum AppScreen: Hashable, CaseIterable {
     case login
     case onboarding1
     case onboarding2
-    case challengingSounds
+    case dailyGoal
     case exploreActivities
     case homeDashboard
     case prolongedSpeechIntro
@@ -76,6 +76,8 @@ public final class AppState {
     public var selectedTab: Int = 0 // 0: Home, 1: Insights, 2: Profile
     public var dailyPracticeMinutes: Int = 10
     public var currentStreakDays: Int = 3
+    public var profileName: String = "John doe"
+    public var profileAvatarStyle: Int = 0
     
     // Practice & Difficulty State
     public var selectedDifficulty: String = "Easy"
@@ -91,6 +93,11 @@ public final class AppState {
     public var isAudioPracticing: Bool = false
     public var practiceAudioSeconds: Int = 0
     public var showPracticeModal: Bool = false
+
+    public var dailyGoalProgress: Double {
+        let goalSeconds = max(dailyPracticeMinutes, 1) * 60
+        return min(max(Double(practiceAudioSeconds) / Double(goalSeconds), 0), 1)
+    }
     
     // UI Feedback States
     public var showEmailSheet: Bool = false
@@ -171,11 +178,12 @@ public final class AppState {
     public func restartFlow() {
         withAnimation(.easeInOut(duration: 0.35)) {
             self.currentScreen = .launch
-            self.selectedSoundIds = ["td"]
-            self.customSoundInput = ""
+            self.dailyPracticeMinutes = 10
             self.isAuthenticated = false
             self.userEmail = ""
             self.selectedTab = 0
+            self.profileName = "John doe"
+            self.profileAvatarStyle = 0
             self.completedProlongedDifficulties = []
             self.hasSeenProlongedSpeechIntro = false
             self.selectedPictureDescriptionDifficulty = "Easy"

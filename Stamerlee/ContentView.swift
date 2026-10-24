@@ -25,8 +25,8 @@ public struct ContentView: View {
                 case .onboarding2:
                     OnboardingStepTwoView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
-                case .challengingSounds:
-                    ChallengingSoundsView(state: appState)
+                case .dailyGoal:
+                    DailyGoalView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
                 case .exploreActivities:
                     ExploreActivitiesView(state: appState)
@@ -125,7 +125,7 @@ public struct ContentView: View {
                     jumpButton(title: "Login", screen: .login)
                     jumpButton(title: "Info 1", screen: .onboarding1)
                     jumpButton(title: "Info 2", screen: .onboarding2)
-                    jumpButton(title: "Sounds", screen: .challengingSounds)
+                    jumpButton(title: "Daily Goal", screen: .dailyGoal)
                     jumpButton(title: "Explore", screen: .exploreActivities)
                     jumpButton(title: "Home", screen: .homeDashboard)
                     jumpButton(title: "Pro Speech", screen: .prolongedSpeechIntro)

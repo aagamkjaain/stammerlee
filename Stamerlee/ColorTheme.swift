@@ -41,8 +41,8 @@ public enum StamerleeTheme {
     public static let illustrationPurple = Color(red: 147 / 255, green: 140 / 255, blue: 220 / 255)
     public static let illustrationCardBg = Color(red: 24 / 255, green: 30 / 255, blue: 68 / 255)
 
-    /// Profile screen colors for the dark profile treatment.
-    public static let profileCard = Color(red: 19 / 255, green: 21 / 255, blue: 44 / 255)
+    /// Profile card color shared with the homepage's light lavender cards.
+    public static let profileCard = Color(red: 238 / 255, green: 240 / 255, blue: 250 / 255)
     public static let profileHeaderBase = Color(red: 13 / 255, green: 14 / 255, blue: 32 / 255)
     public static let profileHeaderHighlight = Color(red: 29 / 255, green: 31 / 255, blue: 60 / 255)
     public static let profileArcDark = Color(red: 7 / 255, green: 8 / 255, blue: 22 / 255)
