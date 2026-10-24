@@ -32,17 +32,6 @@ public struct HomeDashboardView: View {
                     
                     Spacer()
                     
-                    // Replay Onboarding Button
-                    Button(action: {
-                        state.navigate(to: .exploreActivities, forward: false)
-                    }) {
-                        Image(systemName: "arrow.counterclockwise")
-                            .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(.white.opacity(0.8))
-                            .padding(8)
-                            .background(Color.white.opacity(0.1))
-                            .clipShape(Circle())
-                    }
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 16)

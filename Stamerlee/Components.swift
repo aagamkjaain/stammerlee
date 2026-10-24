@@ -248,7 +248,7 @@ public struct OptionSelectRow: View {
         self.isSelected = isSelected
         self.onSelect = onSelect
     }
-    
+
     public var body: some View {
         Button(action: {
             let impact = UIImpactFeedbackGenerator(style: .light)
@@ -305,5 +305,71 @@ public struct OptionSelectRow: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+    }
+}
+
+// MARK: - Universal Difficulty Card
+public struct DifficultyCard: View {
+    public let title: String
+    public let isLocked: Bool
+    public let isCompleted: Bool
+    public let action: () -> Void
+
+    public init(
+        title: String,
+        isLocked: Bool,
+        isCompleted: Bool,
+        action: @escaping () -> Void
+    ) {
+        self.title = title
+        self.isLocked = isLocked
+        self.isCompleted = isCompleted
+        self.action = action
+    }
+
+    public var body: some View {
+        Button {
+            let impact = UIImpactFeedbackGenerator(style: isLocked ? .light : .medium)
+            impact.impactOccurred()
+            action()
+        } label: {
+            ZStack {
+                Text(title)
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .foregroundColor(StamerleeTheme.textPrimaryLight)
+
+                HStack {
+                    badge
+                    Spacer()
+                    Image(systemName: isCompleted ? "checkmark.circle.fill" : "chevron.right")
+                        .font(.system(size: isCompleted ? 18 : 14, weight: .semibold))
+                        .foregroundColor(
+                            isCompleted ? StamerleeTheme.primaryBlue : .gray.opacity(0.5)
+                        )
+                        .frame(width: 30, alignment: .trailing)
+                }
+            }
+            .padding(.horizontal, 16)
+            .frame(height: 100)
+            .background(Color(red: 238 / 255, green: 240 / 255, blue: 250 / 255))
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
+        }
+        .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
+    private var badge: some View {
+        if isLocked {
+            Image(systemName: "lock.fill")
+                .font(.system(size: 19, weight: .bold))
+                .foregroundColor(.white)
+                .frame(width: 50, height: 50)
+                .background(Color(red: 90 / 255, green: 105 / 255, blue: 180 / 255))
+                .clipShape(Circle())
+        } else {
+            Color.clear
+                .frame(width: 50, height: 50)
+        }
     }
 }

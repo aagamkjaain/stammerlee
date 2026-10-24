@@ -22,7 +22,7 @@ public struct ProlongedSpeechDifficultyView: View {
                 // Top Navigation Bar
                 HStack {
                     BackNavButton {
-                        state.navigate(to: .prolongedSpeechIntro, forward: false)
+                        state.navigate(to: .homeDashboard, forward: false)
                     }
                     Spacer()
                 }
@@ -84,54 +84,11 @@ public struct ProlongedSpeechDifficultyView: View {
         isCompleted: Bool,
         action: @escaping () -> Void
     ) -> some View {
-        Button(action: {
-            let impact = UIImpactFeedbackGenerator(style: isLocked ? .light : .medium)
-            impact.impactOccurred()
-            action()
-        }) {
-            HStack {
-                if isLocked {
-                    // Blue Lock Badge
-                    ZStack {
-                        Circle()
-                            .fill(Color(red: 90 / 255, green: 105 / 255, blue: 180 / 255))
-                            .frame(width: 50, height: 50)
-                        
-                        Image(systemName: "lock.fill")
-                            .font(.system(size: 19, weight: .bold))
-                            .foregroundColor(.white)
-                    }
-                    .padding(.leading, 8)
-                    
-                    Spacer()
-                    
-                    Text(title)
-                        .font(.system(size: 18, weight: .bold, design: .rounded))
-                        .foregroundColor(StamerleeTheme.textPrimaryLight)
-                    
-                    Spacer()
-                } else {
-                    Spacer()
-                    
-                    Text(title)
-                        .font(.system(size: 18, weight: .bold, design: .rounded))
-                        .foregroundColor(StamerleeTheme.textPrimaryLight)
-                    
-                    Spacer()
-                }
-                
-                // Trailing status indicator
-                Image(systemName: isCompleted ? "checkmark.circle.fill" : "chevron.right")
-                    .font(.system(size: isCompleted ? 18 : 14, weight: .semibold))
-                    .foregroundColor(isCompleted ? StamerleeTheme.primaryBlue : Color.gray.opacity(0.5))
-                    .padding(.trailing, 8)
-            }
-            .padding(.horizontal, 16)
-            .frame(height: 100)
-            .background(Color(red: 238 / 255, green: 240 / 255, blue: 250 / 255))
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-            .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
-        }
-        .buttonStyle(.plain)
+        DifficultyCard(
+            title: title,
+            isLocked: isLocked,
+            isCompleted: isCompleted,
+            action: action
+        )
     }
 }

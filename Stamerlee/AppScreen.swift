@@ -1,3 +1,4 @@
+import Foundation
 import SwiftUI
 import Observation
 
@@ -78,6 +79,7 @@ public final class AppState {
     public var currentStreakDays: Int = 3
     public var profileName: String = "John doe"
     public var profileAvatarStyle: Int = 0
+    public var profileAvatarData: Data?
     
     // Practice & Difficulty State
     public var selectedDifficulty: String = "Easy"
@@ -184,6 +186,7 @@ public final class AppState {
             self.selectedTab = 0
             self.profileName = "John doe"
             self.profileAvatarStyle = 0
+            self.profileAvatarData = nil
             self.completedProlongedDifficulties = []
             self.hasSeenProlongedSpeechIntro = false
             self.selectedPictureDescriptionDifficulty = "Easy"

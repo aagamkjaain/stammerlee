@@ -1,10 +1,13 @@
 import SwiftUI
+import PhotosUI
+import UIKit
 
 // MARK: - Profile
 /// Personal progress screen presented from the dashboard's Profile tab.
 public struct ProfileView: View {
     @Bindable public var state: AppState
     @State private var isEditingProfile = false
+    @State private var selectedPhoto: PhotosPickerItem?
 
     public init(state: AppState) {
         self.state = state
@@ -21,7 +24,7 @@ public struct ProfileView: View {
 
                     VStack(alignment: .leading, spacing: 22) {
                         statsSection
-                        streakSection
+
                         dailyGoalCard
                     }
                     .padding(.horizontal, 24)
@@ -35,21 +38,14 @@ public struct ProfileView: View {
 
     private var profileHeader: some View {
         ZStack(alignment: .topTrailing) {
-            ZStack {
-                StamerleeTheme.profileHeaderBase
-                ProfileArc(fill: StamerleeTheme.profileHeaderHighlight, height: 142, yOffset: 28)
-                ProfileArc(fill: StamerleeTheme.profileArcDark, height: 120, yOffset: 57)
-            }
+            StamerleeTheme.profileHeaderBase
             .frame(height: 184)
 
-            // The reference uses this as a visual settings affordance. Settings
-            // navigation is intentionally left out until that destination exists.
-
             VStack(spacing: 9) {
-                ProfileAvatar(style: state.profileAvatarStyle)
+            ProfileAvatar(style: state.profileAvatarStyle, imageData: state.profileAvatarData)
 
-                if isEditingProfile {
-                    avatarStylePicker
+            if isEditingProfile {
+                avatarStylePicker
                 }
 
                 if isEditingProfile {
@@ -94,15 +90,22 @@ public struct ProfileView: View {
             .padding(.trailing, 20)
             .accessibilityLabel(isEditingProfile ? "Save profile" : "Edit profile")
         }
+        .task(id: selectedPhoto) {
+            guard let selectedPhoto else { return }
+            guard let data = try? await selectedPhoto.loadTransferable(type: Data.self) else { return }
+            state.profileAvatarData = data
+            state.profileAvatarStyle = 0
+        }
     }
 
     private var avatarStylePicker: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 12) {
             ForEach(0..<3, id: \.self) { style in
                 Button {
+                    state.profileAvatarData = nil
                     state.profileAvatarStyle = style
                 } label: {
-                    ProfileAvatar(style: style)
+                    ProfileAvatar(style: style, imageData: nil)
                         .scaleEffect(0.42)
                         .frame(width: 42, height: 42)
                         .background(
@@ -117,6 +120,25 @@ public struct ProfileView: View {
                 }
                 .accessibilityLabel("Avatar style \(style + 1)")
             }
+
+            PhotosPicker(selection: $selectedPhoto, matching: .images) {
+                Image(systemName: "photo")
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(StamerleeTheme.textPrimaryLight)
+                    .frame(width: 42, height: 42)
+                    .background(StamerleeTheme.profileCard)
+                    .clipShape(Circle())
+                    .overlay(
+                        Circle()
+                            .stroke(
+                                state.profileAvatarData != nil
+                                    ? StamerleeTheme.primaryBlue
+                                    : Color.clear,
+                                lineWidth: 3
+                            )
+                    )
+            }
+            .accessibilityLabel("Choose avatar photo")
         }
         .frame(height: 42)
     }
@@ -137,30 +159,7 @@ public struct ProfileView: View {
         }
     }
 
-    private var streakSection: some View {
-        VStack(alignment: .leading, spacing: 11) {
-            sectionTitle("Streak")
 
-            HStack(alignment: .center, spacing: 14) {
-                VStack(spacing: 2) {
-                    StreakSpark()
-                        .frame(width: 66, height: 63)
-
-                    Text("\(state.currentStreakDays) days")
-                        .font(.system(size: 14, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
-                }
-                .frame(width: 66)
-
-                Text("You've got this. All you need is a few\nminutes a day to get your streak\ngoing.")
-                    .font(.system(size: 15, weight: .regular, design: .rounded))
-                    .foregroundStyle(StamerleeTheme.textSecondaryDark)
-                    .lineSpacing(4)
-
-                Spacer(minLength: 0)
-            }
-        }
-    }
 
     private var dailyGoalCard: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -209,22 +208,29 @@ public struct ProfileView: View {
 
 private struct ProfileAvatar: View {
     let style: Int
+    let imageData: Data?
 
     var body: some View {
         ZStack {
-            Circle()
-                .fill(backgroundColor)
-                .padding(8)
+            if let imageData, let image = UIImage(data: imageData) {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                Circle()
+                    .fill(backgroundColor)
+                    .padding(8)
 
-            Circle()
-                .fill(foregroundColor)
-                .frame(width: 22, height: 22)
-                .offset(y: -13)
+                Circle()
+                    .fill(foregroundColor)
+                    .frame(width: 22, height: 22)
+                    .offset(y: -13)
 
-            Capsule()
-                .fill(foregroundColor)
-                .frame(width: 59, height: 33)
-                .offset(y: 25)
+                Capsule()
+                    .fill(foregroundColor)
+                    .frame(width: 59, height: 33)
+                    .offset(y: 25)
+            }
         }
         .frame(width: 84, height: 84)
         .background(Color.black)
@@ -260,34 +266,5 @@ private struct StreakSpark: View {
                 .foregroundStyle(.yellow)
                 .offset(x: 27, y: 25)
         }
-    }
-}
-
-private struct ProfileArc: View {
-    let fill: Color
-    let height: CGFloat
-    let yOffset: CGFloat
-
-    var body: some View {
-        ProfileArcShape()
-            .fill(fill)
-            .frame(height: height)
-            .offset(y: yOffset)
-    }
-}
-
-private struct ProfileArcShape: Shape {
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        path.move(to: CGPoint(x: 0, y: rect.height * 0.4))
-        path.addCurve(
-            to: CGPoint(x: rect.width, y: rect.height * 0.4),
-            control1: CGPoint(x: rect.width * 0.26, y: -rect.height * 0.03),
-            control2: CGPoint(x: rect.width * 0.74, y: -rect.height * 0.03)
-        )
-        path.addLine(to: CGPoint(x: rect.width, y: rect.height))
-        path.addLine(to: CGPoint(x: 0, y: rect.height))
-        path.closeSubpath()
-        return path
     }
 }
