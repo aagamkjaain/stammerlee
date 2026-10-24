@@ -75,29 +75,11 @@ public struct PictureDescriptionDifficultyView: View {
         isCompleted: Bool,
         action: @escaping () -> Void
     ) -> some View {
-        Button(action: action) {
-            HStack {
-                if isLocked {
-                    Image(systemName: "lock.fill")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(.white)
-                        .frame(width: 28, height: 28)
-                        .background(Color(red: 80 / 255, green: 75 / 255, blue: 175 / 255))
-                        .clipShape(Circle())
-                }
-                Spacer()
-                Text(title)
-                    .font(.system(size: 18, weight: .bold, design: .rounded))
-                    .foregroundColor(StamerleeTheme.textPrimaryLight)
-                Spacer()
-                Image(systemName: isCompleted ? "checkmark.circle.fill" : "chevron.right")
-                    .foregroundColor(isCompleted ? StamerleeTheme.primaryBlue : .gray.opacity(0.5))
-            }
-            .padding(.horizontal, 16)
-            .frame(height: 100)
-            .background(Color(red: 238 / 255, green: 240 / 255, blue: 250 / 255))
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-        }
-        .buttonStyle(.plain)
+        DifficultyCard(
+            title: title,
+            isLocked: isLocked,
+            isCompleted: isCompleted,
+            action: action
+        )
     }
 }

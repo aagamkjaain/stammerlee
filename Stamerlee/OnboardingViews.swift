@@ -3,24 +3,24 @@ import SwiftUI
 // =============================================================================
 // MARK: - ONBOARDING VIEWS (Consolidated)
 // Contains: LaunchView, LoginView, OnboardingStepOneView,
-//           OnboardingStepTwoView, ChallengingSoundsView, ExploreActivitiesView
+//           OnboardingStepTwoView, DailyGoalView, ExploreActivitiesView
 // =============================================================================
 
 // MARK: - 1. Launch Screen
 public struct LaunchView: View {
     @Bindable public var state: AppState
-    
+
     @State private var logoOpacity: Double = 0.0
     @State private var logoScale: CGFloat = 0.94
-    
+
     public init(state: AppState) {
         self.state = state
     }
-    
+
     public var body: some View {
         ZStack {
             StamerleeTheme.backgroundDark.ignoresSafeArea()
-            
+
             VStack {
                 Spacer()
                 Text("Stamerlee")
@@ -53,24 +53,24 @@ public struct LaunchView: View {
 // MARK: - 2. Login Screen
 public struct LoginView: View {
     @Bindable public var state: AppState
-    
+
     @State private var emailInput: String = ""
     @State private var passwordInput: String = ""
     @State private var activeSheet: ActiveSheet? = nil
-    
+
     private enum ActiveSheet: Identifiable {
         case emailSignIn, terms, privacy
         var id: Int { hashValue }
     }
-    
+
     public init(state: AppState) {
         self.state = state
     }
-    
+
     public var body: some View {
         ZStack {
             StamerleeTheme.backgroundDark.ignoresSafeArea()
-            
+
             VStack(spacing: 0) {
                 // Top Branding
                 VStack {
@@ -82,24 +82,24 @@ public struct LoginView: View {
                     Spacer()
                 }
                 .frame(maxHeight: .infinity)
-                
+
                 // Bottom Rounded Sheet
                 VStack(alignment: .leading, spacing: 20) {
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Get started")
                             .font(.system(size: 26, weight: .bold, design: .rounded))
                             .foregroundColor(StamerleeTheme.textPrimaryLight)
-                        
+
                         Text("Start your fluency journey.")
                             .font(.system(size: 14, weight: .regular, design: .rounded))
                             .foregroundColor(StamerleeTheme.textSecondaryLight)
                     }
                     .padding(.top, 4)
-                    
+
                     VStack(spacing: 12) {
                         SocialAuthRow(type: .apple) { handleAuth(provider: "Apple") }
                         SocialAuthRow(type: .google) { handleAuth(provider: "Google") }
-                        
+
                         HStack(spacing: 12) {
                             Rectangle().fill(StamerleeTheme.dividerLight).frame(height: 1)
                             Text("OR")
@@ -108,26 +108,26 @@ public struct LoginView: View {
                             Rectangle().fill(StamerleeTheme.dividerLight).frame(height: 1)
                         }
                         .padding(.vertical, 2)
-                        
+
                         SocialAuthRow(type: .email) { activeSheet = .emailSignIn }
                     }
-                    
+
                     // Terms & Privacy
                     VStack(spacing: 4) {
                         Text("By continuing, you agree to our")
                             .font(.system(size: 11, weight: .regular))
                             .foregroundColor(StamerleeTheme.textSecondaryLight)
-                        
+
                         HStack(spacing: 4) {
                             Button("Terms of Service") { activeSheet = .terms }
                                 .font(.system(size: 11, weight: .semibold))
                                 .foregroundColor(StamerleeTheme.primaryBlue)
                                 .underline()
-                            
+
                             Text("and")
                                 .font(.system(size: 11, weight: .regular))
                                 .foregroundColor(StamerleeTheme.textSecondaryLight)
-                            
+
                             Button("Privacy Policy") { activeSheet = .privacy }
                                 .font(.system(size: 11, weight: .semibold))
                                 .foregroundColor(StamerleeTheme.primaryBlue)
@@ -159,13 +159,13 @@ public struct LoginView: View {
             sheetView(for: sheet)
         }
     }
-    
+
     private func handleAuth(provider: String) {
         state.authMethod = provider
         state.isAuthenticated = true
         state.navigate(to: .onboarding1)
     }
-    
+
     @ViewBuilder
     private func sheetView(for sheet: ActiveSheet) -> some View {
         NavigationStack {
@@ -187,25 +187,25 @@ public struct LoginView: View {
         }
         .presentationDetents([.medium])
     }
-    
+
     private var emailForm: some View {
         VStack(spacing: 16) {
             Text("Sign in with Email")
                 .font(.system(size: 20, weight: .bold, design: .rounded))
                 .padding(.top, 16)
-            
+
             TextField("Email address", text: $emailInput)
                 .keyboardType(.emailAddress)
                 .autocapitalization(.none)
                 .padding()
                 .background(Color(red: 242 / 255, green: 244 / 255, blue: 250 / 255))
                 .cornerRadius(12)
-            
+
             SecureField("Password", text: $passwordInput)
                 .padding()
                 .background(Color(red: 242 / 255, green: 244 / 255, blue: 250 / 255))
                 .cornerRadius(12)
-            
+
             PrimaryActionButton(title: "Continue") {
                 state.userEmail = emailInput.isEmpty ? "user@stamerlee.com" : emailInput
                 state.authMethod = "Email"
@@ -218,7 +218,7 @@ public struct LoginView: View {
         }
         .padding(.horizontal, 24)
     }
-    
+
     private func legalSheet(title: String, text: String) -> some View {
         VStack(alignment: .leading, spacing: 14) {
             Text(title).font(.system(size: 22, weight: .bold, design: .rounded))
@@ -232,25 +232,25 @@ public struct LoginView: View {
 // MARK: - 3. Onboarding Info 1
 public struct OnboardingStepOneView: View {
     @Bindable public var state: AppState
-    
+
     public init(state: AppState) {
         self.state = state
     }
-    
+
     public var body: some View {
         ZStack {
             StamerleeTheme.backgroundDark.ignoresSafeArea()
-            
+
             VStack(spacing: 0) {
                 PageIndicatorView(totalPages: 2, currentPage: 0)
                     .padding(.top, 12)
-                
+
                 VStack(alignment: .leading, spacing: 10) {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Small steps,")
                             .font(.system(size: 32, weight: .bold, design: .rounded))
                             .foregroundColor(StamerleeTheme.textPrimaryDark)
-                        
+
                         Text("stronger speech")
                             .font(.system(size: 32, weight: .bold, design: .rounded))
                             .foregroundStyle(
@@ -261,7 +261,7 @@ public struct OnboardingStepOneView: View {
                                 )
                             )
                     }
-                    
+
                     Text("Practice at your own pace, build confidence, and celebrate every step forward.")
                         .font(.system(size: 15, weight: .regular, design: .rounded))
                         .foregroundColor(StamerleeTheme.textSecondaryDark)
@@ -270,14 +270,14 @@ public struct OnboardingStepOneView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 28)
                 .padding(.top, 24)
-                
+
                 Spacer()
-                
+
                 OnboardingStepOneIllustration()
                     .padding(.vertical, 10)
-                
+
                 Spacer()
-                
+
                 PrimaryActionButton(title: "Begin") {
                     state.navigate(to: .onboarding2)
                 }
@@ -291,15 +291,15 @@ public struct OnboardingStepOneView: View {
 // MARK: - 4. Onboarding Info 2
 public struct OnboardingStepTwoView: View {
     @Bindable public var state: AppState
-    
+
     public init(state: AppState) {
         self.state = state
     }
-    
+
     public var body: some View {
         ZStack {
             StamerleeTheme.backgroundDark.ignoresSafeArea()
-            
+
             VStack(spacing: 0) {
                 ZStack {
                     PageIndicatorView(totalPages: 2, currentPage: 1)
@@ -310,13 +310,13 @@ public struct OnboardingStepTwoView: View {
                     .padding(.horizontal, 20)
                 }
                 .padding(.top, 12)
-                
+
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Support on your\nschedule")
                         .font(.system(size: 32, weight: .bold, design: .rounded))
                         .foregroundColor(StamerleeTheme.textPrimaryDark)
                         .lineSpacing(2)
-                    
+
                     Text("Simple activities to practice fluency and become more comfortable speaking.")
                         .font(.system(size: 15, weight: .regular, design: .rounded))
                         .foregroundColor(StamerleeTheme.textSecondaryDark)
@@ -325,16 +325,16 @@ public struct OnboardingStepTwoView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 28)
                 .padding(.top, 24)
-                
+
                 Spacer()
-                
+
                 OnboardingStepTwoIllustration()
                     .padding(.vertical, 8)
-                
+
                 Spacer()
-                
+
                 PrimaryActionButton(title: "Continue") {
-                    state.navigate(to: .challengingSounds)
+                state.navigate(to: .dailyGoal)
                 }
                 .padding(.horizontal, 28)
                 .padding(.bottom, 24)
@@ -343,21 +343,20 @@ public struct OnboardingStepTwoView: View {
     }
 }
 
-// MARK: - 5. Challenging Sounds View
-public struct ChallengingSoundsView: View {
+// MARK: - 5. Daily Goal View
+public struct DailyGoalView: View {
     @Bindable public var state: AppState
-    
-    @State private var options = SoundOption.sampleOptions
-    @FocusState private var isCustomFieldFocused: Bool
-    
+
+    private let goalOptions = [5, 10, 15, 20]
+
     public init(state: AppState) {
         self.state = state
     }
-    
+
     public var body: some View {
         ZStack {
             StamerleeTheme.backgroundDark.ignoresSafeArea()
-            
+
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     BackNavButton { state.navigate(to: .onboarding2, forward: false) }
@@ -365,65 +364,84 @@ public struct ChallengingSoundsView: View {
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 16)
-                
-                Text("Challenging\nSounds")
+
+                Text("Set Your Goals")
                     .font(.system(size: 32, weight: .bold, design: .rounded))
                     .foregroundColor(StamerleeTheme.textPrimaryDark)
-                    .lineSpacing(2)
                     .padding(.horizontal, 24)
                     .padding(.top, 24)
-                    .padding(.bottom, 28)
-                
+                    .padding(.bottom, 34)
+
                 VStack(alignment: .leading, spacing: 0) {
-                    Text("What are the sounds you stutter on?")
+                    Text("Choose your daily goal")
                         .font(.system(size: 16, weight: .bold, design: .rounded))
                         .foregroundColor(StamerleeTheme.textPrimaryLight)
                         .padding(.horizontal, 20)
                         .padding(.top, 22)
                         .padding(.bottom, 14)
-                    
+
                     VStack(spacing: 0) {
-                        ForEach(Array(options.enumerated()), id: \.element.id) { index, option in
-                            OptionSelectRow(
-                                option: option,
-                                isSelected: state.isSoundSelected(id: option.id)
-                            ) {
-                                state.toggleSound(id: option.id)
-                            }
-                            
-                            if option.isCustom && state.isSoundSelected(id: option.id) {
-                                HStack(spacing: 10) {
-                                    Image(systemName: "pencil")
-                                        .foregroundColor(StamerleeTheme.primaryBlue)
-                                    TextField("e.g. S, R, vowels...", text: $state.customSoundInput)
-                                        .font(.system(size: 14))
-                                        .focused($isCustomFieldFocused)
+                        ForEach(goalOptions, id: \.self) { minutes in
+                            Button {
+                                let impact = UIImpactFeedbackGenerator(style: .light)
+                                impact.impactOccurred()
+                                state.dailyPracticeMinutes = minutes
+                            } label: {
+                                HStack {
+                                    Text("\(minutes) min/day")
+                                        .font(.system(
+                                            size: 15,
+                                            weight: state.dailyPracticeMinutes == minutes ? .semibold : .regular,
+                                            design: .rounded
+                                        ))
+                                        .foregroundColor(StamerleeTheme.textPrimaryLight)
+
+                                    Spacer()
+
+                                    ZStack {
+                                        if state.dailyPracticeMinutes == minutes {
+                                            Circle()
+                                                .fill(StamerleeTheme.primaryBlue)
+                                                .frame(width: 22, height: 22)
+
+                                            Image(systemName: "checkmark")
+                                                .font(.system(size: 11, weight: .bold))
+                                                .foregroundColor(.white)
+                                        } else {
+                                            Circle()
+                                                .stroke(
+                                                    Color(red: 210 / 255, green: 215 / 255, blue: 228 / 255),
+                                                    lineWidth: 1.8
+                                                )
+                                                .frame(width: 22, height: 22)
+                                        }
+                                    }
                                 }
-                                .padding(.horizontal, 14)
-                                .padding(.vertical, 10)
-                                .background(Color(red: 245 / 255, green: 247 / 255, blue: 252 / 255))
-                                .cornerRadius(10)
                                 .padding(.horizontal, 16)
-                                .padding(.bottom, 12)
+                                .frame(height: 64)
+                                .background(
+                                    state.dailyPracticeMinutes == minutes
+                                        ? StamerleeTheme.primaryBlue.opacity(0.08)
+                                        : Color.clear
+                                )
                             }
-                            
-                            if index < options.count - 1 {
-                                Divider().padding(.horizontal, 16)
+
+                            if minutes != goalOptions.last {
+                                Divider()
+                                    .padding(.horizontal, 16)
                             }
                         }
                     }
-                    .padding(.bottom, 10)
                 }
                 .background(StamerleeTheme.cardLight)
                 .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
                 .shadow(color: Color.black.opacity(0.18), radius: 16, x: 0, y: 8)
                 .padding(.horizontal, 20)
-                
+
                 Spacer()
-                
+
                 PrimaryActionButton(
-                    title: "Continue",
-                    isEnabled: !state.selectedSoundIds.isEmpty
+                    title: "Continue"
                 ) {
                     state.navigate(to: .exploreActivities)
                 }
@@ -437,18 +455,18 @@ public struct ChallengingSoundsView: View {
 // MARK: - 6. Explore Activities View
 public struct ExploreActivitiesView: View {
     @Bindable public var state: AppState
-    
+
     public init(state: AppState) {
         self.state = state
     }
-    
+
     private struct ActivityCardItem: Identifiable {
         let id: String
         let iconName: String
         let fallbackFile: String
         let text: String
     }
-    
+
     private let activities: [ActivityCardItem] = [
         ActivityCardItem(
             id: "prolonged",
@@ -475,19 +493,19 @@ public struct ExploreActivitiesView: View {
             text: "Monitor your physical tension during narration with mirror exercises"
         )
     ]
-    
+
     public var body: some View {
         ZStack {
             StamerleeTheme.backgroundDark.ignoresSafeArea()
-            
+
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
-                    BackNavButton { state.navigate(to: .challengingSounds, forward: false) }
+                    BackNavButton { state.navigate(to: .dailyGoal, forward: false) }
                     Spacer()
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 16)
-                
+
                 Text("Explore activities\ndesigned for your\nstutter")
                     .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundColor(StamerleeTheme.textPrimaryDark)
@@ -495,7 +513,7 @@ public struct ExploreActivitiesView: View {
                     .padding(.horizontal, 24)
                     .padding(.top, 22)
                     .padding(.bottom, 22)
-                
+
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 12) {
                         ForEach(activities) { item in
@@ -505,9 +523,9 @@ public struct ExploreActivitiesView: View {
                     .padding(.horizontal, 20)
                     .padding(.bottom, 16)
                 }
-                
+
                 Spacer()
-                
+
                 PrimaryActionButton(title: "Continue") {
                     state.navigate(to: .homeDashboard)
                 }
@@ -516,7 +534,7 @@ public struct ExploreActivitiesView: View {
             }
         }
     }
-    
+
     private func activityCard(_ item: ActivityCardItem) -> some View {
         HStack(spacing: 16) {
             Group {
@@ -533,13 +551,13 @@ public struct ExploreActivitiesView: View {
                 }
             }
             .frame(width: 48, height: 48)
-            
+
             Text(item.text)
                 .font(.system(size: 13.5, weight: .semibold, design: .rounded))
                 .foregroundColor(StamerleeTheme.textPrimaryLight)
                 .lineSpacing(2.5)
                 .multilineTextAlignment(.leading)
-            
+
             Spacer(minLength: 4)
         }
         .padding(.horizontal, 16)
