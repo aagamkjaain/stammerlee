@@ -235,7 +235,7 @@ public struct HomeDashboardView: View {
                     ZStack {
                         Circle()
                             .fill(Color(red: 90 / 255, green: 105 / 255, blue: 180 / 255))
-                            .frame(width: 40, height: 50)
+                            .frame(width: 75, height: 75)
                         
                         Image(systemName: "lock.fill")
                             .font(.system(size: 19, weight: .bold))
@@ -266,7 +266,8 @@ public struct HomeDashboardView: View {
                     Text(subtitle)
                         .font(.system(size: 12, weight: .regular, design: .rounded))
                         .foregroundColor(StamerleeTheme.textSecondaryLight)
-                        .lineLimit(1)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 
                 Spacer()
@@ -277,7 +278,7 @@ public struct HomeDashboardView: View {
                     .foregroundColor(Color.gray.opacity(0.5))
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 14)
+            .frame(height: 100)
             .background(Color(red: 238 / 255, green: 240 / 255, blue: 250 / 255))
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             .shadow(color: Color.black.opacity(0.04), radius: 5, x: 0, y: 2)

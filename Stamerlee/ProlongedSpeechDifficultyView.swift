@@ -127,7 +127,7 @@ public struct ProlongedSpeechDifficultyView: View {
                     .padding(.trailing, 8)
             }
             .padding(.horizontal, 16)
-            .frame(height: 58)
+            .frame(height: 100)
             .background(Color(red: 238 / 255, green: 240 / 255, blue: 250 / 255))
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
