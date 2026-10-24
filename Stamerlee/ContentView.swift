@@ -34,6 +34,9 @@ public struct ContentView: View {
                 case .homeDashboard:
                     DashboardTabView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
+                case .profile:
+                    ProfileView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
                 case .prolongedSpeechIntro:
                     ProlongedSpeechIntroView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))

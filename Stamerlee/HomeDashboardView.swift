@@ -31,6 +31,15 @@ public struct HomeDashboardView: View {
                         .foregroundColor(StamerleeTheme.textPrimaryDark)
                     
                     Spacer()
+
+                    Button {
+                        state.navigate(to: .profile)
+                    } label: {
+                        Image(systemName: "person.crop.circle.fill")
+                            .font(.system(size: 32, weight: .semibold))
+                            .foregroundColor(StamerleeTheme.textPrimaryDark)
+                    }
+                    .accessibilityLabel("Open profile")
                     
                 }
                 .padding(.horizontal, 24)
@@ -261,11 +270,8 @@ public struct HomeDashboardView: View {
                 Tab("Home", systemImage: "house.fill", value: 0) {
                     Color.clear
                 }
-                Tab("Insights", systemImage: "chart.bar.fill", value: 1) {
+                Tab("Summary", systemImage: "chart.bar.fill", value: 1) {
                     Color.clear
-                }
-                Tab("Profile", systemImage: "person.crop.circle.fill", value: 2) {
-                    ProfileView(state: state)
                 }
             }
         } else {
@@ -274,11 +280,8 @@ public struct HomeDashboardView: View {
                     .tabItem { Label("Home", systemImage: "house.fill") }
                     .tag(0)
                 Color.clear
-                    .tabItem { Label("Insights", systemImage: "chart.bar.fill") }
+                    .tabItem { Label("Summary", systemImage: "chart.bar.fill") }
                     .tag(1)
-                ProfileView(state: state)
-                    .tabItem { Label("Profile", systemImage: "person.crop.circle.fill") }
-                    .tag(2)
             }
         }
     }
@@ -375,18 +378,12 @@ public struct DashboardTabView: View {
                 }
                 .tag(0)
 
-            Color.white
-                .ignoresSafeArea()
+            SummaryView(state: state)
                 .tabItem {
-                    Label("Insights", systemImage: "chart.bar.fill")
+                    Label("Summary", systemImage: "chart.bar.fill")
                 }
                 .tag(1)
 
-            ProfileView(state: state)
-                .tabItem {
-                    Label("Profile", systemImage: "person.crop.circle.fill")
-                }
-                .tag(2)
         }
     }
 

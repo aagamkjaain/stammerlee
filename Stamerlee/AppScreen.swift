@@ -11,6 +11,7 @@ public enum AppScreen: Hashable, CaseIterable {
     case dailyGoal
     case exploreActivities
     case homeDashboard
+    case profile
     case prolongedSpeechIntro
     case prolongedSpeechDifficulty
     case prolongedPractice
@@ -74,7 +75,7 @@ public final class AppState {
     public var customSoundInput: String = ""
     
     // Dashboard & Tab State
-    public var selectedTab: Int = 0 // 0: Home, 1: Insights, 2: Profile
+    public var selectedTab: Int = 0 // 0: Home, 1: Summary
     public var dailyPracticeMinutes: Int = 10
     public var currentStreakDays: Int = 3
     public var profileName: String = "John doe"
