@@ -94,7 +94,7 @@ public struct NarrationDifficultyView: View {
                     .foregroundColor(isCompleted ? StamerleeTheme.primaryBlue : .gray.opacity(0.5))
             }
             .padding(.horizontal, 16)
-            .frame(height: 58)
+            .frame(height: 100)
             .background(Color(red: 238 / 255, green: 240 / 255, blue: 250 / 255))
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }

@@ -235,12 +235,12 @@ public struct HomeDashboardView: View {
                     ZStack {
                         Circle()
                             .fill(Color(red: 90 / 255, green: 105 / 255, blue: 180 / 255))
-                            .frame(width: 40, height: 50)
+                            .frame(width: 50, height: 50)
                         
                         Image(systemName: "lock.fill")
                             .font(.system(size: 19, weight: .bold))
                             .foregroundColor(.white)
-                    }
+                    }.frame(width:75, height:75)
                 } else {
                     // Every unlocked exercise uses the same fixed icon treatment.
                     if let iconName, let fallbackPath,
@@ -249,11 +249,7 @@ public struct HomeDashboardView: View {
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 75, height: 75)
-                    } else {
-                        Image(systemName: "waveform.and.mic")
-                            .font(.system(size: 28, weight: .semibold))
-                            .foregroundColor(StamerleeTheme.primaryBlue)
-                            .frame(width: 75, height: 75)
+                     
                     }
                 }
                 
@@ -266,7 +262,8 @@ public struct HomeDashboardView: View {
                     Text(subtitle)
                         .font(.system(size: 12, weight: .regular, design: .rounded))
                         .foregroundColor(StamerleeTheme.textSecondaryLight)
-                        .lineLimit(1)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 
                 Spacer()
@@ -277,7 +274,7 @@ public struct HomeDashboardView: View {
                     .foregroundColor(Color.gray.opacity(0.5))
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 14)
+            .frame(height: 100)
             .background(Color(red: 238 / 255, green: 240 / 255, blue: 250 / 255))
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             .shadow(color: Color.black.opacity(0.04), radius: 5, x: 0, y: 2)
@@ -297,7 +294,7 @@ public struct HomeDashboardView: View {
                     Color.clear
                 }
                 Tab("Profile", systemImage: "person.crop.circle.fill", value: 2) {
-                    Color.clear
+                    ProfileView(state: state)
                 }
             }
         } else {
@@ -308,7 +305,7 @@ public struct HomeDashboardView: View {
                 Color.clear
                     .tabItem { Label("Insights", systemImage: "chart.bar.fill") }
                     .tag(1)
-                Color.clear
+                ProfileView(state: state)
                     .tabItem { Label("Profile", systemImage: "person.crop.circle.fill") }
                     .tag(2)
             }
@@ -355,8 +352,7 @@ public struct DashboardTabView: View {
                 }
                 .tag(1)
 
-            Color.white
-                .ignoresSafeArea()
+            ProfileView(state: state)
                 .tabItem {
                     Label("Profile", systemImage: "person.crop.circle.fill")
                 }
