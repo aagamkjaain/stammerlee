@@ -79,10 +79,10 @@ public struct PictureDescriptionDifficultyView: View {
             HStack {
                 if isLocked {
                     Image(systemName: "lock.fill")
-                        .font(.system(size: 12, weight: .bold))
+                        .font(.system(size: 19, weight: .bold))
                         .foregroundColor(.white)
-                        .frame(width: 28, height: 28)
-                        .background(Color(red: 80 / 255, green: 75 / 255, blue: 175 / 255))
+                        .frame(width: 50, height: 50)
+                        .background(Color(red: 90 / 255, green: 105 / 255, blue: 180 / 255))
                         .clipShape(Circle())
                 }
                 Spacer()
@@ -91,6 +91,7 @@ public struct PictureDescriptionDifficultyView: View {
                     .foregroundColor(StamerleeTheme.textPrimaryLight)
                 Spacer()
                 Image(systemName: isCompleted ? "checkmark.circle.fill" : "chevron.right")
+                    .font(.system(size: 12, weight: .semibold))
                     .foregroundColor(isCompleted ? StamerleeTheme.primaryBlue : .gray.opacity(0.5))
             }
             .padding(.horizontal, 16)

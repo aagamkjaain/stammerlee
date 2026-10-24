@@ -95,10 +95,10 @@ public struct ProlongedSpeechDifficultyView: View {
                     ZStack {
                         Circle()
                             .fill(Color(red: 90 / 255, green: 105 / 255, blue: 180 / 255))
-                            .frame(width: 32, height: 32)
+                            .frame(width: 50, height: 50)
                         
                         Image(systemName: "lock.fill")
-                            .font(.system(size: 13, weight: .bold))
+                            .font(.system(size: 19, weight: .bold))
                             .foregroundColor(.white)
                     }
                     .padding(.leading, 8)
