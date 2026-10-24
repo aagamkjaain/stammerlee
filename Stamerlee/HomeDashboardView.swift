@@ -306,23 +306,15 @@ public struct HomeDashboardView: View {
 
 
 private struct DailyGoalActivityRing: View {
-    private let ringSize: CGFloat = 60
+    private let ringSize: CGFloat = 63
     private let lineWidth: CGFloat = 10
     private let progress: Double = 0.25
 
     @State private var animatedProgress: Double = 0
 
-    private let trackColor = Color(
-        red: 70.0 / 255.0,
-        green: 0.0,
-        blue: 8.0 / 255.0
-    )
+    private let trackColor = Color(red: 74.0 / 255.0, green: 57.0 / 255.0, blue: 123.0 / 255.0)
 
-    private let progressColor = Color(
-        red: 245.0 / 255.0,
-        green: 0.0,
-        blue: 35.0 / 255.0
-    )
+    private let progressColor = Color(red: 139.0 / 255.0, green: 112.0 / 255.0, blue: 245.0 / 255.0)
 
     var body: some View {
         ZStack {
