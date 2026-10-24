@@ -235,12 +235,12 @@ public struct HomeDashboardView: View {
                     ZStack {
                         Circle()
                             .fill(Color(red: 90 / 255, green: 105 / 255, blue: 180 / 255))
-                            .frame(width: 75, height: 75)
+                            .frame(width: 50, height: 50)
                         
                         Image(systemName: "lock.fill")
                             .font(.system(size: 19, weight: .bold))
                             .foregroundColor(.white)
-                    }
+                    }.frame(width:75, height:75)
                 } else {
                     // Every unlocked exercise uses the same fixed icon treatment.
                     if let iconName, let fallbackPath,
@@ -249,11 +249,7 @@ public struct HomeDashboardView: View {
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 75, height: 75)
-                    } else {
-                        Image(systemName: "waveform.and.mic")
-                            .font(.system(size: 28, weight: .semibold))
-                            .foregroundColor(StamerleeTheme.primaryBlue)
-                            .frame(width: 75, height: 75)
+                     
                     }
                 }
                 
