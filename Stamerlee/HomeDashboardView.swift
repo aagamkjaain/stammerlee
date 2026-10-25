@@ -22,7 +22,7 @@ public struct HomeDashboardView: View {
             StamerleeTheme.backgroundDark
                 .ignoresSafeArea()
             
-            if state.selectedTab == 0 {
+            if state.selectedTab == .home {
                 VStack(alignment: .leading, spacing: 0) {
                 // Header Bar
                 HStack {
@@ -266,38 +266,26 @@ public struct HomeDashboardView: View {
     @ViewBuilder
     private var nativeTabView: some View {
         if #available(iOS 18.0, *) {
-            TabView(selection: tabSelectionBinding) {
-                Tab("Home", systemImage: "house.fill", value: 0) {
+            TabView(selection: state.selectedTabBinding) {
+                Tab(AppTab.home.title, systemImage: AppTab.home.systemImage, value: AppTab.home) {
                     Color.clear
                 }
-                Tab("Summary", systemImage: "chart.bar.fill", value: 1) {
+                Tab(AppTab.summary.title, systemImage: AppTab.summary.systemImage, value: AppTab.summary) {
                     Color.clear
                 }
             }
         } else {
-            TabView(selection: tabSelectionBinding) {
+            TabView(selection: state.selectedTabBinding) {
                 Color.clear
-                    .tabItem { Label("Home", systemImage: "house.fill") }
-                    .tag(0)
+                    .tabItem { Label(AppTab.home.title, systemImage: AppTab.home.systemImage) }
+                    .tag(AppTab.home)
                 Color.clear
-                    .tabItem { Label("Summary", systemImage: "chart.bar.fill") }
-                    .tag(1)
+                    .tabItem { Label(AppTab.summary.title, systemImage: AppTab.summary.systemImage) }
+                    .tag(AppTab.summary)
             }
         }
     }
 
-    private var tabSelectionBinding: Binding<Int> {
-        Binding(
-            get: { state.selectedTab },
-            set: { newValue in
-                UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                withAnimation(.easeInOut(duration: 0.22)) {
-                    state.selectedTab = newValue
-                }
-            }
-        )
-    }
-    
     private func triggerLockedAlert(title: String) {
         lockedAlertMessage = "\(title) will unlock as you complete the Prolonged Speech foundation exercises!"
         showLockedAlert = true
@@ -306,7 +294,7 @@ public struct HomeDashboardView: View {
 
 
 private struct DailyGoalActivityRing: View {
-    private let ringSize: CGFloat = 63
+    private let ringSize: CGFloat = 65
     private let lineWidth: CGFloat = 10
     private let progress: Double = 0.25
 
@@ -363,31 +351,19 @@ public struct DashboardTabView: View {
     }
 
     public var body: some View {
-        TabView(selection: tabSelectionBinding) {
+        TabView(selection: state.selectedTabBinding) {
             HomeDashboardView(state: state, showsTabBar: false)
                 .tabItem {
-                    Label("Home", systemImage: "house.fill")
+                    Label(AppTab.home.title, systemImage: AppTab.home.systemImage)
                 }
-                .tag(0)
+                .tag(AppTab.home)
 
             SummaryView(state: state)
                 .tabItem {
-                    Label("Summary", systemImage: "chart.bar.fill")
+                    Label(AppTab.summary.title, systemImage: AppTab.summary.systemImage)
                 }
-                .tag(1)
+                .tag(AppTab.summary)
 
         }
-    }
-
-    private var tabSelectionBinding: Binding<Int> {
-        Binding(
-            get: { state.selectedTab },
-            set: { newValue in
-                UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                withAnimation(.easeInOut(duration: 0.22)) {
-                    state.selectedTab = newValue
-                }
-            }
-        )
     }
 }
