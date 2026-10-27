@@ -64,7 +64,7 @@ public struct SummaryView: View {
             HStack(spacing: 0) {
                 ForEach(Array(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].enumerated()), id: \.offset) { index, day in
                     let completedDays = min(max(state.currentStreakDays, 0), 7)
-                    let isCompleted = index < completedDays
+                 
                     let isCurrent = completedDays > 0 && index == completedDays - 1
 
                     VStack(spacing: 8) {

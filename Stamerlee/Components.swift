@@ -145,7 +145,11 @@ public struct SocialAuthRow: View {
                 .font(.system(size: 20, weight: .semibold))
                 .foregroundColor(.black)
         case .google:
-            GoogleLogoIcon()
+            Image("googlesvg")
+                .resizable()
+                .frame(width: 20, height: 20)
+    
+            
         case .email:
             Image(systemName: "envelope")
                 .font(.system(size: 17, weight: .semibold))
@@ -154,37 +158,37 @@ public struct SocialAuthRow: View {
     }
 }
 
-// MARK: - Google 'G' Icon
-public struct GoogleLogoIcon: View {
-    public init() {}
-    
-    public var body: some View {
-        ZStack {
-            // Stylized 4-color Google G representation
-            Circle()
-                .stroke(
-                    AngularGradient(
-                        gradient: Gradient(colors: [
-                            Color(red: 234 / 255, green: 67 / 255, blue: 53 / 255),  // Red
-                            Color(red: 251 / 255, green: 188 / 255, blue: 5 / 255), // Yellow
-                            Color(red: 52 / 255, green: 168 / 255, blue: 83 / 255),  // Green
-                            Color(red: 66 / 255, green: 133 / 255, blue: 244 / 255), // Blue
-                            Color(red: 234 / 255, green: 67 / 255, blue: 53 / 255)
-                        ]),
-                        center: .center
-                    ),
-                    lineWidth: 3
-                )
-                .frame(width: 19, height: 19)
-            
-            // Cross bar for 'G'
-            Rectangle()
-                .fill(Color(red: 66 / 255, green: 133 / 255, blue: 244 / 255))
-                .frame(width: 9, height: 3)
-                .offset(x: 2, y: 0)
-        }
-    }
-}
+//// MARK: - Google 'G' Icon
+//public struct GoogleLogoIcon: View {
+//    public init() {}
+//    
+//    public var body: some View {
+//        ZStack {
+//            // Stylized 4-color Google G representation
+//            Circle()
+//                .stroke(
+//                    AngularGradient(
+//                        gradient: Gradient(colors: [
+//                            Color(red: 234 / 255, green: 67 / 255, blue: 53 / 255),  // Red
+//                            Color(red: 251 / 255, green: 188 / 255, blue: 5 / 255), // Yellow
+//                            Color(red: 52 / 255, green: 168 / 255, blue: 83 / 255),  // Green
+//                            Color(red: 66 / 255, green: 133 / 255, blue: 244 / 255), // Blue
+//                            Color(red: 234 / 255, green: 67 / 255, blue: 53 / 255)
+//                        ]),
+//                        center: .center
+//                    ),
+//                    lineWidth: 3
+//                )
+//                .frame(width: 19, height: 19)
+//            
+//            // Cross bar for 'G'
+//            Rectangle()
+//                .fill(Color(red: 66 / 255, green: 133 / 255, blue: 244 / 255))
+//                .frame(width: 9, height: 3)
+//                .offset(x: 2, y: 0)
+//        }
+//    }
+//}
 
 // MARK: - Page Indicator
 public struct PageIndicatorView: View {

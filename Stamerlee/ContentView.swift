@@ -187,15 +187,10 @@ private struct OnboardingFlowView: View {
                 .navigationDestination(for: AppScreen.self) { screen in
                     destinationView(for: screen)
                 }
-        }
-        .safeAreaInset(edge: .top, spacing: 0) {
-            PageIndicatorView(
-                totalPages: pages.count,
-                currentPage: pages.firstIndex(of: state.currentScreen) ?? 0
-            )
-            .frame(maxWidth: .infinity)
-            .background(StamerleeTheme.backgroundDark)
-            .transition(.opacity.combined(with: .scale(scale: 0.9)))
+                .toolbar(.visible, for: .navigationBar)
+                .toolbarBackground(StamerleeTheme.backgroundDark, for: .navigationBar)
+                .toolbarBackground(.visible, for: .navigationBar)
+                .navigationBarTitleDisplayMode(.inline)
         }
         .animation(.easeInOut(duration: 0.28), value: state.currentScreen)
         .onAppear {

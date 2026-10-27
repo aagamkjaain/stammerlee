@@ -313,6 +313,8 @@ private struct DailyGoalActivityRing: View {
 
 
 
+
+
 public struct DashboardTabView: View {
     @Bindable public var state: AppState
 
@@ -322,21 +324,30 @@ public struct DashboardTabView: View {
 
     public var body: some View {
         TabView(selection: state.selectedTabBinding) {
+
             HomeDashboardView(state: state)
                 .tabItem {
-                    Label(AppTab.home.title, systemImage: AppTab.home.systemImage)
+                    Label(
+                        AppTab.home.title,
+                        systemImage: AppTab.home.systemImage
+                    )
                 }
                 .tag(AppTab.home)
 
             SummaryView(state: state)
                 .tabItem {
-                    Label(AppTab.summary.title, systemImage: AppTab.summary.systemImage)
+                    Label(
+                        AppTab.summary.title,
+                        systemImage: AppTab.summary.systemImage
+                    )
                 }
                 .tag(AppTab.summary)
-
         }
         .tint(StamerleeTheme.primaryBlue)
-        .toolbarBackground(StamerleeTheme.backgroundDark, for: .tabBar)
+        .toolbarBackground(
+            StamerleeTheme.backgroundDark,
+            for: .tabBar
+        )
         .toolbarBackground(.visible, for: .tabBar)
         .toolbarColorScheme(.dark, for: .tabBar)
     }
