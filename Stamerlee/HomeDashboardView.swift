@@ -5,14 +5,12 @@ import UIKit
 /// Main application hub with daily goals, exercise modules, and bottom tab bar.
 public struct HomeDashboardView: View {
     @Bindable public var state: AppState
-    private let showsTabBar: Bool
     
     @State private var showLockedAlert: Bool = false
     @State private var lockedAlertMessage: String = ""
     
-    public init(state: AppState, showsTabBar: Bool = true) {
+    public init(state: AppState) {
         self.state = state
-        self.showsTabBar = showsTabBar
     }
     
     public var body: some View {
@@ -151,10 +149,6 @@ public struct HomeDashboardView: View {
                 Color.white
                     .ignoresSafeArea()
             }
-            
-            if showsTabBar {
-                nativeTabView
-            }
         }
 
         .alert("Module Locked", isPresented: $showLockedAlert) {
@@ -262,30 +256,6 @@ public struct HomeDashboardView: View {
         .buttonStyle(.plain)
     }
     
-    // MARK: - Native Tab Bar
-    @ViewBuilder
-    private var nativeTabView: some View {
-        if #available(iOS 18.0, *) {
-            TabView(selection: state.selectedTabBinding) {
-                Tab(AppTab.home.title, systemImage: AppTab.home.systemImage, value: AppTab.home) {
-                    Color.clear
-                }
-                Tab(AppTab.summary.title, systemImage: AppTab.summary.systemImage, value: AppTab.summary) {
-                    Color.clear
-                }
-            }
-        } else {
-            TabView(selection: state.selectedTabBinding) {
-                Color.clear
-                    .tabItem { Label(AppTab.home.title, systemImage: AppTab.home.systemImage) }
-                    .tag(AppTab.home)
-                Color.clear
-                    .tabItem { Label(AppTab.summary.title, systemImage: AppTab.summary.systemImage) }
-                    .tag(AppTab.summary)
-            }
-        }
-    }
-
     private func triggerLockedAlert(title: String) {
         lockedAlertMessage = "\(title) will unlock as you complete the Prolonged Speech foundation exercises!"
         showLockedAlert = true
@@ -352,7 +322,7 @@ public struct DashboardTabView: View {
 
     public var body: some View {
         TabView(selection: state.selectedTabBinding) {
-            HomeDashboardView(state: state, showsTabBar: false)
+            HomeDashboardView(state: state)
                 .tabItem {
                     Label(AppTab.home.title, systemImage: AppTab.home.systemImage)
                 }
@@ -365,5 +335,9 @@ public struct DashboardTabView: View {
                 .tag(AppTab.summary)
 
         }
+        .tint(StamerleeTheme.primaryBlue)
+        .toolbarBackground(StamerleeTheme.backgroundDark, for: .tabBar)
+        .toolbarBackground(.visible, for: .tabBar)
+        .toolbarColorScheme(.dark, for: .tabBar)
     }
 }

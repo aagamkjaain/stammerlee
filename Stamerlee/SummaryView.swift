@@ -5,11 +5,14 @@ import UIKit
 /// Progress overview shown in the Summary tab.
 public struct SummaryView: View {
     @Bindable public var state: AppState
-    @State private var showingCalendar = false
 
     private let lavender = StamerleeTheme.profileCard
     private let rowBackground = Color.white.opacity(0.62)
-    private let summaryBlue = Color(red: 73 / 255, green: 111 / 255, blue: 245 / 255)
+    private let summaryBlue = StamerleeTheme.primaryBlue
+    private let streakCardBackground = Color(red: 232 / 255, green: 233 / 255, blue: 248 / 255)
+    private let streakAccent = Color(red: 101 / 255, green: 120 / 255, blue: 223 / 255)
+    private let streakRing = Color(red: 165 / 255, green: 175 / 255, blue: 232 / 255)
+    private let selectedDayBackground = Color(red: 215 / 255, green: 217 / 255, blue: 243 / 255)
 
     public init(state: AppState) {
         self.state = state
@@ -35,70 +38,51 @@ public struct SummaryView: View {
             }
         }
         .preferredColorScheme(.dark)
-        .sheet(isPresented: $showingCalendar) {
-            PracticeCalendarSheet(streakDays: state.currentStreakDays)
-                .presentationDetents([.medium, .large])
-                .presentationDragIndicator(.visible)
-        }
     }
 
     private var practiceStreakCard: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            HStack(spacing: 12) {
-                Image(systemName: "flame.fill")
-                    .font(.system(size: 20, weight: .bold))
-                    .foregroundStyle(Color(red: 117 / 255, green: 113 / 255, blue: 231 / 255))
-                    .frame(width: 40, height: 40)
-                    .background(Color.white.opacity(0.35), in: Circle())
-                Text("Practice Streak")
-                    .font(.system(size: 21, weight: .bold, design: .rounded))
-                    .foregroundStyle(StamerleeTheme.textPrimaryLight)
-                Spacer()
-                Button {
-                    showingCalendar = true
-                } label: {
-                    HStack(spacing: 4) {
-                        Text("This month")
-                        Image(systemName: "chevron.down")
-                            .font(.system(size: 8, weight: .bold))
-                    }
-                    .font(.system(size: 10, weight: .semibold, design: .rounded))
-                    .foregroundStyle(StamerleeTheme.textPrimaryLight)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-                    .background(Color.white.opacity(0.38), in: Capsule())
+        VStack(alignment: .leading, spacing: 15) {
+            HStack(spacing: 10) {
+                Image(systemName: "flame")
+                    .font(.system(size: 22, weight: .semibold))
+                    .foregroundStyle(streakAccent)
+                    .frame(width: 48, height: 48)
+                    .background(streakAccent.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
+
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("Daily Practice")
+                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                        .foregroundStyle(StamerleeTheme.textPrimaryLight)
+                    Text("Streak: \(max(state.currentStreakDays, 0)) Days")
+                        .font(.system(size: 16, weight: .medium, design: .rounded))
+                        .foregroundStyle(StamerleeTheme.textSecondaryLight)
                 }
-                .buttonStyle(.plain)
+
+                
             }
 
-            HStack(spacing: 14) {
+            HStack(spacing: 0) {
                 ForEach(Array(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].enumerated()), id: \.offset) { index, day in
-                    let isCompleted = index < min(max(state.currentStreakDays, 0), 5)
-                    let isCurrent = index == 4
+                    let completedDays = min(max(state.currentStreakDays, 0), 7)
+                    let isCompleted = index < completedDays
+                    let isCurrent = completedDays > 0 && index == completedDays - 1
 
-                    VStack(spacing: 7) {
-                        ZStack {
-                            Circle()
-                                .stroke(summaryBlue.opacity(0.35), lineWidth: isCurrent ? 5 : 1.5)
-                                .frame(width: 24, height: 24)
-                            if isCompleted {
-                                Circle().fill(summaryBlue).frame(width: 24, height: 24)
-                                Image(systemName: "checkmark")
-                                    .font(.system(size: 11, weight: .bold))
-                                    .foregroundStyle(.white)
-                            }
-                        }
+                    VStack(spacing: 8) {
                         Text(day)
-                            .font(.system(size: 10, weight: .medium, design: .rounded))
-                            .foregroundStyle(isCurrent ? StamerleeTheme.textPrimaryLight : summaryBlue.opacity(0.7))
+                            .font(.system(size: 15, weight: .medium, design: .rounded))
+                            .foregroundStyle(StamerleeTheme.textPrimaryLight)
+
+                        
                     }
                     .frame(maxWidth: .infinity)
+                    .padding(.vertical, 4)
+                    .background(isCurrent ? selectedDayBackground : .clear, in: RoundedRectangle(cornerRadius: 12))
                 }
             }
         }
         .padding(.horizontal, 18)
-        .padding(.vertical, 14)
-        .background(lavender, in: RoundedRectangle(cornerRadius: 16))
+        .padding(.vertical, 16)
+        .background(streakCardBackground, in: RoundedRectangle(cornerRadius: 18))
     }
 
     private var challengingSoundsCard: some View {
@@ -308,11 +292,4 @@ private struct NativePracticeCalendar: UIViewRepresentable {
             return dayOffset >= 0 && dayOffset < max(streakDays, 0)
         }
     }
-}
-
-
-#Preview("Summary Screen") {
-    @Previewable @State var state = AppState()
-
-    SummaryView(state: state)
 }
