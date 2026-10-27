@@ -79,13 +79,13 @@ public struct PictureDescriptionEasyView: View {
                 .padding(.horizontal, 24)
                 .padding(.top, 10)
 
-            pictureAsset
-                .frame(maxWidth: .infinity)
-                .frame(height: 190)
-                .padding(.horizontal, 20)
-                .padding(.top, 24)
+            Spacer(minLength: 16)
 
-            Spacer()
+            pictureAsset
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.horizontal, 20)
+
+            Spacer(minLength: 16)
 
             Button {
                 completeCurrentDifficulty()
@@ -195,33 +195,67 @@ public struct PictureDescriptionEasyView: View {
         }
     }
 
+    private var localFallbackPath: String {
+        let filename: String
+        switch difficulty {
+        case "Medium":
+            filename = "PictureDescriptionMedium.imageset/picdesmedium.png"
+        case "Hard":
+            filename = "PictureDescriptionHard.imageset/picdeshard.png"
+        default:
+            filename = "PictureDescriptionEasy.imageset/picturedeseasy.png"
+        }
+        return "/Users/user15/Desktop/untitled folder/stammerlee/Stamerlee/Assets.xcassets/\(filename)"
+    }
+
+    private var loadedImage: UIImage? {
+        if let image = StamerleeImageLoader.loadHeroImage(name: pictureAssetName, fallbackPath: localFallbackPath) {
+            return image
+        }
+        if let image = StamerleeImageLoader.loadHeroImage(name: pictureAssetName, fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/\(pictureAssetName).png") {
+            return image
+        }
+        if let image = StamerleeImageLoader.loadHeroImage(name: "picturedes", fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/picturedes.png") {
+            return image
+        }
+        return nil
+    }
+
     @ViewBuilder
     private var pictureAsset: some View {
-        if let image = StamerleeImageLoader.loadHeroImage(
-            name: pictureAssetName,
-            fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/\(pictureAssetName).png"
-        ) ?? StamerleeImageLoader.loadHeroImage(
-            name: "picturedes",
-            fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/picturedes.png"
-        ) {
-            Image(uiImage: image)
-                .resizable()
-                .scaledToFit()
-                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-        } else {
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(Color.white.opacity(0.08))
-                .overlay {
-                    VStack(spacing: 8) {
-                        Image(systemName: "photo")
-                            .font(.system(size: 34))
-                        Text("Picture Description")
-                            .font(.system(size: 14, weight: .semibold, design: .rounded))
+        Group {
+            if let image = loadedImage {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity)
+                    .frame(maxHeight: 280)
+                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20, style: .continuous)
+                            .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                    )
+                    .shadow(color: Color.black.opacity(0.3), radius: 10, x: 0, y: 4)
+            } else {
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .fill(Color.white.opacity(0.08))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 240)
+                    .overlay {
+                        VStack(spacing: 8) {
+                            Image(systemName: "photo")
+                                .font(.system(size: 34))
+                            Text("Picture Description")
+                                .font(.system(size: 14, weight: .semibold, design: .rounded))
+                        }
+                        .foregroundColor(StamerleeTheme.textSecondaryDark)
                     }
-                    .foregroundColor(StamerleeTheme.textSecondaryDark)
-                }
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20, style: .continuous)
+                            .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                    )
+            }
         }
-
     }
 
     private func completeCurrentDifficulty() {
