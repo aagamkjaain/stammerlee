@@ -68,93 +68,63 @@ public struct LoginView: View {
     }
 
     public var body: some View {
-        ZStack {
-            StamerleeTheme.backgroundDark.ignoresSafeArea()
+        VStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Get started")
+                    .font(.system(size: 26, weight: .bold, design: .rounded))
+                    .foregroundColor(StamerleeTheme.textPrimaryLight)
 
-            VStack(spacing: 0) {
-                // Top Branding
-                VStack {
-                    Spacer()
-                    Text("Stamerlee")
-                        .font(.system(size: 38, weight: .bold, design: .rounded))
-                        .foregroundColor(StamerleeTheme.textPrimaryDark)
-                        .padding(.bottom, 36)
-                    Spacer()
-                }
-                .frame(maxHeight: .infinity)
-
-                // Bottom Rounded Sheet
-                VStack(alignment: .leading, spacing: 20) {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Get started")
-                            .font(.system(size: 26, weight: .bold, design: .rounded))
-                            .foregroundColor(StamerleeTheme.textPrimaryLight)
-
-                        Text("Start your fluency journey.")
-                            .font(.system(size: 14, weight: .regular, design: .rounded))
-                            .foregroundColor(StamerleeTheme.textSecondaryLight)
-                    }
-                    .padding(.top, 4)
-
-                    VStack(spacing: 12) {
-                        SocialAuthRow(type: .apple) { handleAuth(provider: "Apple") }
-                        SocialAuthRow(type: .google) { handleAuth(provider: "Google") }
-
-                        HStack(spacing: 12) {
-                            Rectangle().fill(StamerleeTheme.dividerLight).frame(height: 1)
-                            Text("OR")
-                                .font(.system(size: 11, weight: .semibold))
-                                .foregroundColor(StamerleeTheme.textSecondaryLight.opacity(0.8))
-                            Rectangle().fill(StamerleeTheme.dividerLight).frame(height: 1)
-                        }
-                        .padding(.vertical, 2)
-
-                        SocialAuthRow(type: .email) { activeSheet = .emailSignIn }
-                    }
-
-                    // Terms & Privacy
-                    VStack(spacing: 4) {
-                        Text("By continuing, you agree to our")
-                            .font(.system(size: 11, weight: .regular))
-                            .foregroundColor(StamerleeTheme.textSecondaryLight)
-
-                        HStack(spacing: 4) {
-                            Button("Terms of Service") { activeSheet = .terms }
-                                .font(.system(size: 11, weight: .semibold))
-                                .foregroundColor(StamerleeTheme.primaryBlue)
-                                .underline()
-
-                            Text("and")
-                                .font(.system(size: 11, weight: .regular))
-                                .foregroundColor(StamerleeTheme.textSecondaryLight)
-
-                            Button("Privacy Policy") { activeSheet = .privacy }
-                                .font(.system(size: 11, weight: .semibold))
-                                .foregroundColor(StamerleeTheme.primaryBlue)
-                                .underline()
-                        }
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.top, 6)
-                    .padding(.bottom, 12)
-                }
-                .padding(.horizontal, 24)
-                .padding(.top, 28)
-                .background(
-                    StamerleeTheme.sheetBackground
-                        .clipShape(
-                            UnevenRoundedRectangle(
-                                topLeadingRadius: 36,
-                                bottomLeadingRadius: 0,
-                                bottomTrailingRadius: 0,
-                                topTrailingRadius: 36,
-                                style: .continuous
-                            )
-                        )
-                        .ignoresSafeArea(edges: .bottom)
-                )
+                Text("Start your fluency journey.")
+                    .font(.system(size: 14, weight: .regular, design: .rounded))
+                    .foregroundColor(StamerleeTheme.textSecondaryLight)
             }
+            .padding(.top, 4)
+
+            VStack(spacing: 12) {
+                SocialAuthRow(type: .apple) { handleAuth(provider: "Apple") }
+                SocialAuthRow(type: .google) { handleAuth(provider: "Google") }
+
+                HStack(spacing: 12) {
+                    Rectangle().fill(StamerleeTheme.dividerLight).frame(height: 1)
+                    Text("OR")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(StamerleeTheme.textSecondaryLight.opacity(0.8))
+                    Rectangle().fill(StamerleeTheme.dividerLight).frame(height: 1)
+                }
+                .padding(.vertical, 2)
+
+                SocialAuthRow(type: .email) { activeSheet = .emailSignIn }
+            }
+
+            VStack(spacing: 4) {
+                Text("By continuing, you agree to our")
+                    .font(.system(size: 11, weight: .regular))
+                    .foregroundColor(StamerleeTheme.textSecondaryLight)
+
+                HStack(spacing: 4) {
+                    Button("Terms of Service") { activeSheet = .terms }
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(StamerleeTheme.primaryBlue)
+                        .underline()
+
+                    Text("and")
+                        .font(.system(size: 11, weight: .regular))
+                        .foregroundColor(StamerleeTheme.textSecondaryLight)
+
+                    Button("Privacy Policy") { activeSheet = .privacy }
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(StamerleeTheme.primaryBlue)
+                        .underline()
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.top, 6)
+            .padding(.bottom, 12)
         }
+        .padding(.horizontal, 24)
+        .padding(.top, 28)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .background(StamerleeTheme.sheetBackground.ignoresSafeArea())
         .sheet(item: $activeSheet) { sheet in
             sheetView(for: sheet)
         }
@@ -242,9 +212,6 @@ public struct OnboardingStepOneView: View {
             StamerleeTheme.backgroundDark.ignoresSafeArea()
 
             VStack(spacing: 0) {
-                PageIndicatorView(totalPages: 4, currentPage: 0)
-                    .padding(.top, 12)
-
                 VStack(alignment: .leading, spacing: 10) {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Small steps,")
@@ -278,7 +245,7 @@ public struct OnboardingStepOneView: View {
 
                 Spacer()
 
-                PrimaryActionButton(title: "Begin") {
+                PrimaryActionButton(title: "Next") {
                     state.navigate(to: .onboarding2)
                 }
                 .padding(.horizontal, 28)
@@ -301,16 +268,6 @@ public struct OnboardingStepTwoView: View {
             StamerleeTheme.backgroundDark.ignoresSafeArea()
 
             VStack(spacing: 0) {
-                ZStack {
-                    PageIndicatorView(totalPages: 4, currentPage: 1)
-                    HStack {
-                        BackNavButton { state.navigate(to: .onboarding1, forward: false) }
-                        Spacer()
-                    }
-                    .padding(.horizontal, 20)
-                }
-                .padding(.top, 12)
-
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Support on your\nschedule")
                         .font(.system(size: 32, weight: .bold, design: .rounded))
@@ -333,8 +290,8 @@ public struct OnboardingStepTwoView: View {
 
                 Spacer()
 
-                PrimaryActionButton(title: "Continue") {
-                state.navigate(to: .dailyGoal)
+                PrimaryActionButton(title: "Next") {
+                    state.navigate(to: .dailyGoal)
                 }
                 .padding(.horizontal, 28)
                 .padding(.bottom, 24)
@@ -358,16 +315,6 @@ public struct DailyGoalView: View {
             StamerleeTheme.backgroundDark.ignoresSafeArea()
 
             VStack(alignment: .leading, spacing: 0) {
-                ZStack {
-                    PageIndicatorView(totalPages: 4, currentPage: 2)
-                    HStack {
-                        BackNavButton { state.navigate(to: .onboarding2, forward: false) }
-                        Spacer()
-                    }
-                }
-                .padding(.horizontal, 24)
-                .padding(.top, 16)
-
                 Text("Set Your Goals")
                     .font(.system(size: 32, weight: .bold, design: .rounded))
                     .foregroundColor(StamerleeTheme.textPrimaryDark)
@@ -444,7 +391,7 @@ public struct DailyGoalView: View {
                 Spacer()
 
                 PrimaryActionButton(
-                    title: "Continue"
+                    title: "Next"
                 ) {
                     state.navigate(to: .exploreActivities)
                 }
@@ -502,16 +449,6 @@ public struct ExploreActivitiesView: View {
             StamerleeTheme.backgroundDark.ignoresSafeArea()
 
             VStack(alignment: .leading, spacing: 0) {
-                ZStack {
-                    PageIndicatorView(totalPages: 4, currentPage: 3)
-                    HStack {
-                        BackNavButton { state.navigate(to: .dailyGoal, forward: false) }
-                        Spacer()
-                    }
-                }
-                .padding(.horizontal, 24)
-                .padding(.top, 16)
-
                 Text("Explore activities\ndesigned for your\nstutter")
                     .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundColor(StamerleeTheme.textPrimaryDark)
@@ -532,7 +469,7 @@ public struct ExploreActivitiesView: View {
 
                 Spacer()
 
-                PrimaryActionButton(title: "Continue") {
+                PrimaryActionButton(title: "Begin") {
                     state.navigate(to: .homeDashboard)
                 }
                 .padding(.horizontal, 24)
