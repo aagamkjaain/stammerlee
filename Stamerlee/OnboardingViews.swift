@@ -37,7 +37,7 @@ public struct LaunchView: View {
             state.navigate(to: .login)
         }
         .onAppear {
-            withAnimation(.easeOut(duration: 0.9)) {
+            withAnimation(.easeOut(duration: 2.5)) {
                 logoOpacity = 1.0
                 logoScale = 1.0
             }
@@ -421,25 +421,25 @@ public struct ExploreActivitiesView: View {
         ActivityCardItem(
             id: "prolonged",
             iconName: "IconProlongedSpeech",
-            fallbackFile: "/Users/user89/Documents/bitch/Screenshot_2026-10-21_at_11.26.10_PM-removebg-preview 2.png",
+            fallbackFile: "/Users/user89/Documents/stammerlee/Screenshot_2026-10-21_at_11.26.10_PM-removebg-preview 2.png",
             text: "Learn smooth pacing with prolonged speech and continuous airflow exercises"
         ),
         ActivityCardItem(
             id: "picture",
             iconName: "IconPictureDesc",
-            fallbackFile: "/Users/user89/Documents/bitch/Screenshot_2026-10-21_at_11.46.28_PM-removebg-preview 2.png",
+            fallbackFile: "/Users/user89/Documents/stammerlee/Screenshot_2026-10-21_at_11.46.28_PM-removebg-preview 2.png",
             text: "Build spontaneous fluency with picture description"
         ),
         ActivityCardItem(
             id: "dial",
             iconName: "IconDialScene",
-            fallbackFile: "/Users/user89/Documents/bitch/Firefly_RemoveBackground 2.png",
+            fallbackFile: "/Users/user89/Documents/stammerlee/Firefly_RemoveBackground 2.png",
             text: "Simulate phone calls using dial scene to build conversational confidence"
         ),
         ActivityCardItem(
             id: "mirror",
             iconName: "IconMirrorNarration",
-            fallbackFile: "/Users/user89/Documents/bitch/Screenshot_2026-10-21_at_11.35.41_PM-removebg-preview 2.png",
+            fallbackFile: "/Users/user89/Documents/stammerlee/Screenshot_2026-10-21_at_11.35.41_PM-removebg-preview 2.png",
             text: "Monitor your physical tension during narration with mirror exercises"
         )
     ]

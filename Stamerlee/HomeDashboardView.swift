@@ -62,7 +62,7 @@ public struct HomeDashboardView: View {
                                 subtitle: "Practice gently stretching sounds while speaking slowly",
                                 isLocked: false,
                                 iconName: "IconProlongedSpeech",
-                                fallbackPath: "/Users/user89/Documents/bitch/Screenshot_2026-10-21_at_11.26.10_PM-removebg-preview 2.png"
+                                fallbackPath: "/Users/user89/Documents/stammerlee/Screenshot_2026-10-21_at_11.26.10_PM-removebg-preview 2.png"
                             ) {
                                 state.navigate(
                                     to: state.hasSeenProlongedSpeechIntro
@@ -77,7 +77,7 @@ public struct HomeDashboardView: View {
                                 subtitle: "Describe real-world scenes in detail to practice spontaneous speech flow",
                                 isLocked: !state.isPictureDescriptionUnlocked,
                                 iconName: "IconPictureDesc",
-                                fallbackPath: "/Users/user89/Documents/bitch/Stamerlee/IconPictureDesc.png"
+                                fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/IconPictureDesc.png"
                             ) {
                                 if state.isPictureDescriptionUnlocked {
                                     state.navigate(to: .pictureDescriptionDifficulty)
@@ -92,7 +92,7 @@ public struct HomeDashboardView: View {
                                 subtitle: "Practice interactive scenario-based phone calls and service counter chats",
                                 isLocked: !state.isDialSceneUnlocked,
                                 iconName: "IconDialScene",
-                                fallbackPath: "/Users/user89/Documents/bitch/Stamerlee/IconDialScene.png"
+                                fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/IconDialScene.png"
                             ) {
                                 if state.isDialSceneUnlocked {
                                     state.navigate(to: .dialScene)
@@ -107,7 +107,7 @@ public struct HomeDashboardView: View {
                                 subtitle: "Practice reading and telling longer stories while watching yourself in the mirror",
                                 isLocked: !state.isNarrationUnlocked,
                                 iconName: "IconMirrorNarration",
-                                fallbackPath: "/Users/user89/Documents/bitch/Stamerlee/IconMirrorNarration.png"
+                                fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/IconMirrorNarration.png"
                             ) {
                                 if state.isNarrationUnlocked {
                                     state.navigate(to: .narrationDifficulty)
@@ -129,7 +129,7 @@ public struct HomeDashboardView: View {
                                 subtitle: "Practice speaking to a steady, rhythmic beat using an interactive metronome",
                                 isLocked: !state.isBeatBuddyUnlocked,
                                 iconName: "BeatBuddyLogo",
-                                fallbackPath: "/Users/user89/Documents/bitch/Stamerlee/IconMirrorNarration.png"
+                                fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/IconMirrorNarration.png"
                             ) {
                                 if state.isBeatBuddyUnlocked {
                                     state.navigate(to: .beatBuddyWords)
@@ -324,7 +324,6 @@ public struct DashboardTabView: View {
 
     public var body: some View {
         TabView(selection: state.selectedTabBinding) {
-
             HomeDashboardView(state: state)
                 .tabItem {
                     Label(

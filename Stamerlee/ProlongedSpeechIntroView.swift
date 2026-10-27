@@ -7,7 +7,7 @@ public struct ProlongedSpeechIntroView: View {
     
     @State private var breatheEffect: Bool = false
     
-    private let heroFallbackPath = "/Users/user89/Documents/bitch/Screenshot 2026-10-22 at 3.16.37 PM 1.png"
+    private let heroFallbackPath = "/Users/user89/Documents/stammerlee/Screenshot 2026-10-22 at 3.16.37 PM 1.png"
     
     public init(state: AppState) {
         self.state = state
@@ -33,12 +33,12 @@ public struct ProlongedSpeechIntroView: View {
                 // Headings Section
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Let's start with\nProlonged Speech")
-                        .font(.system(size: 30, weight: .bold, design: .rounded))
+                        .font(.system(size: 32, weight: .bold, design: .rounded))
                         .foregroundColor(StamerleeTheme.textPrimaryDark)
                         .lineSpacing(2)
                     
                     Text("Learn to gently stretch sounds and connect words smoothly. This technique can help reduce speech tension and improve fluency with practice")
-                        .font(.system(size: 14.5, weight: .regular, design: .rounded))
+                        .font(.system(size: 17, weight: .regular, design: .rounded))
                         .foregroundColor(StamerleeTheme.textSecondaryDark)
                         .lineSpacing(4)
                 }

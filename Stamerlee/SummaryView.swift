@@ -37,7 +37,6 @@ public struct SummaryView: View {
                 .padding(.horizontal, 24)
             }
         }
-        .preferredColorScheme(.dark)
     }
 
     private var practiceStreakCard: some View {

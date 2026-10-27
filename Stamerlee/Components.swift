@@ -158,61 +158,6 @@ public struct SocialAuthRow: View {
     }
 }
 
-//// MARK: - Google 'G' Icon
-//public struct GoogleLogoIcon: View {
-//    public init() {}
-//    
-//    public var body: some View {
-//        ZStack {
-//            // Stylized 4-color Google G representation
-//            Circle()
-//                .stroke(
-//                    AngularGradient(
-//                        gradient: Gradient(colors: [
-//                            Color(red: 234 / 255, green: 67 / 255, blue: 53 / 255),  // Red
-//                            Color(red: 251 / 255, green: 188 / 255, blue: 5 / 255), // Yellow
-//                            Color(red: 52 / 255, green: 168 / 255, blue: 83 / 255),  // Green
-//                            Color(red: 66 / 255, green: 133 / 255, blue: 244 / 255), // Blue
-//                            Color(red: 234 / 255, green: 67 / 255, blue: 53 / 255)
-//                        ]),
-//                        center: .center
-//                    ),
-//                    lineWidth: 3
-//                )
-//                .frame(width: 19, height: 19)
-//            
-//            // Cross bar for 'G'
-//            Rectangle()
-//                .fill(Color(red: 66 / 255, green: 133 / 255, blue: 244 / 255))
-//                .frame(width: 9, height: 3)
-//                .offset(x: 2, y: 0)
-//        }
-//    }
-//}
-
-// MARK: - Page Indicator
-public struct PageIndicatorView: View {
-    public let totalPages: Int
-    public let currentPage: Int
-    
-    public init(totalPages: Int = 2, currentPage: Int) {
-        self.totalPages = totalPages
-        self.currentPage = currentPage
-    }
-    
-    public var body: some View {
-        HStack(spacing: 8) {
-            ForEach(0..<totalPages, id: \.self) { index in
-                Circle()
-                    .fill(index == currentPage ? Color.white : Color.white.opacity(0.3))
-                    .frame(width: index == currentPage ? 8 : 6, height: index == currentPage ? 8 : 6)
-                    .animation(.spring(response: 0.35, dampingFraction: 0.7), value: currentPage)
-            }
-        }
-        .padding(.vertical, 8)
-    }
-}
-
 // MARK: - Back Navigation Button
 public struct BackNavButton: View {
     public let action: () -> Void
@@ -339,7 +284,7 @@ public struct DifficultyCard: View {
         } label: {
             ZStack {
                 Text(title)
-                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .font(.system(size: 16, weight: .bold, design: .rounded))
                     .foregroundColor(StamerleeTheme.textPrimaryLight)
 
                 HStack {
@@ -353,11 +298,11 @@ public struct DifficultyCard: View {
                         .frame(width: 30, alignment: .trailing)
                 }
             }
-            .padding(.horizontal, 16)
-            .frame(height: 100)
+            .padding(.horizontal, 14)
+            .frame(height: 72)
             .background(Color(red: 238 / 255, green: 240 / 255, blue: 250 / 255))
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-            .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 2)
         }
         .buttonStyle(.plain)
     }
@@ -366,14 +311,14 @@ public struct DifficultyCard: View {
     private var badge: some View {
         if isLocked {
             Image(systemName: "lock.fill")
-                .font(.system(size: 19, weight: .bold))
+                .font(.system(size: 15, weight: .bold))
                 .foregroundColor(.white)
-                .frame(width: 50, height: 50)
+                .frame(width: 38, height: 38)
                 .background(Color(red: 90 / 255, green: 105 / 255, blue: 180 / 255))
                 .clipShape(Circle())
         } else {
             Color.clear
-                .frame(width: 50, height: 50)
+                .frame(width: 38, height: 38)
         }
     }
 }

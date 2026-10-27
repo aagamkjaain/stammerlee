@@ -199,10 +199,10 @@ public struct PictureDescriptionEasyView: View {
     private var pictureAsset: some View {
         if let image = StamerleeImageLoader.loadHeroImage(
             name: pictureAssetName,
-            fallbackPath: "/Users/user89/Documents/bitch/Stamerlee/\(pictureAssetName).png"
+            fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/\(pictureAssetName).png"
         ) ?? StamerleeImageLoader.loadHeroImage(
             name: "picturedes",
-            fallbackPath: "/Users/user89/Documents/bitch/Stamerlee/picturedes.png"
+            fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/picturedes.png"
         ) {
             Image(uiImage: image)
                 .resizable()
