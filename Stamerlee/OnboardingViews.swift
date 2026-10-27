@@ -242,7 +242,7 @@ public struct OnboardingStepOneView: View {
             StamerleeTheme.backgroundDark.ignoresSafeArea()
 
             VStack(spacing: 0) {
-                PageIndicatorView(totalPages: 2, currentPage: 0)
+                PageIndicatorView(totalPages: 4, currentPage: 0)
                     .padding(.top, 12)
 
                 VStack(alignment: .leading, spacing: 10) {
@@ -302,7 +302,7 @@ public struct OnboardingStepTwoView: View {
 
             VStack(spacing: 0) {
                 ZStack {
-                    PageIndicatorView(totalPages: 2, currentPage: 1)
+                    PageIndicatorView(totalPages: 4, currentPage: 1)
                     HStack {
                         BackNavButton { state.navigate(to: .onboarding1, forward: false) }
                         Spacer()
@@ -358,9 +358,12 @@ public struct DailyGoalView: View {
             StamerleeTheme.backgroundDark.ignoresSafeArea()
 
             VStack(alignment: .leading, spacing: 0) {
-                HStack {
-                    BackNavButton { state.navigate(to: .onboarding2, forward: false) }
-                    Spacer()
+                ZStack {
+                    PageIndicatorView(totalPages: 4, currentPage: 2)
+                    HStack {
+                        BackNavButton { state.navigate(to: .onboarding2, forward: false) }
+                        Spacer()
+                    }
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 16)
@@ -499,9 +502,12 @@ public struct ExploreActivitiesView: View {
             StamerleeTheme.backgroundDark.ignoresSafeArea()
 
             VStack(alignment: .leading, spacing: 0) {
-                HStack {
-                    BackNavButton { state.navigate(to: .dailyGoal, forward: false) }
-                    Spacer()
+                ZStack {
+                    PageIndicatorView(totalPages: 4, currentPage: 3)
+                    HStack {
+                        BackNavButton { state.navigate(to: .dailyGoal, forward: false) }
+                        Spacer()
+                    }
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 16)

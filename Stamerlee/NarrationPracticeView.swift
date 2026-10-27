@@ -1,4 +1,5 @@
 import SwiftUI
+import AVFoundation
 
 // MARK: - Narration Practice
 /// Guided narration practice with a level-specific prompt and analysis result.
@@ -63,9 +64,9 @@ public struct NarrationPracticeView: View {
                 .padding(.horizontal, 24)
                 .padding(.top, 10)
 
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color.white.opacity(0.25))
-                .frame(height: 168)
+            SelfieCameraPreview()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                 .padding(.horizontal, 24)
                 .padding(.top, 24)
 
@@ -77,7 +78,8 @@ public struct NarrationPracticeView: View {
                 .background(Color.white)
                 .clipShape(Capsule())
                 .frame(maxWidth: .infinity)
-                .padding(.top, 10)
+                .padding(.horizontal, 24)
+                .padding(.top, 12)
 
             Spacer()
 
@@ -165,4 +167,94 @@ public struct NarrationPracticeView: View {
             showAnalysis = true
         }
     }
+}
+
+private struct SelfieCameraPreview: UIViewRepresentable {
+    func makeUIView(context: Context) -> CameraPreviewView {
+        let view = CameraPreviewView()
+        view.startSession()
+        return view
+    }
+
+    func updateUIView(_ uiView: CameraPreviewView, context: Context) {}
+
+    static func dismantleUIView(_ uiView: CameraPreviewView, coordinator: ()) {
+        uiView.stopSession()
+    }
+}
+
+private final class CameraPreviewView: UIView {
+    private let session = AVCaptureSession()
+    private var isConfigured = false
+
+    override class var layerClass: AnyClass {
+        AVCaptureVideoPreviewLayer.self
+    }
+
+    private var previewLayer: AVCaptureVideoPreviewLayer {
+        layer as! AVCaptureVideoPreviewLayer
+    }
+
+    func startSession() {
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .authorized:
+            configureAndStart()
+        case .notDetermined:
+            AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
+                guard granted else { return }
+                DispatchQueue.main.async {
+                    self?.configureAndStart()
+                }
+            }
+        default:
+            break
+        }
+    }
+
+    func stopSession() {
+        guard session.isRunning else { return }
+        DispatchQueue.global(qos: .userInitiated).async { [session] in
+            session.stopRunning()
+        }
+    }
+
+    private func configureAndStart() {
+        guard !isConfigured else {
+            startRunning()
+            return
+        }
+
+        session.beginConfiguration()
+        session.sessionPreset = .high
+        defer {
+            session.commitConfiguration()
+            isConfigured = true
+            previewLayer.session = session
+            previewLayer.videoGravity = .resizeAspectFill
+            startRunning()
+        }
+
+        guard
+            let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front),
+            let input = try? AVCaptureDeviceInput(device: camera),
+            session.canAddInput(input)
+        else {
+            return
+        }
+
+        session.addInput(input)
+    }
+
+    private func startRunning() {
+        guard !session.isRunning else { return }
+        DispatchQueue.global(qos: .userInitiated).async { [session] in
+            session.startRunning()
+        }
+    }
+}
+
+#Preview("Narration Practice") {
+    @Previewable @State var state = AppState()
+
+    NarrationPracticeView(state: state)
 }

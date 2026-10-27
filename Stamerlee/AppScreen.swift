@@ -2,6 +2,26 @@ import Foundation
 import SwiftUI
 import Observation
 
+// MARK: - App Tabs
+public enum AppTab: Int, CaseIterable, Hashable {
+    case home
+    case summary
+
+    public var title: String {
+        switch self {
+        case .home: return "Home"
+        case .summary: return "Summary"
+        }
+    }
+
+    public var systemImage: String {
+        switch self {
+        case .home: return "house.fill"
+        case .summary: return "chart.bar.fill"
+        }
+    }
+}
+
 // MARK: - Navigation Screens
 public enum AppScreen: Hashable, CaseIterable {
     case launch
@@ -11,6 +31,7 @@ public enum AppScreen: Hashable, CaseIterable {
     case dailyGoal
     case exploreActivities
     case homeDashboard
+    case profile
     case prolongedSpeechIntro
     case prolongedSpeechDifficulty
     case prolongedPractice
@@ -74,7 +95,7 @@ public final class AppState {
     public var customSoundInput: String = ""
     
     // Dashboard & Tab State
-    public var selectedTab: Int = 0 // 0: Home, 1: Insights, 2: Profile
+    public var selectedTab: AppTab = .home
     public var dailyPracticeMinutes: Int = 10
     public var currentStreakDays: Int = 3
     public var profileName: String = "John doe"
@@ -98,7 +119,8 @@ public final class AppState {
 
     public var dailyGoalProgress: Double {
         let goalSeconds = max(dailyPracticeMinutes, 1) * 60
-        return min(max(Double(practiceAudioSeconds) / Double(goalSeconds), 0), 1)
+        let recordedProgress = Double(practiceAudioSeconds) / Double(goalSeconds)
+        return min(max(recordedProgress, 0.2), 1)
     }
     
     // UI Feedback States
@@ -108,6 +130,13 @@ public final class AppState {
     public var termsSheetContent: String = ""
     
     public init() {}
+
+    public func selectTab(_ tab: AppTab) {
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        withAnimation(.easeInOut(duration: 0.22)) {
+            selectedTab = tab
+        }
+    }
     
     // MARK: - Navigation Actions
     public func navigate(to screen: AppScreen, forward: Bool = true) {
@@ -183,7 +212,7 @@ public final class AppState {
             self.dailyPracticeMinutes = 10
             self.isAuthenticated = false
             self.userEmail = ""
-            self.selectedTab = 0
+            self.selectedTab = .home
             self.profileName = "John doe"
             self.profileAvatarStyle = 0
             self.profileAvatarData = nil

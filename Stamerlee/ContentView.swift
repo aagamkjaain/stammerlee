@@ -19,20 +19,14 @@ public struct ContentView: View {
                 case .login:
                     LoginView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
-                case .onboarding1:
-                    OnboardingStepOneView(state: appState)
-                        .transition(slideTransition(for: appState.navigationDirection))
-                case .onboarding2:
-                    OnboardingStepTwoView(state: appState)
-                        .transition(slideTransition(for: appState.navigationDirection))
-                case .dailyGoal:
-                    DailyGoalView(state: appState)
-                        .transition(slideTransition(for: appState.navigationDirection))
-                case .exploreActivities:
-                    ExploreActivitiesView(state: appState)
-                        .transition(slideTransition(for: appState.navigationDirection))
+                case .onboarding1, .onboarding2, .dailyGoal, .exploreActivities:
+                    OnboardingFlowView(state: appState)
+                        .transition(.opacity)
                 case .homeDashboard:
                     DashboardTabView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
+                case .profile:
+                    ProfileView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
                 case .prolongedSpeechIntro:
                     ProlongedSpeechIntroView(state: appState)
@@ -155,6 +149,51 @@ public struct ContentView: View {
                 .background(appState.currentScreen == screen ? StamerleeTheme.primaryBlue : Color.white.opacity(0.12))
                 .clipShape(Capsule())
         }
+    }
+}
+
+// MARK: - Swipeable Onboarding Flow
+private struct OnboardingFlowView: View {
+    @Bindable var state: AppState
+
+    private let pages: [AppScreen] = [
+        .onboarding1,
+        .onboarding2,
+        .dailyGoal,
+        .exploreActivities
+    ]
+
+    var body: some View {
+        TabView(selection: screenBinding) {
+            OnboardingStepOneView(state: state)
+                .tag(AppScreen.onboarding1)
+
+            OnboardingStepTwoView(state: state)
+                .tag(AppScreen.onboarding2)
+
+            DailyGoalView(state: state)
+                .tag(AppScreen.dailyGoal)
+
+            ExploreActivitiesView(state: state)
+                .tag(AppScreen.exploreActivities)
+        }
+        .tabViewStyle(.page(indexDisplayMode: .never))
+        .animation(.easeInOut(duration: 0.24), value: state.currentScreen)
+    }
+
+    private var screenBinding: Binding<AppScreen> {
+        Binding(
+            get: { state.currentScreen },
+            set: { newScreen in
+                guard pages.contains(newScreen), newScreen != state.currentScreen else {
+                    return
+                }
+
+                let currentIndex = pages.firstIndex(of: state.currentScreen) ?? 0
+                let newIndex = pages.firstIndex(of: newScreen) ?? currentIndex
+                state.navigate(to: newScreen, forward: newIndex >= currentIndex)
+            }
+        )
     }
 }
 

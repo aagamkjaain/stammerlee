@@ -34,6 +34,8 @@
 		AA000001029 /* NarrationPracticeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002029 /* NarrationPracticeView.swift */; };
 		AA000001031 /* BeatBuddyViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002031 /* BeatBuddyViews.swift */; };
 		AA000001032 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002032 /* ProfileView.swift */; };
+		AA000001033 /* SummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002033 /* SummaryView.swift */; };
+		AA000001034 /* AppTabNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002034 /* AppTabNavigation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -64,6 +66,8 @@
 		AA000002029 /* NarrationPracticeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NarrationPracticeView.swift; sourceTree = "<group>"; };
 		AA000002031 /* BeatBuddyViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeatBuddyViews.swift; sourceTree = "<group>"; };
 		AA000002032 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		AA000002033 /* SummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryView.swift; sourceTree = "<group>"; };
+		AA000002034 /* AppTabNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTabNavigation.swift; sourceTree = "<group>"; };
 		AA000003001 /* Stamerlee.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stamerlee.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -123,6 +127,8 @@
 				AA000002029 /* NarrationPracticeView.swift */,
 				AA000002031 /* BeatBuddyViews.swift */,
 				AA000002032 /* ProfileView.swift */,
+				AA000002033 /* SummaryView.swift */,
+				AA000002034 /* AppTabNavigation.swift */,
 				23730120308B673B00C14980 /* pictures */,
 			);
 			path = Stamerlee;
@@ -230,6 +236,8 @@
 				AA000001010 /* Components.swift in Sources */,
 				AA000001011 /* Illustrations.swift in Sources */,
 				AA000001032 /* ProfileView.swift in Sources */,
+				AA000001033 /* SummaryView.swift in Sources */,
+				AA000001034 /* AppTabNavigation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -306,6 +314,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Stamerlee;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Stamerlee uses the front camera during narration practice.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -331,6 +340,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Stamerlee;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Stamerlee uses the front camera during narration practice.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

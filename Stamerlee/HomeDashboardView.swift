@@ -5,14 +5,12 @@ import UIKit
 /// Main application hub with daily goals, exercise modules, and bottom tab bar.
 public struct HomeDashboardView: View {
     @Bindable public var state: AppState
-    private let showsTabBar: Bool
     
     @State private var showLockedAlert: Bool = false
     @State private var lockedAlertMessage: String = ""
     
-    public init(state: AppState, showsTabBar: Bool = true) {
+    public init(state: AppState) {
         self.state = state
-        self.showsTabBar = showsTabBar
     }
     
     public var body: some View {
@@ -22,7 +20,7 @@ public struct HomeDashboardView: View {
             StamerleeTheme.backgroundDark
                 .ignoresSafeArea()
             
-            if state.selectedTab == 0 {
+            if state.selectedTab == .home {
                 VStack(alignment: .leading, spacing: 0) {
                 // Header Bar
                 HStack {
@@ -31,6 +29,15 @@ public struct HomeDashboardView: View {
                         .foregroundColor(StamerleeTheme.textPrimaryDark)
                     
                     Spacer()
+
+                    Button {
+                        state.navigate(to: .profile)
+                    } label: {
+                        Image(systemName: "person.crop.circle.fill")
+                            .font(.system(size: 32, weight: .semibold))
+                            .foregroundColor(StamerleeTheme.textPrimaryDark)
+                    }
+                    .accessibilityLabel("Open profile")
                     
                 }
                 .padding(.horizontal, 24)
@@ -142,10 +149,6 @@ public struct HomeDashboardView: View {
                 Color.white
                     .ignoresSafeArea()
             }
-            
-            if showsTabBar {
-                nativeTabView
-            }
         }
 
         .alert("Module Locked", isPresented: $showLockedAlert) {
@@ -158,7 +161,7 @@ public struct HomeDashboardView: View {
     // MARK: - Daily Goal Card
     private var dailyGoalCard: some View {
         HStack(spacing: 14) {
-            DailyGoalProgressRing(progress: state.dailyGoalProgress)
+            DailyGoalActivityRing()
 
             VStack(alignment: .leading, spacing: 3) {
                 Text("YOUR DAILY GOAL")
@@ -253,112 +256,62 @@ public struct HomeDashboardView: View {
         .buttonStyle(.plain)
     }
     
-    // MARK: - Native Tab Bar
-    @ViewBuilder
-    private var nativeTabView: some View {
-        if #available(iOS 18.0, *) {
-            TabView(selection: tabSelectionBinding) {
-                Tab("Home", systemImage: "house.fill", value: 0) {
-                    Color.clear
-                }
-                Tab("Insights", systemImage: "chart.bar.fill", value: 1) {
-                    Color.clear
-                }
-                Tab("Profile", systemImage: "person.crop.circle.fill", value: 2) {
-                    ProfileView(state: state)
-                }
-            }
-        } else {
-            TabView(selection: tabSelectionBinding) {
-                Color.clear
-                    .tabItem { Label("Home", systemImage: "house.fill") }
-                    .tag(0)
-                Color.clear
-                    .tabItem { Label("Insights", systemImage: "chart.bar.fill") }
-                    .tag(1)
-                ProfileView(state: state)
-                    .tabItem { Label("Profile", systemImage: "person.crop.circle.fill") }
-                    .tag(2)
-            }
-        }
-    }
-
-    private var tabSelectionBinding: Binding<Int> {
-        Binding(
-            get: { state.selectedTab },
-            set: { newValue in
-                UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                withAnimation(.easeInOut(duration: 0.22)) {
-                    state.selectedTab = newValue
-                }
-            }
-        )
-    }
-    
     private func triggerLockedAlert(title: String) {
         lockedAlertMessage = "\(title) will unlock as you complete the Prolonged Speech foundation exercises!"
         showLockedAlert = true
     }
 }
 
-private struct DailyGoalProgressRing: View {
-    let progress: Double
 
-    private let ringSize: CGFloat = 68
-    private let lineWidth: CGFloat = 15
+private struct DailyGoalActivityRing: View {
+    private let ringSize: CGFloat = 65
+    private let lineWidth: CGFloat = 10
+    private let progress: Double = 0.25
+
+    @State private var animatedProgress: Double = 0
+
+    private let trackColor = Color(red: 74.0 / 255.0, green: 57.0 / 255.0, blue: 123.0 / 255.0)
+
+    private let progressColor = Color(red: 139.0 / 255.0, green: 112.0 / 255.0, blue: 245.0 / 255.0)
 
     var body: some View {
         ZStack {
+            // Background track
             Circle()
-                .fill(StamerleeTheme.profileCard)
+                .stroke(trackColor, lineWidth: lineWidth)
 
+            // Progress arc
             Circle()
-                .stroke(Color(red: 192 / 255, green: 196 / 255, blue: 220 / 255), lineWidth: lineWidth)
-
-            Circle()
-                .trim(from: 0, to: progress)
+                .trim(from: 0, to: animatedProgress)
                 .stroke(
-                    AngularGradient(
-                        colors: [
-                            Color(red: 92 / 255, green: 125 / 255, blue: 255 / 255),
-                            Color(red: 164 / 255, green: 153 / 255, blue: 255 / 255),
-                            Color(red: 255 / 255, green: 214 / 255, blue: 74 / 255),
-                            Color(red: 92 / 255, green: 125 / 255, blue: 255 / 255)
-                        ],
-                        center: .center,
-                        startAngle: .degrees(-90),
-                        endAngle: .degrees(270)
-                    ),
-                    style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
+                    progressColor,
+                    style: StrokeStyle(
+                        lineWidth: lineWidth,
+                        lineCap: .round
+                    )
                 )
                 .rotationEffect(.degrees(-90))
-                .animation(.easeInOut(duration: 0.35), value: progress)
 
-            if progress > 0 {
-                Circle()
-                    .fill(Color(red: 255 / 255, green: 219 / 255, blue: 91 / 255))
-                    .frame(width: 20, height: 20)
-                    .shadow(color: Color.yellow.opacity(0.75), radius: 8)
-                    .offset(endpointOffset)
-                    .animation(.easeInOut(duration: 0.35), value: progress)
-            }
+            // Inner circle
+            Circle()
+                .fill(StamerleeTheme.profileCard)
+                .padding(lineWidth)
         }
         .frame(width: ringSize, height: ringSize)
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.8)) {
+                animatedProgress = min(max(progress, 0), 1)
+            }
+        }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Daily goal progress")
-        .accessibilityValue("\(Int(progress * 100)) percent")
-    }
-
-    private var endpointOffset: CGSize {
-        let angle = (progress * 360) - 90
-        let radians = angle * .pi / 180
-        let radius = (ringSize - lineWidth) / 2
-        return CGSize(
-            width: cos(radians) * radius,
-            height: sin(radians) * radius
+        .accessibilityValue(
+            "\(Int(progress * 100)) percent"
         )
     }
 }
+
+
 
 public struct DashboardTabView: View {
     @Bindable public var state: AppState
@@ -368,37 +321,23 @@ public struct DashboardTabView: View {
     }
 
     public var body: some View {
-        TabView(selection: tabSelectionBinding) {
-            HomeDashboardView(state: state, showsTabBar: false)
+        TabView(selection: state.selectedTabBinding) {
+            HomeDashboardView(state: state)
                 .tabItem {
-                    Label("Home", systemImage: "house.fill")
+                    Label(AppTab.home.title, systemImage: AppTab.home.systemImage)
                 }
-                .tag(0)
+                .tag(AppTab.home)
 
-            Color.white
-                .ignoresSafeArea()
+            SummaryView(state: state)
                 .tabItem {
-                    Label("Insights", systemImage: "chart.bar.fill")
+                    Label(AppTab.summary.title, systemImage: AppTab.summary.systemImage)
                 }
-                .tag(1)
+                .tag(AppTab.summary)
 
-            ProfileView(state: state)
-                .tabItem {
-                    Label("Profile", systemImage: "person.crop.circle.fill")
-                }
-                .tag(2)
         }
-    }
-
-    private var tabSelectionBinding: Binding<Int> {
-        Binding(
-            get: { state.selectedTab },
-            set: { newValue in
-                UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                withAnimation(.easeInOut(duration: 0.22)) {
-                    state.selectedTab = newValue
-                }
-            }
-        )
+        .tint(StamerleeTheme.primaryBlue)
+        .toolbarBackground(StamerleeTheme.backgroundDark, for: .tabBar)
+        .toolbarBackground(.visible, for: .tabBar)
+        .toolbarColorScheme(.dark, for: .tabBar)
     }
 }

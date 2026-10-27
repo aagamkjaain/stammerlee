@@ -41,6 +41,13 @@ public struct ProfileView: View {
             StamerleeTheme.profileHeaderBase
             .frame(height: 184)
 
+            BackNavButton {
+                state.navigate(to: .homeDashboard, forward: false)
+            }
+            .padding(.top, 18)
+            .padding(.leading, 20)
+            .frame(maxWidth: .infinity, alignment: .topLeading)
+
             VStack(spacing: 9) {
             ProfileAvatar(style: state.profileAvatarStyle, imageData: state.profileAvatarData)
 
@@ -168,7 +175,7 @@ public struct ProfileView: View {
                 .foregroundStyle(StamerleeTheme.textPrimaryLight)
 
             Picker("Daily practice time", selection: $state.dailyPracticeMinutes) {
-                ForEach([5, 10, 15, 20, 30], id: \.self) { minutes in
+                ForEach([5, 10, 15, 20], id: \.self) { minutes in
                     Text("\(minutes) minutes")
                         .tag(minutes)
                 }
