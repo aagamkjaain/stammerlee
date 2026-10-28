@@ -38,6 +38,7 @@ public enum AppScreen: Hashable, CaseIterable {
     case prolongedAnalysis
     case pictureDescriptionDifficulty
     case pictureDescriptionPractice
+    case dialSceneIntro
     case dialScene
     case narrationDifficulty
     case narrationPractice
@@ -109,6 +110,7 @@ public final class AppState {
     public var selectedPictureDescriptionDifficulty: String = "Easy"
     public var completedPictureDescriptionDifficulties: Set<String> = []
     public var hasCompletedDialScene: Bool = false
+    public var hasSeenDialSceneIntro: Bool = false
     public var selectedNarrationDifficulty: String = "Easy"
     public var completedNarrationDifficulties: Set<String> = []
     public var beatBuddySelectedWords: Set<String> = ["Water", "University"]

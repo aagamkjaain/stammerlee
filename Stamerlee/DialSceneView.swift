@@ -1,16 +1,125 @@
 import SwiftUI
 
+// MARK: - Dial Scene Intro View
+/// Introduces the Dial Scene scenario-based phone practice technique.
+public struct DialSceneIntroView: View {
+    @Bindable public var state: AppState
+    public var onBack: (() -> Void)? = nil
+    public var onContinue: (() -> Void)? = nil
+
+    @State private var breatheEffect: Bool = false
+
+    private let heroFallbackPath = "/Users/user89/Documents/stammerlee/Stamerlee/pictures/dialscenehero.png"
+
+    public init(
+        state: AppState,
+        onBack: (() -> Void)? = nil,
+        onContinue: (() -> Void)? = nil
+    ) {
+        self.state = state
+        self.onBack = onBack
+        self.onContinue = onContinue
+    }
+
+    public var body: some View {
+        ZStack {
+            // Dark Background
+            StamerleeTheme.backgroundDark
+                .ignoresSafeArea()
+
+            VStack(alignment: .leading, spacing: 0) {
+                // Top Navigation Bar
+                HStack {
+                    BackNavButton {
+                        if let onBack {
+                            onBack()
+                        } else {
+                            state.navigate(to: .homeDashboard, forward: false)
+                        }
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 16)
+
+                // Headings Section
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Let's start with\nDial Scene")
+                        .font(.system(size: 32, weight: .bold, design: .rounded))
+                        .foregroundColor(StamerleeTheme.textPrimaryDark)
+                        .lineSpacing(2)
+
+                    Text("Dial Scene helps you practice real-life phone conversations, manage speaking challenges and build confidence in communicating smoothly during everyday calls.")
+                        .font(.system(size: 16, weight: .regular, design: .rounded))
+                        .foregroundColor(StamerleeTheme.textSecondaryDark)
+                        .lineSpacing(4)
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 22)
+
+                // Hero Illustration from uploaded screenshot
+                ZStack {
+                    if let uiImage = StamerleeImageLoader.loadHeroImage(
+                        name: "DialSceneHero",
+                        fallbackPath: heroFallbackPath
+                    ) {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxHeight: 360)
+                            .shadow(color: Color.black.opacity(0.35), radius: 20, x: 0, y: 10)
+                            .scaleEffect(breatheEffect ? 1.015 : 0.985)
+                            .animation(.easeInOut(duration: 2.8).repeatForever(autoreverses: true), value: breatheEffect)
+                    } else {
+                        // Fallback
+                        RoundedRectangle(cornerRadius: 24)
+                            .fill(Color(red: 25 / 255, green: 30 / 255, blue: 65 / 255))
+                            .frame(width: 250, height: 230)
+                            .overlay(
+                                Image(systemName: "phone.fill")
+                                    .font(.system(size: 60))
+                                    .foregroundColor(StamerleeTheme.primaryBlue)
+                            )
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+
+                Spacer()
+
+                // Bottom CTA Button ("Continue")
+                VStack {
+                    PrimaryActionButton(title: "Continue") {
+                        state.hasSeenDialSceneIntro = true
+                        if let onContinue {
+                            onContinue()
+                        } else {
+                            state.navigate(to: .dialScene)
+                        }
+                    }
+                }
+                .padding(.horizontal, 24)
+                .padding(.bottom, 24)
+            }
+        }
+        .onAppear {
+            breatheEffect = true
+        }
+    }
+}
+
 // MARK: - Dial Scene
 /// Conversation practice unlocked alongside Picture Description.
 public struct DialSceneView: View {
     @Bindable public var state: AppState
 
     @State private var selectedScenario = "Ordering at a Café"
-    @State private var stage: Stage = .scenarios
+    @State private var stage: Stage
     @State private var selectedSegment = "Prolongations"
     @State private var selectedWords: Set<String> = ["Medium", "Special"]
 
     private enum Stage {
+        case intro
         case scenarios
         case conversation
         case analysis
@@ -32,6 +141,7 @@ public struct DialSceneView: View {
 
     public init(state: AppState) {
         self.state = state
+        _stage = State(initialValue: state.hasSeenDialSceneIntro ? .scenarios : .intro)
     }
 
     private var words: [String] {
@@ -42,6 +152,19 @@ public struct DialSceneView: View {
         ZStack {
             StamerleeTheme.backgroundDark.ignoresSafeArea()
             switch stage {
+            case .intro:
+                DialSceneIntroView(
+                    state: state,
+                    onBack: {
+                        state.navigate(to: .homeDashboard, forward: false)
+                    },
+                    onContinue: {
+                        state.hasSeenDialSceneIntro = true
+                        withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
+                            stage = .scenarios
+                        }
+                    }
+                )
             case .scenarios:
                 scenarioView
             case .conversation:
@@ -56,7 +179,9 @@ public struct DialSceneView: View {
         HStack {
             BackNavButton {
                 if stage == .scenarios {
-                    state.navigate(to: .homeDashboard, forward: false)
+                    withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
+                        stage = .intro
+                    }
                 } else {
                     stage = .scenarios
                 }

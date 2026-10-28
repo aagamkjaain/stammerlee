@@ -51,6 +51,9 @@ public struct ContentView: View {
                 case .pictureDescriptionPractice:
                     PictureDescriptionEasyView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
+                case .dialSceneIntro:
+                    DialSceneIntroView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
                 case .dialScene:
                     DialSceneView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
@@ -140,6 +143,8 @@ public struct ContentView: View {
                     jumpButton(title: "Explore", screen: .exploreActivities)
                     jumpButton(title: "Home", screen: .homeDashboard)
                     jumpButton(title: "Pro Speech", screen: .prolongedSpeechIntro)
+                    jumpButton(title: "Dial Intro", screen: .dialSceneIntro)
+                    jumpButton(title: "Dial Scene", screen: .dialScene)
                     jumpButton(title: "Difficulty", screen: .prolongedSpeechDifficulty)
                     jumpButton(title: "Practice", screen: .prolongedPractice)
                     jumpButton(title: "Analysis", screen: .prolongedAnalysis)

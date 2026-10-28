@@ -94,7 +94,11 @@ public struct HomeDashboardView: View {
                                 fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/IconDialScene.png"
                             ) {
                                 if state.isDialSceneUnlocked {
-                                    state.navigate(to: .dialScene)
+                                    state.navigate(
+                                        to: state.hasSeenDialSceneIntro
+                                            ? .dialScene
+                                            : .dialSceneIntro
+                                    )
                                 } else {
                                     triggerLockedAlert(title: "Dial Scene")
                                 }
