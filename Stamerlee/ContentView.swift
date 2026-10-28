@@ -45,6 +45,9 @@ public struct ContentView: View {
                                 removal: .opacity
                             )
                         )
+                case .pictureDescriptionIntro:
+                    PictureDescriptionIntroView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
                 case .pictureDescriptionDifficulty:
                     PictureDescriptionDifficultyView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
@@ -56,6 +59,9 @@ public struct ContentView: View {
                         .transition(slideTransition(for: appState.navigationDirection))
                 case .dialScene:
                     DialSceneView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
+                case .narrationIntro:
+                    NarrationIntroView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
                 case .narrationDifficulty:
                     NarrationDifficultyView(state: appState)
@@ -143,7 +149,9 @@ public struct ContentView: View {
                     jumpButton(title: "Explore", screen: .exploreActivities)
                     jumpButton(title: "Home", screen: .homeDashboard)
                     jumpButton(title: "Pro Speech", screen: .prolongedSpeechIntro)
+                    jumpButton(title: "Pic Intro", screen: .pictureDescriptionIntro)
                     jumpButton(title: "Dial Intro", screen: .dialSceneIntro)
+                    jumpButton(title: "Narr Intro", screen: .narrationIntro)
                     jumpButton(title: "Dial Scene", screen: .dialScene)
                     jumpButton(title: "Difficulty", screen: .prolongedSpeechDifficulty)
                     jumpButton(title: "Practice", screen: .prolongedPractice)

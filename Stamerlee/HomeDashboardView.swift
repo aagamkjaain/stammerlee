@@ -79,7 +79,11 @@ public struct HomeDashboardView: View {
                                 fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/IconPictureDesc.png"
                             ) {
                                 if state.isPictureDescriptionUnlocked {
-                                    state.navigate(to: .pictureDescriptionDifficulty)
+                                    state.navigate(
+                                        to: state.hasSeenPictureDescriptionIntro
+                                            ? .pictureDescriptionDifficulty
+                                            : .pictureDescriptionIntro
+                                    )
                                 } else {
                                     triggerLockedAlert(title: "Picture Description")
                                 }
@@ -113,7 +117,11 @@ public struct HomeDashboardView: View {
                                 fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/IconMirrorNarration.png"
                             ) {
                                 if state.isNarrationUnlocked {
-                                    state.navigate(to: .narrationDifficulty)
+                                    state.navigate(
+                                        to: state.hasSeenNarrationIntro
+                                            ? .narrationDifficulty
+                                            : .narrationIntro
+                                    )
                                 } else {
                                     triggerLockedAlert(title: "Narration")
                                 }

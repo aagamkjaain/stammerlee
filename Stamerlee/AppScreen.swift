@@ -36,10 +36,12 @@ public enum AppScreen: Hashable, CaseIterable {
     case prolongedSpeechDifficulty
     case prolongedPractice
     case prolongedAnalysis
+    case pictureDescriptionIntro
     case pictureDescriptionDifficulty
     case pictureDescriptionPractice
     case dialSceneIntro
     case dialScene
+    case narrationIntro
     case narrationDifficulty
     case narrationPractice
     case beatBuddyWords
@@ -107,10 +109,12 @@ public final class AppState {
     public var selectedDifficulty: String = "Easy"
     public var completedProlongedDifficulties: Set<String> = []
     public var hasSeenProlongedSpeechIntro: Bool = false
+    public var hasSeenPictureDescriptionIntro: Bool = false
     public var selectedPictureDescriptionDifficulty: String = "Easy"
     public var completedPictureDescriptionDifficulties: Set<String> = []
     public var hasCompletedDialScene: Bool = false
     public var hasSeenDialSceneIntro: Bool = false
+    public var hasSeenNarrationIntro: Bool = false
     public var selectedNarrationDifficulty: String = "Easy"
     public var completedNarrationDifficulties: Set<String> = []
     public var beatBuddySelectedWords: Set<String> = ["Water", "University"]
