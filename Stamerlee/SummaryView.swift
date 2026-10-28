@@ -45,7 +45,6 @@ public struct SummaryView: View {
                 .presentationDragIndicator(.visible)
                 .presentationBackground(streakCardBackground)
         }
-        .preferredColorScheme(.dark)
     }
 
     private var practiceStreakCard: some View {
@@ -66,7 +65,7 @@ public struct SummaryView: View {
                         .foregroundStyle(StamerleeTheme.textSecondaryLight)
                 }
 
-                
+                Spacer()
             }
 
             HStack(spacing: 4) {
@@ -136,14 +135,14 @@ public struct SummaryView: View {
             Button {
                 showAllSoundsSheet = true
             } label: {
-                soundSummaryRow(letter: "K", title: "K / G sounds", status: "Worth exploring")
+                soundSummaryRow(letter: "K", title: "K / G sounds")
             }
             .buttonStyle(.plain)
 
             Button {
                 showAllSoundsSheet = true
             } label: {
-                soundSummaryRow(letter: "S", title: "S sounds", status: "Getting more comfortable")
+                soundSummaryRow(letter: "S", title: "S sounds")
             }
             .buttonStyle(.plain)
 
@@ -175,7 +174,7 @@ public struct SummaryView: View {
         .background(streakCardBackground, in: RoundedRectangle(cornerRadius: 18))
     }
 
-    private func soundSummaryRow(letter: String, title: String, status: String) -> some View {
+    private func soundSummaryRow(letter: String, title: String) -> some View {
         HStack(spacing: 14) {
             Text(letter)
                 .font(.system(size: 26, weight: .bold, design: .rounded))
@@ -186,13 +185,9 @@ public struct SummaryView: View {
                 .font(.system(size: 16, weight: .medium, design: .rounded))
                 .foregroundStyle(StamerleeTheme.textPrimaryLight)
             Spacer(minLength: 4)
-            Text(status)
-                .font(.system(size: 12, weight: .medium, design: .rounded))
-                .foregroundStyle(streakAccent)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 8)
-                .background(selectedDayBackground, in: Capsule())
+            Image(systemName: "chevron.right")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(streakAccent.opacity(0.7))
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 8)
@@ -414,7 +409,6 @@ private struct SoundDetailItem: Identifiable, Hashable {
     let title: String
     let category: String
     let examples: String
-    let status: String
     let mastery: Int
     let sessionCount: Int
     let isChallenging: Bool
@@ -445,7 +439,6 @@ private struct AllSoundsNavigationSheet: View {
             title: "K / G sounds",
             category: "Velar Plosives",
             examples: "Come, go, keep, great",
-            status: "Worth exploring",
             mastery: 42,
             sessionCount: 16,
             isChallenging: true
@@ -456,7 +449,6 @@ private struct AllSoundsNavigationSheet: View {
             title: "S / Z sounds",
             category: "Sibilants & Fricatives",
             examples: "Sun, space, slow, zoom",
-            status: "Getting more comfortable",
             mastery: 74,
             sessionCount: 22,
             isChallenging: false
@@ -467,7 +459,6 @@ private struct AllSoundsNavigationSheet: View {
             title: "T / D sounds",
             category: "Alveolar Plosives",
             examples: "Today, time, do, day",
-            status: "Worth exploring",
             mastery: 52,
             sessionCount: 14,
             isChallenging: true
@@ -478,7 +469,6 @@ private struct AllSoundsNavigationSheet: View {
             title: "P / B sounds",
             category: "Bilabial Plosives",
             examples: "Please, book, power, begin",
-            status: "Mastered",
             mastery: 89,
             sessionCount: 25,
             isChallenging: false
@@ -489,7 +479,6 @@ private struct AllSoundsNavigationSheet: View {
             title: "R / L sounds",
             category: "Liquids",
             examples: "Right, real, light, level",
-            status: "Getting more comfortable",
             mastery: 68,
             sessionCount: 11,
             isChallenging: false
@@ -500,7 +489,6 @@ private struct AllSoundsNavigationSheet: View {
             title: "F / V sounds",
             category: "Labiodental Fricatives",
             examples: "Focus, friend, voice, value",
-            status: "Mastered",
             mastery: 85,
             sessionCount: 18,
             isChallenging: false
@@ -511,7 +499,6 @@ private struct AllSoundsNavigationSheet: View {
             title: "CH / J sounds",
             category: "Affricates",
             examples: "Choice, change, joy, jump",
-            status: "Worth exploring",
             mastery: 48,
             sessionCount: 9,
             isChallenging: true
@@ -522,7 +509,6 @@ private struct AllSoundsNavigationSheet: View {
             title: "TH sounds",
             category: "Dental Fricatives",
             examples: "Think, thanks, that, there",
-            status: "Worth exploring",
             mastery: 56,
             sessionCount: 12,
             isChallenging: true
@@ -533,7 +519,6 @@ private struct AllSoundsNavigationSheet: View {
             title: "M / N sounds",
             category: "Nasals",
             examples: "Mind, make, now, never",
-            status: "Mastered",
             mastery: 94,
             sessionCount: 28,
             isChallenging: false
@@ -544,7 +529,6 @@ private struct AllSoundsNavigationSheet: View {
             title: "W / Y sounds",
             category: "Glides",
             examples: "Water, walk, year, yes",
-            status: "Mastered",
             mastery: 91,
             sessionCount: 19,
             isChallenging: false
@@ -689,12 +673,9 @@ private struct AllSoundsNavigationSheet: View {
 
                     Spacer(minLength: 4)
 
-                    Text(item.status)
-                        .font(.system(size: 11, weight: .semibold, design: .rounded))
-                        .foregroundStyle(streakAccent)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
-                        .background(selectedDayBackground, in: Capsule())
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(streakAccent.opacity(0.6))
                 }
 
                 // Progress bar & sessions
@@ -726,10 +707,6 @@ private struct AllSoundsNavigationSheet: View {
                     Text("\(item.sessionCount) sessions")
                         .font(.system(size: 11, weight: .medium, design: .rounded))
                         .foregroundStyle(StamerleeTheme.textSecondaryLight)
-
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundStyle(streakAccent.opacity(0.6))
                 }
             }
             .padding(.horizontal, 14)
