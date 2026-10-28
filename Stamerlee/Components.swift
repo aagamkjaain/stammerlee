@@ -123,7 +123,7 @@ public struct SocialAuthRow: View {
                     .foregroundColor(Color.gray.opacity(0.6))
             }
             .padding(.horizontal, 18)
-            .frame(height: 54)
+            .frame(height: 65)
             .background(StamerleeTheme.cardLight)
             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)

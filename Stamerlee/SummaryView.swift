@@ -5,6 +5,7 @@ import UIKit
 /// Progress overview shown in the Summary tab.
 public struct SummaryView: View {
     @Bindable public var state: AppState
+    @State private var showAllSoundsSheet: Bool = false
 
     private let lavender = StamerleeTheme.profileCard
     private let rowBackground = Color.white.opacity(0.62)
@@ -37,6 +38,14 @@ public struct SummaryView: View {
                 .padding(.horizontal, 24)
             }
         }
+        .sheet(isPresented: $showAllSoundsSheet) {
+            AllSoundsNavigationSheet(state: state, isPresented: $showAllSoundsSheet)
+                .ignoresSafeArea()
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+                .presentationBackground(streakCardBackground)
+        }
+        .preferredColorScheme(.dark)
     }
 
     private var practiceStreakCard: some View {
@@ -60,22 +69,38 @@ public struct SummaryView: View {
                 
             }
 
-            HStack(spacing: 0) {
+            HStack(spacing: 4) {
                 ForEach(Array(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].enumerated()), id: \.offset) { index, day in
                     let completedDays = min(max(state.currentStreakDays, 0), 7)
-                 
+                    let isCompleted = index < completedDays
                     let isCurrent = completedDays > 0 && index == completedDays - 1
 
-                    VStack(spacing: 8) {
+                    VStack(spacing: 9) {
                         Text(day)
-                            .font(.system(size: 15, weight: .medium, design: .rounded))
+                            .font(.system(size: 14, weight: .semibold, design: .rounded))
                             .foregroundStyle(StamerleeTheme.textPrimaryLight)
 
-                        
+                        if isCompleted {
+                            ZStack {
+                                Circle()
+                                    .fill(streakAccent)
+                                    .frame(width: 28, height: 28)
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 12, weight: .bold))
+                                    .foregroundStyle(.white)
+                            }
+                        } else {
+                            Circle()
+                                .stroke(streakRing, lineWidth: 2)
+                                .frame(width: 28, height: 28)
+                        }
                     }
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 4)
-                    .background(isCurrent ? selectedDayBackground : .clear, in: RoundedRectangle(cornerRadius: 12))
+                    .padding(.vertical, 8)
+                    .background(
+                        isCurrent ? selectedDayBackground : Color.clear,
+                        in: RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    )
                 }
             }
         }
@@ -86,39 +111,88 @@ public struct SummaryView: View {
 
     private var challengingSoundsCard: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("Challenging Sounds")
-                .font(.system(size: 22, weight: .bold, design: .rounded))
-                .foregroundStyle(StamerleeTheme.textPrimaryLight)
-            soundSummaryRow(letter: "K", title: "K / G sounds", status: "Worth exploring")
-            soundSummaryRow(letter: "S", title: "S sounds", status: "Getting more comfortable")
-            Text("Based on your last 20 sessions.")
-                .font(.system(size: 12, weight: .medium, design: .rounded))
-                .foregroundStyle(summaryBlue.opacity(0.68))
-                .padding(.top, 2)
+            HStack(alignment: .center) {
+                Text("Challenging Sounds")
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .foregroundStyle(StamerleeTheme.textPrimaryLight)
+
+                Spacer()
+
+                Button {
+                    state.navigate(to: .beatBuddyWords)
+                } label: {
+                    HStack(spacing: 3) {
+                        Text("Practice")
+                            .font(.system(size: 14, weight: .semibold, design: .rounded))
+                            .underline()
+                        Image(systemName: "arrow.up.right")
+                            .font(.system(size: 11, weight: .bold))
+                    }
+                    .foregroundStyle(streakAccent)
+                }
+                .buttonStyle(.plain)
+            }
+
+            Button {
+                showAllSoundsSheet = true
+            } label: {
+                soundSummaryRow(letter: "K", title: "K / G sounds", status: "Worth exploring")
+            }
+            .buttonStyle(.plain)
+
+            Button {
+                showAllSoundsSheet = true
+            } label: {
+                soundSummaryRow(letter: "S", title: "S sounds", status: "Getting more comfortable")
+            }
+            .buttonStyle(.plain)
+
+            HStack {
+                Text("Based on your last 20 sessions.")
+                    .font(.system(size: 13, weight: .medium, design: .rounded))
+                    .foregroundStyle(StamerleeTheme.textSecondaryLight)
+
+                Spacer()
+
+                Button {
+                    showAllSoundsSheet = true
+                } label: {
+                    HStack(spacing: 4) {
+                        Text("View more")
+                            .font(.system(size: 14, weight: .semibold, design: .rounded))
+                            .underline()
+                        Image(systemName: "chevron.down")
+                            .font(.system(size: 11, weight: .bold))
+                    }
+                    .foregroundStyle(streakAccent)
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.top, 2)
         }
         .padding(.horizontal, 18)
         .padding(.vertical, 16)
-        .background(lavender, in: RoundedRectangle(cornerRadius: 16))
+        .background(streakCardBackground, in: RoundedRectangle(cornerRadius: 18))
     }
 
     private func soundSummaryRow(letter: String, title: String, status: String) -> some View {
         HStack(spacing: 14) {
             Text(letter)
-                .font(.system(size: 28, weight: .bold, design: .rounded))
-                .foregroundStyle(summaryBlue)
+                .font(.system(size: 26, weight: .bold, design: .rounded))
+                .foregroundStyle(streakAccent)
                 .frame(width: 48, height: 48)
-                .background(Color(red: 220 / 255, green: 227 / 255, blue: 255 / 255), in: Circle())
+                .background(selectedDayBackground, in: Circle())
             Text(title)
                 .font(.system(size: 16, weight: .medium, design: .rounded))
                 .foregroundStyle(StamerleeTheme.textPrimaryLight)
             Spacer(minLength: 4)
             Text(status)
                 .font(.system(size: 12, weight: .medium, design: .rounded))
-                .foregroundStyle(summaryBlue)
+                .foregroundStyle(streakAccent)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)
-                .background(Color(red: 218 / 255, green: 226 / 255, blue: 255 / 255), in: Capsule())
+                .background(selectedDayBackground, in: Capsule())
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 8)
@@ -126,46 +200,86 @@ public struct SummaryView: View {
     }
 
     private var exerciseMasteryCard: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 8) {
             Text("Exercise Mastery")
                 .font(.system(size: 22, weight: .bold, design: .rounded))
                 .foregroundStyle(StamerleeTheme.textPrimaryLight)
             Text("Your current exercise levels, at a glance.")
-                .font(.system(size: 16, weight: .medium, design: .rounded))
-                .foregroundStyle(summaryBlue.opacity(0.7))
+                .font(.system(size: 13, weight: .medium, design: .rounded))
+                .foregroundStyle(StamerleeTheme.textSecondaryLight)
                 .padding(.bottom, 4)
-            masteryRow(assetName: "IconProlongedSpeech", title: "Prolonged Speech", score: state.completedProlongedDifficulties.count * 33)
-            masteryRow(assetName: "IconPictureDesc", title: "Picture Description", score: state.completedPictureDescriptionDifficulties.count * 33)
-            masteryRow(assetName: "IconDialScene", title: "Dial Scene", score: state.hasCompletedDialScene ? 74 : 0)
-            masteryRow(assetName: "IconMirrorNarration", title: "Narration with Mirror", score: state.completedNarrationDifficulties.count * 33)
-            Text("Smooth speech percentages based on level performance.")
-                .font(.system(size: 10, weight: .medium, design: .rounded))
-                .foregroundStyle(summaryBlue.opacity(0.7))
+            masteryRow(
+                assetName: "IconProlongedSpeech",
+                title: "Prolonged Speech",
+                score: state.completedProlongedDifficulties.count * 33,
+                destination: .prolongedSpeechDifficulty
+            )
+            masteryRow(
+                assetName: "IconPictureDesc",
+                title: "Picture Description",
+                score: state.completedPictureDescriptionDifficulties.count * 33,
+                destination: .pictureDescriptionDifficulty
+            )
+            masteryRow(
+                assetName: "IconDialScene",
+                title: "Dial Scene",
+                score: state.hasCompletedDialScene ? 74 : 0,
+                destination: .dialScene
+            )
+            masteryRow(
+                assetName: "IconMirrorNarration",
+                title: "Narration with Mirror",
+                score: state.completedNarrationDifficulties.count * 33,
+                destination: .narrationDifficulty
+            )
+            Text("Smooth speech progress based on level performance.")
+                .font(.system(size: 11, weight: .medium, design: .rounded))
+                .foregroundStyle(StamerleeTheme.textSecondaryLight)
                 .padding(.top, 2)
         }
         .padding(.horizontal, 18)
         .padding(.vertical, 16)
-        .background(lavender, in: RoundedRectangle(cornerRadius: 16))
+        .background(streakCardBackground, in: RoundedRectangle(cornerRadius: 18))
     }
 
-    private func masteryRow(assetName: String, title: String, score: Int) -> some View {
-        HStack(spacing: 12) {
-            summaryAssetImage(named: assetName)
-                .frame(width: 36)
-            Text(title)
-                .font(.system(size: 15, weight: .medium, design: .rounded))
-                .foregroundStyle(StamerleeTheme.textPrimaryLight)
-            Spacer()
-            Text("\(score) / 100")
-                .font(.system(size: 13, weight: .medium, design: .rounded))
-                .foregroundStyle(summaryBlue)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 8)
-                .background(Color(red: 218 / 255, green: 226 / 255, blue: 255 / 255), in: Capsule())
+    private func masteryRow(assetName: String, title: String, score: Int, destination: AppScreen) -> some View {
+        Button {
+            state.navigate(to: destination)
+        } label: {
+            HStack(spacing: 12) {
+                summaryAssetImage(named: assetName)
+                    .frame(width: 36)
+                Text(title)
+                    .font(.system(size: 15, weight: .medium, design: .rounded))
+                    .foregroundStyle(StamerleeTheme.textPrimaryLight)
+                Spacer(minLength: 8)
+
+                // Progress Bar
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        Capsule()
+                            .fill(selectedDayBackground)
+                            .frame(height: 7)
+
+                        Capsule()
+                            .fill(streakAccent)
+                            .frame(
+                                width: max(geo.size.width * CGFloat(min(max(score, 0), 100)) / 100.0, score > 0 ? 6 : 0),
+                                height: 7
+                            )
+                    }
+                }
+                .frame(width: 72, height: 7)
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(streakAccent.opacity(0.7))
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .background(rowBackground, in: RoundedRectangle(cornerRadius: 14))
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .background(rowBackground, in: RoundedRectangle(cornerRadius: 14))
+        .buttonStyle(.plain)
     }
 
     private func summaryAssetImage(named name: String) -> some View {
@@ -292,3 +406,376 @@ private struct NativePracticeCalendar: UIViewRepresentable {
         }
     }
 }
+
+// MARK: - All Sounds Navigation Sheet
+private struct SoundDetailItem: Identifiable, Hashable {
+    let id: String
+    let letter: String
+    let title: String
+    let category: String
+    let examples: String
+    let status: String
+    let mastery: Int
+    let sessionCount: Int
+    let isChallenging: Bool
+}
+
+private struct AllSoundsNavigationSheet: View {
+    @Bindable var state: AppState
+    @Binding var isPresented: Bool
+
+    @State private var selectedFilter: SoundFilter = .all
+
+    private enum SoundFilter: String, CaseIterable {
+        case all = "All"
+        case challenging = "Challenging"
+        case mastered = "Mastered"
+    }
+
+    private let streakCardBackground = Color(red: 232 / 255, green: 233 / 255, blue: 248 / 255)
+    private let streakAccent = Color(red: 101 / 255, green: 120 / 255, blue: 223 / 255)
+    private let streakRing = Color(red: 165 / 255, green: 175 / 255, blue: 232 / 255)
+    private let selectedDayBackground = Color(red: 215 / 255, green: 217 / 255, blue: 243 / 255)
+    private let rowBackground = Color.white.opacity(0.85)
+
+    private let sounds: [SoundDetailItem] = [
+        SoundDetailItem(
+            id: "kg",
+            letter: "K",
+            title: "K / G sounds",
+            category: "Velar Plosives",
+            examples: "Come, go, keep, great",
+            status: "Worth exploring",
+            mastery: 42,
+            sessionCount: 16,
+            isChallenging: true
+        ),
+        SoundDetailItem(
+            id: "sz",
+            letter: "S",
+            title: "S / Z sounds",
+            category: "Sibilants & Fricatives",
+            examples: "Sun, space, slow, zoom",
+            status: "Getting more comfortable",
+            mastery: 74,
+            sessionCount: 22,
+            isChallenging: false
+        ),
+        SoundDetailItem(
+            id: "td",
+            letter: "T",
+            title: "T / D sounds",
+            category: "Alveolar Plosives",
+            examples: "Today, time, do, day",
+            status: "Worth exploring",
+            mastery: 52,
+            sessionCount: 14,
+            isChallenging: true
+        ),
+        SoundDetailItem(
+            id: "pb",
+            letter: "P",
+            title: "P / B sounds",
+            category: "Bilabial Plosives",
+            examples: "Please, book, power, begin",
+            status: "Mastered",
+            mastery: 89,
+            sessionCount: 25,
+            isChallenging: false
+        ),
+        SoundDetailItem(
+            id: "rl",
+            letter: "R",
+            title: "R / L sounds",
+            category: "Liquids",
+            examples: "Right, real, light, level",
+            status: "Getting more comfortable",
+            mastery: 68,
+            sessionCount: 11,
+            isChallenging: false
+        ),
+        SoundDetailItem(
+            id: "fv",
+            letter: "F",
+            title: "F / V sounds",
+            category: "Labiodental Fricatives",
+            examples: "Focus, friend, voice, value",
+            status: "Mastered",
+            mastery: 85,
+            sessionCount: 18,
+            isChallenging: false
+        ),
+        SoundDetailItem(
+            id: "chj",
+            letter: "CH",
+            title: "CH / J sounds",
+            category: "Affricates",
+            examples: "Choice, change, joy, jump",
+            status: "Worth exploring",
+            mastery: 48,
+            sessionCount: 9,
+            isChallenging: true
+        ),
+        SoundDetailItem(
+            id: "th",
+            letter: "TH",
+            title: "TH sounds",
+            category: "Dental Fricatives",
+            examples: "Think, thanks, that, there",
+            status: "Worth exploring",
+            mastery: 56,
+            sessionCount: 12,
+            isChallenging: true
+        ),
+        SoundDetailItem(
+            id: "mn",
+            letter: "M",
+            title: "M / N sounds",
+            category: "Nasals",
+            examples: "Mind, make, now, never",
+            status: "Mastered",
+            mastery: 94,
+            sessionCount: 28,
+            isChallenging: false
+        ),
+        SoundDetailItem(
+            id: "wy",
+            letter: "W",
+            title: "W / Y sounds",
+            category: "Glides",
+            examples: "Water, walk, year, yes",
+            status: "Mastered",
+            mastery: 91,
+            sessionCount: 19,
+            isChallenging: false
+        )
+    ]
+
+    private var filteredSounds: [SoundDetailItem] {
+        switch selectedFilter {
+        case .all:
+            return sounds
+        case .challenging:
+            return sounds.filter { $0.isChallenging }
+        case .mastered:
+            return sounds.filter { $0.mastery >= 80 }
+        }
+    }
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                streakCardBackground
+                    .ignoresSafeArea()
+
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 18) {
+                        // Header subtitle
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("All Sounds & Progress")
+                                .font(.system(size: 22, weight: .bold, design: .rounded))
+                                .foregroundStyle(StamerleeTheme.textPrimaryLight)
+
+                            Text("Review your tracked phoneme groups, fluency scores, and practice history.")
+                                .font(.system(size: 13, weight: .medium, design: .rounded))
+                                .foregroundStyle(StamerleeTheme.textSecondaryLight)
+                        }
+                        .padding(.top, 4)
+
+                        // Filter segmented chips
+                        HStack(spacing: 8) {
+                            ForEach(SoundFilter.allCases, id: \.self) { filter in
+                                let isSelected = selectedFilter == filter
+                                Button {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.75)) {
+                                        selectedFilter = filter
+                                    }
+                                } label: {
+                                    Text(filter.rawValue)
+                                        .font(.system(size: 13, weight: isSelected ? .bold : .medium, design: .rounded))
+                                        .foregroundStyle(isSelected ? .white : StamerleeTheme.textPrimaryLight)
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 8)
+                                        .background(
+                                            isSelected ? streakAccent : rowBackground,
+                                            in: Capsule()
+                                        )
+                                }
+                                .buttonStyle(.plain)
+                            }
+                            Spacer()
+                        }
+
+                        // Sounds list
+                        VStack(spacing: 12) {
+                            ForEach(filteredSounds) { sound in
+                                soundCard(for: sound)
+                            }
+                        }
+
+                        // Practice Beat Buddy CTA Card
+                        practiceCtaBanner
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 14)
+                    .padding(.bottom, 40)
+                }
+            }
+            .navigationTitle("Sounds Library")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(streakCardBackground, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        isPresented = false
+                        state.navigate(to: .beatBuddyWords)
+                    } label: {
+                        HStack(spacing: 3) {
+                            Text("Practice")
+                                .font(.system(size: 14, weight: .semibold, design: .rounded))
+                                .underline()
+                            Image(systemName: "arrow.up.right")
+                                .font(.system(size: 11, weight: .bold))
+                        }
+                        .foregroundStyle(streakAccent)
+                    }
+                }
+
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        isPresented = false
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 22))
+                            .foregroundStyle(streakAccent.opacity(0.85))
+                    }
+                    .accessibilityLabel("Close")
+                }
+            }
+        }
+        .presentationBackground(streakCardBackground)
+        .ignoresSafeArea()
+    }
+
+    private func soundCard(for item: SoundDetailItem) -> some View {
+        Button {
+            isPresented = false
+            state.navigate(to: .beatBuddyWords)
+        } label: {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(spacing: 12) {
+                    Text(item.letter)
+                        .font(.system(size: 22, weight: .bold, design: .rounded))
+                        .foregroundStyle(streakAccent)
+                        .frame(width: 44, height: 44)
+                        .background(selectedDayBackground, in: Circle())
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        HStack(spacing: 6) {
+                            Text(item.title)
+                                .font(.system(size: 16, weight: .bold, design: .rounded))
+                                .foregroundStyle(StamerleeTheme.textPrimaryLight)
+
+                            Text("• \(item.category)")
+                                .font(.system(size: 12, weight: .medium, design: .rounded))
+                                .foregroundStyle(StamerleeTheme.textSecondaryLight)
+                        }
+
+                        Text("Words: \(item.examples)")
+                            .font(.system(size: 12, weight: .regular, design: .rounded))
+                            .foregroundStyle(StamerleeTheme.textSecondaryLight)
+                    }
+
+                    Spacer(minLength: 4)
+
+                    Text(item.status)
+                        .font(.system(size: 11, weight: .semibold, design: .rounded))
+                        .foregroundStyle(streakAccent)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(selectedDayBackground, in: Capsule())
+                }
+
+                // Progress bar & sessions
+                HStack(spacing: 10) {
+                    GeometryReader { geo in
+                        ZStack(alignment: .leading) {
+                            Capsule()
+                                .fill(selectedDayBackground)
+                                .frame(height: 6)
+
+                            Capsule()
+                                .fill(streakAccent)
+                                .frame(
+                                    width: geo.size.width * CGFloat(item.mastery) / 100.0,
+                                    height: 6
+                                )
+                        }
+                    }
+                    .frame(height: 6)
+
+                    Text("\(item.mastery)% mastery")
+                        .font(.system(size: 11, weight: .semibold, design: .rounded))
+                        .foregroundStyle(streakAccent)
+
+                    Text("•")
+                        .font(.system(size: 11))
+                        .foregroundStyle(StamerleeTheme.textSecondaryLight)
+
+                    Text("\(item.sessionCount) sessions")
+                        .font(.system(size: 11, weight: .medium, design: .rounded))
+                        .foregroundStyle(StamerleeTheme.textSecondaryLight)
+
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(streakAccent.opacity(0.6))
+                }
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .background(rowBackground, in: RoundedRectangle(cornerRadius: 16))
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var practiceCtaBanner: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Ready to practice?")
+                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                        .foregroundStyle(StamerleeTheme.textPrimaryLight)
+                    Text("Use Beat Buddy to pace challenging sounds with a rhythmic metronome.")
+                        .font(.system(size: 12, weight: .medium, design: .rounded))
+                        .foregroundStyle(StamerleeTheme.textSecondaryLight)
+                }
+                Spacer()
+            }
+
+            Button {
+                isPresented = false
+                state.navigate(to: .beatBuddyWords)
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: "metronome.fill")
+                        .font(.system(size: 14))
+                    Text("Practice in Beat Buddy")
+                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 12, weight: .bold))
+                }
+                .foregroundStyle(.white)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(streakAccent, in: RoundedRectangle(cornerRadius: 12))
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(16)
+        .background(rowBackground, in: RoundedRectangle(cornerRadius: 16))
+        .padding(.top, 6)
+    }
+}
+

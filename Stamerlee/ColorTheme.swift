@@ -15,11 +15,11 @@ public enum StamerleeTheme {
     /// Pure white for cards and buttons
     public static let cardLight = Color.white
     
-    /// Vibrant primary brand blue: #0A84FF
-    public static let primaryBlue = Color(red: 10 / 255, green: 132 / 255, blue: 255 / 255)
+    /// Vibrant primary brand blue: True rich solid blue without cyanish tone in dark mode
+    public static let primaryBlue = Color(red: 0 / 255, green: 80 / 255, blue: 235 / 255)
     
     /// Deep interactive blue for pressed states
-    public static let primaryBlueDark = Color(red: 0 / 255, green: 110 / 255, blue: 220 / 255)
+    public static let primaryBlueDark = Color(red: 0 / 255, green: 65 / 255, blue: 200 / 255)
     
     /// Accent purple gradient for headline highlights
     public static let accentPurpleLight = Color(red: 192 / 255, green: 132 / 255, blue: 252 / 255)

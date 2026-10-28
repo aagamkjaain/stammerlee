@@ -20,8 +20,7 @@ public struct HomeDashboardView: View {
             StamerleeTheme.backgroundDark
                 .ignoresSafeArea()
             
-            if state.selectedTab == .home {
-                VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 0) {
                 // Header Bar
                 HStack {
                     Text("Welcome")
@@ -144,10 +143,6 @@ public struct HomeDashboardView: View {
                     }
                     .padding(.horizontal, 20)
                 }
-                }
-            } else {
-                Color.white
-                    .ignoresSafeArea()
             }
         }
 
@@ -349,5 +344,6 @@ public struct DashboardTabView: View {
         )
         .toolbarBackground(.visible, for: .tabBar)
         .toolbarColorScheme(.dark, for: .tabBar)
+        .preferredColorScheme(.dark)
     }
 }
