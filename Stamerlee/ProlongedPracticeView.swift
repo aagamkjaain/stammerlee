@@ -219,31 +219,33 @@ public struct ProlongedPracticeView: View {
 public struct ProlongedAnalysisView: View {
     @Bindable public var state: AppState
     
-    @State private var selectedSegment: String = "Blocks"
     @State private var selectedWords: Set<String> = []
+    @State private var showAllWordsSheet: Bool = false
     
     private var level: String {
         state.selectedDifficulty
     }
 
     private var wordsList: [String] {
-        switch (level, selectedSegment) {
-        case ("Easy", "Blocks"):
-            return ["Water", "Sun", "Morning", "Please", "Garden", "Window"]
-        case ("Easy", _):
-            return ["Water", "Morning", "Please", "Slowly", "Relaxed", "Together"]
-        case ("Medium", "Blocks"):
+        switch level {
+        case "Medium":
             return [
-                "Love", "Spiderman", "Please", "Water", "Morning", "Friend"
+                "Love", "Spiderman", "Please", "Water", "Morning", "Friend",
+                "Together", "Sentence", "Adventure", "Courage", "Family", "Journey",
+                "Comfort", "Practice", "Freedom", "Balance", "Connect", "Progress"
             ]
-        case ("Medium", _):
+        case "Hard":
             return [
-                "Love", "Spiderman", "Morning", "Please", "Together", "Sentence"
+                "Really", "Weather", "Coffee", "Repeat", "Slowly", "Feeling",
+                "Would", "Natural", "Connection", "Confidence", "Today", "Pacing",
+                "Conversation", "Expressive", "Overcome", "Clarity", "Smoothness", "Resilience"
             ]
-        case ("Hard", "Blocks"):
-            return ["Really", "Weather", "Coffee", "Repeat", "Slowly", "Feeling"]
-        default:
-            return ["Would", "Natural", "Connection", "Confidence", "Today", "Pacing"]
+        default: // Easy
+            return [
+                "Water", "Sun", "Morning", "Please", "Garden", "Window",
+                "Slowly", "Relaxed", "Together", "Gentle", "Quiet", "Breathe",
+                "Listen", "River", "Sunny", "Simple", "Golden", "Peaceful"
+            ]
         }
     }
     
@@ -264,79 +266,92 @@ public struct ProlongedAnalysisView: View {
                     .foregroundColor(StamerleeTheme.textPrimaryDark)
                     .padding(.horizontal, 24)
                     .padding(.top, 24)
-                    .padding(.bottom, 32)
+                    .padding(.bottom, 28)
                 
-                // Big Score Display
+                // Big Score Display - Out of 10
                 VStack(spacing: 6) {
                     Text("YOU SCORED")
                         .font(.system(size: 20, weight: .bold, design: .rounded))
                         .foregroundColor(StamerleeTheme.textPrimaryDark)
                         .tracking(1.2)
                     
-                    Text("86%")
-                        .font(.system(size: 54, weight: .bold, design: .rounded))
-                        .foregroundColor(.white)
+                    HStack(alignment: .firstTextBaseline, spacing: 4) {
+                        Text("8.6")
+                            .font(.system(size: 54, weight: .bold, design: .rounded))
+                            .foregroundColor(.white)
+                        Text("/ 10")
+                            .font(.system(size: 24, weight: .bold, design: .rounded))
+                            .foregroundColor(StamerleeTheme.textSecondaryDark)
+                    }
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.bottom, 32)
+                .padding(.bottom, 28)
                 
                 // Instructions Subtitle
                 Text("Tap words you want Beat Buddy to revisit")
                     .font(.system(size: 13, weight: .regular, design: .rounded))
                     .foregroundColor(StamerleeTheme.textSecondaryDark)
                     .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.bottom, 16)
+                    .padding(.bottom, 20)
                 
-                // Segmented Pill Control (Blocks | Repetition)
-                HStack(spacing: 0) {
-                    segmentButton(title: "Blocks", isSelected: selectedSegment == "Blocks") {
-                        selectedSegment = "Blocks"
-                    }
-                    
-                    segmentButton(title: "Repetition", isSelected: selectedSegment == "Repetition") {
-                        selectedSegment = "Repetition"
-                    }
-                }
-                .padding(3)
-                .background(Color(red: 220 / 255, green: 224 / 255, blue: 245 / 255))
-                .clipShape(Capsule())
-                .padding(.horizontal, 24)
-                .padding(.bottom, 22)
-
+                // Action Row: Counter + Select all & Deselect all
                 HStack {
                     Text("\(selectedWords.count) selected")
-                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                        .font(.system(size: 13, weight: .semibold, design: .rounded))
                         .foregroundColor(StamerleeTheme.textSecondaryDark)
+                    
                     Spacer()
-                    Button(selectedWords.count == wordsList.count ? "Clear all" : "Select all") {
+                    
+                    Button("Select all") {
                         withAnimation(.easeInOut(duration: 0.2)) {
-                            selectedWords = selectedWords.count == wordsList.count ? [] : Set(wordsList)
+                            selectedWords = Set(wordsList)
                         }
                     }
-                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
                     .foregroundColor(StamerleeTheme.primaryBlue)
+                    
+                    Text("•")
+                        .font(.system(size: 12))
+                        .foregroundColor(StamerleeTheme.textSecondaryDark.opacity(0.4))
+                        .padding(.horizontal, 4)
+                    
+                    Button("Deselect all") {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            selectedWords.removeAll()
+                        }
+                    }
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .foregroundColor(StamerleeTheme.textSecondaryDark)
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 12)
                 
-                // 2-Column Word Grid
+                // 2-Column Word Grid (Initial Preview)
                 LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
-                    ForEach(wordsList, id: \.self) { word in
+                    ForEach(Array(wordsList.prefix(6)), id: \.self) { word in
                         let isSelected = selectedWords.contains(word)
                         wordButton(word: word, isSelected: isSelected) {
-                            let impact = UIImpactFeedbackGenerator(style: .light)
-                            impact.impactOccurred()
-                            withAnimation(.spring(response: 0.25, dampingFraction: 0.7)) {
-                                if selectedWords.contains(word) {
-                                    selectedWords.remove(word)
-                                } else {
-                                    selectedWords.insert(word)
-                                }
-                            }
+                            toggleWordSelection(word)
                         }
                     }
                 }
                 .padding(.horizontal, 24)
+                
+                // Hyperlink-style "View more" button
+                Button {
+                    showAllWordsSheet = true
+                } label: {
+                    HStack(spacing: 4) {
+                        Text("View more")
+                            .underline()
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 11, weight: .semibold))
+                    }
+                    .font(.system(size: 13.5, weight: .semibold, design: .rounded))
+                    .foregroundColor(StamerleeTheme.primaryBlue)
+                }
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.top, 14)
                 
                 Spacer()
                 
@@ -353,30 +368,99 @@ public struct ProlongedAnalysisView: View {
         .onAppear {
             selectedWords = Set(wordsList.prefix(2))
         }
-        .onChange(of: selectedSegment) { _, _ in
-            selectedWords = Set(wordsList.prefix(2))
+        .sheet(isPresented: $showAllWordsSheet) {
+            wordsSheetView
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+                .presentationBackground(StamerleeTheme.backgroundDark)
+                .ignoresSafeArea()
         }
     }
     
-    // MARK: - Segment Pill Button
-    private func segmentButton(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: {
-            let impact = UIImpactFeedbackGenerator(style: .light)
-            impact.impactOccurred()
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.75)) {
-                action()
+    // MARK: - Navigation Sheet with Scrollable Word List
+    private var wordsSheetView: some View {
+        NavigationStack {
+            ZStack {
+                StamerleeTheme.backgroundDark
+                    .ignoresSafeArea()
+                
+                ScrollView(.vertical, showsIndicators: true) {
+                    VStack(alignment: .leading, spacing: 16) {
+                        // Header counter and Select All / Deselect All
+                        HStack {
+                            Text("\(selectedWords.count) of \(wordsList.count) selected")
+                                .font(.system(size: 13, weight: .medium, design: .rounded))
+                                .foregroundColor(StamerleeTheme.textSecondaryDark)
+                            
+                            Spacer()
+                            
+                            Button("Select all") {
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    selectedWords = Set(wordsList)
+                                }
+                            }
+                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                            .foregroundColor(StamerleeTheme.primaryBlue)
+                            
+                            Text("•")
+                                .font(.system(size: 12))
+                                .foregroundColor(StamerleeTheme.textSecondaryDark.opacity(0.4))
+                                .padding(.horizontal, 4)
+                            
+                            Button("Deselect all") {
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    selectedWords.removeAll()
+                                }
+                            }
+                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                            .foregroundColor(StamerleeTheme.textSecondaryDark)
+                        }
+                        .padding(.horizontal, 24)
+                        .padding(.top, 12)
+                        
+                        // 2-Column Word Grid in the exact same UI
+                        LazyVGrid(
+                            columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)],
+                            spacing: 12
+                        ) {
+                            ForEach(wordsList, id: \.self) { word in
+                                let isSelected = selectedWords.contains(word)
+                                wordButton(word: word, isSelected: isSelected) {
+                                    toggleWordSelection(word)
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 24)
+                        .padding(.bottom, 32)
+                    }
+                }
             }
-        }) {
-            Text(title)
-                .font(.system(size: 13, weight: .bold, design: .rounded))
-                .foregroundColor(isSelected ? StamerleeTheme.textPrimaryLight : Color(red: 80 / 255, green: 85 / 255, blue: 110 / 255))
-                .frame(maxWidth: .infinity)
-                .frame(height: 38)
-                .background(
-                    isSelected ? Color.white : Color.clear
-                )
-                .clipShape(Capsule())
-                .shadow(color: isSelected ? Color.black.opacity(0.08) : .clear, radius: 4, x: 0, y: 2)
+            .navigationTitle("Practice Words")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(StamerleeTheme.backgroundDark, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") {
+                        showAllWordsSheet = false
+                    }
+                    .font(.system(size: 15, weight: .bold, design: .rounded))
+                    .foregroundColor(StamerleeTheme.primaryBlue)
+                }
+            }
+        }
+        .ignoresSafeArea()
+    }
+    
+    private func toggleWordSelection(_ word: String) {
+        let impact = UIImpactFeedbackGenerator(style: .light)
+        impact.impactOccurred()
+        withAnimation(.spring(response: 0.25, dampingFraction: 0.7)) {
+            if selectedWords.contains(word) {
+                selectedWords.remove(word)
+            } else {
+                selectedWords.insert(word)
+            }
         }
     }
     

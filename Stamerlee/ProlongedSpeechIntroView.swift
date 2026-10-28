@@ -38,14 +38,13 @@ public struct ProlongedSpeechIntroView: View {
                         .lineSpacing(2)
                     
                     Text("Learn to gently stretch sounds and connect words smoothly. This technique can help reduce speech tension and improve fluency with practice")
-                        .font(.system(size: 17, weight: .regular, design: .rounded))
+                        .font(.system(size: 21, weight: .regular, design: .rounded))
                         .foregroundColor(StamerleeTheme.textSecondaryDark)
                         .lineSpacing(4)
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 22)
-                
-                Spacer()
+
                 
                 // Hero Illustration from uploaded screenshot
                 ZStack {
@@ -53,7 +52,7 @@ public struct ProlongedSpeechIntroView: View {
                         Image(uiImage: uiImage)
                             .resizable()
                             .scaledToFit()
-                            .frame(maxHeight: 280)
+                            .frame(maxHeight: 380)
                             .shadow(color: Color.black.opacity(0.35), radius: 20, x: 0, y: 10)
                             .scaleEffect(breatheEffect ? 1.015 : 0.985)
                             .animation(.easeInOut(duration: 2.8).repeatForever(autoreverses: true), value: breatheEffect)

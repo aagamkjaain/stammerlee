@@ -26,7 +26,6 @@
 		AA000001017 /* IconMirrorNarration.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002017 /* IconMirrorNarration.png */; };
 		AA000001018 /* IconPictureDesc.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002018 /* IconPictureDesc.png */; };
 		AA000001019 /* IconProlongedSpeech.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002019 /* IconProlongedSpeech.png */; };
-		AA000001020 /* ProlongedSpeechHero.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002020 /* ProlongedSpeechHero.png */; };
 		AA000001021 /* PictureDescriptionEasyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002021 /* PictureDescriptionEasyView.swift */; };
 		AA000001024 /* PictureDescriptionDifficultyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002024 /* PictureDescriptionDifficultyView.swift */; };
 		AA000001027 /* DialSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002027 /* DialSceneView.swift */; };
@@ -58,7 +57,6 @@
 		AA000002017 /* IconMirrorNarration.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IconMirrorNarration.png; sourceTree = "<group>"; };
 		AA000002018 /* IconPictureDesc.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IconPictureDesc.png; sourceTree = "<group>"; };
 		AA000002019 /* IconProlongedSpeech.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IconProlongedSpeech.png; sourceTree = "<group>"; };
-		AA000002020 /* ProlongedSpeechHero.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ProlongedSpeechHero.png; sourceTree = "<group>"; };
 		AA000002021 /* PictureDescriptionEasyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureDescriptionEasyView.swift; sourceTree = "<group>"; };
 		AA000002024 /* PictureDescriptionDifficultyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureDescriptionDifficultyView.swift; sourceTree = "<group>"; };
 		AA000002027 /* DialSceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DialSceneView.swift; sourceTree = "<group>"; };
@@ -91,7 +89,6 @@
 				AA000002017 /* IconMirrorNarration.png */,
 				AA000002018 /* IconPictureDesc.png */,
 				AA000002019 /* IconProlongedSpeech.png */,
-				AA000002020 /* ProlongedSpeechHero.png */,
 				AA000002015 /* ClockIllustration.png */,
 			);
 			path = pictures;
@@ -207,7 +204,6 @@
 				AA000001017 /* IconMirrorNarration.png in Resources */,
 				AA000001018 /* IconPictureDesc.png in Resources */,
 				AA000001019 /* IconProlongedSpeech.png in Resources */,
-				AA000001020 /* ProlongedSpeechHero.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
