@@ -48,10 +48,7 @@ public struct ContentView: View {
                 case .pictureDescriptionIntro:
                     PictureDescriptionIntroView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
-                case .pictureDescriptionDifficulty:
-                    PictureDescriptionDifficultyView(state: appState)
-                        .transition(slideTransition(for: appState.navigationDirection))
-                case .pictureDescriptionPractice:
+                case .pictureDescriptionDifficulty, .pictureDescriptionPractice:
                     PictureDescriptionEasyView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
                 case .dialSceneIntro:
@@ -63,10 +60,7 @@ public struct ContentView: View {
                 case .narrationIntro:
                     NarrationIntroView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
-                case .narrationDifficulty:
-                    NarrationDifficultyView(state: appState)
-                        .transition(slideTransition(for: appState.navigationDirection))
-                case .narrationPractice:
+                case .narrationDifficulty, .narrationPractice:
                     NarrationPracticeView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
                 case .beatBuddyWords:
@@ -127,7 +121,7 @@ public struct ContentView: View {
             HStack {
                 Text("Screen Jump (Tap to test):")
                     .font(.system(size: 11, weight: .bold))
-                    .foregroundColor(.white.opacity(0.8))
+                    .foregroundStyle(.white.opacity(0.8))
                 
                 Spacer()
                 
@@ -135,7 +129,7 @@ public struct ContentView: View {
                     withAnimation { showScreenPicker = false }
                 }) {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.white.opacity(0.7))
+                        .foregroundStyle(.white.opacity(0.7))
                 }
             }
             
@@ -173,7 +167,7 @@ public struct ContentView: View {
         }) {
             Text(title)
                 .font(.system(size: 12, weight: appState.currentScreen == screen ? .bold : .medium))
-                .foregroundColor(appState.currentScreen == screen ? .white : .white.opacity(0.7))
+                .foregroundStyle(appState.currentScreen == screen ? .white : .white.opacity(0.7))
                 .padding(.horizontal, 10)
                 .padding(.vertical, 6)
                 .background(appState.currentScreen == screen ? StamerleeTheme.primaryBlue : Color.white.opacity(0.12))

@@ -25,7 +25,7 @@ public struct LaunchView: View {
                 Spacer()
                 Text("Stamerlee")
                     .font(.system(size: 44, weight: .bold, design: .rounded))
-                    .foregroundColor(StamerleeTheme.textPrimaryDark)
+                    .foregroundStyle(StamerleeTheme.textPrimaryDark)
                     .opacity(logoOpacity)
                     .scaleEffect(logoScale)
                     .shadow(color: Color.white.opacity(0.15), radius: 16, x: 0, y: 0)
@@ -72,11 +72,11 @@ public struct LoginView: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text("Get started")
                     .font(.system(size: 26, weight: .bold, design: .rounded))
-                    .foregroundColor(StamerleeTheme.textPrimaryLight)
+                    .foregroundStyle(StamerleeTheme.textPrimaryLight)
 
                 Text("Start your fluency journey.")
                     .font(.system(size: 14, weight: .regular, design: .rounded))
-                    .foregroundColor(StamerleeTheme.textSecondaryLight)
+                    .foregroundStyle(StamerleeTheme.textSecondaryLight)
             }
             .padding(.top, 4)
 
@@ -88,7 +88,7 @@ public struct LoginView: View {
                     Rectangle().fill(StamerleeTheme.dividerLight).frame(height: 1)
                     Text("OR")
                         .font(.system(size: 11, weight: .semibold))
-                        .foregroundColor(StamerleeTheme.textSecondaryLight.opacity(0.8))
+                        .foregroundStyle(StamerleeTheme.textSecondaryLight.opacity(0.8))
                     Rectangle().fill(StamerleeTheme.dividerLight).frame(height: 1)
                 }
                 .padding(.vertical, 2)
@@ -99,21 +99,21 @@ public struct LoginView: View {
             VStack(spacing: 4) {
                 Text("By continuing, you agree to our")
                     .font(.system(size: 11, weight: .regular))
-                    .foregroundColor(StamerleeTheme.textSecondaryLight)
+                    .foregroundStyle(StamerleeTheme.textSecondaryLight)
 
                 HStack(spacing: 4) {
                     Button("Terms of Service") { activeSheet = .terms }
                         .font(.system(size: 11, weight: .semibold))
-                        .foregroundColor(StamerleeTheme.primaryBlue)
+                        .foregroundStyle(StamerleeTheme.primaryBlue)
                         .underline()
 
                     Text("and")
                         .font(.system(size: 11, weight: .regular))
-                        .foregroundColor(StamerleeTheme.textSecondaryLight)
+                        .foregroundStyle(StamerleeTheme.textSecondaryLight)
 
                     Button("Privacy Policy") { activeSheet = .privacy }
                         .font(.system(size: 11, weight: .semibold))
-                        .foregroundColor(StamerleeTheme.primaryBlue)
+                        .foregroundStyle(StamerleeTheme.primaryBlue)
                         .underline()
                 }
             }
@@ -131,8 +131,7 @@ public struct LoginView: View {
     }
 
     private func handleAuth(provider: String) {
-        state.authMethod = provider
-        state.isAuthenticated = true
+        state.signIn(method: provider)
         state.navigate(to: .onboarding1)
     }
 
@@ -166,20 +165,22 @@ public struct LoginView: View {
 
             TextField("Email address", text: $emailInput)
                 .keyboardType(.emailAddress)
-                .autocapitalization(.none)
+                .textContentType(.emailAddress)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
                 .padding()
                 .background(Color(red: 242 / 255, green: 244 / 255, blue: 250 / 255))
-                .cornerRadius(12)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
 
             SecureField("Password", text: $passwordInput)
+                .textContentType(.password)
                 .padding()
                 .background(Color(red: 242 / 255, green: 244 / 255, blue: 250 / 255))
-                .cornerRadius(12)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
 
             PrimaryActionButton(title: "Continue") {
-                state.userEmail = emailInput.isEmpty ? "user@stamerlee.com" : emailInput
-                state.authMethod = "Email"
-                state.isAuthenticated = true
+                state.signIn(method: "Email", email: emailInput.isEmpty ? "user@stamerlee.com" : emailInput)
+                passwordInput = ""
                 activeSheet = nil
                 state.navigate(to: .onboarding1)
             }
@@ -192,7 +193,7 @@ public struct LoginView: View {
     private func legalSheet(title: String, text: String) -> some View {
         VStack(alignment: .leading, spacing: 14) {
             Text(title).font(.system(size: 22, weight: .bold, design: .rounded))
-            Text(text).font(.system(size: 15)).foregroundColor(StamerleeTheme.textSecondaryLight)
+            Text(text).font(.system(size: 15)).foregroundStyle(StamerleeTheme.textSecondaryLight)
             Spacer()
         }
         .padding(24)
@@ -216,7 +217,7 @@ public struct OnboardingStepOneView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Small steps,")
                             .font(.system(size: 32, weight: .bold, design: .rounded))
-                            .foregroundColor(StamerleeTheme.textPrimaryDark)
+                            .foregroundStyle(StamerleeTheme.textPrimaryDark)
 
                         Text("stronger speech")
                             .font(.system(size: 32, weight: .bold, design: .rounded))
@@ -231,7 +232,7 @@ public struct OnboardingStepOneView: View {
 
                     Text("Practice at your own pace, build confidence, and celebrate every step forward.")
                         .font(.system(size: 15, weight: .regular, design: .rounded))
-                        .foregroundColor(StamerleeTheme.textSecondaryDark)
+                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
                         .lineSpacing(4)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -271,12 +272,12 @@ public struct OnboardingStepTwoView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Support on your\nschedule")
                         .font(.system(size: 32, weight: .bold, design: .rounded))
-                        .foregroundColor(StamerleeTheme.textPrimaryDark)
+                        .foregroundStyle(StamerleeTheme.textPrimaryDark)
                         .lineSpacing(2)
 
                     Text("Simple activities to practice fluency and become more comfortable speaking.")
                         .font(.system(size: 15, weight: .regular, design: .rounded))
-                        .foregroundColor(StamerleeTheme.textSecondaryDark)
+                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
                         .lineSpacing(4)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -317,7 +318,7 @@ public struct DailyGoalView: View {
             VStack(alignment: .leading, spacing: 0) {
                 Text("Set Your Goals")
                     .font(.system(size: 32, weight: .bold, design: .rounded))
-                    .foregroundColor(StamerleeTheme.textPrimaryDark)
+                    .foregroundStyle(StamerleeTheme.textPrimaryDark)
                     .padding(.horizontal, 24)
                     .padding(.top, 24)
                     .padding(.bottom, 34)
@@ -325,7 +326,7 @@ public struct DailyGoalView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     Text("Choose your daily goal")
                         .font(.system(size: 16, weight: .bold, design: .rounded))
-                        .foregroundColor(StamerleeTheme.textPrimaryLight)
+                        .foregroundStyle(StamerleeTheme.textPrimaryLight)
                         .padding(.horizontal, 20)
                         .padding(.top, 22)
                         .padding(.bottom, 14)
@@ -344,7 +345,7 @@ public struct DailyGoalView: View {
                                             weight: state.dailyPracticeMinutes == minutes ? .semibold : .regular,
                                             design: .rounded
                                         ))
-                                        .foregroundColor(StamerleeTheme.textPrimaryLight)
+                                        .foregroundStyle(StamerleeTheme.textPrimaryLight)
 
                                     Spacer()
 
@@ -356,7 +357,7 @@ public struct DailyGoalView: View {
 
                                             Image(systemName: "checkmark")
                                                 .font(.system(size: 11, weight: .bold))
-                                                .foregroundColor(.white)
+                                                .foregroundStyle(.white)
                                         } else {
                                             Circle()
                                                 .stroke(
@@ -451,7 +452,7 @@ public struct ExploreActivitiesView: View {
             VStack(alignment: .leading, spacing: 0) {
                 Text("Explore activities\ndesigned for your\nstutter")
                     .font(.system(size: 28, weight: .bold, design: .rounded))
-                    .foregroundColor(StamerleeTheme.textPrimaryDark)
+                    .foregroundStyle(StamerleeTheme.textPrimaryDark)
                     .lineSpacing(3)
                     .padding(.horizontal, 24)
                     .padding(.top, 22)
@@ -490,14 +491,14 @@ public struct ExploreActivitiesView: View {
                     Circle()
                         .fill(StamerleeTheme.accentPurple.opacity(0.2))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "sparkles").foregroundColor(StamerleeTheme.primaryBlue))
+                        .overlay(Image(systemName: "sparkles").foregroundStyle(StamerleeTheme.primaryBlue))
                 }
             }
             .frame(width: 48, height: 48)
 
             Text(item.text)
                 .font(.system(size: 13.5, weight: .semibold, design: .rounded))
-                .foregroundColor(StamerleeTheme.textPrimaryLight)
+                .foregroundStyle(StamerleeTheme.textPrimaryLight)
                 .lineSpacing(2.5)
                 .multilineTextAlignment(.leading)
 

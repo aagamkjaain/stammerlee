@@ -47,7 +47,7 @@ public struct PictureDescriptionEasyView: View {
                 Spacer()
                 Text("DAF")
                     .font(.system(size: 13, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
                     .background(StamerleeTheme.primaryBlueDark)
@@ -56,15 +56,15 @@ public struct PictureDescriptionEasyView: View {
             .padding(.horizontal, 24)
             .padding(.top, 16)
 
-            Text(difficulty)
+            Text("Picture Description")
                 .font(.system(size: 30, weight: .bold, design: .rounded))
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
                 .padding(.horizontal, 24)
                 .padding(.top, 20)
 
             Text(description)
                 .font(.system(size: 14, design: .rounded))
-                .foregroundColor(StamerleeTheme.textSecondaryDark)
+                .foregroundStyle(StamerleeTheme.textSecondaryDark)
                 .padding(.horizontal, 24)
                 .padding(.top, 10)
 
@@ -91,7 +91,7 @@ public struct PictureDescriptionEasyView: View {
                         .frame(width: 52, height: 52)
                     Image(systemName: "mic.fill")
                         .font(.system(size: 23, weight: .bold))
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
                 }
             }
             .frame(maxWidth: .infinity)
@@ -207,7 +207,7 @@ public struct PictureDescriptionEasyView: View {
                             Text("Picture Description")
                                 .font(.system(size: 14, weight: .semibold, design: .rounded))
                         }
-                        .foregroundColor(StamerleeTheme.textSecondaryDark)
+                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
                     }
                     .overlay(
                         RoundedRectangle(cornerRadius: 20, style: .continuous)
@@ -218,7 +218,7 @@ public struct PictureDescriptionEasyView: View {
     }
 
     private func completeCurrentDifficulty() {
-        state.completedPictureDescriptionDifficulties.insert(difficulty)
+        state.completePictureDescription()
     }
 
     private var description: String {

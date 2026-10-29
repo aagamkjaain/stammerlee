@@ -32,11 +32,11 @@ public struct NarrationPracticeView: View {
     private var practiceView: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
-                BackNavButton { state.navigate(to: .narrationDifficulty, forward: false) }
+                BackNavButton { state.navigate(to: .homeDashboard, forward: false) }
                 Spacer()
                 Text("DAF")
                     .font(.system(size: 12, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .padding(.horizontal, 14)
                     .padding(.vertical, 7)
                     .background(StamerleeTheme.primaryBlueDark)
@@ -45,15 +45,15 @@ public struct NarrationPracticeView: View {
             .padding(.horizontal, 24)
             .padding(.top, 16)
 
-            Text(difficulty)
+            Text("Narration")
                 .font(.system(size: 30, weight: .bold, design: .rounded))
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
                 .padding(.horizontal, 24)
                 .padding(.top, 22)
 
             Text(prompt)
                 .font(.system(size: 14, design: .rounded))
-                .foregroundColor(StamerleeTheme.textSecondaryDark)
+                .foregroundStyle(StamerleeTheme.textSecondaryDark)
                 .padding(.horizontal, 24)
                 .padding(.top, 10)
 
@@ -65,7 +65,7 @@ public struct NarrationPracticeView: View {
 
             Text(prompt)
                 .font(.system(size: 12, weight: .semibold, design: .rounded))
-                .foregroundColor(.black)
+                .foregroundStyle(.black)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)
                 .background(Color.white)
@@ -82,7 +82,7 @@ public struct NarrationPracticeView: View {
                 ZStack {
                     Circle().fill(Color(red: 205 / 255, green: 215 / 255, blue: 245 / 255)).frame(width: 78, height: 78)
                     Circle().fill(StamerleeTheme.backgroundDark).frame(width: 52, height: 52)
-                    Image(systemName: "mic.fill").foregroundColor(.white).font(.system(size: 23, weight: .bold))
+                    Image(systemName: "mic.fill").foregroundStyle(.white).font(.system(size: 23, weight: .bold))
                 }
             }
             .frame(maxWidth: .infinity)
@@ -141,7 +141,7 @@ public struct NarrationPracticeView: View {
     }
 
     private func complete() {
-        state.completedNarrationDifficulties.insert(difficulty)
+        state.completeNarration()
         withAnimation(.easeInOut(duration: 0.25)) {
             showAnalysis = true
         }

@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import Observation
+import UserNotifications
 
 // MARK: - App Tabs
 public enum AppTab: Int, CaseIterable, Hashable {
@@ -87,11 +88,10 @@ public final class AppState {
     public var currentScreen: AppScreen = .launch
     public var navigationDirection: Edge = .trailing
     
-    // Auth State
-    public var userEmail: String = ""
-    public var isAuthenticated: Bool = false
-    public var isAuthenticating: Bool = false
-    public var authMethod: String? = nil
+    // Auth State (read-only outside AppState; mutate via signIn/logout/deleteAccount)
+    public private(set) var userEmail: String = ""
+    public private(set) var isAuthenticated: Bool = false
+    public private(set) var authMethod: String? = nil
     
     // Challenging Sounds Selection
     public var selectedSoundIds: Set<String> = ["td"] // Default "T, D" selected as in screenshot
@@ -106,7 +106,7 @@ public final class AppState {
     public var profileAvatarData: Data?
     
     // Practice & Difficulty State
-    public var selectedDifficulty: String = "Easy"
+    public var selectedDifficulty: String = "Words"
     public var completedProlongedDifficulties: Set<String> = []
     public var hasAttemptedProlongedEasy: Bool = false
     public var hasReceivedProlongedEasyScore: Bool = false
@@ -114,6 +114,7 @@ public final class AppState {
     public var prolongedSpeechScores: [String: Double] = [:]
     public var hasSeenProlongedSpeechIntro: Bool = false
     public var hasSeenPictureDescriptionIntro: Bool = false
+    public var hasCompletedPictureDescription: Bool = false
     public var selectedPictureDescriptionDifficulty: String = "Easy"
     public var completedPictureDescriptionDifficulties: Set<String> = []
     public var hasCompletedDialScene: Bool = false
@@ -144,19 +145,29 @@ public final class AppState {
     public var reminderEnabled: Bool = true
     public var reminderTime: Date = Calendar.current.date(from: DateComponents(hour: 20, minute: 0)) ?? Date()
 
+    public func signIn(method: String, email: String = "") {
+        authMethod = method
+        userEmail = email
+        isAuthenticated = true
+    }
+
     public func logout() {
         isAuthenticated = false
         userEmail = ""
+        authMethod = nil
         navigate(to: .login, forward: false)
     }
 
     public func deleteAccount() {
         isAuthenticated = false
         userEmail = ""
+        authMethod = nil
+        profileAvatarData = nil
         profileName = "New User"
         currentStreakDays = 0
         practiceAudioSeconds = 0
         completedProlongedDifficulties.removeAll()
+        hasCompletedPictureDescription = false
         completedPictureDescriptionDifficulties.removeAll()
         completedNarrationDifficulties.removeAll()
         hasCompletedDialScene = false
@@ -164,6 +175,8 @@ public final class AppState {
         hasReceivedProlongedEasyScore = false
         prolongedEasyScore = nil
         prolongedSpeechScores.removeAll()
+        reminderEnabled = false
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         navigate(to: .login, forward: false)
     }
     
@@ -199,16 +212,7 @@ public final class AppState {
     }
 
     public func isProlongedDifficultyUnlocked(_ difficulty: String) -> Bool {
-        switch difficulty {
-        case "Easy":
-            return true
-        case "Medium":
-            return completedProlongedDifficulties.contains("Easy")
-        case "Hard":
-            return completedProlongedDifficulties.contains("Medium")
-        default:
-            return false
-        }
+        true
     }
 
     public func completeProlongedDifficulty(_ difficulty: String) {
@@ -218,7 +222,7 @@ public final class AppState {
     public func recordProlongedScore(difficulty: String, score: Double) {
         prolongedSpeechScores[difficulty] = score
         completedProlongedDifficulties.insert(difficulty)
-        if difficulty == "Easy" {
+        if difficulty == "Words" || difficulty == "Easy" {
             hasAttemptedProlongedEasy = true
             hasReceivedProlongedEasyScore = true
             prolongedEasyScore = score
@@ -226,32 +230,28 @@ public final class AppState {
     }
 
     public var isPictureDescriptionUnlocked: Bool {
-        completedProlongedDifficulties.contains("Hard")
+        true
+    }
+
+    public func completePictureDescription() {
+        hasCompletedPictureDescription = true
+        completedPictureDescriptionDifficulties.insert("Completed")
     }
 
     public var isDialSceneUnlocked: Bool {
-        completedPictureDescriptionDifficulties.contains("Hard")
-    }
-
-    public func isPictureDescriptionDifficultyUnlocked(_ difficulty: String) -> Bool {
-        switch difficulty {
-        case "Easy":
-            return isPictureDescriptionUnlocked
-        case "Medium":
-            return completedPictureDescriptionDifficulties.contains("Easy")
-        case "Hard":
-            return completedPictureDescriptionDifficulties.contains("Medium")
-        default:
-            return false
-        }
+        true
     }
 
     public var isBeatBuddyUnlocked: Bool {
-        hasReceivedProlongedEasyScore || (hasAttemptedProlongedEasy && prolongedEasyScore != nil)
+        true
     }
 
     public var isNarrationUnlocked: Bool {
-        hasCompletedDialScene
+        true
+    }
+
+    public func completeNarration() {
+        completedNarrationDifficulties.insert("Completed")
     }
     
     public func restartFlow() {

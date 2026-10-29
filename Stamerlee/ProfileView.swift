@@ -298,10 +298,10 @@ public struct ProfileView: View {
                 HStack(spacing: 6) {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 13, weight: .bold))
-                        .foregroundColor(.green)
+                        .foregroundStyle(.green)
                     Text("Reminder set for \(formattedReminderTime) daily")
                         .font(.system(size: 12, weight: .medium, design: .rounded))
-                        .foregroundColor(StamerleeTheme.textSecondaryLight)
+                        .foregroundStyle(StamerleeTheme.textSecondaryLight)
                 }
                 .padding(.top, 2)
             }

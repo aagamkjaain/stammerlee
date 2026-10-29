@@ -25,7 +25,7 @@ public struct HomeDashboardView: View {
                 HStack {
                     Text("Welcome")
                         .font(.system(size: 32, weight: .bold, design: .rounded))
-                        .foregroundColor(StamerleeTheme.textPrimaryDark)
+                        .foregroundStyle(StamerleeTheme.textPrimaryDark)
                     
                     Spacer()
 
@@ -34,7 +34,7 @@ public struct HomeDashboardView: View {
                     } label: {
                         Image(systemName: "person.crop.circle.fill")
                             .font(.system(size: 32, weight: .semibold))
-                            .foregroundColor(StamerleeTheme.textPrimaryDark)
+                            .foregroundStyle(StamerleeTheme.textPrimaryDark)
                     }
                     .accessibilityLabel("Open profile")
                     
@@ -53,7 +53,7 @@ public struct HomeDashboardView: View {
                         VStack(alignment: .leading, spacing: 12) {
                             Text("Exercises")
                                 .font(.system(size: 17, weight: .bold, design: .rounded))
-                                .foregroundColor(StamerleeTheme.textPrimaryDark)
+                                .foregroundStyle(StamerleeTheme.textPrimaryDark)
                             
                             // 1. Prolonged Speech (UNLOCKED - Primary action)
                             exerciseRow(
@@ -70,61 +70,49 @@ public struct HomeDashboardView: View {
                                 )
                             }
                             
-                            // 2. Picture Description (unlocked after Prolonged Speech Hard)
+                            // 2. Picture Description
                             exerciseRow(
                                 title: "Picture Description",
                                 subtitle: "Describe real-world scenes in detail to practice spontaneous speech flow",
-                                isLocked: !state.isPictureDescriptionUnlocked,
+                                isLocked: false,
                                 iconName: "IconPictureDesc",
                                 fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/IconPictureDesc.png"
                             ) {
-                                if state.isPictureDescriptionUnlocked {
-                                    state.navigate(
-                                        to: state.hasSeenPictureDescriptionIntro
-                                            ? .pictureDescriptionDifficulty
-                                            : .pictureDescriptionIntro
-                                    )
-                                } else {
-                                    triggerLockedAlert(title: "Picture Description")
-                                }
+                                state.navigate(
+                                    to: state.hasSeenPictureDescriptionIntro
+                                        ? .pictureDescriptionPractice
+                                        : .pictureDescriptionIntro
+                                )
                             }
                             
-                            // 3. Dial Scene (unlocked after Picture Description Hard)
+                            // 3. Dial Scene
                             exerciseRow(
                                 title: "Dial Scene",
                                 subtitle: "Practice interactive scenario-based phone calls and service counter chats",
-                                isLocked: !state.isDialSceneUnlocked,
+                                isLocked: false,
                                 iconName: "IconDialScene",
                                 fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/IconDialScene.png"
                             ) {
-                                if state.isDialSceneUnlocked {
-                                    state.navigate(
-                                        to: state.hasSeenDialSceneIntro
-                                            ? .dialScene
-                                            : .dialSceneIntro
-                                    )
-                                } else {
-                                    triggerLockedAlert(title: "Dial Scene")
-                                }
+                                state.navigate(
+                                    to: state.hasSeenDialSceneIntro
+                                        ? .dialScene
+                                        : .dialSceneIntro
+                                )
                             }
                             
-                            // 4. Narration (unlocked after one completed Dial Scene)
+                            // 4. Narration
                             exerciseRow(
                                 title: "Narration",
                                 subtitle: "Practice reading and telling longer stories while watching yourself in the mirror",
-                                isLocked: !state.isNarrationUnlocked,
+                                isLocked: false,
                                 iconName: "IconMirrorNarration",
                                 fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/IconMirrorNarration.png"
                             ) {
-                                if state.isNarrationUnlocked {
-                                    state.navigate(
-                                        to: state.hasSeenNarrationIntro
-                                            ? .narrationDifficulty
-                                            : .narrationIntro
-                                    )
-                                } else {
-                                    triggerLockedAlert(title: "Narration")
-                                }
+                                state.navigate(
+                                    to: state.hasSeenNarrationIntro
+                                        ? .narrationPractice
+                                        : .narrationIntro
+                                )
                             }
                         }
                         
@@ -132,21 +120,17 @@ public struct HomeDashboardView: View {
                         VStack(alignment: .leading, spacing: 12) {
                             Text("Practice")
                                 .font(.system(size: 17, weight: .bold, design: .rounded))
-                                .foregroundColor(StamerleeTheme.textPrimaryDark)
+                                .foregroundStyle(StamerleeTheme.textPrimaryDark)
                             
-                            // Beat Buddy (unlocked after Prolonged Speech Easy)
+                            // Beat Buddy
                             exerciseRow(
                                 title: "Beat Buddy",
                                 subtitle: "Practice speaking to a steady, rhythmic beat using an interactive metronome",
-                                isLocked: !state.isBeatBuddyUnlocked,
+                                isLocked: false,
                                 iconName: "BeatBuddyLogo",
                                 fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/IconMirrorNarration.png"
                             ) {
-                                if state.isBeatBuddyUnlocked {
-                                    state.navigate(to: .beatBuddyWords)
-                                } else {
-                                    triggerLockedAlert(title: "Beat Buddy")
-                                }
+                                state.navigate(to: .beatBuddyWords)
                             }
                         }
                         
@@ -173,16 +157,16 @@ public struct HomeDashboardView: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text("YOUR DAILY GOAL")
                     .font(.system(size: 10, weight: .bold, design: .rounded))
-                    .foregroundColor(StamerleeTheme.textSecondaryLight)
+                    .foregroundStyle(StamerleeTheme.textSecondaryLight)
                     .tracking(1.2)
                 
                 Text("Practice for \(state.dailyPracticeMinutes) minutes")
                     .font(.system(size: 16, weight: .bold, design: .rounded))
-                    .foregroundColor(StamerleeTheme.textPrimaryLight)
+                    .foregroundStyle(StamerleeTheme.textPrimaryLight)
                 
                 Text("Your daily fluency goal.")
                     .font(.system(size: 13, weight: .regular, design: .rounded))
-                    .foregroundColor(StamerleeTheme.textSecondaryLight)
+                    .foregroundStyle(StamerleeTheme.textSecondaryLight)
             }
             
             Spacer()
@@ -219,7 +203,7 @@ public struct HomeDashboardView: View {
                         
                         Image(systemName: "lock.fill")
                             .font(.system(size: 19, weight: .bold))
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                     }.frame(width:75, height:75)
                 } else {
                     // Every unlocked exercise uses the same fixed icon treatment.
@@ -238,11 +222,11 @@ public struct HomeDashboardView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(title)
                         .font(.system(size: 15, weight: .bold, design: .rounded))
-                        .foregroundColor(StamerleeTheme.textPrimaryLight)
+                        .foregroundStyle(StamerleeTheme.textPrimaryLight)
                     
                     Text(subtitle)
                         .font(.system(size: 12, weight: .regular, design: .rounded))
-                        .foregroundColor(StamerleeTheme.textSecondaryLight)
+                        .foregroundStyle(StamerleeTheme.textSecondaryLight)
                         .lineLimit(3)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -253,7 +237,7 @@ public struct HomeDashboardView: View {
                 if !isLocked {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(Color.gray.opacity(0.5))
+                        .foregroundStyle(Color.gray.opacity(0.5))
                 }
             }
             .padding(.horizontal, 16)
