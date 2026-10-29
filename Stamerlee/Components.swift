@@ -24,7 +24,6 @@ public struct PrimaryActionButton: View {
         self.isLoading = isLoading
         self.action = action
     }
-    
     public var body: some View {
         Button(action: {
             guard isEnabled && !isLoading else { return }
@@ -499,49 +498,47 @@ public struct ExerciseAnalysisSkeletonView: View {
             VStack(alignment: .leading, spacing: 0) {
                 // Top Title Bar
                 Text("Analysis")
-                    .font(.system(size: 30, weight: .bold, design: .rounded))
+                    .font(.system(size: 32, weight: .bold, design: .rounded))
                     .foregroundColor(StamerleeTheme.textPrimaryDark)
                     .padding(.horizontal, 24)
                     .padding(.top, 24)
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 16)
 
-                // Big Affirmation & Score Display
-                VStack(spacing: 8) {
-                    // Big Confidence Affirmation
+                // Big Affirmation & Prominent Score Display (Made bigger to occupy the upper area)
+                VStack(spacing: 12) {
                     Text(computedAffirmation)
-                        .font(.system(size: 26, weight: .bold, design: .rounded))
+                        .font(.system(size: 30, weight: .bold, design: .rounded))
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 24)
-                        .padding(.bottom, 4)
 
                     Text("YOU SCORED")
-                        .font(.system(size: 15, weight: .bold, design: .rounded))
+                        .font(.system(size: 20, weight: .bold, design: .rounded))
                         .foregroundColor(StamerleeTheme.textSecondaryDark)
                         .tracking(1.4)
+                        .padding(.top, 4)
 
-                    HStack(alignment: .firstTextBaseline, spacing: 4) {
+                    HStack(alignment: .firstTextBaseline, spacing: 6) {
                         Text(scoreText)
-                            .font(.system(size: 54, weight: .bold, design: .rounded))
+                            .font(.system(size: 72, weight: .bold, design: .rounded))
                             .foregroundColor(.white)
                         if !maxScoreText.isEmpty {
                             Text(maxScoreText)
-                                .font(.system(size: 24, weight: .bold, design: .rounded))
+                                .font(.system(size: 28, weight: .bold, design: .rounded))
                                 .foregroundColor(StamerleeTheme.textSecondaryDark)
                         }
                     }
                 }
                 .frame(maxWidth: .infinity)
-
-                // Spacer pushing the words section down
-                Spacer(minLength: 24)
+                .padding(.top, 36)
+                .padding(.bottom, 48)
 
                 // Instructions Subtitle
                 Text(subtitle)
                     .font(.system(size: 13, weight: .regular, design: .rounded))
                     .foregroundColor(StamerleeTheme.textSecondaryDark)
                     .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.bottom, 16)
+                    .padding(.bottom, 18)
 
                 // Action Row: Counter + Single "Select all / Deselect all" Toggle Button
                 HStack {
@@ -560,11 +557,11 @@ public struct ExerciseAnalysisSkeletonView: View {
                 .padding(.horizontal, 24)
                 .padding(.bottom, 14)
 
-                // 2-Column Word Grid (Capsule style like Beat Buddy, preview top 6)
+                // 2-Column Word Grid (Older sleek capsule design)
                 LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
                     ForEach(Array(wordsList.prefix(6)), id: \.self) { word in
                         let isSelected = selectedWords.contains(word)
-                        analysisWordButton(word: word, isSelected: isSelected) {
+                        wordButton(word: word, isSelected: isSelected) {
                             toggleWordSelection(word)
                         }
                     }
@@ -589,7 +586,7 @@ public struct ExerciseAnalysisSkeletonView: View {
                     .padding(.top, 14)
                 }
 
-                Spacer(minLength: 24)
+                Spacer(minLength: 20)
 
                 // Bottom CTA Button ("Done")
                 VStack {
@@ -638,7 +635,7 @@ public struct ExerciseAnalysisSkeletonView: View {
                         ) {
                             ForEach(wordsList, id: \.self) { word in
                                 let isSelected = selectedWords.contains(word)
-                                analysisWordButton(word: word, isSelected: isSelected) {
+                                wordButton(word: word, isSelected: isSelected) {
                                     toggleWordSelection(word)
                                 }
                             }
@@ -677,38 +674,31 @@ public struct ExerciseAnalysisSkeletonView: View {
         }
     }
 
-    private func analysisWordButton(word: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
+    // MARK: - Word Selection Pill (Older clean capsule design)
+    private func wordButton(word: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            HStack(spacing: 8) {
-                Text(word)
-                    .font(.system(size: 15, weight: .bold, design: .rounded))
-                    .foregroundColor(isSelected ? .white : StamerleeTheme.textPrimaryDark)
-
-                if isSelected {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundColor(StamerleeTheme.primaryBlue)
-                        .transition(.scale.combined(with: .opacity))
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 52)
-            .background(
-                RoundedRectangle(cornerRadius: 16, style: .continuous).fill(
-                    isSelected
-                        ? StamerleeTheme.primaryBlue.opacity(0.38)
-                        : Color.white.opacity(0.06)
+            Text(word)
+                .font(.system(size: 13.5, weight: isSelected ? .bold : .medium, design: .rounded))
+                .foregroundColor(isSelected ? .white : StamerleeTheme.textSecondaryDark)
+                .frame(maxWidth: .infinity)
+                .frame(height: 44)
+                .background(
+                    Group {
+                        if isSelected {
+                            Color(red: 20 / 255, green: 45 / 255, blue: 105 / 255)
+                        } else {
+                            Color(red: 16 / 255, green: 18 / 255, blue: 36 / 255)
+                        }
+                    }
                 )
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(
-                    isSelected
-                        ? StamerleeTheme.primaryBlue
-                        : Color.white.opacity(0.12),
-                    lineWidth: isSelected ? 1.5 : 1
+                .overlay(
+                    Capsule()
+                        .stroke(
+                            isSelected ? StamerleeTheme.primaryBlue : Color.white.opacity(0.06),
+                            lineWidth: isSelected ? 2 : 1
+                        )
                 )
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .clipShape(Capsule())
         }
         .buttonStyle(.plain)
     }
