@@ -108,6 +108,10 @@ public final class AppState {
     // Practice & Difficulty State
     public var selectedDifficulty: String = "Easy"
     public var completedProlongedDifficulties: Set<String> = []
+    public var hasAttemptedProlongedEasy: Bool = false
+    public var hasReceivedProlongedEasyScore: Bool = false
+    public var prolongedEasyScore: Double? = nil
+    public var prolongedSpeechScores: [String: Double] = [:]
     public var hasSeenProlongedSpeechIntro: Bool = false
     public var hasSeenPictureDescriptionIntro: Bool = false
     public var selectedPictureDescriptionDifficulty: String = "Easy"
@@ -156,6 +160,10 @@ public final class AppState {
         completedPictureDescriptionDifficulties.removeAll()
         completedNarrationDifficulties.removeAll()
         hasCompletedDialScene = false
+        hasAttemptedProlongedEasy = false
+        hasReceivedProlongedEasyScore = false
+        prolongedEasyScore = nil
+        prolongedSpeechScores.removeAll()
         navigate(to: .login, forward: false)
     }
     
@@ -207,6 +215,16 @@ public final class AppState {
         completedProlongedDifficulties.insert(difficulty)
     }
 
+    public func recordProlongedScore(difficulty: String, score: Double) {
+        prolongedSpeechScores[difficulty] = score
+        completedProlongedDifficulties.insert(difficulty)
+        if difficulty == "Easy" {
+            hasAttemptedProlongedEasy = true
+            hasReceivedProlongedEasyScore = true
+            prolongedEasyScore = score
+        }
+    }
+
     public var isPictureDescriptionUnlocked: Bool {
         completedProlongedDifficulties.contains("Hard")
     }
@@ -229,7 +247,7 @@ public final class AppState {
     }
 
     public var isBeatBuddyUnlocked: Bool {
-        completedProlongedDifficulties.contains("Easy")
+        hasReceivedProlongedEasyScore || (hasAttemptedProlongedEasy && prolongedEasyScore != nil)
     }
 
     public var isNarrationUnlocked: Bool {
@@ -247,6 +265,10 @@ public final class AppState {
             self.profileAvatarStyle = 0
             self.profileAvatarData = nil
             self.completedProlongedDifficulties = []
+            self.hasAttemptedProlongedEasy = false
+            self.hasReceivedProlongedEasyScore = false
+            self.prolongedEasyScore = nil
+            self.prolongedSpeechScores = [:]
             self.hasSeenProlongedSpeechIntro = false
             self.selectedPictureDescriptionDifficulty = "Easy"
             self.completedPictureDescriptionDifficulties = []

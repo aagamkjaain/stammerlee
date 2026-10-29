@@ -250,9 +250,11 @@ public struct HomeDashboardView: View {
                 Spacer()
                 
                 // Trailing Chevron
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundColor(Color.gray.opacity(0.5))
+                if !isLocked {
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(Color.gray.opacity(0.5))
+                }
             }
             .padding(.horizontal, 16)
             .frame(height: 100)
@@ -264,7 +266,11 @@ public struct HomeDashboardView: View {
     }
     
     private func triggerLockedAlert(title: String) {
-        lockedAlertMessage = "\(title) will unlock as you complete the Prolonged Speech foundation exercises!"
+        if title == "Beat Buddy" {
+            lockedAlertMessage = "Complete Prolonged Speech Easy and receive a score to unlock Beat Buddy!"
+        } else {
+            lockedAlertMessage = "\(title) will unlock as you complete the Prolonged Speech foundation exercises!"
+        }
         showLockedAlert = true
     }
 }
