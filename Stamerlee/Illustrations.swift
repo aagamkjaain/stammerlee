@@ -20,11 +20,13 @@ public struct StamerleeImageLoader {
             return image
         }
         
-        // 4. Try local disk path (for previews and development)
+        // 4. Try local disk path (for previews and development only)
+        #if DEBUG
         if FileManager.default.fileExists(atPath: fallbackPath),
            let image = UIImage(contentsOfFile: fallbackPath) {
             return image
         }
+        #endif
         
         return nil
     }
@@ -58,7 +60,7 @@ public struct OnboardingStepOneIllustration: View {
                     
                     Image(systemName: "headphones")
                         .font(.system(size: 80))
-                        .foregroundColor(StamerleeTheme.primaryBlue)
+                        .foregroundStyle(StamerleeTheme.primaryBlue)
                 }
             }
         }
@@ -97,7 +99,7 @@ public struct OnboardingStepTwoIllustration: View {
                     
                     Image(systemName: "video.fill")
                         .font(.system(size: 70))
-                        .foregroundColor(StamerleeTheme.primaryBlue)
+                        .foregroundStyle(StamerleeTheme.primaryBlue)
                 }
             }
         }

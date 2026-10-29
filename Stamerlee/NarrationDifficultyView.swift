@@ -53,13 +53,13 @@ public struct NarrationDifficultyView: View {
 
                 Text("Narration")
                     .font(.system(size: 30, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .padding(.horizontal, 24)
                     .padding(.top, 24)
 
                 Text("Practice speaking at your own pace\nthrough guided storytelling.")
                     .font(.system(size: 14, design: .rounded))
-                    .foregroundColor(StamerleeTheme.textSecondaryDark)
+                    .foregroundStyle(StamerleeTheme.textSecondaryDark)
                     .padding(.horizontal, 24)
                     .padding(.top, 10)
                     .padding(.bottom, 34)

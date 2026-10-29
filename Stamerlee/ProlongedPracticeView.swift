@@ -90,7 +90,7 @@ public struct ProlongedPracticeView: View {
                             Text("DAF")
                                 .font(.system(size: 13, weight: .bold, design: .rounded))
                         }
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
                         .background(
@@ -109,11 +109,11 @@ public struct ProlongedPracticeView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text(state.selectedDifficulty)
                         .font(.system(size: 32, weight: .bold, design: .rounded))
-                        .foregroundColor(StamerleeTheme.textPrimaryDark)
+                        .foregroundStyle(StamerleeTheme.textPrimaryDark)
                     
                     Text(levelDescription)
                     .font(.system(size: 14, weight: .regular, design: .rounded))
-                    .foregroundColor(StamerleeTheme.textSecondaryDark)
+                    .foregroundStyle(StamerleeTheme.textSecondaryDark)
                     .lineSpacing(4)
                 }
                 .padding(.horizontal, 24)
@@ -125,7 +125,7 @@ public struct ProlongedPracticeView: View {
                 VStack(spacing: 16) {
                     Text(practicePhrases[min(currentWordIndex, practicePhrases.count - 1)])
                         .font(.system(size: isHard ? 21 : (isMedium ? 23 : 26), weight: .bold, design: .rounded))
-                        .foregroundColor(Color(red: 55 / 255, green: 95 / 255, blue: 225 / 255))
+                        .foregroundStyle(Color(red: 55 / 255, green: 95 / 255, blue: 225 / 255))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 16)
                         .frame(maxWidth: .infinity)
@@ -193,7 +193,7 @@ public struct ProlongedPracticeView: View {
                             // White Microphone Icon
                             Image(systemName: "mic.fill")
                                 .font(.system(size: 26, weight: .bold))
-                                .foregroundColor(isListening ? StamerleeTheme.primaryBlue : .white)
+                                .foregroundStyle(isListening ? StamerleeTheme.primaryBlue : .white)
                         }
                     }
                     

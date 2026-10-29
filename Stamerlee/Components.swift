@@ -46,7 +46,7 @@ public struct PrimaryActionButton: View {
                         .font(.system(size: 16, weight: .semibold, design: .rounded))
                 }
             }
-            .foregroundColor(.white)
+            .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
             .frame(height: 52)
             .background(
@@ -113,14 +113,14 @@ public struct SocialAuthRow: View {
                 // Title
                 Text(type.title)
                     .font(.system(size: 15, weight: .medium, design: .rounded))
-                    .foregroundColor(StamerleeTheme.textPrimaryLight)
+                    .foregroundStyle(StamerleeTheme.textPrimaryLight)
                 
                 Spacer()
                 
                 // Trailing Chevron
                 Image(systemName: "chevron.right")
                     .font(.system(size: 13, weight: .semibold))
-                    .foregroundColor(Color.gray.opacity(0.6))
+                    .foregroundStyle(Color.gray.opacity(0.6))
             }
             .padding(.horizontal, 18)
             .frame(height: 65)
@@ -143,7 +143,7 @@ public struct SocialAuthRow: View {
         case .apple:
             Image(systemName: "applelogo")
                 .font(.system(size: 20, weight: .semibold))
-                .foregroundColor(.black)
+                .foregroundStyle(.black)
         case .google:
             Image("googlesvg")
                 .resizable()
@@ -153,7 +153,7 @@ public struct SocialAuthRow: View {
         case .email:
             Image(systemName: "envelope")
                 .font(.system(size: 17, weight: .semibold))
-                .foregroundColor(StamerleeTheme.primaryBlue)
+                .foregroundStyle(StamerleeTheme.primaryBlue)
         }
     }
 }
@@ -179,7 +179,7 @@ public struct BackNavButton: View {
                 
                 Image(systemName: "chevron.left")
                     .font(.system(size: 15, weight: .bold))
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
             }
         }
         .accessibilityLabel("Go Back")
@@ -211,16 +211,16 @@ public struct OptionSelectRow: View {
                         HStack(spacing: 4) {
                             Text(option.title)
                                 .font(.system(size: 15, weight: .semibold, design: .rounded))
-                                .foregroundColor(StamerleeTheme.textPrimaryLight)
+                                .foregroundStyle(StamerleeTheme.textPrimaryLight)
                             
                             Text("(\(subtitle))")
                                 .font(.system(size: 14, weight: .regular, design: .rounded))
-                                .foregroundColor(StamerleeTheme.textSecondaryLight)
+                                .foregroundStyle(StamerleeTheme.textSecondaryLight)
                         }
                     } else {
                         Text(option.title)
                             .font(.system(size: 15, weight: .medium, design: .rounded))
-                            .foregroundColor(StamerleeTheme.textPrimaryLight)
+                            .foregroundStyle(StamerleeTheme.textPrimaryLight)
                     }
                 }
                 
@@ -235,7 +235,7 @@ public struct OptionSelectRow: View {
                         
                         Image(systemName: "checkmark")
                             .font(.system(size: 11, weight: .bold))
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                             .transition(.scale.combined(with: .opacity))
                     } else {
                         Circle()
@@ -285,7 +285,7 @@ public struct DifficultyCard: View {
             ZStack {
                 Text(title)
                     .font(.system(size: 16, weight: .bold, design: .rounded))
-                    .foregroundColor(StamerleeTheme.textPrimaryLight)
+                    .foregroundStyle(StamerleeTheme.textPrimaryLight)
 
                 HStack {
                     badge
@@ -293,12 +293,12 @@ public struct DifficultyCard: View {
                     if isCompleted {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 18, weight: .semibold))
-                            .foregroundColor(StamerleeTheme.primaryBlue)
+                            .foregroundStyle(StamerleeTheme.primaryBlue)
                             .frame(width: 30, alignment: .trailing)
                     } else if !isLocked {
                         Image(systemName: "chevron.right")
                             .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.gray.opacity(0.5))
+                            .foregroundStyle(.gray.opacity(0.5))
                             .frame(width: 30, alignment: .trailing)
                     }
                 }
@@ -317,7 +317,7 @@ public struct DifficultyCard: View {
         if isLocked {
             Image(systemName: "lock.fill")
                 .font(.system(size: 15, weight: .bold))
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
                 .frame(width: 38, height: 38)
                 .background(Color(red: 90 / 255, green: 105 / 255, blue: 180 / 255))
                 .clipShape(Circle())
@@ -380,12 +380,12 @@ public struct ExerciseIntroSkeletonView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(title)
                         .font(.system(size: 32, weight: .bold, design: .rounded))
-                        .foregroundColor(StamerleeTheme.textPrimaryDark)
+                        .foregroundStyle(StamerleeTheme.textPrimaryDark)
                         .lineSpacing(2)
 
                     Text(subtitle)
                         .font(.system(size: 16, weight: .regular, design: .rounded))
-                        .foregroundColor(StamerleeTheme.textSecondaryDark)
+                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
                         .lineSpacing(4)
                 }
                 .padding(.horizontal, 24)
@@ -411,7 +411,7 @@ public struct ExerciseIntroSkeletonView: View {
                             .overlay(
                                 Image(systemName: systemIconFallback)
                                     .font(.system(size: 60))
-                                    .foregroundColor(StamerleeTheme.primaryBlue)
+                                    .foregroundStyle(StamerleeTheme.primaryBlue)
                             )
                     }
                 }
@@ -505,7 +505,7 @@ public struct ExerciseAnalysisSkeletonView: View {
                 // Top Title Bar
                 Text("Analysis")
                     .font(.system(size: 32, weight: .bold, design: .rounded))
-                    .foregroundColor(StamerleeTheme.textPrimaryDark)
+                    .foregroundStyle(StamerleeTheme.textPrimaryDark)
                     .padding(.horizontal, 24)
                     .padding(.top, 24)
                     .padding(.bottom, 16)
@@ -514,24 +514,24 @@ public struct ExerciseAnalysisSkeletonView: View {
                 VStack(spacing: 12) {
                     Text(computedAffirmation)
                         .font(.system(size: 30, weight: .bold, design: .rounded))
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 24)
 
                     Text("YOU SCORED")
                         .font(.system(size: 20, weight: .bold, design: .rounded))
-                        .foregroundColor(StamerleeTheme.textSecondaryDark)
+                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
                         .tracking(1.4)
                         .padding(.top, 4)
 
                     HStack(alignment: .firstTextBaseline, spacing: 6) {
                         Text(scoreText)
                             .font(.system(size: 72, weight: .bold, design: .rounded))
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                         if !maxScoreText.isEmpty {
                             Text(maxScoreText)
                                 .font(.system(size: 28, weight: .bold, design: .rounded))
-                                .foregroundColor(StamerleeTheme.textSecondaryDark)
+                                .foregroundStyle(StamerleeTheme.textSecondaryDark)
                         }
                     }
                 }
@@ -542,7 +542,7 @@ public struct ExerciseAnalysisSkeletonView: View {
                 // Instructions Subtitle
                 Text(subtitle)
                     .font(.system(size: 13, weight: .regular, design: .rounded))
-                    .foregroundColor(StamerleeTheme.textSecondaryDark)
+                    .foregroundStyle(StamerleeTheme.textSecondaryDark)
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.bottom, 18)
 
@@ -550,7 +550,7 @@ public struct ExerciseAnalysisSkeletonView: View {
                 HStack {
                     Text("\(selectedWords.count) selected")
                         .font(.system(size: 13, weight: .semibold, design: .rounded))
-                        .foregroundColor(StamerleeTheme.textSecondaryDark)
+                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
 
                     Spacer()
 
@@ -558,7 +558,7 @@ public struct ExerciseAnalysisSkeletonView: View {
                         toggleSelectAll()
                     }
                     .font(.system(size: 13, weight: .bold, design: .rounded))
-                    .foregroundColor(StamerleeTheme.primaryBlue)
+                    .foregroundStyle(StamerleeTheme.primaryBlue)
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 14)
@@ -586,7 +586,7 @@ public struct ExerciseAnalysisSkeletonView: View {
                                 .font(.system(size: 11, weight: .semibold))
                         }
                         .font(.system(size: 13.5, weight: .semibold, design: .rounded))
-                        .foregroundColor(StamerleeTheme.primaryBlue)
+                        .foregroundStyle(StamerleeTheme.primaryBlue)
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.top, 14)
@@ -622,7 +622,7 @@ public struct ExerciseAnalysisSkeletonView: View {
                         HStack {
                             Text("\(selectedWords.count) of \(wordsList.count) selected")
                                 .font(.system(size: 13, weight: .medium, design: .rounded))
-                                .foregroundColor(StamerleeTheme.textSecondaryDark)
+                                .foregroundStyle(StamerleeTheme.textSecondaryDark)
 
                             Spacer()
 
@@ -630,7 +630,7 @@ public struct ExerciseAnalysisSkeletonView: View {
                                 toggleSelectAll()
                             }
                             .font(.system(size: 13, weight: .bold, design: .rounded))
-                            .foregroundColor(StamerleeTheme.primaryBlue)
+                            .foregroundStyle(StamerleeTheme.primaryBlue)
                         }
                         .padding(.horizontal, 24)
                         .padding(.top, 12)
@@ -661,7 +661,7 @@ public struct ExerciseAnalysisSkeletonView: View {
                         showAllWordsSheet = false
                     }
                     .font(.system(size: 15, weight: .bold, design: .rounded))
-                    .foregroundColor(StamerleeTheme.primaryBlue)
+                    .foregroundStyle(StamerleeTheme.primaryBlue)
                 }
             }
         }
@@ -685,7 +685,7 @@ public struct ExerciseAnalysisSkeletonView: View {
         Button(action: action) {
             Text(word)
                 .font(.system(size: 13.5, weight: isSelected ? .bold : .medium, design: .rounded))
-                .foregroundColor(isSelected ? .white : StamerleeTheme.textSecondaryDark)
+                .foregroundStyle(isSelected ? .white : StamerleeTheme.textSecondaryDark)
                 .frame(maxWidth: .infinity)
                 .frame(height: 44)
                 .background(

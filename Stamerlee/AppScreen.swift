@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import Observation
+import UserNotifications
 
 // MARK: - App Tabs
 public enum AppTab: Int, CaseIterable, Hashable {
@@ -87,11 +88,10 @@ public final class AppState {
     public var currentScreen: AppScreen = .launch
     public var navigationDirection: Edge = .trailing
     
-    // Auth State
-    public var userEmail: String = ""
-    public var isAuthenticated: Bool = false
-    public var isAuthenticating: Bool = false
-    public var authMethod: String? = nil
+    // Auth State (read-only outside AppState; mutate via signIn/logout/deleteAccount)
+    public private(set) var userEmail: String = ""
+    public private(set) var isAuthenticated: Bool = false
+    public private(set) var authMethod: String? = nil
     
     // Challenging Sounds Selection
     public var selectedSoundIds: Set<String> = ["td"] // Default "T, D" selected as in screenshot
@@ -144,15 +144,24 @@ public final class AppState {
     public var reminderEnabled: Bool = true
     public var reminderTime: Date = Calendar.current.date(from: DateComponents(hour: 20, minute: 0)) ?? Date()
 
+    public func signIn(method: String, email: String = "") {
+        authMethod = method
+        userEmail = email
+        isAuthenticated = true
+    }
+
     public func logout() {
         isAuthenticated = false
         userEmail = ""
+        authMethod = nil
         navigate(to: .login, forward: false)
     }
 
     public func deleteAccount() {
         isAuthenticated = false
         userEmail = ""
+        authMethod = nil
+        profileAvatarData = nil
         profileName = "New User"
         currentStreakDays = 0
         practiceAudioSeconds = 0
@@ -164,6 +173,8 @@ public final class AppState {
         hasReceivedProlongedEasyScore = false
         prolongedEasyScore = nil
         prolongedSpeechScores.removeAll()
+        reminderEnabled = false
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         navigate(to: .login, forward: false)
     }
     

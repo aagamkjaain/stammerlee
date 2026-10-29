@@ -46,12 +46,12 @@ public struct DialSceneIntroView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Let's start with\nDial Scene")
                         .font(.system(size: 32, weight: .bold, design: .rounded))
-                        .foregroundColor(StamerleeTheme.textPrimaryDark)
+                        .foregroundStyle(StamerleeTheme.textPrimaryDark)
                         .lineSpacing(2)
 
                     Text("Dial Scene helps you practice real-life phone conversations, manage speaking challenges and build confidence in communicating smoothly during everyday calls.")
                         .font(.system(size: 16, weight: .regular, design: .rounded))
-                        .foregroundColor(StamerleeTheme.textSecondaryDark)
+                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
                         .lineSpacing(4)
                 }
                 .padding(.horizontal, 24)
@@ -77,7 +77,7 @@ public struct DialSceneIntroView: View {
                             .overlay(
                                 Image(systemName: "phone.fill")
                                     .font(.system(size: 60))
-                                    .foregroundColor(StamerleeTheme.primaryBlue)
+                                    .foregroundStyle(StamerleeTheme.primaryBlue)
                             )
                     }
                 }
@@ -191,12 +191,12 @@ public struct DialSceneView: View {
             header
             Text("Dial Scene")
                 .font(.system(size: 30, weight: .bold, design: .rounded))
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
                 .padding(.horizontal, 24)
                 .padding(.top, 22)
             Text("Practice real life conversations through\ninteractive scenarios.")
                 .font(.system(size: 14, design: .rounded))
-                .foregroundColor(StamerleeTheme.textSecondaryDark)
+                .foregroundStyle(StamerleeTheme.textSecondaryDark)
                 .padding(.horizontal, 24)
                 .padding(.top, 10)
                 .padding(.bottom, 24)
@@ -211,19 +211,19 @@ public struct DialSceneView: View {
                             HStack(spacing: 14) {
                                 Image(systemName: scenario.2)
                                     .font(.system(size: 20, weight: .semibold))
-                                    .foregroundColor(.white)
+                                    .foregroundStyle(.white)
                                     .frame(width: 36)
                                 VStack(alignment: .leading, spacing: 3) {
                                     Text(scenario.0)
                                         .font(.system(size: 14, weight: .bold, design: .rounded))
                                     Text(scenario.1)
                                         .font(.system(size: 11, design: .rounded))
-                                        .foregroundColor(StamerleeTheme.textSecondaryDark)
+                                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
                                 }
-                                .foregroundColor(.white)
+                                .foregroundStyle(.white)
                                 Spacer()
                                 Image(systemName: "phone.fill")
-                                    .foregroundColor(.white)
+                                    .foregroundStyle(.white)
                                     .padding(8)
                                     .background(Color(red: 73 / 255, green: 65 / 255, blue: 174 / 255))
                                     .clipShape(Circle())
@@ -261,7 +261,7 @@ public struct DialSceneView: View {
                         Text("DAF")
                             .font(.system(size: 12, weight: .bold, design: .rounded))
                     }
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .padding(.horizontal, 14)
                     .padding(.vertical, 7)
                     .background(isDAFActive ? StamerleeTheme.primaryBlue : StamerleeTheme.primaryBlueDark)
@@ -271,7 +271,7 @@ public struct DialSceneView: View {
             }
             Text(selectedScenario)
                 .font(.system(size: 22, weight: .bold, design: .rounded))
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
                 .padding(.horizontal, 24)
                 .padding(.top, 20)
 
@@ -301,7 +301,7 @@ public struct DialSceneView: View {
                         .fill(StamerleeTheme.backgroundDark)
                         .frame(width: 52, height: 52)
                     Image(systemName: isListening ? "waveform" : "mic.fill")
-                        .foregroundColor(isListening ? StamerleeTheme.primaryBlue : .white)
+                        .foregroundStyle(isListening ? StamerleeTheme.primaryBlue : .white)
                         .font(.system(size: 22, weight: .bold))
                 }
             }
@@ -327,7 +327,7 @@ public struct DialSceneView: View {
                     .font(.system(size: 13, design: .rounded))
                     .lineSpacing(2)
             }
-            .foregroundColor(isUser ? .black : .white)
+            .foregroundStyle(isUser ? .black : .white)
             .padding(14)
             .background(isUser ? Color(red: 226 / 255, green: 229 / 255, blue: 250 / 255) : Color(red: 35 / 255, green: 39 / 255, blue: 78 / 255))
             .clipShape(RoundedRectangle(cornerRadius: 14))

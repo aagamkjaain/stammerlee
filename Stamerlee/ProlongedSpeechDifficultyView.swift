@@ -33,11 +33,11 @@ public struct ProlongedSpeechDifficultyView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Prolonged Speech")
                         .font(.system(size: 30, weight: .bold, design: .rounded))
-                        .foregroundColor(StamerleeTheme.textPrimaryDark)
+                        .foregroundStyle(StamerleeTheme.textPrimaryDark)
                     
                     Text("Practice stretching sounds for smoother,more fluent speech.")
                         .font(.system(size: 14.5, weight: .regular, design: .rounded))
-                        .foregroundColor(StamerleeTheme.textSecondaryDark)
+                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
                         .lineSpacing(3)
                 }
                 .padding(.horizontal, 24)

@@ -56,13 +56,13 @@ public struct PictureDescriptionDifficultyView: View {
 
                 Text("Picture Description")
                     .font(.system(size: 30, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .padding(.horizontal, 24)
                     .padding(.top, 24)
 
                 Text("Describe simple pictures using words and\nshort sentences.")
                     .font(.system(size: 14, design: .rounded))
-                    .foregroundColor(StamerleeTheme.textSecondaryDark)
+                    .foregroundStyle(StamerleeTheme.textSecondaryDark)
                     .padding(.horizontal, 24)
                     .padding(.top, 10)
                     .padding(.bottom, 34)

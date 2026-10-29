@@ -25,7 +25,7 @@ public struct HomeDashboardView: View {
                 HStack {
                     Text("Welcome")
                         .font(.system(size: 32, weight: .bold, design: .rounded))
-                        .foregroundColor(StamerleeTheme.textPrimaryDark)
+                        .foregroundStyle(StamerleeTheme.textPrimaryDark)
                     
                     Spacer()
 
@@ -34,7 +34,7 @@ public struct HomeDashboardView: View {
                     } label: {
                         Image(systemName: "person.crop.circle.fill")
                             .font(.system(size: 32, weight: .semibold))
-                            .foregroundColor(StamerleeTheme.textPrimaryDark)
+                            .foregroundStyle(StamerleeTheme.textPrimaryDark)
                     }
                     .accessibilityLabel("Open profile")
                     
@@ -53,7 +53,7 @@ public struct HomeDashboardView: View {
                         VStack(alignment: .leading, spacing: 12) {
                             Text("Exercises")
                                 .font(.system(size: 17, weight: .bold, design: .rounded))
-                                .foregroundColor(StamerleeTheme.textPrimaryDark)
+                                .foregroundStyle(StamerleeTheme.textPrimaryDark)
                             
                             // 1. Prolonged Speech (UNLOCKED - Primary action)
                             exerciseRow(
@@ -132,7 +132,7 @@ public struct HomeDashboardView: View {
                         VStack(alignment: .leading, spacing: 12) {
                             Text("Practice")
                                 .font(.system(size: 17, weight: .bold, design: .rounded))
-                                .foregroundColor(StamerleeTheme.textPrimaryDark)
+                                .foregroundStyle(StamerleeTheme.textPrimaryDark)
                             
                             // Beat Buddy (unlocked after Prolonged Speech Easy)
                             exerciseRow(
@@ -173,16 +173,16 @@ public struct HomeDashboardView: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text("YOUR DAILY GOAL")
                     .font(.system(size: 10, weight: .bold, design: .rounded))
-                    .foregroundColor(StamerleeTheme.textSecondaryLight)
+                    .foregroundStyle(StamerleeTheme.textSecondaryLight)
                     .tracking(1.2)
                 
                 Text("Practice for \(state.dailyPracticeMinutes) minutes")
                     .font(.system(size: 16, weight: .bold, design: .rounded))
-                    .foregroundColor(StamerleeTheme.textPrimaryLight)
+                    .foregroundStyle(StamerleeTheme.textPrimaryLight)
                 
                 Text("Your daily fluency goal.")
                     .font(.system(size: 13, weight: .regular, design: .rounded))
-                    .foregroundColor(StamerleeTheme.textSecondaryLight)
+                    .foregroundStyle(StamerleeTheme.textSecondaryLight)
             }
             
             Spacer()
@@ -219,7 +219,7 @@ public struct HomeDashboardView: View {
                         
                         Image(systemName: "lock.fill")
                             .font(.system(size: 19, weight: .bold))
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                     }.frame(width:75, height:75)
                 } else {
                     // Every unlocked exercise uses the same fixed icon treatment.
@@ -238,11 +238,11 @@ public struct HomeDashboardView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(title)
                         .font(.system(size: 15, weight: .bold, design: .rounded))
-                        .foregroundColor(StamerleeTheme.textPrimaryLight)
+                        .foregroundStyle(StamerleeTheme.textPrimaryLight)
                     
                     Text(subtitle)
                         .font(.system(size: 12, weight: .regular, design: .rounded))
-                        .foregroundColor(StamerleeTheme.textSecondaryLight)
+                        .foregroundStyle(StamerleeTheme.textSecondaryLight)
                         .lineLimit(3)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -253,7 +253,7 @@ public struct HomeDashboardView: View {
                 if !isLocked {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(Color.gray.opacity(0.5))
+                        .foregroundStyle(Color.gray.opacity(0.5))
                 }
             }
             .padding(.horizontal, 16)

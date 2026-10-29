@@ -71,13 +71,13 @@ public struct BeatBuddyWordsView: View {
                 // Screen Headings
                 Text("Select Words")
                     .font(.system(size: 30, weight: .bold, design: .rounded))
-                    .foregroundColor(StamerleeTheme.textPrimaryDark)
+                    .foregroundStyle(StamerleeTheme.textPrimaryDark)
                     .padding(.horizontal, 24)
                     .padding(.top, 20)
 
                 Text("Choose the words you want to practice with Beat Buddy")
                     .font(.system(size: 14, weight: .regular, design: .rounded))
-                    .foregroundColor(StamerleeTheme.textSecondaryDark)
+                    .foregroundStyle(StamerleeTheme.textSecondaryDark)
                     .padding(.horizontal, 24)
                     .padding(.top, 8)
 
@@ -85,11 +85,11 @@ public struct BeatBuddyWordsView: View {
                 HStack(spacing: 12) {
                     Image(systemName: "magnifyingglass")
                         .font(.system(size: 17, weight: .semibold))
-                        .foregroundColor(StamerleeTheme.textSecondaryDark)
+                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
 
                     TextField("Search words...", text: $searchText)
                         .font(.system(size: 15, weight: .medium, design: .rounded))
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
                         .tint(StamerleeTheme.primaryBlue)
 
                     if !searchText.isEmpty {
@@ -97,7 +97,7 @@ public struct BeatBuddyWordsView: View {
                             searchText = ""
                         } label: {
                             Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(StamerleeTheme.textSecondaryDark)
+                                .foregroundStyle(StamerleeTheme.textSecondaryDark)
                                 .font(.system(size: 16))
                         }
                     }
@@ -117,7 +117,7 @@ public struct BeatBuddyWordsView: View {
                 HStack {
                     Text("\(state.beatBuddySelectedWords.count) selected")
                         .font(.system(size: 13, weight: .semibold, design: .rounded))
-                        .foregroundColor(StamerleeTheme.textSecondaryDark)
+                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
 
                     Spacer()
 
@@ -137,7 +137,7 @@ public struct BeatBuddyWordsView: View {
                         }
                     }
                     .font(.system(size: 13, weight: .bold, design: .rounded))
-                    .foregroundColor(StamerleeTheme.primaryBlue)
+                    .foregroundStyle(StamerleeTheme.primaryBlue)
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 14)
@@ -165,12 +165,12 @@ public struct BeatBuddyWordsView: View {
                                 HStack(spacing: 10) {
                                     Text(word)
                                         .font(.system(size: 16, weight: .bold, design: .rounded))
-                                        .foregroundColor(isSelected ? .white : StamerleeTheme.textPrimaryDark)
+                                        .foregroundStyle(isSelected ? .white : StamerleeTheme.textPrimaryDark)
 
                                     if isSelected {
                                         Image(systemName: "checkmark.circle.fill")
                                             .font(.system(size: 17, weight: .bold))
-                                            .foregroundColor(StamerleeTheme.primaryBlue)
+                                            .foregroundStyle(StamerleeTheme.primaryBlue)
                                             .transition(.scale.combined(with: .opacity))
                                     }
                                 }
@@ -298,17 +298,17 @@ public struct ArcBPMDialView: View {
             VStack(spacing: 4) {
                 Text("\(bpm)")
                     .font(.system(size: 56, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .contentTransition(.numericText())
 
                 Text("BPM")
                     .font(.system(size: 13, weight: .bold, design: .rounded))
-                    .foregroundColor(StamerleeTheme.textSecondaryDark)
+                    .foregroundStyle(StamerleeTheme.textSecondaryDark)
                     .tracking(1.4)
 
                 Text(tempoDescriptor(for: bpm))
                     .font(.system(size: 11, weight: .semibold, design: .rounded))
-                    .foregroundColor(Color.cyan.opacity(0.85))
+                    .foregroundStyle(Color.cyan.opacity(0.85))
                     .padding(.top, 2)
             }
         }
@@ -387,13 +387,13 @@ public struct BeatBuddyBPMView: View {
                 // Headings
                 Text("Select BPM")
                     .font(.system(size: 30, weight: .bold, design: .rounded))
-                    .foregroundColor(StamerleeTheme.textPrimaryDark)
+                    .foregroundStyle(StamerleeTheme.textPrimaryDark)
                     .padding(.horizontal, 24)
                     .padding(.top, 18)
 
                 Text("Speak with the steady beat")
                     .font(.system(size: 14, weight: .regular, design: .rounded))
-                    .foregroundColor(StamerleeTheme.textSecondaryDark)
+                    .foregroundStyle(StamerleeTheme.textSecondaryDark)
                     .padding(.horizontal, 24)
                     .padding(.top, 6)
 
@@ -415,7 +415,7 @@ public struct BeatBuddyBPMView: View {
                     } label: {
                         Image(systemName: "minus")
                             .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                             .frame(width: 44, height: 44)
                             .background(Color.white.opacity(0.08))
                             .clipShape(Circle())
@@ -428,7 +428,7 @@ public struct BeatBuddyBPMView: View {
                     } label: {
                         Image(systemName: "plus")
                             .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                             .frame(width: 44, height: 44)
                             .background(Color.white.opacity(0.08))
                             .clipShape(Circle())
@@ -483,7 +483,7 @@ public struct BeatBuddyBPMView: View {
                 Text(title)
                     .font(.system(size: 14, weight: .semibold, design: .rounded))
             }
-            .foregroundColor(isOn ? .white : StamerleeTheme.textSecondaryDark)
+            .foregroundStyle(isOn ? .white : StamerleeTheme.textSecondaryDark)
             .frame(maxWidth: .infinity)
             .frame(height: 50)
             .background(isOn ? StamerleeTheme.primaryBlue.opacity(0.38) : Color.white.opacity(0.06), in: Capsule())
@@ -524,10 +524,10 @@ public struct BeatBuddyPracticeView: View {
                     HStack(spacing: 6) {
                         Image(systemName: "metronome.fill")
                             .font(.system(size: 12))
-                            .foregroundColor(.cyan)
+                            .foregroundStyle(.cyan)
                         Text("\(state.beatBuddyBPM) BPM")
                             .font(.system(size: 12, weight: .bold, design: .rounded))
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                     }
                     .padding(.horizontal, 14)
                     .padding(.vertical, 8)
@@ -542,11 +542,11 @@ public struct BeatBuddyPracticeView: View {
                 VStack(spacing: 18) {
                     Text(words[min(index, words.count - 1)])
                         .font(.system(size: 20, weight: .medium, design: .rounded))
-                        .foregroundColor(StamerleeTheme.textSecondaryDark)
+                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
 
                     Text(splitWord(words[min(index, words.count - 1)]))
                         .font(.system(size: 42, weight: .bold, design: .rounded))
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
 
                     // Page Indicator Dots
                     HStack(spacing: 8) {
