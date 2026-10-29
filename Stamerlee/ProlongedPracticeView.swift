@@ -161,6 +161,9 @@ public struct ProlongedPracticeView: View {
                     Button(action: {
                         let impact = UIImpactFeedbackGenerator(style: .heavy)
                         impact.impactOccurred()
+                        if state.selectedDifficulty == "Easy" {
+                            state.hasAttemptedProlongedEasy = true
+                        }
                         withAnimation(.spring(response: 0.35, dampingFraction: 0.65)) {
                             isListening.toggle()
                             wavePulse = isListening
@@ -201,7 +204,9 @@ public struct ProlongedPracticeView: View {
                 // Bottom CTA Button ("Finish")
                 VStack {
                     PrimaryActionButton(title: "Finish") {
-                        state.completeProlongedDifficulty(state.selectedDifficulty)
+                        if state.selectedDifficulty == "Easy" {
+                            state.hasAttemptedProlongedEasy = true
+                        }
                         state.navigate(to: .prolongedAnalysis)
                     }
                 }
@@ -270,11 +275,15 @@ public struct ProlongedAnalysisView: View {
             wordsList: wordsList,
             selectedWords: $selectedWords,
             onDone: {
+                let score = Double(scoreText) ?? 8.8
+                state.recordProlongedScore(difficulty: level, score: score)
                 state.navigate(to: .homeDashboard)
             }
         )
         .onAppear {
             selectedWords = Set(wordsList.prefix(2))
+            let score = Double(scoreText) ?? 8.8
+            state.recordProlongedScore(difficulty: level, score: score)
         }
     }
 }

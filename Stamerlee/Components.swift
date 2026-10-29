@@ -289,12 +289,17 @@ public struct DifficultyCard: View {
                 HStack {
                     badge
                     Spacer()
-                    Image(systemName: isCompleted ? "checkmark.circle.fill" : "chevron.right")
-                        .font(.system(size: isCompleted ? 18 : 14, weight: .semibold))
-                        .foregroundColor(
-                            isCompleted ? StamerleeTheme.primaryBlue : .gray.opacity(0.5)
-                        )
-                        .frame(width: 30, alignment: .trailing)
+                    if isCompleted {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(StamerleeTheme.primaryBlue)
+                            .frame(width: 30, alignment: .trailing)
+                    } else if !isLocked {
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.gray.opacity(0.5))
+                            .frame(width: 30, alignment: .trailing)
+                    }
                 }
             }
             .padding(.horizontal, 14)
