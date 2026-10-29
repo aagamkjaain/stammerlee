@@ -24,6 +24,7 @@ public struct PrimaryActionButton: View {
         self.isLoading = isLoading
         self.action = action
     }
+    
     public var body: some View {
         Button(action: {
             guard isEnabled && !isLoading else { return }
@@ -703,3 +704,4 @@ public struct ExerciseAnalysisSkeletonView: View {
         .buttonStyle(.plain)
     }
 }
+
