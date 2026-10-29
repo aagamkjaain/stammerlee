@@ -6,14 +6,7 @@ import AVFoundation
 public struct NarrationPracticeView: View {
     @Bindable public var state: AppState
     @State private var showAnalysis = false
-    @State private var selectedSegment = "Prolongations"
     @State private var selectedWords: Set<String> = ["Dance", "University"]
-
-    private let wordsBySegment: [String: [String]] = [
-        "Prolongations": ["Dance", "University", "Breaking", "Computer", "Arts", "Laptop"],
-        "Blocks": ["Water", "Plants", "Teacher", "Science", "Communication", "Interaction"],
-        "Repetitions": ["Story", "People", "Picture", "Sentence", "Practice", "Together"]
-    ]
 
     public init(state: AppState) {
         self.state = state

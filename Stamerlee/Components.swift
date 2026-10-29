@@ -681,34 +681,34 @@ public struct ExerciseAnalysisSkeletonView: View {
         Button(action: action) {
             HStack(spacing: 8) {
                 Text(word)
-                    .font(.system(size: 14, weight: .semibold, design: .rounded))
+                    .font(.system(size: 15, weight: .bold, design: .rounded))
                     .foregroundColor(isSelected ? .white : StamerleeTheme.textPrimaryDark)
 
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 15, weight: .bold))
+                        .font(.system(size: 16, weight: .bold))
                         .foregroundColor(StamerleeTheme.primaryBlue)
                         .transition(.scale.combined(with: .opacity))
                 }
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 46)
+            .frame(height: 52)
             .background(
-                Capsule().fill(
+                RoundedRectangle(cornerRadius: 16, style: .continuous).fill(
                     isSelected
                         ? StamerleeTheme.primaryBlue.opacity(0.38)
                         : Color.white.opacity(0.06)
                 )
             )
             .overlay(
-                Capsule().stroke(
+                RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(
                     isSelected
                         ? StamerleeTheme.primaryBlue
                         : Color.white.opacity(0.12),
                     lineWidth: isSelected ? 1.5 : 1
                 )
             )
-            .clipShape(Capsule())
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
         .buttonStyle(.plain)
     }

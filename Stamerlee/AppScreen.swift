@@ -136,6 +136,29 @@ public final class AppState {
     public var termsSheetTitle: String = ""
     public var termsSheetContent: String = ""
     
+    // Reminder Notification State
+    public var reminderEnabled: Bool = true
+    public var reminderTime: Date = Calendar.current.date(from: DateComponents(hour: 20, minute: 0)) ?? Date()
+
+    public func logout() {
+        isAuthenticated = false
+        userEmail = ""
+        navigate(to: .login, forward: false)
+    }
+
+    public func deleteAccount() {
+        isAuthenticated = false
+        userEmail = ""
+        profileName = "New User"
+        currentStreakDays = 0
+        practiceAudioSeconds = 0
+        completedProlongedDifficulties.removeAll()
+        completedPictureDescriptionDifficulties.removeAll()
+        completedNarrationDifficulties.removeAll()
+        hasCompletedDialScene = false
+        navigate(to: .login, forward: false)
+    }
+    
     public init() {}
 
     public func selectTab(_ tab: AppTab) {

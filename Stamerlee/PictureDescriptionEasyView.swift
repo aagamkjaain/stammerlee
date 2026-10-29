@@ -5,14 +5,7 @@ import SwiftUI
 public struct PictureDescriptionEasyView: View {
     @Bindable public var state: AppState
     @State private var isAnalysisVisible = false
-    @State private var selectedSegment = "Prolongations"
     @State private var selectedWords: Set<String> = ["Sitting", "Smiling"]
-
-    private let wordsBySegment: [String: [String]] = [
-        "Prolongations": ["Sitting", "Steps", "Tree", "Light", "Golden", "Smiling"],
-        "Blocks": ["Bench", "Purple", "Golden", "Pet", "White", "Shoes"],
-        "Repetitions": ["People", "Talking", "Dog", "Building", "Friends", "Campus"]
-    ]
 
     private var difficulty: String {
         state.selectedPictureDescriptionDifficulty
@@ -31,10 +24,6 @@ public struct PictureDescriptionEasyView: View {
 
     public init(state: AppState) {
         self.state = state
-    }
-
-    private var words: [String] {
-        wordsBySegment[selectedSegment] ?? []
     }
 
     public var body: some View {

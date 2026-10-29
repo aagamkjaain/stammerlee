@@ -1,6 +1,4 @@
 import SwiftUI
-import AVFoundation
-import AudioToolbox
 
 private let defaultBeatBuddyWords = [
     "Water", "University", "Breaking", "Computer", "Scale", "Laptop",
@@ -51,7 +49,6 @@ public struct BeatBuddyWordsView: View {
 
     private var allWords: [String] {
         var words = defaultBeatBuddyWords
-        // Prioritize any words the user previously selected in analysis
         for word in state.beatBuddySelectedWords {
             if !words.contains(word) {
                 words.insert(word, at: 0)
@@ -146,11 +143,11 @@ public struct BeatBuddyWordsView: View {
                 .padding(.top, 14)
                 .padding(.bottom, 6)
 
-                // Scrollable Words Grid (Capsules with animated checkmarks)
+                // Scrollable Words Grid (Larger Cards)
                 ScrollView(showsIndicators: false) {
                     LazyVGrid(
-                        columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)],
-                        spacing: 12
+                        columns: [GridItem(.flexible(), spacing: 14), GridItem(.flexible(), spacing: 14)],
+                        spacing: 14
                     ) {
                         ForEach(filteredWords, id: \.self) { word in
                             let isSelected = state.beatBuddySelectedWords.contains(word)
@@ -165,42 +162,42 @@ public struct BeatBuddyWordsView: View {
                                     }
                                 }
                             } label: {
-                                HStack(spacing: 8) {
+                                HStack(spacing: 10) {
                                     Text(word)
-                                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                                        .font(.system(size: 16, weight: .bold, design: .rounded))
                                         .foregroundColor(isSelected ? .white : StamerleeTheme.textPrimaryDark)
 
                                     if isSelected {
                                         Image(systemName: "checkmark.circle.fill")
-                                            .font(.system(size: 15, weight: .bold))
+                                            .font(.system(size: 17, weight: .bold))
                                             .foregroundColor(StamerleeTheme.primaryBlue)
                                             .transition(.scale.combined(with: .opacity))
                                     }
                                 }
                                 .frame(maxWidth: .infinity)
-                                .frame(height: 48)
+                                .frame(height: 64)
                                 .background(
-                                    Capsule().fill(
+                                    RoundedRectangle(cornerRadius: 18, style: .continuous).fill(
                                         isSelected
                                             ? StamerleeTheme.primaryBlue.opacity(0.38)
-                                            : Color.white.opacity(0.06)
+                                            : Color.white.opacity(0.07)
                                     )
                                 )
                                 .overlay(
-                                    Capsule().stroke(
+                                    RoundedRectangle(cornerRadius: 18, style: .continuous).stroke(
                                         isSelected
                                             ? StamerleeTheme.primaryBlue
                                             : Color.white.opacity(0.12),
                                         lineWidth: isSelected ? 1.5 : 1
                                     )
                                 )
-                                .clipShape(Capsule())
+                                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                             }
                             .buttonStyle(.plain)
                         }
                     }
                     .padding(.horizontal, 24)
-                    .padding(.top, 6)
+                    .padding(.top, 8)
                     .padding(.bottom, 24)
                 }
 
@@ -228,7 +225,6 @@ public struct ArcBPMDialView: View {
     public let size: CGFloat
 
     @State private var isDragging: Bool = false
-    @State private var beatPulse: Bool = false
 
     public init(bpm: Binding<Int>, size: CGFloat = 240) {
         self._bpm = bpm
@@ -298,16 +294,10 @@ public struct ArcBPMDialView: View {
                 .offset(x: knobX, y: knobY)
                 .animation(.spring(response: 0.25, dampingFraction: 0.8), value: knobAngleDegrees)
 
-            // Center Content (Waveform icon, big BPM value, and tempo description)
-            VStack(spacing: 3) {
-                Image(systemName: "waveform")
-                    .font(.system(size: 20, weight: .bold))
-                    .foregroundColor(Color(red: 30 / 255, green: 215 / 255, blue: 245 / 255))
-                    .scaleEffect(beatPulse ? 1.25 : 0.95)
-                    .padding(.bottom, 2)
-
+            // Center Content (Big BPM value, label, and tempo descriptor - NO beating symbol / animation)
+            VStack(spacing: 4) {
                 Text("\(bpm)")
-                    .font(.system(size: 50, weight: .bold, design: .rounded))
+                    .font(.system(size: 56, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
                     .contentTransition(.numericText())
 
@@ -334,19 +324,6 @@ public struct ArcBPMDialView: View {
                     isDragging = false
                 }
         )
-        .onAppear {
-            startBeatPulse()
-        }
-        .onChange(of: bpm) {
-            startBeatPulse()
-        }
-    }
-
-    private func startBeatPulse() {
-        let interval = 60.0 / max(Double(bpm), 40.0)
-        withAnimation(.easeInOut(duration: min(interval * 0.4, 0.25)).repeatForever(autoreverses: true)) {
-            beatPulse = true
-        }
     }
 
     private func updateAngle(location: CGPoint, center: CGPoint) {
@@ -397,7 +374,6 @@ public struct BeatBuddyBPMView: View {
     @Bindable public var state: AppState
     @State private var soundEnabled: Bool = true
     @State private var vibrationEnabled: Bool = true
-    @State private var selectedTimerMinutes: Int = 2
 
     public init(state: AppState) {
         self.state = state
@@ -421,59 +397,28 @@ public struct BeatBuddyBPMView: View {
                     .padding(.horizontal, 24)
                     .padding(.top, 6)
 
-                Spacer(minLength: 12)
+                Spacer(minLength: 24)
 
                 // Arc Dial Centered
                 HStack {
                     Spacer()
-                    ArcBPMDialView(bpm: $state.beatBuddyBPM, size: 236)
+                    ArcBPMDialView(bpm: $state.beatBuddyBPM, size: 250)
                     Spacer()
                 }
 
-                Spacer(minLength: 12)
+                Spacer(minLength: 20)
 
-                // Stepper & Quick Presets Row
-                HStack(spacing: 12) {
+                // Stepper Buttons (- and +)
+                HStack {
                     Button {
                         adjustBPM(by: -5)
                     } label: {
                         Image(systemName: "minus")
-                            .font(.system(size: 14, weight: .bold))
+                            .font(.system(size: 16, weight: .bold))
                             .foregroundColor(.white)
-                            .frame(width: 36, height: 36)
+                            .frame(width: 44, height: 44)
                             .background(Color.white.opacity(0.08))
                             .clipShape(Circle())
-                    }
-
-                    Spacer()
-
-                    // Quick BPM preset chips
-                    ForEach([60, 90, 120, 150], id: \.self) { preset in
-                        Button {
-                            let impact = UIImpactFeedbackGenerator(style: .medium)
-                            impact.impactOccurred()
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                state.beatBuddyBPM = preset
-                            }
-                        } label: {
-                            Text("\(preset)")
-                                .font(.system(size: 12, weight: .bold, design: .rounded))
-                                .foregroundColor(state.beatBuddyBPM == preset ? .white : StamerleeTheme.textSecondaryDark)
-                                .padding(.horizontal, 11)
-                                .padding(.vertical, 7)
-                                .background(
-                                    state.beatBuddyBPM == preset
-                                        ? StamerleeTheme.primaryBlue.opacity(0.5)
-                                        : Color.white.opacity(0.05),
-                                    in: Capsule()
-                                )
-                                .overlay(
-                                    Capsule().stroke(
-                                        state.beatBuddyBPM == preset ? StamerleeTheme.primaryBlue : Color.clear,
-                                        lineWidth: 1
-                                    )
-                                )
-                        }
                     }
 
                     Spacer()
@@ -482,14 +427,14 @@ public struct BeatBuddyBPMView: View {
                         adjustBPM(by: 5)
                     } label: {
                         Image(systemName: "plus")
-                            .font(.system(size: 14, weight: .bold))
+                            .font(.system(size: 16, weight: .bold))
                             .foregroundColor(.white)
-                            .frame(width: 36, height: 36)
+                            .frame(width: 44, height: 44)
                             .background(Color.white.opacity(0.08))
                             .clipShape(Circle())
                     }
                 }
-                .padding(.horizontal, 24)
+                .padding(.horizontal, 48)
                 .padding(.bottom, 16)
 
                 // Sound & Vibration Toggles
@@ -502,66 +447,19 @@ public struct BeatBuddyBPMView: View {
                     }
                 }
                 .padding(.horizontal, 24)
-                .padding(.bottom, 18)
+                .padding(.bottom, 20)
 
-                // Distinct Practice Timer Section (Completely separate, never overlapping!)
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "timer")
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundColor(Color.cyan)
-                        Text("PRACTICE TIMER")
-                            .font(.system(size: 11, weight: .bold, design: .rounded))
-                            .foregroundColor(StamerleeTheme.textSecondaryDark)
-                            .tracking(1.0)
-                    }
-                    .padding(.horizontal, 24)
-
-                    HStack(spacing: 8) {
-                        ForEach([1, 2, 3, 5, 0], id: \.self) { minutes in
-                            let isSelected = selectedTimerMinutes == minutes
-                            Button {
-                                let impact = UIImpactFeedbackGenerator(style: .light)
-                                impact.impactOccurred()
-                                selectedTimerMinutes = minutes
-                            } label: {
-                                Text(minutes == 0 ? "Continuous" : "\(minutes) min")
-                                    .font(.system(size: 12, weight: .semibold, design: .rounded))
-                                    .foregroundColor(isSelected ? .white : StamerleeTheme.textSecondaryDark)
-                                    .frame(maxWidth: .infinity)
-                                    .frame(height: 36)
-                                    .background(
-                                        isSelected
-                                            ? StamerleeTheme.primaryBlue.opacity(0.4)
-                                            : Color.white.opacity(0.06),
-                                        in: Capsule()
-                                    )
-                                    .overlay(
-                                        Capsule().stroke(
-                                            isSelected ? StamerleeTheme.primaryBlue : Color.white.opacity(0.08),
-                                            lineWidth: 1
-                                        )
-                                    )
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 24)
-                }
-                .padding(.bottom, 22)
+                Spacer()
 
                 // Primary Start Button
                 VStack {
                     PrimaryActionButton(title: "▶ Start Metronome") {
-                        state.beatBuddyDurationMinutes = selectedTimerMinutes
                         state.navigate(to: .beatBuddyPractice)
                     }
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
             }
-        }
-        .onAppear {
-            selectedTimerMinutes = state.beatBuddyDurationMinutes
         }
     }
 
@@ -581,13 +479,13 @@ public struct BeatBuddyBPMView: View {
         }) {
             HStack(spacing: 8) {
                 Image(systemName: icon)
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.system(size: 15, weight: .semibold))
                 Text(title)
-                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    .font(.system(size: 14, weight: .semibold, design: .rounded))
             }
             .foregroundColor(isOn ? .white : StamerleeTheme.textSecondaryDark)
             .frame(maxWidth: .infinity)
-            .frame(height: 42)
+            .frame(height: 50)
             .background(isOn ? StamerleeTheme.primaryBlue.opacity(0.38) : Color.white.opacity(0.06), in: Capsule())
             .overlay(
                 Capsule().stroke(
@@ -604,11 +502,6 @@ public struct BeatBuddyBPMView: View {
 public struct BeatBuddyPracticeView: View {
     @Bindable public var state: AppState
     @State private var index = 0
-    @State private var isCameraEnabled = false
-    @State private var beatPulse = false
-    @State private var remainingSeconds: Int = 120
-    @State private var metronomeTimer: Timer? = nil
-    @State private var countdownTimer: Timer? = nil
 
     public init(state: AppState) {
         self.state = state
@@ -618,108 +511,57 @@ public struct BeatBuddyPracticeView: View {
         Array(state.beatBuddySelectedWords.isEmpty ? Set(["Water", "Coffee"]) : state.beatBuddySelectedWords)
     }
 
-    private var isContinuous: Bool {
-        state.beatBuddyDurationMinutes == 0
-    }
-
-    private var formattedTime: String {
-        let mins = remainingSeconds / 60
-        let secs = remainingSeconds % 60
-        return String(format: "%02d:%02d", mins, secs)
-    }
-
     public var body: some View {
         BeatBuddyShell(state: state, onBack: {
-            stopTimers()
             state.navigate(to: .beatBuddyBPM, forward: false)
         }) {
             VStack(spacing: 0) {
-                // Top Info Bar (Timer, DAF, Camera)
-                HStack(spacing: 10) {
-                    // Practice Timer Display
-                    if !isContinuous {
-                        HStack(spacing: 5) {
-                            Image(systemName: "timer")
-                                .font(.system(size: 11, weight: .bold))
-                                .foregroundColor(remainingSeconds <= 30 ? .red : .cyan)
-                            Text(formattedTime)
-                                .font(.system(size: 12, weight: .bold, design: .monospaced))
-                                .foregroundColor(.white)
-                        }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 7)
-                        .background(Color.white.opacity(0.08), in: Capsule())
-                    }
-
+                // Top Info Bar (Only BPM Badge, no timer, no sound icon, no camera icon)
+                HStack {
                     Spacer()
 
                     // BPM Badge
-                    HStack(spacing: 4) {
+                    HStack(spacing: 6) {
                         Image(systemName: "metronome.fill")
-                            .font(.system(size: 11))
-                            .scaleEffect(beatPulse ? 1.25 : 0.95)
+                            .font(.system(size: 12))
                             .foregroundColor(.cyan)
                         Text("\(state.beatBuddyBPM) BPM")
-                            .font(.system(size: 11, weight: .bold, design: .rounded))
+                            .font(.system(size: 12, weight: .bold, design: .rounded))
                             .foregroundColor(.white)
                     }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 7)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
                     .background(Color.white.opacity(0.08), in: Capsule())
-
-                    // Camera Toggle
-                    Button {
-                        isCameraEnabled.toggle()
-                    } label: {
-                        Label(
-                            "Camera",
-                            systemImage: isCameraEnabled ? "video.fill" : "video.slash.fill"
-                        )
-                        .font(.system(size: 11, weight: .semibold, design: .rounded))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 7)
-                        .background(
-                            isCameraEnabled
-                                ? StamerleeTheme.primaryBlue.opacity(0.45)
-                                : Color.white.opacity(0.08),
-                            in: Capsule()
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel(isCameraEnabled ? "Turn camera off" : "Turn camera on")
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 12)
 
                 Spacer()
 
-                // Center Word Practice Card with Rhythm Pulse Glow
-                VStack(spacing: 16) {
+                // Center Word Practice Card (Large, prominent, clean)
+                VStack(spacing: 18) {
                     Text(words[min(index, words.count - 1)])
-                        .font(.system(size: 17, weight: .medium, design: .rounded))
+                        .font(.system(size: 20, weight: .medium, design: .rounded))
                         .foregroundColor(StamerleeTheme.textSecondaryDark)
 
                     Text(splitWord(words[min(index, words.count - 1)]))
-                        .font(.system(size: 32, weight: .bold, design: .rounded))
+                        .font(.system(size: 42, weight: .bold, design: .rounded))
                         .foregroundColor(.white)
-                        .scaleEffect(beatPulse ? 1.05 : 1.0)
-                        .animation(.spring(response: 0.18, dampingFraction: 0.6), value: beatPulse)
 
                     // Page Indicator Dots
-                    HStack(spacing: 6) {
+                    HStack(spacing: 8) {
                         ForEach(0..<words.count, id: \.self) { i in
                             Circle()
                                 .fill(i == index ? Color.cyan : Color.white.opacity(0.2))
-                                .frame(width: i == index ? 7 : 5, height: i == index ? 7 : 5)
+                                .frame(width: i == index ? 8 : 6, height: i == index ? 8 : 6)
                         }
                     }
-                    .padding(.top, 4)
+                    .padding(.top, 6)
                 }
                 .frame(maxWidth: .infinity)
-                .frame(height: 160)
+                .frame(height: 220)
                 .background(
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    RoundedRectangle(cornerRadius: 26, style: .continuous)
                         .fill(
                             LinearGradient(
                                 colors: [
@@ -732,31 +574,13 @@ public struct BeatBuddyPracticeView: View {
                         )
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
-                        .stroke(
-                            beatPulse ? Color.cyan.opacity(0.7) : Color.white.opacity(0.12),
-                            lineWidth: beatPulse ? 2 : 1
-                        )
+                    RoundedRectangle(cornerRadius: 26, style: .continuous)
+                        .stroke(Color.white.opacity(0.14), lineWidth: 1)
                 )
-                .shadow(
-                    color: beatPulse ? Color.cyan.opacity(0.35) : Color.black.opacity(0.2),
-                    radius: beatPulse ? 20 : 10,
-                    x: 0,
-                    y: 6
-                )
+                .shadow(color: Color.black.opacity(0.35), radius: 18, x: 0, y: 10)
                 .padding(.horizontal, 24)
 
                 Spacer()
-
-                // Optional Front Camera Preview
-                if isCameraEnabled {
-                    BeatBuddyCameraPreview()
-                        .frame(height: 160)
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
-                        .padding(.horizontal, 24)
-                        .padding(.bottom, 16)
-                        .transition(.opacity.combined(with: .scale(scale: 0.96)))
-                }
 
                 // Bottom Action Button
                 VStack {
@@ -766,7 +590,6 @@ public struct BeatBuddyPracticeView: View {
                                 index += 1
                             }
                         } else {
-                            stopTimers()
                             state.navigate(to: .homeDashboard, forward: false)
                         }
                     }
@@ -774,53 +597,7 @@ public struct BeatBuddyPracticeView: View {
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
             }
-            .animation(.easeInOut(duration: 0.25), value: isCameraEnabled)
         }
-        .onAppear {
-            remainingSeconds = max(state.beatBuddyDurationMinutes, 1) * 60
-            startMetronome()
-        }
-        .onDisappear {
-            stopTimers()
-        }
-    }
-
-    private func startMetronome() {
-        stopTimers()
-        let interval = 60.0 / max(Double(state.beatBuddyBPM), 40.0)
-
-        // Rhythmic Metronome Beat
-        metronomeTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { _ in
-            let impact = UIImpactFeedbackGenerator(style: .rigid)
-            impact.impactOccurred()
-            AudioServicesPlaySystemSound(1057)
-
-            withAnimation(.spring(response: 0.15, dampingFraction: 0.6)) {
-                beatPulse = true
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                beatPulse = false
-            }
-        }
-
-        // Countdown Timer
-        if !isContinuous {
-            countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-                if remainingSeconds > 0 {
-                    remainingSeconds -= 1
-                } else {
-                    stopTimers()
-                    state.navigate(to: .homeDashboard, forward: false)
-                }
-            }
-        }
-    }
-
-    private func stopTimers() {
-        metronomeTimer?.invalidate()
-        metronomeTimer = nil
-        countdownTimer?.invalidate()
-        countdownTimer = nil
     }
 
     private func splitWord(_ word: String) -> AttributedString {
@@ -830,80 +607,5 @@ public struct BeatBuddyPracticeView: View {
             result[split...].foregroundColor = Color.cyan
         }
         return result
-    }
-}
-
-// MARK: - Camera Preview Subview
-private struct BeatBuddyCameraPreview: UIViewRepresentable {
-    func makeUIView(context: Context) -> BeatBuddyCameraView {
-        BeatBuddyCameraView()
-    }
-
-    func updateUIView(_ uiView: BeatBuddyCameraView, context: Context) {}
-
-    static func dismantleUIView(_ uiView: BeatBuddyCameraView, coordinator: ()) {
-        uiView.stopSession()
-    }
-}
-
-private final class BeatBuddyCameraView: UIView {
-    private let session = AVCaptureSession()
-
-    override class var layerClass: AnyClass {
-        AVCaptureVideoPreviewLayer.self
-    }
-
-    private var previewLayer: AVCaptureVideoPreviewLayer {
-        layer as! AVCaptureVideoPreviewLayer
-    }
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        previewLayer.videoGravity = .resizeAspectFill
-        requestCameraAccessAndStart()
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    private func requestCameraAccessAndStart() {
-        switch AVCaptureDevice.authorizationStatus(for: .video) {
-        case .authorized:
-            startSession()
-        case .notDetermined:
-            AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
-                guard granted else { return }
-                DispatchQueue.main.async {
-                    self?.startSession()
-                }
-            }
-        default:
-            break
-        }
-    }
-
-    private func startSession() {
-        guard !session.isRunning,
-              let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front),
-              let input = try? AVCaptureDeviceInput(device: camera),
-              session.canAddInput(input) else {
-            return
-        }
-
-        session.beginConfiguration()
-        session.addInput(input)
-        session.commitConfiguration()
-        previewLayer.session = session
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            self?.session.startRunning()
-        }
-    }
-
-    func stopSession() {
-        guard session.isRunning else { return }
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            self?.session.stopRunning()
-        }
     }
 }
