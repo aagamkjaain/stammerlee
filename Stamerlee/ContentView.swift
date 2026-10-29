@@ -17,8 +17,8 @@ public struct ContentView: View {
                     LaunchView(state: appState)
                         .transition(.opacity)
                 case .login:
-                    LoginView(state: appState)
-                        .transition(slideTransition(for: appState.navigationDirection))
+                    LaunchView(state: appState)
+                        .transition(.opacity)
                 case .onboarding1, .onboarding2, .dailyGoal, .exploreActivities:
                     OnboardingFlowView(state: appState)
                         .transition(.opacity)
@@ -45,14 +45,23 @@ public struct ContentView: View {
                                 removal: .opacity
                             )
                         )
+                case .pictureDescriptionIntro:
+                    PictureDescriptionIntroView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
                 case .pictureDescriptionDifficulty:
                     PictureDescriptionDifficultyView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
                 case .pictureDescriptionPractice:
                     PictureDescriptionEasyView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
+                case .dialSceneIntro:
+                    DialSceneIntroView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
                 case .dialScene:
                     DialSceneView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
+                case .narrationIntro:
+                    NarrationIntroView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
                 case .narrationDifficulty:
                     NarrationDifficultyView(state: appState)
@@ -79,6 +88,23 @@ public struct ContentView: View {
             }
         }
         .preferredColorScheme(.dark)
+        .sheet(
+            isPresented: Binding(
+                get: { appState.currentScreen == .login },
+                set: { isPresented in
+                    if !isPresented && appState.currentScreen == .login {
+                        appState.navigate(to: .launch, forward: false)
+                    }
+                }
+            )
+        ) {
+            NavigationStack {
+                LoginView(state: appState)
+            }
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
+            .presentationCornerRadius(28)
+        }
         // Two finger tap anywhere to toggle the quick screen jump bar
         .onTapGesture(count: 2) {
             withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
@@ -123,6 +149,10 @@ public struct ContentView: View {
                     jumpButton(title: "Explore", screen: .exploreActivities)
                     jumpButton(title: "Home", screen: .homeDashboard)
                     jumpButton(title: "Pro Speech", screen: .prolongedSpeechIntro)
+                    jumpButton(title: "Pic Intro", screen: .pictureDescriptionIntro)
+                    jumpButton(title: "Dial Intro", screen: .dialSceneIntro)
+                    jumpButton(title: "Narr Intro", screen: .narrationIntro)
+                    jumpButton(title: "Dial Scene", screen: .dialScene)
                     jumpButton(title: "Difficulty", screen: .prolongedSpeechDifficulty)
                     jumpButton(title: "Practice", screen: .prolongedPractice)
                     jumpButton(title: "Analysis", screen: .prolongedAnalysis)
@@ -152,9 +182,10 @@ public struct ContentView: View {
     }
 }
 
-// MARK: - Swipeable Onboarding Flow
+// MARK: - Stack-based Onboarding Flow
 private struct OnboardingFlowView: View {
     @Bindable var state: AppState
+    @State private var path: [AppScreen] = []
 
     private let pages: [AppScreen] = [
         .onboarding1,
@@ -164,36 +195,57 @@ private struct OnboardingFlowView: View {
     ]
 
     var body: some View {
-        TabView(selection: screenBinding) {
+        NavigationStack(path: $path) {
             OnboardingStepOneView(state: state)
-                .tag(AppScreen.onboarding1)
-
-            OnboardingStepTwoView(state: state)
-                .tag(AppScreen.onboarding2)
-
-            DailyGoalView(state: state)
-                .tag(AppScreen.dailyGoal)
-
-            ExploreActivitiesView(state: state)
-                .tag(AppScreen.exploreActivities)
+                .navigationDestination(for: AppScreen.self) { screen in
+                    destinationView(for: screen)
+                }
+                .toolbar(.visible, for: .navigationBar)
+                .toolbarBackground(StamerleeTheme.backgroundDark, for: .navigationBar)
+                .toolbarBackground(.visible, for: .navigationBar)
+                .navigationBarTitleDisplayMode(.inline)
         }
-        .tabViewStyle(.page(indexDisplayMode: .never))
-        .animation(.easeInOut(duration: 0.24), value: state.currentScreen)
+        .animation(.easeInOut(duration: 0.28), value: state.currentScreen)
+        .onAppear {
+            syncPath(with: state.currentScreen)
+        }
+        .onChange(of: state.currentScreen) { _, newScreen in
+            syncPath(with: newScreen)
+        }
+        .onChange(of: path) { _, newPath in
+            guard let screen = newPath.last ?? pages.first,
+                  screen != state.currentScreen else {
+                return
+            }
+
+            let currentIndex = pages.firstIndex(of: state.currentScreen) ?? 0
+            let newIndex = pages.firstIndex(of: screen) ?? currentIndex
+            state.navigate(to: screen, forward: newIndex >= currentIndex)
+        }
     }
 
-    private var screenBinding: Binding<AppScreen> {
-        Binding(
-            get: { state.currentScreen },
-            set: { newScreen in
-                guard pages.contains(newScreen), newScreen != state.currentScreen else {
-                    return
-                }
+    @ViewBuilder
+    private func destinationView(for screen: AppScreen) -> some View {
+        switch screen {
+        case .onboarding2:
+            OnboardingStepTwoView(state: state)
+        case .dailyGoal:
+            DailyGoalView(state: state)
+        case .exploreActivities:
+            ExploreActivitiesView(state: state)
+        default:
+            EmptyView()
+        }
+    }
 
-                let currentIndex = pages.firstIndex(of: state.currentScreen) ?? 0
-                let newIndex = pages.firstIndex(of: newScreen) ?? currentIndex
-                state.navigate(to: newScreen, forward: newIndex >= currentIndex)
-            }
-        )
+    private func syncPath(with screen: AppScreen) {
+        guard let index = pages.firstIndex(of: screen) else {
+            return
+        }
+        let expectedPath = Array(pages.dropFirst().prefix(index))
+        if path != expectedPath {
+            path = expectedPath
+        }
     }
 }
 

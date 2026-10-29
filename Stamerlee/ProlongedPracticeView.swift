@@ -219,7 +219,6 @@ public struct ProlongedPracticeView: View {
 public struct ProlongedAnalysisView: View {
     @Bindable public var state: AppState
     
-    @State private var selectedSegment: String = "Blocks"
     @State private var selectedWords: Set<String> = []
     
     private var level: String {
@@ -227,23 +226,25 @@ public struct ProlongedAnalysisView: View {
     }
 
     private var wordsList: [String] {
-        switch (level, selectedSegment) {
-        case ("Easy", "Blocks"):
-            return ["Water", "Sun", "Morning", "Please", "Garden", "Window"]
-        case ("Easy", _):
-            return ["Water", "Morning", "Please", "Slowly", "Relaxed", "Together"]
-        case ("Medium", "Blocks"):
+        switch level {
+        case "Medium":
             return [
-                "Love", "Spiderman", "Please", "Water", "Morning", "Friend"
+                "Love", "Spiderman", "Please", "Water", "Morning", "Friend",
+                "Together", "Sentence", "Adventure", "Courage", "Family", "Journey",
+                "Comfort", "Practice", "Freedom", "Balance", "Connect", "Progress"
             ]
-        case ("Medium", _):
+        case "Hard":
             return [
-                "Love", "Spiderman", "Morning", "Please", "Together", "Sentence"
+                "Really", "Weather", "Coffee", "Repeat", "Slowly", "Feeling",
+                "Would", "Natural", "Connection", "Confidence", "Today", "Pacing",
+                "Conversation", "Expressive", "Overcome", "Clarity", "Smoothness", "Resilience"
             ]
-        case ("Hard", "Blocks"):
-            return ["Really", "Weather", "Coffee", "Repeat", "Slowly", "Feeling"]
-        default:
-            return ["Would", "Natural", "Connection", "Confidence", "Today", "Pacing"]
+        default: // Easy
+            return [
+                "Water", "Sun", "Morning", "Please", "Garden", "Window",
+                "Slowly", "Relaxed", "Together", "Gentle", "Quiet", "Breathe",
+                "Listen", "River", "Sunny", "Simple", "Golden", "Peaceful"
+            ]
         }
     }
     
@@ -251,161 +252,29 @@ public struct ProlongedAnalysisView: View {
         self.state = state
     }
     
-    public var body: some View {
-        ZStack {
-            // Dark Background
-            StamerleeTheme.backgroundDark
-                .ignoresSafeArea()
-            
-            VStack(alignment: .leading, spacing: 0) {
-                // Top Title Bar
-                Text("Analysis")
-                    .font(.system(size: 30, weight: .bold, design: .rounded))
-                    .foregroundColor(StamerleeTheme.textPrimaryDark)
-                    .padding(.horizontal, 24)
-                    .padding(.top, 24)
-                    .padding(.bottom, 32)
-                
-                // Big Score Display
-                VStack(spacing: 6) {
-                    Text("YOU SCORED")
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
-                        .foregroundColor(StamerleeTheme.textPrimaryDark)
-                        .tracking(1.2)
-                    
-                    Text("86%")
-                        .font(.system(size: 54, weight: .bold, design: .rounded))
-                        .foregroundColor(.white)
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.bottom, 32)
-                
-                // Instructions Subtitle
-                Text("Tap words you want Beat Buddy to revisit")
-                    .font(.system(size: 13, weight: .regular, design: .rounded))
-                    .foregroundColor(StamerleeTheme.textSecondaryDark)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.bottom, 16)
-                
-                // Segmented Pill Control (Blocks | Repetition)
-                HStack(spacing: 0) {
-                    segmentButton(title: "Blocks", isSelected: selectedSegment == "Blocks") {
-                        selectedSegment = "Blocks"
-                    }
-                    
-                    segmentButton(title: "Repetition", isSelected: selectedSegment == "Repetition") {
-                        selectedSegment = "Repetition"
-                    }
-                }
-                .padding(3)
-                .background(Color(red: 220 / 255, green: 224 / 255, blue: 245 / 255))
-                .clipShape(Capsule())
-                .padding(.horizontal, 24)
-                .padding(.bottom, 22)
-
-                HStack {
-                    Text("\(selectedWords.count) selected")
-                        .font(.system(size: 12, weight: .semibold, design: .rounded))
-                        .foregroundColor(StamerleeTheme.textSecondaryDark)
-                    Spacer()
-                    Button(selectedWords.count == wordsList.count ? "Clear all" : "Select all") {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            selectedWords = selectedWords.count == wordsList.count ? [] : Set(wordsList)
-                        }
-                    }
-                    .font(.system(size: 12, weight: .bold, design: .rounded))
-                    .foregroundColor(StamerleeTheme.primaryBlue)
-                }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 12)
-                
-                // 2-Column Word Grid
-                LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
-                    ForEach(wordsList, id: \.self) { word in
-                        let isSelected = selectedWords.contains(word)
-                        wordButton(word: word, isSelected: isSelected) {
-                            let impact = UIImpactFeedbackGenerator(style: .light)
-                            impact.impactOccurred()
-                            withAnimation(.spring(response: 0.25, dampingFraction: 0.7)) {
-                                if selectedWords.contains(word) {
-                                    selectedWords.remove(word)
-                                } else {
-                                    selectedWords.insert(word)
-                                }
-                            }
-                        }
-                    }
-                }
-                .padding(.horizontal, 24)
-                
-                Spacer()
-                
-                // Bottom CTA Button ("Done")
-                VStack {
-                    PrimaryActionButton(title: "Done") {
-                        state.navigate(to: .homeDashboard)
-                    }
-                }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 24)
-            }
+    private var scoreText: String {
+        switch level {
+        case "Hard":
+            return "7.9"
+        case "Medium":
+            return "8.5"
+        default:
+            return "8.8"
         }
+    }
+
+    public var body: some View {
+        ExerciseAnalysisSkeletonView(
+            scoreText: scoreText,
+            maxScoreText: "/ 10",
+            wordsList: wordsList,
+            selectedWords: $selectedWords,
+            onDone: {
+                state.navigate(to: .homeDashboard)
+            }
+        )
         .onAppear {
             selectedWords = Set(wordsList.prefix(2))
         }
-        .onChange(of: selectedSegment) { _, _ in
-            selectedWords = Set(wordsList.prefix(2))
-        }
-    }
-    
-    // MARK: - Segment Pill Button
-    private func segmentButton(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: {
-            let impact = UIImpactFeedbackGenerator(style: .light)
-            impact.impactOccurred()
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.75)) {
-                action()
-            }
-        }) {
-            Text(title)
-                .font(.system(size: 13, weight: .bold, design: .rounded))
-                .foregroundColor(isSelected ? StamerleeTheme.textPrimaryLight : Color(red: 80 / 255, green: 85 / 255, blue: 110 / 255))
-                .frame(maxWidth: .infinity)
-                .frame(height: 38)
-                .background(
-                    isSelected ? Color.white : Color.clear
-                )
-                .clipShape(Capsule())
-                .shadow(color: isSelected ? Color.black.opacity(0.08) : .clear, radius: 4, x: 0, y: 2)
-        }
-    }
-    
-    // MARK: - Word Selection Pill
-    private func wordButton(word: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Text(word)
-                .font(.system(size: 13.5, weight: isSelected ? .bold : .medium, design: .rounded))
-                .foregroundColor(isSelected ? .white : StamerleeTheme.textSecondaryDark)
-                .frame(maxWidth: .infinity)
-                .frame(height: 44)
-                .background(
-                    Group {
-                        if isSelected {
-                            Color(red: 20 / 255, green: 45 / 255, blue: 105 / 255)
-                        } else {
-                            Color(red: 16 / 255, green: 18 / 255, blue: 36 / 255)
-                        }
-                    }
-                )
-                .overlay(
-                    Capsule()
-                        .stroke(
-                            isSelected ? StamerleeTheme.primaryBlue : Color.white.opacity(0.06),
-                            lineWidth: isSelected ? 2 : 1
-                        )
-                )
-                .clipShape(Capsule())
-        }
-        .buttonStyle(.plain)
     }
 }

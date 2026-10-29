@@ -5,14 +5,7 @@ import SwiftUI
 public struct PictureDescriptionEasyView: View {
     @Bindable public var state: AppState
     @State private var isAnalysisVisible = false
-    @State private var selectedSegment = "Prolongations"
     @State private var selectedWords: Set<String> = ["Sitting", "Smiling"]
-
-    private let wordsBySegment: [String: [String]] = [
-        "Prolongations": ["Sitting", "Steps", "Tree", "Light", "Golden", "Smiling"],
-        "Blocks": ["Bench", "Purple", "Golden", "Pet", "White", "Shoes"],
-        "Repetitions": ["People", "Talking", "Dog", "Building", "Friends", "Campus"]
-    ]
 
     private var difficulty: String {
         state.selectedPictureDescriptionDifficulty
@@ -31,10 +24,6 @@ public struct PictureDescriptionEasyView: View {
 
     public init(state: AppState) {
         self.state = state
-    }
-
-    private var words: [String] {
-        wordsBySegment[selectedSegment] ?? []
     }
 
     public var body: some View {
@@ -79,13 +68,13 @@ public struct PictureDescriptionEasyView: View {
                 .padding(.horizontal, 24)
                 .padding(.top, 10)
 
-            pictureAsset
-                .frame(maxWidth: .infinity)
-                .frame(height: 190)
-                .padding(.horizontal, 20)
-                .padding(.top, 24)
+            Spacer(minLength: 16)
 
-            Spacer()
+            pictureAsset
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.horizontal, 20)
+
+            Spacer(minLength: 16)
 
             Button {
                 completeCurrentDifficulty()
@@ -119,109 +108,113 @@ public struct PictureDescriptionEasyView: View {
         }
     }
 
+    private var wordsList: [String] {
+        switch difficulty {
+        case "Medium":
+            return [
+                "Pathway", "Bridge", "Forest", "Walking", "Together", "Shadows",
+                "Sunlight", "Reflection", "Serene", "Horizon", "Stream", "Nature",
+                "Quiet", "Breeze", "Greenery", "Trail", "Landscape", "Journey"
+            ]
+        case "Hard":
+            return [
+                "Architecture", "Downtown", "Movement", "Pedestrians", "Bicycle", "Boulevard",
+                "Conversation", "Vibrant", "Crossing", "Reflection", "Urban", "Momentum",
+                "Atmosphere", "Dynamic", "Rhythm", "Expression", "Perspective", "Detail"
+            ]
+        default:
+            return [
+                "Sitting", "Steps", "Tree", "Light", "Golden", "Smiling",
+                "Bench", "Purple", "Pet", "White", "Shoes", "People",
+                "Talking", "Dog", "Building", "Friends", "Campus", "Relaxed"
+            ]
+        }
+    }
+
+    private var scoreText: String {
+        switch difficulty {
+        case "Hard":
+            return "6.8"
+        case "Medium":
+            return "7.5"
+        default:
+            return "8.3"
+        }
+    }
+
     private var analysisView: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Text("Analysis")
-                .font(.system(size: 30, weight: .bold, design: .rounded))
-                .foregroundColor(.white)
-                .padding(.horizontal, 24)
-                .padding(.top, 24)
-
-            VStack(spacing: 6) {
-                Text("YOU SCORED")
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
-                Text("68%")
-                    .font(.system(size: 52, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.top, 64)
-            .padding(.bottom, 28)
-
-            Text("Choose the words to practice them using Beat Buddy")
-                .font(.system(size: 13, design: .rounded))
-                .foregroundColor(StamerleeTheme.textSecondaryDark)
-                .frame(maxWidth: .infinity)
-                .padding(.bottom, 14)
-
-            HStack(spacing: 0) {
-                ForEach(["Prolongations", "Blocks", "Repetitions"], id: \.self) { segment in
-                    Button(segment) {
-                        selectedSegment = segment
-                        selectedWords = Set(wordsBySegment[segment, default: []].prefix(2))
-                    }
-                    .font(.system(size: 10, weight: .bold, design: .rounded))
-                    .foregroundColor(selectedSegment == segment ? .black : .black.opacity(0.7))
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 34)
-                    .background(selectedSegment == segment ? .white : .clear)
-                    .clipShape(Capsule())
-                }
-            }
-            .padding(3)
-            .background(Color(red: 220 / 255, green: 224 / 255, blue: 245 / 255))
-            .clipShape(Capsule())
-            .padding(.horizontal, 24)
-            .padding(.bottom, 22)
-
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                ForEach(words, id: \.self) { word in
-                    Button(word) {
-                        if selectedWords.contains(word) {
-                            selectedWords.remove(word)
-                        } else {
-                            selectedWords.insert(word)
-                        }
-                    }
-                    .font(.system(size: 13, weight: .medium, design: .rounded))
-                    .foregroundColor(selectedWords.contains(word) ? .white : StamerleeTheme.textSecondaryDark)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 44)
-                    .background(selectedWords.contains(word) ? Color(red: 20 / 255, green: 45 / 255, blue: 105 / 255) : Color.white.opacity(0.03))
-                    .overlay(Capsule().stroke(selectedWords.contains(word) ? StamerleeTheme.primaryBlue : Color.white.opacity(0.06)))
-                    .clipShape(Capsule())
-                }
-            }
-            .padding(.horizontal, 24)
-
-            Spacer()
-
-            PrimaryActionButton(title: "Done") {
+        ExerciseAnalysisSkeletonView(
+            scoreText: scoreText,
+            maxScoreText: "/ 10",
+            wordsList: wordsList,
+            selectedWords: $selectedWords,
+            onDone: {
                 state.navigate(to: .homeDashboard)
             }
-            .padding(.horizontal, 24)
-            .padding(.bottom, 24)
+        )
+    }
+
+    private var localFallbackPath: String {
+        let filename: String
+        switch difficulty {
+        case "Medium":
+            filename = "PictureDescriptionMedium.imageset/picdesmedium.png"
+        case "Hard":
+            filename = "PictureDescriptionHard.imageset/picdeshard.png"
+        default:
+            filename = "PictureDescriptionEasy.imageset/picturedeseasy.png"
         }
+        return "/Users/user15/Desktop/untitled folder/stammerlee/Stamerlee/Assets.xcassets/\(filename)"
+    }
+
+    private var loadedImage: UIImage? {
+        if let image = StamerleeImageLoader.loadHeroImage(name: pictureAssetName, fallbackPath: localFallbackPath) {
+            return image
+        }
+        if let image = StamerleeImageLoader.loadHeroImage(name: pictureAssetName, fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/\(pictureAssetName).png") {
+            return image
+        }
+        if let image = StamerleeImageLoader.loadHeroImage(name: "picturedes", fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/picturedes.png") {
+            return image
+        }
+        return nil
     }
 
     @ViewBuilder
     private var pictureAsset: some View {
-        if let image = StamerleeImageLoader.loadHeroImage(
-            name: pictureAssetName,
-            fallbackPath: "/Users/user89/Documents/bitch/Stamerlee/\(pictureAssetName).png"
-        ) ?? StamerleeImageLoader.loadHeroImage(
-            name: "picturedes",
-            fallbackPath: "/Users/user89/Documents/bitch/Stamerlee/picturedes.png"
-        ) {
-            Image(uiImage: image)
-                .resizable()
-                .scaledToFit()
-                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-        } else {
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(Color.white.opacity(0.08))
-                .overlay {
-                    VStack(spacing: 8) {
-                        Image(systemName: "photo")
-                            .font(.system(size: 34))
-                        Text("Picture Description")
-                            .font(.system(size: 14, weight: .semibold, design: .rounded))
+        Group {
+            if let image = loadedImage {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity)
+                    .frame(maxHeight: 280)
+                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20, style: .continuous)
+                            .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                    )
+                    .shadow(color: Color.black.opacity(0.3), radius: 10, x: 0, y: 4)
+            } else {
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .fill(Color.white.opacity(0.08))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 240)
+                    .overlay {
+                        VStack(spacing: 8) {
+                            Image(systemName: "photo")
+                                .font(.system(size: 34))
+                            Text("Picture Description")
+                                .font(.system(size: 14, weight: .semibold, design: .rounded))
+                        }
+                        .foregroundColor(StamerleeTheme.textSecondaryDark)
                     }
-                    .foregroundColor(StamerleeTheme.textSecondaryDark)
-                }
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20, style: .continuous)
+                            .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                    )
+            }
         }
-
     }
 
     private func completeCurrentDifficulty() {
