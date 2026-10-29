@@ -14,23 +14,23 @@ public struct ProlongedPracticeView: View {
     @State private var currentWordIndex: Int = 0
     @State private var wavePulse: Bool = false
     
-    private var isMedium: Bool {
-        state.selectedDifficulty == "Medium"
+    private var isSentences: Bool {
+        state.selectedDifficulty == "Sentences" || state.selectedDifficulty == "Medium"
     }
 
-    private var isHard: Bool {
-        state.selectedDifficulty == "Hard"
+    private var isParagraphs: Bool {
+        state.selectedDifficulty == "Paragraphs" || state.selectedDifficulty == "Hard"
     }
 
     private var practicePhrases: [String] {
-        if isHard {
+        if isParagraphs {
             return [
                 "“I wwouldd rreally likke a cup of coffee”",
                 "“The wweather is bbeautiful this morning”",
                 "“Could you please repeat that slowly”",
                 "“I am feeling calm and confident today”"
             ]
-        } else if isMedium {
+        } else if isSentences {
             return [
                 "“I lovve sspiiderrmaann”",
                 "“Ggood mmoorrning friieend”",
@@ -48,9 +48,9 @@ public struct ProlongedPracticeView: View {
     }
 
     private var levelDescription: String {
-        if isHard {
+        if isParagraphs {
             return "Build fluency with longer passages,\nconnections, and natural pacing"
-        } else if isMedium {
+        } else if isSentences {
             return "Practice stretching sounds in longer\nphrases and everyday sentences"
         }
         return "Stretch the sounds gently as you speak,\nkeeping each word slow, and relaxed"
@@ -124,7 +124,7 @@ public struct ProlongedPracticeView: View {
                 // Center Practice Phrase Card
                 VStack(spacing: 16) {
                     Text(practicePhrases[min(currentWordIndex, practicePhrases.count - 1)])
-                        .font(.system(size: isHard ? 21 : (isMedium ? 23 : 26), weight: .bold, design: .rounded))
+                        .font(.system(size: isParagraphs ? 21 : (isSentences ? 23 : 26), weight: .bold, design: .rounded))
                         .foregroundStyle(Color(red: 55 / 255, green: 95 / 255, blue: 225 / 255))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 16)
@@ -232,19 +232,19 @@ public struct ProlongedAnalysisView: View {
 
     private var wordsList: [String] {
         switch level {
-        case "Medium":
+        case "Sentences", "Medium":
             return [
                 "Love", "Spiderman", "Please", "Water", "Morning", "Friend",
                 "Together", "Sentence", "Adventure", "Courage", "Family", "Journey",
                 "Comfort", "Practice", "Freedom", "Balance", "Connect", "Progress"
             ]
-        case "Hard":
+        case "Paragraphs", "Hard":
             return [
                 "Really", "Weather", "Coffee", "Repeat", "Slowly", "Feeling",
                 "Would", "Natural", "Connection", "Confidence", "Today", "Pacing",
                 "Conversation", "Expressive", "Overcome", "Clarity", "Smoothness", "Resilience"
             ]
-        default: // Easy
+        default: // Words / Easy
             return [
                 "Water", "Sun", "Morning", "Please", "Garden", "Window",
                 "Slowly", "Relaxed", "Together", "Gentle", "Quiet", "Breathe",
@@ -259,9 +259,9 @@ public struct ProlongedAnalysisView: View {
     
     private var scoreText: String {
         switch level {
-        case "Hard":
+        case "Paragraphs", "Hard":
             return "7.9"
-        case "Medium":
+        case "Sentences", "Medium":
             return "8.5"
         default:
             return "8.8"

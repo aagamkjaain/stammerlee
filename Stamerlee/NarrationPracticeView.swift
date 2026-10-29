@@ -32,7 +32,7 @@ public struct NarrationPracticeView: View {
     private var practiceView: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
-                BackNavButton { state.navigate(to: .narrationDifficulty, forward: false) }
+                BackNavButton { state.navigate(to: .homeDashboard, forward: false) }
                 Spacer()
                 Text("DAF")
                     .font(.system(size: 12, weight: .bold, design: .rounded))
@@ -45,7 +45,7 @@ public struct NarrationPracticeView: View {
             .padding(.horizontal, 24)
             .padding(.top, 16)
 
-            Text(difficulty)
+            Text("Narration")
                 .font(.system(size: 30, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
                 .padding(.horizontal, 24)
@@ -141,7 +141,7 @@ public struct NarrationPracticeView: View {
     }
 
     private func complete() {
-        state.completedNarrationDifficulties.insert(difficulty)
+        state.completeNarration()
         withAnimation(.easeInOut(duration: 0.25)) {
             showAnalysis = true
         }

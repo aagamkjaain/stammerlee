@@ -46,20 +46,12 @@ public struct ProlongedSpeechDifficultyView: View {
                 
                 // Difficulty Level Cards
                 VStack(spacing: 16) {
-                    ForEach(["Easy", "Medium", "Hard"], id: \.self) { difficulty in
-                        let isUnlocked = state.isProlongedDifficultyUnlocked(difficulty)
+                    ForEach(["Words", "Sentences", "Paragraphs"], id: \.self) { difficulty in
                         difficultyCard(
                             title: difficulty,
-                            isLocked: !isUnlocked,
+                            isLocked: false,
                             isCompleted: state.completedProlongedDifficulties.contains(difficulty)
                         ) {
-                            guard isUnlocked else {
-                                let prerequisite = difficulty == "Hard" ? "Medium" : "Easy"
-                                lockedAlertText = "Complete \(prerequisite) practice to unlock \(difficulty)."
-                                showLockedAlert = true
-                                return
-                            }
-
                             state.selectedDifficulty = difficulty
                             state.navigate(to: .prolongedPractice)
                         }

@@ -106,7 +106,7 @@ public final class AppState {
     public var profileAvatarData: Data?
     
     // Practice & Difficulty State
-    public var selectedDifficulty: String = "Easy"
+    public var selectedDifficulty: String = "Words"
     public var completedProlongedDifficulties: Set<String> = []
     public var hasAttemptedProlongedEasy: Bool = false
     public var hasReceivedProlongedEasyScore: Bool = false
@@ -114,6 +114,7 @@ public final class AppState {
     public var prolongedSpeechScores: [String: Double] = [:]
     public var hasSeenProlongedSpeechIntro: Bool = false
     public var hasSeenPictureDescriptionIntro: Bool = false
+    public var hasCompletedPictureDescription: Bool = false
     public var selectedPictureDescriptionDifficulty: String = "Easy"
     public var completedPictureDescriptionDifficulties: Set<String> = []
     public var hasCompletedDialScene: Bool = false
@@ -166,6 +167,7 @@ public final class AppState {
         currentStreakDays = 0
         practiceAudioSeconds = 0
         completedProlongedDifficulties.removeAll()
+        hasCompletedPictureDescription = false
         completedPictureDescriptionDifficulties.removeAll()
         completedNarrationDifficulties.removeAll()
         hasCompletedDialScene = false
@@ -210,16 +212,7 @@ public final class AppState {
     }
 
     public func isProlongedDifficultyUnlocked(_ difficulty: String) -> Bool {
-        switch difficulty {
-        case "Easy":
-            return true
-        case "Medium":
-            return completedProlongedDifficulties.contains("Easy")
-        case "Hard":
-            return completedProlongedDifficulties.contains("Medium")
-        default:
-            return false
-        }
+        true
     }
 
     public func completeProlongedDifficulty(_ difficulty: String) {
@@ -229,7 +222,7 @@ public final class AppState {
     public func recordProlongedScore(difficulty: String, score: Double) {
         prolongedSpeechScores[difficulty] = score
         completedProlongedDifficulties.insert(difficulty)
-        if difficulty == "Easy" {
+        if difficulty == "Words" || difficulty == "Easy" {
             hasAttemptedProlongedEasy = true
             hasReceivedProlongedEasyScore = true
             prolongedEasyScore = score
@@ -237,32 +230,28 @@ public final class AppState {
     }
 
     public var isPictureDescriptionUnlocked: Bool {
-        completedProlongedDifficulties.contains("Hard")
+        true
+    }
+
+    public func completePictureDescription() {
+        hasCompletedPictureDescription = true
+        completedPictureDescriptionDifficulties.insert("Completed")
     }
 
     public var isDialSceneUnlocked: Bool {
-        completedPictureDescriptionDifficulties.contains("Hard")
-    }
-
-    public func isPictureDescriptionDifficultyUnlocked(_ difficulty: String) -> Bool {
-        switch difficulty {
-        case "Easy":
-            return isPictureDescriptionUnlocked
-        case "Medium":
-            return completedPictureDescriptionDifficulties.contains("Easy")
-        case "Hard":
-            return completedPictureDescriptionDifficulties.contains("Medium")
-        default:
-            return false
-        }
+        true
     }
 
     public var isBeatBuddyUnlocked: Bool {
-        hasReceivedProlongedEasyScore || (hasAttemptedProlongedEasy && prolongedEasyScore != nil)
+        true
     }
 
     public var isNarrationUnlocked: Bool {
-        hasCompletedDialScene
+        true
+    }
+
+    public func completeNarration() {
+        completedNarrationDifficulties.insert("Completed")
     }
     
     public func restartFlow() {

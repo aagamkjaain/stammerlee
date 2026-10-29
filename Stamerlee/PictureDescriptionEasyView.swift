@@ -56,7 +56,7 @@ public struct PictureDescriptionEasyView: View {
             .padding(.horizontal, 24)
             .padding(.top, 16)
 
-            Text(difficulty)
+            Text("Picture Description")
                 .font(.system(size: 30, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
                 .padding(.horizontal, 24)
@@ -218,7 +218,7 @@ public struct PictureDescriptionEasyView: View {
     }
 
     private func completeCurrentDifficulty() {
-        state.completedPictureDescriptionDifficulties.insert(difficulty)
+        state.completePictureDescription()
     }
 
     private var description: String {

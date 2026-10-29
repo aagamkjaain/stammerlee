@@ -70,61 +70,49 @@ public struct HomeDashboardView: View {
                                 )
                             }
                             
-                            // 2. Picture Description (unlocked after Prolonged Speech Hard)
+                            // 2. Picture Description
                             exerciseRow(
                                 title: "Picture Description",
                                 subtitle: "Describe real-world scenes in detail to practice spontaneous speech flow",
-                                isLocked: !state.isPictureDescriptionUnlocked,
+                                isLocked: false,
                                 iconName: "IconPictureDesc",
                                 fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/IconPictureDesc.png"
                             ) {
-                                if state.isPictureDescriptionUnlocked {
-                                    state.navigate(
-                                        to: state.hasSeenPictureDescriptionIntro
-                                            ? .pictureDescriptionDifficulty
-                                            : .pictureDescriptionIntro
-                                    )
-                                } else {
-                                    triggerLockedAlert(title: "Picture Description")
-                                }
+                                state.navigate(
+                                    to: state.hasSeenPictureDescriptionIntro
+                                        ? .pictureDescriptionPractice
+                                        : .pictureDescriptionIntro
+                                )
                             }
                             
-                            // 3. Dial Scene (unlocked after Picture Description Hard)
+                            // 3. Dial Scene
                             exerciseRow(
                                 title: "Dial Scene",
                                 subtitle: "Practice interactive scenario-based phone calls and service counter chats",
-                                isLocked: !state.isDialSceneUnlocked,
+                                isLocked: false,
                                 iconName: "IconDialScene",
                                 fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/IconDialScene.png"
                             ) {
-                                if state.isDialSceneUnlocked {
-                                    state.navigate(
-                                        to: state.hasSeenDialSceneIntro
-                                            ? .dialScene
-                                            : .dialSceneIntro
-                                    )
-                                } else {
-                                    triggerLockedAlert(title: "Dial Scene")
-                                }
+                                state.navigate(
+                                    to: state.hasSeenDialSceneIntro
+                                        ? .dialScene
+                                        : .dialSceneIntro
+                                )
                             }
                             
-                            // 4. Narration (unlocked after one completed Dial Scene)
+                            // 4. Narration
                             exerciseRow(
                                 title: "Narration",
                                 subtitle: "Practice reading and telling longer stories while watching yourself in the mirror",
-                                isLocked: !state.isNarrationUnlocked,
+                                isLocked: false,
                                 iconName: "IconMirrorNarration",
                                 fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/IconMirrorNarration.png"
                             ) {
-                                if state.isNarrationUnlocked {
-                                    state.navigate(
-                                        to: state.hasSeenNarrationIntro
-                                            ? .narrationDifficulty
-                                            : .narrationIntro
-                                    )
-                                } else {
-                                    triggerLockedAlert(title: "Narration")
-                                }
+                                state.navigate(
+                                    to: state.hasSeenNarrationIntro
+                                        ? .narrationPractice
+                                        : .narrationIntro
+                                )
                             }
                         }
                         
@@ -134,19 +122,15 @@ public struct HomeDashboardView: View {
                                 .font(.system(size: 17, weight: .bold, design: .rounded))
                                 .foregroundStyle(StamerleeTheme.textPrimaryDark)
                             
-                            // Beat Buddy (unlocked after Prolonged Speech Easy)
+                            // Beat Buddy
                             exerciseRow(
                                 title: "Beat Buddy",
                                 subtitle: "Practice speaking to a steady, rhythmic beat using an interactive metronome",
-                                isLocked: !state.isBeatBuddyUnlocked,
+                                isLocked: false,
                                 iconName: "BeatBuddyLogo",
                                 fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/IconMirrorNarration.png"
                             ) {
-                                if state.isBeatBuddyUnlocked {
-                                    state.navigate(to: .beatBuddyWords)
-                                } else {
-                                    triggerLockedAlert(title: "Beat Buddy")
-                                }
+                                state.navigate(to: .beatBuddyWords)
                             }
                         }
                         

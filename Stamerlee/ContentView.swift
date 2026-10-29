@@ -48,10 +48,7 @@ public struct ContentView: View {
                 case .pictureDescriptionIntro:
                     PictureDescriptionIntroView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
-                case .pictureDescriptionDifficulty:
-                    PictureDescriptionDifficultyView(state: appState)
-                        .transition(slideTransition(for: appState.navigationDirection))
-                case .pictureDescriptionPractice:
+                case .pictureDescriptionDifficulty, .pictureDescriptionPractice:
                     PictureDescriptionEasyView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
                 case .dialSceneIntro:
@@ -63,10 +60,7 @@ public struct ContentView: View {
                 case .narrationIntro:
                     NarrationIntroView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
-                case .narrationDifficulty:
-                    NarrationDifficultyView(state: appState)
-                        .transition(slideTransition(for: appState.navigationDirection))
-                case .narrationPractice:
+                case .narrationDifficulty, .narrationPractice:
                     NarrationPracticeView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
                 case .beatBuddyWords:
