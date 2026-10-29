@@ -119,6 +119,7 @@ public final class AppState {
     public var completedNarrationDifficulties: Set<String> = []
     public var beatBuddySelectedWords: Set<String> = ["Water", "University"]
     public var beatBuddyBPM: Int = 120
+    public var beatBuddyDurationMinutes: Int = 2
     public var isAudioPracticing: Bool = false
     public var practiceAudioSeconds: Int = 0
     public var showPracticeModal: Bool = false
