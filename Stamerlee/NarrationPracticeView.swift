@@ -6,14 +6,7 @@ import AVFoundation
 public struct NarrationPracticeView: View {
     @Bindable public var state: AppState
     @State private var showAnalysis = false
-    @State private var selectedSegment = "Prolongations"
     @State private var selectedWords: Set<String> = ["Dance", "University"]
-
-    private let wordsBySegment: [String: [String]] = [
-        "Prolongations": ["Dance", "University", "Breaking", "Computer", "Arts", "Laptop"],
-        "Blocks": ["Water", "Plants", "Teacher", "Science", "Communication", "Interaction"],
-        "Repetitions": ["Story", "People", "Picture", "Sentence", "Practice", "Together"]
-    ]
 
     public init(state: AppState) {
         self.state = state
@@ -101,64 +94,50 @@ public struct NarrationPracticeView: View {
         }
     }
 
-    private var analysisView: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Text("Analysis")
-                .font(.system(size: 30, weight: .bold, design: .rounded))
-                .foregroundColor(.white)
-                .padding(.horizontal, 24)
-                .padding(.top, 24)
-            VStack(spacing: 6) {
-                Text("YOU SCORED").font(.system(size: 20, weight: .bold, design: .rounded)).foregroundColor(.white)
-                Text("86%").font(.system(size: 52, weight: .bold, design: .rounded)).foregroundColor(.white)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.top, 56)
-            .padding(.bottom, 26)
-            Text("Choose the words to practice them using Beat Buddy")
-                .font(.system(size: 13, design: .rounded))
-                .foregroundColor(StamerleeTheme.textSecondaryDark)
-                .frame(maxWidth: .infinity)
-                .padding(.bottom, 14)
-
-            HStack(spacing: 0) {
-                ForEach(["Prolongations", "Blocks", "Repetitions"], id: \.self) { segment in
-                    Button(segment) {
-                        selectedSegment = segment
-                        selectedWords = Set(wordsBySegment[segment, default: []].prefix(2))
-                    }
-                    .font(.system(size: 10, weight: .bold, design: .rounded))
-                    .foregroundColor(selectedSegment == segment ? .black : .black.opacity(0.7))
-                    .frame(maxWidth: .infinity).frame(height: 34)
-                    .background(selectedSegment == segment ? .white : .clear)
-                    .clipShape(Capsule())
-                }
-            }
-            .padding(3)
-            .background(Color(red: 220 / 255, green: 224 / 255, blue: 245 / 255))
-            .clipShape(Capsule())
-            .padding(.horizontal, 24)
-            .padding(.bottom, 22)
-
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                ForEach(wordsBySegment[selectedSegment, default: []], id: \.self) { word in
-                    Button(word) {
-                        if selectedWords.contains(word) { selectedWords.remove(word) } else { selectedWords.insert(word) }
-                    }
-                    .font(.system(size: 13, weight: .medium, design: .rounded))
-                    .foregroundColor(selectedWords.contains(word) ? .white : StamerleeTheme.textSecondaryDark)
-                    .frame(maxWidth: .infinity).frame(height: 44)
-                    .background(selectedWords.contains(word) ? Color(red: 20 / 255, green: 45 / 255, blue: 105 / 255) : Color.white.opacity(0.03))
-                    .overlay(Capsule().stroke(selectedWords.contains(word) ? StamerleeTheme.primaryBlue : Color.white.opacity(0.06)))
-                    .clipShape(Capsule())
-                }
-            }
-            .padding(.horizontal, 24)
-            Spacer()
-            PrimaryActionButton(title: "Done") { state.navigate(to: .homeDashboard) }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 24)
+    private var wordsList: [String] {
+        switch difficulty {
+        case "Medium":
+            return [
+                "Sequence", "Detail", "Beginning", "Next", "Transition", "Flow",
+                "Explanation", "Storyline", "Moment", "Remember", "Action", "Context",
+                "Pacing", "Natural", "Breathe", "Voice", "Clarity", "Presence"
+            ]
+        case "Hard":
+            return [
+                "Narrative", "Character", "Conflict", "Resolution", "Journey", "Perspective",
+                "Expression", "Meaning", "Imagination", "Experience", "Articulate", "Emotion",
+                "Reflection", "Confidence", "Delivery", "Speaking", "Insight", "Connection"
+            ]
+        default:
+            return [
+                "Dance", "University", "Breaking", "Computer", "Arts", "Laptop",
+                "Water", "Plants", "Teacher", "Science", "Communication", "Interaction",
+                "Story", "People", "Picture", "Sentence", "Practice", "Together"
+            ]
         }
+    }
+
+    private var scoreText: String {
+        switch difficulty {
+        case "Hard":
+            return "8.1"
+        case "Medium":
+            return "8.7"
+        default:
+            return "9.3"
+        }
+    }
+
+    private var analysisView: some View {
+        ExerciseAnalysisSkeletonView(
+            scoreText: scoreText,
+            maxScoreText: "/ 10",
+            wordsList: wordsList,
+            selectedWords: $selectedWords,
+            onDone: {
+                state.navigate(to: .homeDashboard)
+            }
+        )
     }
 
     private func complete() {

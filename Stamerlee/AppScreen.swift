@@ -36,9 +36,12 @@ public enum AppScreen: Hashable, CaseIterable {
     case prolongedSpeechDifficulty
     case prolongedPractice
     case prolongedAnalysis
+    case pictureDescriptionIntro
     case pictureDescriptionDifficulty
     case pictureDescriptionPractice
+    case dialSceneIntro
     case dialScene
+    case narrationIntro
     case narrationDifficulty
     case narrationPractice
     case beatBuddyWords
@@ -106,13 +109,17 @@ public final class AppState {
     public var selectedDifficulty: String = "Easy"
     public var completedProlongedDifficulties: Set<String> = []
     public var hasSeenProlongedSpeechIntro: Bool = false
+    public var hasSeenPictureDescriptionIntro: Bool = false
     public var selectedPictureDescriptionDifficulty: String = "Easy"
     public var completedPictureDescriptionDifficulties: Set<String> = []
     public var hasCompletedDialScene: Bool = false
+    public var hasSeenDialSceneIntro: Bool = false
+    public var hasSeenNarrationIntro: Bool = false
     public var selectedNarrationDifficulty: String = "Easy"
     public var completedNarrationDifficulties: Set<String> = []
     public var beatBuddySelectedWords: Set<String> = ["Water", "University"]
     public var beatBuddyBPM: Int = 120
+    public var beatBuddyDurationMinutes: Int = 2
     public var isAudioPracticing: Bool = false
     public var practiceAudioSeconds: Int = 0
     public var showPracticeModal: Bool = false
@@ -128,6 +135,29 @@ public final class AppState {
     public var showTermsSheet: Bool = false
     public var termsSheetTitle: String = ""
     public var termsSheetContent: String = ""
+    
+    // Reminder Notification State
+    public var reminderEnabled: Bool = true
+    public var reminderTime: Date = Calendar.current.date(from: DateComponents(hour: 20, minute: 0)) ?? Date()
+
+    public func logout() {
+        isAuthenticated = false
+        userEmail = ""
+        navigate(to: .login, forward: false)
+    }
+
+    public func deleteAccount() {
+        isAuthenticated = false
+        userEmail = ""
+        profileName = "New User"
+        currentStreakDays = 0
+        practiceAudioSeconds = 0
+        completedProlongedDifficulties.removeAll()
+        completedPictureDescriptionDifficulties.removeAll()
+        completedNarrationDifficulties.removeAll()
+        hasCompletedDialScene = false
+        navigate(to: .login, forward: false)
+    }
     
     public init() {}
 
