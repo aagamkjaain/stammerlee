@@ -98,9 +98,6 @@ public struct ProfileView: View {
                 .frame(height: 184)
 
             BackNavButton {
-                withAnimation(.easeOut(duration: 0.14)) {
-                    didAppearContent = false
-                }
                 state.navigate(to: .homeDashboard, forward: false)
             }
             .padding(.top, 18)
@@ -108,48 +105,12 @@ public struct ProfileView: View {
             .frame(maxWidth: .infinity, alignment: .topLeading)
 
             VStack(spacing: 9) {
-                ZStack(alignment: .topTrailing) {
-                    if state.currentScreen == .profile {
-                        ProfileAvatar(
-                            style: state.profileAvatarStyle,
-                            imageData: state.profileAvatarData,
-                            size: 84
-                        )
-                        .matchedGeometryEffectIfPresent(id: "profileAvatarHero", in: profileNamespace)
-                    } else {
-                        Color.clear
-                            .frame(width: 84, height: 84)
-                    }
-
-                    if state.currentScreen == .profile {
-                        Button {
-                            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
-                                isEditingProfile.toggle()
-                            }
-                        } label: {
-                            ZStack {
-                                Circle()
-                                    .fill(StamerleeTheme.primaryBlue)
-                                    .frame(width: 26, height: 26)
-                                    .overlay(
-                                        Circle()
-                                            .stroke(StamerleeTheme.backgroundDark, lineWidth: 2)
-                                    )
-                                    .shadow(color: .black.opacity(0.35), radius: 3, x: 0, y: 1.5)
-
-                                Image(systemName: isEditingProfile ? "checkmark" : "pencil")
-                                    .font(.system(size: 11, weight: .bold))
-                                    .foregroundStyle(.white)
-                            }
-                        }
-                        .offset(x: 2, y: -2)
-                        .scaleEffect(didAppearContent ? 1.0 : 0.4)
-                        .opacity(didAppearContent ? 1 : 0)
-                        .accessibilityLabel(isEditingProfile ? "Done editing" : "Edit profile picture")
-                        .transition(.opacity.combined(with: .scale(scale: 0.8)))
-                    }
-                }
-                .frame(width: 84, height: 84)
+                ProfileAvatar(
+                    style: state.profileAvatarStyle,
+                    imageData: state.profileAvatarData,
+                    size: 84
+                )
+                .matchedGeometryEffectIfPresent(id: "profileAvatarHero", in: profileNamespace)
 
                 if isEditingProfile {
                     avatarStylePicker
@@ -241,7 +202,35 @@ public struct ProfileView: View {
     // MARK: - Stats Section
     private var statsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            sectionTitle("Stats")
+            HStack {
+                sectionTitle("Stats")
+
+                Spacer()
+
+                Button {
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                        isEditingProfile.toggle()
+                    }
+                } label: {
+                    HStack(spacing: 5) {
+                        Image(systemName: isEditingProfile ? "checkmark" : "pencil")
+                            .font(.system(size: 11, weight: .bold))
+                        Text(isEditingProfile ? "Done" : "Edit")
+                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                    }
+                    .foregroundStyle(isEditingProfile ? Color.white : StamerleeTheme.primaryBlue)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(
+                        isEditingProfile
+                            ? StamerleeTheme.primaryBlue
+                            : StamerleeTheme.profileCard,
+                        in: Capsule()
+                    )
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(isEditingProfile ? "Done editing profile" : "Edit name and avatar")
+            }
 
             VStack(alignment: .leading, spacing: 15) {
                 stat(title: "8 minutes", subtitle: "Average session length")

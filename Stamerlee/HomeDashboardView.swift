@@ -33,22 +33,14 @@ public struct HomeDashboardView: View {
                     Spacer()
 
                     Button {
-                        withAnimation(.easeOut(duration: 0.12)) {
-                            cardsAppeared = false
-                        }
                         state.navigate(to: .profile)
                     } label: {
-                        if state.currentScreen == .homeDashboard {
-                            ProfileAvatar(
-                                style: state.profileAvatarStyle,
-                                imageData: state.profileAvatarData,
-                                size: 38
-                            )
-                            .matchedGeometryEffectIfPresent(id: "profileAvatarHero", in: profileNamespace)
-                        } else {
-                            Color.clear
-                                .frame(width: 38, height: 38)
-                        }
+                        ProfileAvatar(
+                            style: state.profileAvatarStyle,
+                            imageData: state.profileAvatarData,
+                            size: 38
+                        )
+                        .matchedGeometryEffectIfPresent(id: "profileAvatarHero", in: profileNamespace)
                     }
                     .buttonStyle(AvatarInteractiveButtonStyle())
                     .accessibilityLabel("Open profile")

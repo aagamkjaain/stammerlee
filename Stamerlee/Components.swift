@@ -698,7 +698,13 @@ public struct ProfileAvatar: View {
     }
 
     public var body: some View {
-        let scale = size / 84.0
+        avatarArtwork
+            .scaleEffect(size / 84.0)
+            .frame(width: size, height: size)
+            .contentShape(Circle())
+    }
+
+    private var avatarArtwork: some View {
         ZStack {
             if let imageData, let image = UIImage(data: imageData) {
                 Image(uiImage: image)
@@ -707,25 +713,27 @@ public struct ProfileAvatar: View {
             } else {
                 Circle()
                     .fill(backgroundColor)
-                    .padding(8 * scale)
+                    .padding(8)
 
                 Circle()
                     .fill(foregroundColor)
-                    .frame(width: 22 * scale, height: 22 * scale)
-                    .offset(y: -13 * scale)
+                    .frame(width: 22, height: 22)
+                    .offset(y: -13)
 
                 Capsule()
                     .fill(foregroundColor)
-                    .frame(width: 59 * scale, height: 33 * scale)
-                    .offset(y: 25 * scale)
+                    .frame(width: 59, height: 33)
+                    .offset(y: 25)
             }
         }
-        .frame(width: size, height: size)
+        .frame(width: 84, height: 84)
         .background(Color.black)
         .clipShape(Circle())
-        .overlay(Circle().stroke(StamerleeTheme.profileCard, lineWidth: max(1, size / 42.0)))
-        .shadow(color: StamerleeTheme.primaryBlue.opacity(0.22), radius: max(4, size / 8.0), x: 0, y: max(2, size / 20.0))
-        .contentShape(Circle())
+        .overlay(
+            Circle()
+                .stroke(StamerleeTheme.profileCard, lineWidth: 2)
+        )
+        .shadow(color: Color.black.opacity(0.18), radius: 4, x: 0, y: 2)
     }
 
     private var backgroundColor: Color {
