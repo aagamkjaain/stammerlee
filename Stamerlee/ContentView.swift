@@ -15,13 +15,32 @@ public struct ContentView: View {
                 switch appState.currentScreen {
                 case .launch:
                     LaunchView(state: appState)
-                        .transition(.opacity)
+                        .transition(
+                            .asymmetric(
+                                insertion: .opacity,
+                                removal: .opacity.combined(with: .scale(scale: 1.04))
+                            )
+                        )
                 case .login:
-                    LaunchView(state: appState)
-                        .transition(.opacity)
-                case .onboarding1, .onboarding2, .dailyGoal, .exploreActivities:
-                    OnboardingFlowView(state: appState)
-                        .transition(.opacity)
+                    LoginView(state: appState)
+                        .transition(
+                            .asymmetric(
+                                insertion: .move(edge: .bottom).combined(with: .opacity),
+                                removal: slideTransition(for: appState.navigationDirection)
+                            )
+                        )
+                case .onboarding1:
+                    OnboardingStepOneView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
+                case .onboarding2:
+                    OnboardingStepTwoView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
+                case .dailyGoal:
+                    DailyGoalView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
+                case .exploreActivities:
+                    ExploreActivitiesView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
                 case .homeDashboard:
                     DashboardTabView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
@@ -80,7 +99,7 @@ public struct ContentView: View {
                         .transition(slideTransition(for: appState.navigationDirection))
                 }
             }
-            .animation(.easeInOut(duration: 0.24), value: appState.currentScreen)
+            .animation(.spring(response: 0.45, dampingFraction: 0.88), value: appState.currentScreen)
             
             // Quick Screen Navigation Pill (for easy previewing & testing)
             if showScreenPicker {
@@ -88,23 +107,6 @@ public struct ContentView: View {
             }
         }
         .preferredColorScheme(.dark)
-        .sheet(
-            isPresented: Binding(
-                get: { appState.currentScreen == .login },
-                set: { isPresented in
-                    if !isPresented && appState.currentScreen == .login {
-                        appState.navigate(to: .launch, forward: false)
-                    }
-                }
-            )
-        ) {
-            NavigationStack {
-                LoginView(state: appState)
-            }
-            .presentationDetents([.medium, .large])
-            .presentationDragIndicator(.visible)
-            .presentationCornerRadius(28)
-        }
         // Two finger tap anywhere to toggle the quick screen jump bar
         .onTapGesture(count: 2) {
             withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
@@ -113,11 +115,16 @@ public struct ContentView: View {
         }
     }
     
-    // MARK: - Directional Slide Transition
+    // MARK: - Directional Slide with Depth Transition
     private func slideTransition(for edge: Edge) -> AnyTransition {
-        .asymmetric(
-            insertion: .move(edge: edge).combined(with: .opacity),
-            removal: .move(edge: edge == .trailing ? .leading : .trailing).combined(with: .opacity)
+        let oppositeEdge: Edge = (edge == .trailing ? .leading : .trailing)
+        return .asymmetric(
+            insertion: .move(edge: edge)
+                .combined(with: .opacity)
+                .combined(with: .scale(scale: 0.96)),
+            removal: .move(edge: oppositeEdge)
+                .combined(with: .opacity)
+                .combined(with: .scale(scale: 0.96))
         )
     }
     
@@ -178,73 +185,6 @@ public struct ContentView: View {
                 .padding(.vertical, 6)
                 .background(appState.currentScreen == screen ? StamerleeTheme.primaryBlue : Color.white.opacity(0.12))
                 .clipShape(Capsule())
-        }
-    }
-}
-
-// MARK: - Stack-based Onboarding Flow
-private struct OnboardingFlowView: View {
-    @Bindable var state: AppState
-    @State private var path: [AppScreen] = []
-
-    private let pages: [AppScreen] = [
-        .onboarding1,
-        .onboarding2,
-        .dailyGoal,
-        .exploreActivities
-    ]
-
-    var body: some View {
-        NavigationStack(path: $path) {
-            OnboardingStepOneView(state: state)
-                .navigationDestination(for: AppScreen.self) { screen in
-                    destinationView(for: screen)
-                }
-                .toolbar(.visible, for: .navigationBar)
-                .toolbarBackground(StamerleeTheme.backgroundDark, for: .navigationBar)
-                .toolbarBackground(.visible, for: .navigationBar)
-                .navigationBarTitleDisplayMode(.inline)
-        }
-        .animation(.easeInOut(duration: 0.28), value: state.currentScreen)
-        .onAppear {
-            syncPath(with: state.currentScreen)
-        }
-        .onChange(of: state.currentScreen) { _, newScreen in
-            syncPath(with: newScreen)
-        }
-        .onChange(of: path) { _, newPath in
-            guard let screen = newPath.last ?? pages.first,
-                  screen != state.currentScreen else {
-                return
-            }
-
-            let currentIndex = pages.firstIndex(of: state.currentScreen) ?? 0
-            let newIndex = pages.firstIndex(of: screen) ?? currentIndex
-            state.navigate(to: screen, forward: newIndex >= currentIndex)
-        }
-    }
-
-    @ViewBuilder
-    private func destinationView(for screen: AppScreen) -> some View {
-        switch screen {
-        case .onboarding2:
-            OnboardingStepTwoView(state: state)
-        case .dailyGoal:
-            DailyGoalView(state: state)
-        case .exploreActivities:
-            ExploreActivitiesView(state: state)
-        default:
-            EmptyView()
-        }
-    }
-
-    private func syncPath(with screen: AppScreen) {
-        guard let index = pages.firstIndex(of: screen) else {
-            return
-        }
-        let expectedPath = Array(pages.dropFirst().prefix(index))
-        if path != expectedPath {
-            path = expectedPath
         }
     }
 }

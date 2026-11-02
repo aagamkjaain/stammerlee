@@ -60,7 +60,7 @@ public struct HomeDashboardView: View {
                             // 1. Prolonged Speech (UNLOCKED - Primary action)
                             exerciseRow(
                                 title: "Prolonged Speech",
-                                subtitle: "Practice gently stretching sounds while speaking slowly",
+                                subtitle: "Practice gently stretching sounds while speaking slowly.",
                                 isLocked: false,
                                 iconName: "IconProlongedSpeech"
                             ) {
