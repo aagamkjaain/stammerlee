@@ -8,10 +8,10 @@ public struct SummaryView: View {
 
     private let rowBackground = Color.white.opacity(0.62)
     private let summaryBlue = StamerleeTheme.primaryBlue
-    private let streakCardBackground = Color(red: 232 / 255, green: 233 / 255, blue: 248 / 255)
+    private let streakCardBackground = Color(red: 242 / 255, green: 243 / 255, blue: 252 / 255)
     private let streakAccent = Color(red: 139 / 255, green: 112 / 255, blue: 245 / 255)
-    private let streakRing = Color(red: 165 / 255, green: 175 / 255, blue: 232 / 255)
-    private let selectedDayBackground = Color(red: 215 / 255, green: 217 / 255, blue: 243 / 255)
+    private let streakRing = Color(red: 205 / 255, green: 200 / 255, blue: 232 / 255)
+    private let selectedDayBackground = Color(red: 228 / 255, green: 222 / 255, blue: 252 / 255)
 
     public init(state: AppState) {
         self.state = state
@@ -38,21 +38,21 @@ public struct SummaryView: View {
     }
 
     private var practiceStreakCard: some View {
-        VStack(alignment: .leading, spacing: 15) {
-            HStack(spacing: 10) {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(spacing: 12) {
                 Image(systemName: "flame")
                     .font(.system(size: 22, weight: .semibold))
                     .foregroundStyle(streakAccent)
                     .frame(width: 48, height: 48)
-                    .background(streakAccent.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
+                    .background(streakAccent.opacity(0.12), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
 
-                VStack(alignment: .leading, spacing: 1) {
+                VStack(alignment: .leading, spacing: 2) {
                     Text("Daily Practice")
                         .font(.system(size: 20, weight: .bold, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textPrimaryLight)
+                        .foregroundStyle(Color(red: 20 / 255, green: 18 / 255, blue: 38 / 255))
                     Text("Streak: \(max(state.currentStreakDays, 0)) Days")
-                        .font(.system(size: 16, weight: .medium, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textSecondaryLight)
+                        .font(.system(size: 15, weight: .medium, design: .rounded))
+                        .foregroundStyle(Color(red: 105 / 255, green: 98 / 255, blue: 142 / 255))
                 }
 
                 Spacer()
@@ -67,7 +67,7 @@ public struct SummaryView: View {
                     VStack(spacing: 9) {
                         Text(day)
                             .font(.system(size: 14, weight: .semibold, design: .rounded))
-                            .foregroundStyle(StamerleeTheme.textPrimaryLight)
+                            .foregroundStyle(Color(red: 35 / 255, green: 30 / 255, blue: 55 / 255))
 
                         if index < completedDays {
                             ZStack {
@@ -94,8 +94,12 @@ public struct SummaryView: View {
             }
         }
         .padding(.horizontal, 18)
-        .padding(.vertical, 16)
-        .background(streakCardBackground, in: RoundedRectangle(cornerRadius: 18))
+        .padding(.vertical, 18)
+        .background(
+            streakCardBackground,
+            in: RoundedRectangle(cornerRadius: 26, style: .continuous)
+        )
+        .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
     }
 
     private struct ExerciseHighScoreItem: Identifiable {
@@ -112,7 +116,7 @@ public struct SummaryView: View {
             ExerciseHighScoreItem(
                 id: "picture_desc",
                 title: "Picture Description",
-                displayTitle: "picture\ndescription",
+                displayTitle: "Picture\nDescription",
                 iconName: "IconPictureDesc",
                 score: 86,
                 targetScreen: state.hasSeenPictureDescriptionIntro ? .pictureDescriptionPractice : .pictureDescriptionIntro
@@ -120,7 +124,7 @@ public struct SummaryView: View {
             ExerciseHighScoreItem(
                 id: "prolonged_speech",
                 title: "Prolonged Speech",
-                displayTitle: "prolonged\nspeech",
+                displayTitle: "Prolonged\nSpeech",
                 iconName: "IconProlongedSpeech",
                 score: 92,
                 targetScreen: state.hasSeenProlongedSpeechIntro ? .prolongedSpeechDifficulty : .prolongedSpeechIntro
@@ -128,7 +132,7 @@ public struct SummaryView: View {
             ExerciseHighScoreItem(
                 id: "dial_scene",
                 title: "Dial Scene",
-                displayTitle: "dial\nscene",
+                displayTitle: "Dial\nScene",
                 iconName: "IconDialScene",
                 score: 78,
                 targetScreen: state.hasSeenDialSceneIntro ? .dialScene : .dialSceneIntro
@@ -136,7 +140,7 @@ public struct SummaryView: View {
             ExerciseHighScoreItem(
                 id: "narration",
                 title: "Narration",
-                displayTitle: "mirror\nnarration",
+                displayTitle: "Narration",
                 iconName: "IconMirrorNarration",
                 score: 89,
                 targetScreen: state.hasSeenNarrationIntro ? .narrationPractice : .narrationIntro
@@ -166,20 +170,18 @@ public struct SummaryView: View {
 
     private func exerciseBlockCard(item: ExerciseHighScoreItem) -> some View {
         Button {
-            let impact = UIImpactFeedbackGenerator(style: .light)
-            impact.impactOccurred()
             state.navigate(to: item.targetScreen)
         } label: {
             VStack(alignment: .leading, spacing: 0) {
                 // Top Row: 3D Icon on left, Title on right
                 HStack(alignment: .top) {
-                    summaryAssetImage(named: item.iconName, size: 48)
-                    Spacer(minLength: 4)
+                    summaryAssetImage(named: item.iconName, size: 56)
+                    Spacer(minLength: 6)
                     Text(item.displayTitle)
                         .font(.system(size: 14, weight: .bold, design: .rounded))
                         .foregroundStyle(.black)
                         .multilineTextAlignment(.leading)
-                        .lineSpacing(-2)
+                        .lineSpacing(-1)
                 }
 
                 Spacer(minLength: 16)
@@ -237,25 +239,14 @@ public struct SummaryView: View {
             )
             .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.haptic)
     }
 
     private func summaryAssetImage(named name: String, size: CGFloat = 52) -> some View {
-        Group {
-            if let image = StamerleeImageLoader.loadHeroImage(
-                name: name,
-                fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/\(name).png"
-            ) {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: size, height: size)
-            } else {
-                Image(systemName: "photo")
-                    .font(.system(size: size * 0.6))
-                    .foregroundStyle(summaryBlue)
-            }
-        }
+        Image(name)
+            .resizable()
+            .scaledToFit()
+            .frame(width: size, height: size)
     }
 }
 

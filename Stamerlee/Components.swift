@@ -1,5 +1,37 @@
 import SwiftUI
 
+// MARK: - Haptic Button Style
+/// Native button style that plays a haptic when the button is pressed and optionally
+/// scales the label while pressed. Uses `configuration.isPressed` and `.sensoryFeedback`
+/// instead of UIKit feedback generators or custom drag gestures.
+public struct HapticButtonStyle: ButtonStyle {
+    public var weight: SensoryFeedback.Weight
+    public var pressedScale: CGFloat
+
+    public init(weight: SensoryFeedback.Weight = .light, pressedScale: CGFloat = 1) {
+        self.weight = weight
+        self.pressedScale = pressedScale
+    }
+
+    public func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? pressedScale : 1)
+            .animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
+            .sensoryFeedback(trigger: configuration.isPressed) { _, isPressed in
+                isPressed ? .impact(weight: weight) : nil
+            }
+    }
+}
+
+public extension ButtonStyle where Self == HapticButtonStyle {
+    /// Light haptic on press, no scaling (drop-in replacement for `.plain`).
+    static var haptic: HapticButtonStyle { HapticButtonStyle() }
+
+    static func haptic(weight: SensoryFeedback.Weight = .light, pressedScale: CGFloat = 1) -> HapticButtonStyle {
+        HapticButtonStyle(weight: weight, pressedScale: pressedScale)
+    }
+}
+
 // MARK: - Primary Action Button
 /// Vibrant blue pill button used for "Begin" and "Continue" actions across screens.
 public struct PrimaryActionButton: View {
@@ -8,8 +40,6 @@ public struct PrimaryActionButton: View {
     public let isEnabled: Bool
     public let isLoading: Bool
     public let action: () -> Void
-    
-    @State private var isPressed: Bool = false
     
     public init(
         title: String,
@@ -26,12 +56,7 @@ public struct PrimaryActionButton: View {
     }
     
     public var body: some View {
-        Button(action: {
-            guard isEnabled && !isLoading else { return }
-            let generator = UIImpactFeedbackGenerator(style: .medium)
-            generator.impactOccurred()
-            action()
-        }) {
+        Button(action: action) {
             HStack(spacing: 8) {
                 if isLoading {
                     ProgressView()
@@ -47,8 +72,7 @@ public struct PrimaryActionButton: View {
                 }
             }
             .foregroundStyle(.white)
-            .frame(maxWidth: .infinity)
-            .frame(height: 52)
+            .frame(maxWidth: .infinity, minHeight: 52)
             .background(
                 Group {
                     if isEnabled {
@@ -60,15 +84,9 @@ public struct PrimaryActionButton: View {
             )
             .clipShape(Capsule())
             .shadow(color: isEnabled ? StamerleeTheme.primaryBlue.opacity(0.3) : .clear, radius: 10, x: 0, y: 5)
-            .scaleEffect(isPressed ? 0.97 : 1.0)
-            .animation(.easeInOut(duration: 0.15), value: isPressed)
         }
+        .buttonStyle(.haptic(weight: .medium, pressedScale: 0.97))
         .disabled(!isEnabled || isLoading)
-        .simultaneousGesture(
-            DragGesture(minimumDistance: 0)
-                .onChanged { _ in isPressed = true }
-                .onEnded { _ in isPressed = false }
-        )
     }
 }
 
@@ -92,19 +110,13 @@ public struct SocialAuthRow: View {
     public let type: SocialAuthType
     public let action: () -> Void
     
-    @State private var isPressed: Bool = false
-    
     public init(type: SocialAuthType, action: @escaping () -> Void) {
         self.type = type
         self.action = action
     }
     
     public var body: some View {
-        Button(action: {
-            let impact = UIImpactFeedbackGenerator(style: .light)
-            impact.impactOccurred()
-            action()
-        }) {
+        Button(action: action) {
             HStack(spacing: 14) {
                 // Leading Icon
                 iconView
@@ -123,18 +135,12 @@ public struct SocialAuthRow: View {
                     .foregroundStyle(Color.gray.opacity(0.6))
             }
             .padding(.horizontal, 18)
-            .frame(height: 65)
+            .frame(minHeight: 65)
             .background(StamerleeTheme.cardLight)
             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
-            .scaleEffect(isPressed ? 0.98 : 1.0)
-            .animation(.easeInOut(duration: 0.12), value: isPressed)
         }
-        .simultaneousGesture(
-            DragGesture(minimumDistance: 0)
-                .onChanged { _ in isPressed = true }
-                .onEnded { _ in isPressed = false }
-        )
+        .buttonStyle(.haptic(pressedScale: 0.98))
     }
     
     @ViewBuilder
@@ -167,11 +173,7 @@ public struct BackNavButton: View {
     }
     
     public var body: some View {
-        Button(action: {
-            let impact = UIImpactFeedbackGenerator(style: .light)
-            impact.impactOccurred()
-            action()
-        }) {
+        Button(action: action) {
             ZStack {
                 Circle()
                     .fill(Color.white.opacity(0.14))
@@ -182,6 +184,7 @@ public struct BackNavButton: View {
                     .foregroundStyle(.white)
             }
         }
+        .buttonStyle(.haptic)
         .accessibilityLabel("Go Back")
     }
 }
@@ -200,8 +203,6 @@ public struct OptionSelectRow: View {
 
     public var body: some View {
         Button(action: {
-            let impact = UIImpactFeedbackGenerator(style: .light)
-            impact.impactOccurred()
             onSelect()
         }) {
             HStack(spacing: 12) {
@@ -253,7 +254,7 @@ public struct OptionSelectRow: View {
             )
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.haptic)
     }
 }
 
@@ -278,8 +279,6 @@ public struct DifficultyCard: View {
 
     public var body: some View {
         Button {
-            let impact = UIImpactFeedbackGenerator(style: isLocked ? .light : .medium)
-            impact.impactOccurred()
             action()
         } label: {
             ZStack {
@@ -309,7 +308,7 @@ public struct DifficultyCard: View {
             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 2)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.haptic)
     }
 
     @ViewBuilder
@@ -334,8 +333,6 @@ public struct ExerciseIntroSkeletonView: View {
     public let title: String
     public let subtitle: String
     public let heroImageName: String
-    public let heroFallbackPath: String
-    public let systemIconFallback: String
     public let continueButtonTitle: String
     public let onBack: () -> Void
     public let onContinue: () -> Void
@@ -346,8 +343,6 @@ public struct ExerciseIntroSkeletonView: View {
         title: String,
         subtitle: String,
         heroImageName: String,
-        heroFallbackPath: String,
-        systemIconFallback: String = "waveform.and.mic",
         continueButtonTitle: String = "Continue",
         onBack: @escaping () -> Void,
         onContinue: @escaping () -> Void
@@ -355,8 +350,6 @@ public struct ExerciseIntroSkeletonView: View {
         self.title = title
         self.subtitle = subtitle
         self.heroImageName = heroImageName
-        self.heroFallbackPath = heroFallbackPath
-        self.systemIconFallback = systemIconFallback
         self.continueButtonTitle = continueButtonTitle
         self.onBack = onBack
         self.onContinue = onContinue
@@ -392,29 +385,14 @@ public struct ExerciseIntroSkeletonView: View {
                 .padding(.top, 22)
 
                 // Hero Illustration
-                ZStack {
-                    if let uiImage = StamerleeImageLoader.loadHeroImage(
-                        name: heroImageName,
-                        fallbackPath: heroFallbackPath
-                    ) {
-                        Image(uiImage: uiImage)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(maxHeight: 360)
-                            .shadow(color: Color.black.opacity(0.35), radius: 20, x: 0, y: 10)
-                            .scaleEffect(breatheEffect ? 1.015 : 0.985)
-                            .animation(.easeInOut(duration: 2.8).repeatForever(autoreverses: true), value: breatheEffect)
-                    } else {
-                        RoundedRectangle(cornerRadius: 24)
-                            .fill(Color(red: 25 / 255, green: 30 / 255, blue: 65 / 255))
-                            .frame(width: 250, height: 230)
-                            .overlay(
-                                Image(systemName: systemIconFallback)
-                                    .font(.system(size: 60))
-                                    .foregroundStyle(StamerleeTheme.primaryBlue)
-                            )
-                    }
-                }
+                Image(heroImageName)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxHeight: 360)
+                    .shadow(color: Color.black.opacity(0.35), radius: 20, x: 0, y: 10)
+                    .scaleEffect(breatheEffect ? 1.015 : 0.985)
+                    .animation(.easeInOut(duration: 2.8).repeatForever(autoreverses: true), value: breatheEffect)
+                    .accessibilityHidden(true)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 14)
 
@@ -485,8 +463,6 @@ public struct ExerciseAnalysisSkeletonView: View {
     }
 
     private func toggleSelectAll() {
-        let impact = UIImpactFeedbackGenerator(style: .light)
-        impact.impactOccurred()
         withAnimation(.easeInOut(duration: 0.2)) {
             if isAllSelected {
                 selectedWords.removeAll()
@@ -602,6 +578,7 @@ public struct ExerciseAnalysisSkeletonView: View {
                 .padding(.bottom, 24)
             }
         }
+        .sensoryFeedback(.selection, trigger: selectedWords)
         .sheet(isPresented: $showAllWordsSheet) {
             wordsSheetView
                 .presentationDetents([.medium, .large])
@@ -669,8 +646,6 @@ public struct ExerciseAnalysisSkeletonView: View {
     }
 
     private func toggleWordSelection(_ word: String) {
-        let impact = UIImpactFeedbackGenerator(style: .light)
-        impact.impactOccurred()
         withAnimation(.spring(response: 0.25, dampingFraction: 0.7)) {
             if selectedWords.contains(word) {
                 selectedWords.remove(word)
@@ -706,7 +681,7 @@ public struct ExerciseAnalysisSkeletonView: View {
                 )
                 .clipShape(Capsule())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.haptic)
     }
 }
 
@@ -723,32 +698,42 @@ public struct ProfileAvatar: View {
     }
 
     public var body: some View {
+        avatarArtwork
+            .scaleEffect(size / 84.0)
+            .frame(width: size, height: size)
+            .contentShape(Circle())
+    }
+
+    private var avatarArtwork: some View {
         ZStack {
             if let imageData, let image = UIImage(data: imageData) {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFill()
             } else {
-                let scale = size / 84.0
                 Circle()
                     .fill(backgroundColor)
-                    .padding(8 * scale)
+                    .padding(8)
 
                 Circle()
                     .fill(foregroundColor)
-                    .frame(width: 22 * scale, height: 22 * scale)
-                    .offset(y: -13 * scale)
+                    .frame(width: 22, height: 22)
+                    .offset(y: -13)
 
                 Capsule()
                     .fill(foregroundColor)
-                    .frame(width: 59 * scale, height: 33 * scale)
-                    .offset(y: 25 * scale)
+                    .frame(width: 59, height: 33)
+                    .offset(y: 25)
             }
         }
-        .frame(width: size, height: size)
+        .frame(width: 84, height: 84)
         .background(Color.black)
         .clipShape(Circle())
-        .overlay(Circle().stroke(StamerleeTheme.profileCard, lineWidth: max(1, size / 42.0)))
+        .overlay(
+            Circle()
+                .stroke(StamerleeTheme.profileCard, lineWidth: 2)
+        )
+        .shadow(color: Color.black.opacity(0.18), radius: 4, x: 0, y: 2)
     }
 
     private var backgroundColor: Color {
@@ -763,4 +748,43 @@ public struct ProfileAvatar: View {
         style == 2 ? StamerleeTheme.profileCard : StamerleeTheme.backgroundDark
     }
 }
+
+// MARK: - Avatar Interactive Button Style
+public struct AvatarInteractiveButtonStyle: ButtonStyle {
+    public init() {}
+    public func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.90 : 1.0)
+            .animation(.spring(response: 0.22, dampingFraction: 0.68), value: configuration.isPressed)
+    }
+}
+
+// MARK: - Bouncy Card Button Style
+public struct BouncyCardButtonStyle: ButtonStyle {
+    public init() {}
+    public func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
+            .animation(.spring(response: 0.24, dampingFraction: 0.64), value: configuration.isPressed)
+    }
+}
+
+// MARK: - Matched Geometry View Helper
+extension View {
+    @ViewBuilder
+    public func matchedGeometryEffectIfPresent<ID: Hashable>(
+        id: ID,
+        in namespace: Namespace.ID?,
+        properties: MatchedGeometryProperties = .frame,
+        anchor: UnitPoint = .center,
+        isSource: Bool = true
+    ) -> some View {
+        if let namespace {
+            self.matchedGeometryEffect(id: id, in: namespace, properties: properties, anchor: anchor, isSource: isSource)
+        } else {
+            self
+        }
+    }
+}
+
 

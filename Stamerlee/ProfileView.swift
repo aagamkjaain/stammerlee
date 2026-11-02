@@ -7,8 +7,10 @@ import UserNotifications
 /// Personal progress and settings screen presented from the dashboard's Profile tab.
 public struct ProfileView: View {
     @Bindable public var state: AppState
+    public var profileNamespace: Namespace.ID? = nil
     @State private var isEditingProfile = false
     @State private var selectedPhoto: PhotosPickerItem?
+    @State private var didAppearContent = false
 
     // Alerts and sheets
     @State private var showLogoutConfirmation = false
@@ -16,9 +18,11 @@ public struct ProfileView: View {
     @State private var showLegalSheet = false
     @State private var legalSheetTitle = "Terms of Service"
     @State private var legalSheetContent = ""
+    @State private var reminderSuccessTrigger = 0
 
-    public init(state: AppState) {
+    public init(state: AppState, profileNamespace: Namespace.ID? = nil) {
         self.state = state
+        self.profileNamespace = profileNamespace
     }
 
     private var formattedReminderTime: String {
@@ -50,10 +54,17 @@ public struct ProfileView: View {
                     .padding(.horizontal, 24)
                     .padding(.top, 22)
                     .padding(.bottom, 36)
+                    .offset(y: didAppearContent ? 0 : 22)
+                    .opacity(didAppearContent ? 1 : 0)
                 }
             }
         }
         .preferredColorScheme(.dark)
+        .onAppear {
+            withAnimation(.spring(response: 0.44, dampingFraction: 0.84).delay(0.04)) {
+                didAppearContent = true
+            }
+        }
         .alert("Log Out", isPresented: $showLogoutConfirmation) {
             Button("Cancel", role: .cancel) {}
             Button("Log Out", role: .destructive) {
@@ -77,6 +88,7 @@ public struct ProfileView: View {
                 isPresented: $showLegalSheet
             )
         }
+        .sensoryFeedback(.success, trigger: reminderSuccessTrigger)
     }
 
     // MARK: - Profile Header
@@ -93,53 +105,46 @@ public struct ProfileView: View {
             .frame(maxWidth: .infinity, alignment: .topLeading)
 
             VStack(spacing: 9) {
-                ProfileAvatar(style: state.profileAvatarStyle, imageData: state.profileAvatarData)
+                ProfileAvatar(
+                    style: state.profileAvatarStyle,
+                    imageData: state.profileAvatarData,
+                    size: 84
+                )
+                .matchedGeometryEffectIfPresent(id: "profileAvatarHero", in: profileNamespace)
 
                 if isEditingProfile {
                     avatarStylePicker
                 }
 
-                if isEditingProfile {
-                    TextField("Username", text: $state.profileName)
-                        .font(.system(size: 22, weight: .bold, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textPrimaryLight)
-                        .multilineTextAlignment(.center)
-                        .textInputAutocapitalization(.words)
-                        .autocorrectionDisabled()
-                        .padding(.horizontal, 14)
-                        .frame(height: 38)
-                        .background(StamerleeTheme.profileCard)
-                        .clipShape(Capsule())
-                        .padding(.horizontal, 48)
-                } else {
-                    Text(state.profileName)
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textPrimaryDark)
-                        .minimumScaleFactor(0.8)
-                }
+                Group {
+                    if isEditingProfile {
+                        TextField("Username", text: $state.profileName)
+                            .font(.system(size: 22, weight: .bold, design: .rounded))
+                            .foregroundStyle(StamerleeTheme.textPrimaryLight)
+                            .multilineTextAlignment(.center)
+                            .textInputAutocapitalization(.words)
+                            .autocorrectionDisabled()
+                            .padding(.horizontal, 14)
+                            .frame(height: 38)
+                            .background(StamerleeTheme.profileCard)
+                            .clipShape(Capsule())
+                            .padding(.horizontal, 48)
+                    } else {
+                        Text(state.profileName)
+                            .font(.system(size: 28, weight: .bold, design: .rounded))
+                            .foregroundStyle(StamerleeTheme.textPrimaryDark)
+                            .minimumScaleFactor(0.8)
+                    }
 
-                Text("Joined in October 2026")
-                    .font(.system(size: 14, weight: .regular, design: .rounded))
-                    .foregroundStyle(StamerleeTheme.textSecondaryDark)
+                    Text("Joined in October 2026")
+                        .font(.system(size: 14, weight: .regular, design: .rounded))
+                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
+                }
+                .offset(y: didAppearContent ? 0 : 8)
+                .opacity(didAppearContent ? 1 : 0)
             }
             .frame(maxWidth: .infinity)
             .padding(.top, 44)
-
-            Button {
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    isEditingProfile.toggle()
-                }
-            } label: {
-                Image(systemName: isEditingProfile ? "checkmark" : "pencil")
-                    .font(.system(size: 15, weight: .bold))
-                    .foregroundStyle(StamerleeTheme.textPrimaryLight)
-                    .frame(width: 38, height: 38)
-                    .background(StamerleeTheme.profileCard)
-                    .clipShape(Circle())
-            }
-            .padding(.top, 18)
-            .padding(.trailing, 20)
-            .accessibilityLabel(isEditingProfile ? "Save profile" : "Edit profile")
         }
         .task(id: selectedPhoto) {
             guard let selectedPhoto else { return }
@@ -197,7 +202,35 @@ public struct ProfileView: View {
     // MARK: - Stats Section
     private var statsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            sectionTitle("Stats")
+            HStack {
+                sectionTitle("Stats")
+
+                Spacer()
+
+                Button {
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                        isEditingProfile.toggle()
+                    }
+                } label: {
+                    HStack(spacing: 5) {
+                        Image(systemName: isEditingProfile ? "checkmark" : "pencil")
+                            .font(.system(size: 11, weight: .bold))
+                        Text(isEditingProfile ? "Done" : "Edit")
+                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                    }
+                    .foregroundStyle(isEditingProfile ? Color.white : StamerleeTheme.primaryBlue)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(
+                        isEditingProfile
+                            ? StamerleeTheme.primaryBlue
+                            : StamerleeTheme.profileCard,
+                        in: Capsule()
+                    )
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(isEditingProfile ? "Done editing profile" : "Edit name and avatar")
+            }
 
             VStack(alignment: .leading, spacing: 15) {
                 stat(title: "8 minutes", subtitle: "Average session length")
@@ -345,7 +378,7 @@ public struct ProfileView: View {
                     .padding(.horizontal, 16)
                     .frame(height: 58)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.haptic)
 
                 Divider()
                     .padding(.horizontal, 16)
@@ -378,7 +411,7 @@ public struct ProfileView: View {
                     .padding(.horizontal, 16)
                     .frame(height: 58)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.haptic)
             }
             .background(StamerleeTheme.profileCard)
             .clipShape(RoundedRectangle(cornerRadius: 17, style: .continuous))
@@ -425,13 +458,12 @@ public struct ProfileView: View {
     // MARK: - Notification Helpers
     private func requestAndScheduleReminder(at time: Date) {
         let center = UNUserNotificationCenter.current()
-        center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, _ in
-            DispatchQueue.main.async {
-                if granted {
-                    scheduleNotification(at: time)
-                } else {
-                    state.reminderEnabled = false
-                }
+        Task { @MainActor in
+            let granted = (try? await center.requestAuthorization(options: [.alert, .sound, .badge])) ?? false
+            if granted {
+                scheduleNotification(at: time)
+            } else {
+                state.reminderEnabled = false
             }
         }
     }
@@ -450,8 +482,7 @@ public struct ProfileView: View {
         let request = UNNotificationRequest(identifier: "daily_practice_reminder", content: content, trigger: trigger)
         center.add(request)
 
-        let feedback = UINotificationFeedbackGenerator()
-        feedback.notificationOccurred(.success)
+        reminderSuccessTrigger += 1
     }
 
     private func cancelReminders() {

@@ -77,8 +77,6 @@ public struct ProlongedPracticeView: View {
                     
                     // DAF (Delayed Auditory Feedback) Button
                     Button(action: {
-                        let impact = UIImpactFeedbackGenerator(style: .medium)
-                        impact.impactOccurred()
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                             isDAFActive.toggle()
                         }
@@ -159,8 +157,6 @@ public struct ProlongedPracticeView: View {
                     Spacer()
                     
                     Button(action: {
-                        let impact = UIImpactFeedbackGenerator(style: .heavy)
-                        impact.impactOccurred()
                         if state.selectedDifficulty == "Easy" {
                             state.hasAttemptedProlongedEasy = true
                         }
@@ -214,6 +210,8 @@ public struct ProlongedPracticeView: View {
                 .padding(.bottom, 24)
             }
         }
+        .sensoryFeedback(.impact(weight: .medium), trigger: isDAFActive)
+        .sensoryFeedback(.impact(weight: .heavy), trigger: isListening)
         .onAppear {
             currentWordIndex = 0
         }

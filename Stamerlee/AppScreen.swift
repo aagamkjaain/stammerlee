@@ -45,9 +45,17 @@ public enum AppScreen: Hashable, CaseIterable {
     case narrationIntro
     case narrationDifficulty
     case narrationPractice
+    case beatBuddyPracticeType
     case beatBuddyWords
+    case beatBuddySounds
     case beatBuddyBPM
     case beatBuddyPractice
+}
+
+// MARK: - Beat Buddy Mode
+public enum BeatBuddyMode: String, CaseIterable, Sendable {
+    case words
+    case sounds
 }
 
 // MARK: - Sound Option Model
@@ -86,7 +94,13 @@ extension SoundOption {
 @Observable
 public final class AppState {
     public var currentScreen: AppScreen = .launch
+    public var previousScreen: AppScreen? = nil
     public var navigationDirection: Edge = .trailing
+    
+    public var isProfileTransition: Bool {
+        (currentScreen == .profile && previousScreen == .homeDashboard) ||
+        (currentScreen == .homeDashboard && previousScreen == .profile)
+    }
     
     // Auth State (read-only outside AppState; mutate via signIn/logout/deleteAccount)
     public private(set) var userEmail: String = ""
@@ -122,7 +136,9 @@ public final class AppState {
     public var hasSeenNarrationIntro: Bool = false
     public var selectedNarrationDifficulty: String = "Easy"
     public var completedNarrationDifficulties: Set<String> = []
+    public var beatBuddyMode: BeatBuddyMode = .words
     public var beatBuddySelectedWords: Set<String> = ["Water", "University"]
+    public var beatBuddySelectedSounds: Set<String> = ["P, B", "T, D"]
     public var beatBuddyBPM: Int = 120
     public var beatBuddyDurationMinutes: Int = 2
     public var isAudioPracticing: Bool = false
@@ -183,7 +199,6 @@ public final class AppState {
     public init() {}
 
     public func selectTab(_ tab: AppTab) {
-        UIImpactFeedbackGenerator(style: .light).impactOccurred()
         withAnimation(.easeInOut(duration: 0.22)) {
             selectedTab = tab
         }
@@ -191,7 +206,14 @@ public final class AppState {
     
     // MARK: - Navigation Actions
     public func navigate(to screen: AppScreen, forward: Bool = true) {
-        withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
+        let isHero = (screen == .profile && currentScreen == .homeDashboard) ||
+                     (screen == .homeDashboard && currentScreen == .profile)
+        let animation: Animation = isHero
+            ? .spring(response: 0.44, dampingFraction: 0.82)
+            : .spring(response: 0.45, dampingFraction: 0.85)
+
+        withAnimation(animation) {
+            self.previousScreen = self.currentScreen
             self.navigationDirection = forward ? .trailing : .leading
             self.currentScreen = screen
         }

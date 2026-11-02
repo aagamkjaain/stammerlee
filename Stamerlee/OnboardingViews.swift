@@ -41,7 +41,8 @@ public struct LaunchView: View {
                 logoOpacity = 1.0
                 logoScale = 1.0
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
+            Task { @MainActor in
+                try? await Task.sleep(for: .seconds(1.8))
                 if state.currentScreen == .launch {
                     state.navigate(to: .login)
                 }
@@ -68,63 +69,88 @@ public struct LoginView: View {
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            VStack(alignment: .leading, spacing: 6) {
-                Text("Get started")
-                    .font(.system(size: 26, weight: .bold, design: .rounded))
-                    .foregroundStyle(StamerleeTheme.textPrimaryLight)
+        ZStack(alignment: .bottom) {
+            StamerleeTheme.backgroundDark.ignoresSafeArea()
 
-                Text("Start your fluency journey.")
-                    .font(.system(size: 14, weight: .regular, design: .rounded))
-                    .foregroundStyle(StamerleeTheme.textSecondaryLight)
+            VStack {
+                Spacer()
+                Text("Stamerlee")
+                    .font(.system(size: 44, weight: .bold, design: .rounded))
+                    .foregroundStyle(StamerleeTheme.textPrimaryDark)
+                    .shadow(color: Color.white.opacity(0.15), radius: 16, x: 0, y: 0)
+                Spacer()
             }
-            .padding(.top, 4)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            VStack(spacing: 12) {
-                SocialAuthRow(type: .apple) { handleAuth(provider: "Apple") }
-                SocialAuthRow(type: .google) { handleAuth(provider: "Google") }
+            VStack(alignment: .leading, spacing: 20) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Get started")
+                        .font(.system(size: 26, weight: .bold, design: .rounded))
+                        .foregroundStyle(StamerleeTheme.textPrimaryLight)
 
-                HStack(spacing: 12) {
-                    Rectangle().fill(StamerleeTheme.dividerLight).frame(height: 1)
-                    Text("OR")
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundStyle(StamerleeTheme.textSecondaryLight.opacity(0.8))
-                    Rectangle().fill(StamerleeTheme.dividerLight).frame(height: 1)
+                    Text("Start your fluency journey.")
+                        .font(.system(size: 14, weight: .regular, design: .rounded))
+                        .foregroundStyle(StamerleeTheme.textSecondaryLight)
                 }
-                .padding(.vertical, 2)
+                .padding(.top, 4)
 
-                SocialAuthRow(type: .email) { activeSheet = .emailSignIn }
-            }
+                VStack(spacing: 12) {
+                    SocialAuthRow(type: .apple) { handleAuth(provider: "Apple") }
+                    SocialAuthRow(type: .google) { handleAuth(provider: "Google") }
 
-            VStack(spacing: 4) {
-                Text("By continuing, you agree to our")
-                    .font(.system(size: 11, weight: .regular))
-                    .foregroundStyle(StamerleeTheme.textSecondaryLight)
+                    HStack(spacing: 12) {
+                        Rectangle().fill(StamerleeTheme.dividerLight).frame(height: 1)
+                        Text("OR")
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(StamerleeTheme.textSecondaryLight.opacity(0.8))
+                        Rectangle().fill(StamerleeTheme.dividerLight).frame(height: 1)
+                    }
+                    .padding(.vertical, 2)
 
-                HStack(spacing: 4) {
-                    Button("Terms of Service") { activeSheet = .terms }
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundStyle(StamerleeTheme.primaryBlue)
-                        .underline()
+                    SocialAuthRow(type: .email) { activeSheet = .emailSignIn }
+                }
 
-                    Text("and")
+                VStack(spacing: 4) {
+                    Text("By continuing, you agree to our")
                         .font(.system(size: 11, weight: .regular))
                         .foregroundStyle(StamerleeTheme.textSecondaryLight)
 
-                    Button("Privacy Policy") { activeSheet = .privacy }
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundStyle(StamerleeTheme.primaryBlue)
-                        .underline()
+                    HStack(spacing: 4) {
+                        Button("Terms of Service") { activeSheet = .terms }
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(StamerleeTheme.primaryBlue)
+                            .underline()
+
+                        Text("and")
+                            .font(.system(size: 11, weight: .regular))
+                            .foregroundStyle(StamerleeTheme.textSecondaryLight)
+
+                        Button("Privacy Policy") { activeSheet = .privacy }
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(StamerleeTheme.primaryBlue)
+                            .underline()
+                    }
                 }
+                .frame(maxWidth: .infinity)
+                .padding(.top, 6)
+                .padding(.bottom, 12)
             }
-            .frame(maxWidth: .infinity)
-            .padding(.top, 6)
-            .padding(.bottom, 12)
+            .padding(.horizontal, 24)
+            .padding(.top, 28)
+            .background(
+                StamerleeTheme.sheetBackground
+                    .clipShape(
+                        UnevenRoundedRectangle(
+                            topLeadingRadius: 32,
+                            bottomLeadingRadius: 0,
+                            bottomTrailingRadius: 0,
+                            topTrailingRadius: 32,
+                            style: .continuous
+                        )
+                    )
+                    .ignoresSafeArea(edges: .bottom)
+            )
         }
-        .padding(.horizontal, 24)
-        .padding(.top, 28)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .background(StamerleeTheme.sheetBackground.ignoresSafeArea())
         .sheet(item: $activeSheet) { sheet in
             sheetView(for: sheet)
         }
@@ -132,7 +158,7 @@ public struct LoginView: View {
 
     private func handleAuth(provider: String) {
         state.signIn(method: provider)
-        state.navigate(to: .onboarding1)
+        state.navigate(to: .onboarding1, forward: true)
     }
 
     @ViewBuilder
@@ -182,7 +208,7 @@ public struct LoginView: View {
                 state.signIn(method: "Email", email: emailInput.isEmpty ? "user@stamerlee.com" : emailInput)
                 passwordInput = ""
                 activeSheet = nil
-                state.navigate(to: .onboarding1)
+                state.navigate(to: .onboarding1, forward: true)
             }
             .padding(.top, 8)
             Spacer()
@@ -213,6 +239,15 @@ public struct OnboardingStepOneView: View {
             StamerleeTheme.backgroundDark.ignoresSafeArea()
 
             VStack(spacing: 0) {
+                HStack {
+                    BackNavButton {
+                        state.navigate(to: .login, forward: false)
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 16)
+
                 VStack(alignment: .leading, spacing: 10) {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Small steps,")
@@ -237,7 +272,7 @@ public struct OnboardingStepOneView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 28)
-                .padding(.top, 24)
+                .padding(.top, 16)
 
                 Spacer()
 
@@ -247,7 +282,7 @@ public struct OnboardingStepOneView: View {
                 Spacer()
 
                 PrimaryActionButton(title: "Next") {
-                    state.navigate(to: .onboarding2)
+                    state.navigate(to: .onboarding2, forward: true)
                 }
                 .padding(.horizontal, 28)
                 .padding(.bottom, 24)
@@ -269,6 +304,15 @@ public struct OnboardingStepTwoView: View {
             StamerleeTheme.backgroundDark.ignoresSafeArea()
 
             VStack(spacing: 0) {
+                HStack {
+                    BackNavButton {
+                        state.navigate(to: .onboarding1, forward: false)
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 16)
+
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Support on your\nschedule")
                         .font(.system(size: 32, weight: .bold, design: .rounded))
@@ -282,7 +326,7 @@ public struct OnboardingStepTwoView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 28)
-                .padding(.top, 24)
+                .padding(.top, 16)
 
                 Spacer()
 
@@ -292,7 +336,7 @@ public struct OnboardingStepTwoView: View {
                 Spacer()
 
                 PrimaryActionButton(title: "Next") {
-                    state.navigate(to: .dailyGoal)
+                    state.navigate(to: .dailyGoal, forward: true)
                 }
                 .padding(.horizontal, 28)
                 .padding(.bottom, 24)
@@ -316,12 +360,21 @@ public struct DailyGoalView: View {
             StamerleeTheme.backgroundDark.ignoresSafeArea()
 
             VStack(alignment: .leading, spacing: 0) {
+                HStack {
+                    BackNavButton {
+                        state.navigate(to: .onboarding2, forward: false)
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 16)
+
                 Text("Set Your Goals")
                     .font(.system(size: 32, weight: .bold, design: .rounded))
                     .foregroundStyle(StamerleeTheme.textPrimaryDark)
                     .padding(.horizontal, 24)
-                    .padding(.top, 24)
-                    .padding(.bottom, 34)
+                    .padding(.top, 16)
+                    .padding(.bottom, 28)
 
                 VStack(alignment: .leading, spacing: 0) {
                     Text("Choose your daily goal")
@@ -334,9 +387,9 @@ public struct DailyGoalView: View {
                     VStack(spacing: 0) {
                         ForEach(goalOptions, id: \.self) { minutes in
                             Button {
-                                let impact = UIImpactFeedbackGenerator(style: .light)
-                                impact.impactOccurred()
-                                state.dailyPracticeMinutes = minutes
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    state.dailyPracticeMinutes = minutes
+                                }
                             } label: {
                                 HStack {
                                     Text("\(minutes) min/day")
@@ -369,7 +422,7 @@ public struct DailyGoalView: View {
                                     }
                                 }
                                 .padding(.horizontal, 16)
-                                .frame(height: 64)
+                                .frame(minHeight: 64)
                                 .background(
                                     state.dailyPracticeMinutes == minutes
                                         ? StamerleeTheme.primaryBlue.opacity(0.08)
@@ -394,18 +447,21 @@ public struct DailyGoalView: View {
                 PrimaryActionButton(
                     title: "Next"
                 ) {
-                    state.navigate(to: .exploreActivities)
+                    state.navigate(to: .exploreActivities, forward: true)
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
             }
         }
+        .sensoryFeedback(.selection, trigger: state.dailyPracticeMinutes)
     }
 }
 
 // MARK: - 6. Explore Activities View
 public struct ExploreActivitiesView: View {
     @Bindable public var state: AppState
+
+    @State private var cardsVisible = false
 
     public init(state: AppState) {
         self.state = state
@@ -414,7 +470,6 @@ public struct ExploreActivitiesView: View {
     private struct ActivityCardItem: Identifiable {
         let id: String
         let iconName: String
-        let fallbackFile: String
         let text: String
     }
 
@@ -422,25 +477,21 @@ public struct ExploreActivitiesView: View {
         ActivityCardItem(
             id: "prolonged",
             iconName: "IconProlongedSpeech",
-            fallbackFile: "/Users/user89/Documents/stammerlee/Screenshot_2026-10-21_at_11.26.10_PM-removebg-preview 2.png",
             text: "Learn smooth pacing with prolonged speech and continuous airflow exercises"
         ),
         ActivityCardItem(
             id: "picture",
             iconName: "IconPictureDesc",
-            fallbackFile: "/Users/user89/Documents/stammerlee/Screenshot_2026-10-21_at_11.46.28_PM-removebg-preview 2.png",
             text: "Build spontaneous fluency with picture description"
         ),
         ActivityCardItem(
             id: "dial",
             iconName: "IconDialScene",
-            fallbackFile: "/Users/user89/Documents/stammerlee/Firefly_RemoveBackground 2.png",
             text: "Simulate phone calls using dial scene to build conversational confidence"
         ),
         ActivityCardItem(
             id: "mirror",
             iconName: "IconMirrorNarration",
-            fallbackFile: "/Users/user89/Documents/stammerlee/Screenshot_2026-10-21_at_11.35.41_PM-removebg-preview 2.png",
             text: "Monitor your physical tension during narration with mirror exercises"
         )
     ]
@@ -450,18 +501,34 @@ public struct ExploreActivitiesView: View {
             StamerleeTheme.backgroundDark.ignoresSafeArea()
 
             VStack(alignment: .leading, spacing: 0) {
+                HStack {
+                    BackNavButton {
+                        state.navigate(to: .dailyGoal, forward: false)
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 16)
+
                 Text("Explore activities\ndesigned for your\nstutter")
                     .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundStyle(StamerleeTheme.textPrimaryDark)
                     .lineSpacing(3)
                     .padding(.horizontal, 24)
-                    .padding(.top, 22)
+                    .padding(.top, 16)
                     .padding(.bottom, 22)
 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 12) {
-                        ForEach(activities) { item in
+                        ForEach(Array(activities.enumerated()), id: \.element.id) { index, item in
                             activityCard(item)
+                                .opacity(cardsVisible ? 1 : 0)
+                                .offset(y: cardsVisible ? 0 : 20)
+                                .animation(
+                                    .spring(response: 0.5, dampingFraction: 0.85)
+                                        .delay(0.08 + Double(index) * 0.06),
+                                    value: cardsVisible
+                                )
                         }
                     }
                     .padding(.horizontal, 20)
@@ -471,30 +538,21 @@ public struct ExploreActivitiesView: View {
                 Spacer()
 
                 PrimaryActionButton(title: "Begin") {
-                    state.navigate(to: .homeDashboard)
+                    state.navigate(to: .homeDashboard, forward: true)
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
             }
         }
+        .onAppear { cardsVisible = true }
     }
 
     private func activityCard(_ item: ActivityCardItem) -> some View {
         HStack(spacing: 16) {
-            Group {
-                if let uiImage = StamerleeImageLoader.loadHeroImage(name: item.iconName, fallbackPath: item.fallbackFile) {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 44, height: 44)
-                } else {
-                    Circle()
-                        .fill(StamerleeTheme.accentPurple.opacity(0.2))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "sparkles").foregroundStyle(StamerleeTheme.primaryBlue))
-                }
-            }
-            .frame(width: 48, height: 48)
+            Image(item.iconName)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 44, height: 44)
 
             Text(item.text)
                 .font(.system(size: 13.5, weight: .semibold, design: .rounded))
