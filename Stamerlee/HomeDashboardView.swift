@@ -149,28 +149,13 @@ public struct HomeDashboardView: View {
     // MARK: - Daily Challenge Card
     private var dailyChallengeCard: some View {
         VStack(alignment: .leading, spacing: 14) {
-            HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Daily\nChallenge")
-                        .font(.system(size: 26, weight: .heavy, design: .rounded))
-                        .foregroundStyle(Color(red: 20 / 255, green: 22 / 255, blue: 35 / 255))
-                        .lineSpacing(-2)
-
-                    Text("A short, focused practice session to build fluency and confidence in your speech.")
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textSecondaryLight)
-                        .lineSpacing(2)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-
-                Spacer(minLength: 14)
-
-                // Calendar illustration with soft backdrop blob
+            HStack(alignment: .center, spacing: 16) {
+                // Calendar illustration on the LEFT
                 ZStack {
-                    RoundedRectangle(cornerRadius: 22, style: .continuous)
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
                         .fill(Color(red: 226 / 255, green: 224 / 255, blue: 252 / 255).opacity(0.85))
-                        .frame(width: 72, height: 72)
-                        .rotationEffect(.degrees(7))
+                        .frame(width: 68, height: 68)
+                        .rotationEffect(.degrees(-5))
 
                     Image(systemName: "calendar.badge.checkmark")
                         .font(.system(size: 24, weight: .semibold))
@@ -179,7 +164,22 @@ public struct HomeDashboardView: View {
                         .background(Color.white.opacity(0.95), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
                         .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 3)
                 }
-                .frame(width: 72, height: 72)
+                .frame(width: 68, height: 68)
+
+                // Title and subtitle on the RIGHT
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Daily Challenge")
+                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color(red: 20 / 255, green: 22 / 255, blue: 35 / 255))
+
+                    Text("A short, focused practice session to build fluency and confidence in your speech.")
+                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .foregroundStyle(StamerleeTheme.textSecondaryLight)
+                        .lineSpacing(2)
+                        .lineLimit(3)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
 
             Button(action: {

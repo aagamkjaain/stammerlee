@@ -50,32 +50,41 @@ private struct PracticeOptionCard: View {
             action()
         }) {
             HStack(alignment: .center, spacing: 14) {
+                // Leading Icon Logo
+                ZStack {
+                    Circle()
+                        .fill(Color(red: 228 / 255, green: 220 / 255, blue: 255 / 255))
+                        .frame(width: 52, height: 52)
+
+                    Image(systemName: systemImage)
+                        .font(.system(size: 22, weight: .semibold))
+                        .foregroundStyle(Color(red: 90 / 255, green: 76 / 255, blue: 160 / 255))
+                }
+
+                // Title and Subtitle on the right
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
-                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .font(.system(size: 20, weight: .bold, design: .rounded))
                         .foregroundStyle(Color(red: 18 / 255, green: 16 / 255, blue: 38 / 255))
 
                     Text(subtitle)
                         .font(.system(size: 13, weight: .medium, design: .rounded))
                         .foregroundStyle(Color(red: 105 / 255, green: 98 / 255, blue: 142 / 255))
                         .lineSpacing(1.5)
+                        .lineLimit(3)
+                        .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                VStack(alignment: .trailing, spacing: 12) {
-                    Image(systemName: systemImage)
-                        .font(.system(size: 24, weight: .semibold))
-                        .foregroundStyle(Color(red: 120 / 255, green: 105 / 255, blue: 165 / 255))
-
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundStyle(Color(red: 108 / 255, green: 92 / 255, blue: 168 / 255))
-                }
+                // Trailing Chevron
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundStyle(Color(red: 108 / 255, green: 92 / 255, blue: 168 / 255))
             }
             .padding(.horizontal, 18)
-            .padding(.vertical, 14)
-            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+            .frame(maxWidth: .infinity, minHeight: 104)
             .background(
                 ZStack(alignment: .topTrailing) {
                     RoundedRectangle(cornerRadius: 20, style: .continuous)
