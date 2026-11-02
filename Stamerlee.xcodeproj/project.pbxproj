@@ -19,13 +19,6 @@
 		AA000001010 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002010 /* Components.swift */; };
 		AA000001011 /* Illustrations.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002011 /* Illustrations.swift */; };
 		AA000001012 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA000002012 /* Assets.xcassets */; };
-		AA000001013 /* OnboardingHero1.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002013 /* OnboardingHero1.png */; };
-		AA000001014 /* OnboardingHero2.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002014 /* OnboardingHero2.png */; };
-		AA000001015 /* ClockIllustration.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002015 /* ClockIllustration.png */; };
-		AA000001016 /* IconDialScene.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002016 /* IconDialScene.png */; };
-		AA000001017 /* IconMirrorNarration.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002017 /* IconMirrorNarration.png */; };
-		AA000001018 /* IconPictureDesc.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002018 /* IconPictureDesc.png */; };
-		AA000001019 /* IconProlongedSpeech.png in Resources */ = {isa = PBXBuildFile; fileRef = AA000002019 /* IconProlongedSpeech.png */; };
 		AA000001021 /* PictureDescriptionEasyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002021 /* PictureDescriptionEasyView.swift */; };
 		AA000001024 /* PictureDescriptionDifficultyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002024 /* PictureDescriptionDifficultyView.swift */; };
 		AA000001027 /* DialSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002027 /* DialSceneView.swift */; };
@@ -50,13 +43,6 @@
 		AA000002010 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		AA000002011 /* Illustrations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Illustrations.swift; sourceTree = "<group>"; };
 		AA000002012 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		AA000002013 /* OnboardingHero1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OnboardingHero1.png; sourceTree = "<group>"; };
-		AA000002014 /* OnboardingHero2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OnboardingHero2.png; sourceTree = "<group>"; };
-		AA000002015 /* ClockIllustration.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ClockIllustration.png; sourceTree = "<group>"; };
-		AA000002016 /* IconDialScene.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IconDialScene.png; sourceTree = "<group>"; };
-		AA000002017 /* IconMirrorNarration.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IconMirrorNarration.png; sourceTree = "<group>"; };
-		AA000002018 /* IconPictureDesc.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IconPictureDesc.png; sourceTree = "<group>"; };
-		AA000002019 /* IconProlongedSpeech.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IconProlongedSpeech.png; sourceTree = "<group>"; };
 		AA000002021 /* PictureDescriptionEasyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureDescriptionEasyView.swift; sourceTree = "<group>"; };
 		AA000002024 /* PictureDescriptionDifficultyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureDescriptionDifficultyView.swift; sourceTree = "<group>"; };
 		AA000002027 /* DialSceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DialSceneView.swift; sourceTree = "<group>"; };
@@ -80,20 +66,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		23730120308B673B00C14980 /* pictures */ = {
-			isa = PBXGroup;
-			children = (
-				AA000002013 /* OnboardingHero1.png */,
-				AA000002014 /* OnboardingHero2.png */,
-				AA000002016 /* IconDialScene.png */,
-				AA000002017 /* IconMirrorNarration.png */,
-				AA000002018 /* IconPictureDesc.png */,
-				AA000002019 /* IconProlongedSpeech.png */,
-				AA000002015 /* ClockIllustration.png */,
-			);
-			path = pictures;
-			sourceTree = "<group>";
-		};
 		AA000005001 = {
 			isa = PBXGroup;
 			children = (
@@ -126,7 +98,6 @@
 				AA000002032 /* ProfileView.swift */,
 				AA000002033 /* SummaryView.swift */,
 				AA000002034 /* AppTabNavigation.swift */,
-				23730120308B673B00C14980 /* pictures */,
 			);
 			path = Stamerlee;
 			sourceTree = "<group>";
@@ -197,13 +168,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA000001012 /* Assets.xcassets in Resources */,
-				AA000001013 /* OnboardingHero1.png in Resources */,
-				AA000001014 /* OnboardingHero2.png in Resources */,
-				AA000001015 /* ClockIllustration.png in Resources */,
-				AA000001016 /* IconDialScene.png in Resources */,
-				AA000001017 /* IconMirrorNarration.png in Resources */,
-				AA000001018 /* IconPictureDesc.png in Resources */,
-				AA000001019 /* IconProlongedSpeech.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

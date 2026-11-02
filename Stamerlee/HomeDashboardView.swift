@@ -32,9 +32,11 @@ public struct HomeDashboardView: View {
                     Button {
                         state.navigate(to: .profile)
                     } label: {
-                        Image(systemName: "person.crop.circle.fill")
-                            .font(.system(size: 32, weight: .semibold))
-                            .foregroundStyle(StamerleeTheme.textPrimaryDark)
+                        ProfileAvatar(
+                            style: state.profileAvatarStyle,
+                            imageData: state.profileAvatarData,
+                            size: 38
+                        )
                     }
                     .accessibilityLabel("Open profile")
                     
@@ -46,8 +48,8 @@ public struct HomeDashboardView: View {
                 // Scrollable Body Content
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 20) {
-                        // Daily Goal Banner Card
-                        dailyGoalCard
+                        // Daily Challenge Card
+                        dailyChallengeCard
                         
                         // Exercises Section
                         VStack(alignment: .leading, spacing: 12) {
@@ -149,33 +151,67 @@ public struct HomeDashboardView: View {
         }
     }
     
-    // MARK: - Daily Goal Card
-    private var dailyGoalCard: some View {
-        HStack(spacing: 14) {
-            DailyGoalActivityRing()
+    // MARK: - Daily Challenge Card
+    private var dailyChallengeCard: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Daily\nChallenge")
+                        .font(.system(size: 26, weight: .heavy, design: .rounded))
+                        .foregroundStyle(Color(red: 20 / 255, green: 22 / 255, blue: 35 / 255))
+                        .lineSpacing(-2)
 
-            VStack(alignment: .leading, spacing: 3) {
-                Text("YOUR DAILY GOAL")
-                    .font(.system(size: 10, weight: .bold, design: .rounded))
-                    .foregroundStyle(StamerleeTheme.textSecondaryLight)
-                    .tracking(1.2)
-                
-                Text("Practice for \(state.dailyPracticeMinutes) minutes")
-                    .font(.system(size: 16, weight: .bold, design: .rounded))
-                    .foregroundStyle(StamerleeTheme.textPrimaryLight)
-                
-                Text("Your daily fluency goal.")
-                    .font(.system(size: 13, weight: .regular, design: .rounded))
-                    .foregroundStyle(StamerleeTheme.textSecondaryLight)
+                    Text("A short, focused practice session to build fluency and confidence in your speech.")
+                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .foregroundStyle(StamerleeTheme.textSecondaryLight)
+                        .lineSpacing(2)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Spacer(minLength: 14)
+
+                // Calendar illustration with soft backdrop blob
+                ZStack {
+                    RoundedRectangle(cornerRadius: 22, style: .continuous)
+                        .fill(Color(red: 226 / 255, green: 224 / 255, blue: 252 / 255).opacity(0.85))
+                        .frame(width: 72, height: 72)
+                        .rotationEffect(.degrees(7))
+
+                    Image(systemName: "calendar.badge.checkmark")
+                        .font(.system(size: 24, weight: .semibold))
+                        .foregroundStyle(StamerleeTheme.primaryPurple)
+                        .frame(width: 48, height: 48)
+                        .background(Color.white.opacity(0.95), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
+                        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 3)
+                }
+                .frame(width: 72, height: 72)
             }
-            
-            Spacer()
+
+            Button(action: {
+                let impact = UIImpactFeedbackGenerator(style: .medium)
+                impact.impactOccurred()
+                state.navigate(to: .beatBuddyWords)
+            }) {
+                HStack(spacing: 8) {
+                    Text("Start Challenge")
+                        .font(.system(size: 15, weight: .bold, design: .rounded))
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 12, weight: .bold))
+                }
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity)
+                .frame(height: 46)
+                .background(Color(red: 35 / 255, green: 37 / 255, blue: 62 / 255))
+                .clipShape(Capsule())
+            }
+            .buttonStyle(.plain)
         }
-        .padding(.horizontal, 22)
-        .padding(.vertical, 20)
-        .background(Color(red: 238 / 255, green: 240 / 255, blue: 250 / 255))
-        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-        .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
+        .padding(18)
+        .background(
+            Color(red: 242 / 255, green: 243 / 255, blue: 252 / 255),
+            in: RoundedRectangle(cornerRadius: 24, style: .continuous)
+        )
+        .shadow(color: Color.black.opacity(0.06), radius: 7, x: 0, y: 3)
     }
     
     // MARK: - Exercise List Row
@@ -259,54 +295,6 @@ public struct HomeDashboardView: View {
     }
 }
 
-
-private struct DailyGoalActivityRing: View {
-    private let ringSize: CGFloat = 65
-    private let lineWidth: CGFloat = 10
-    private let progress: Double = 0.25
-
-    @State private var animatedProgress: Double = 0
-
-    private let trackColor = Color(red: 74.0 / 255.0, green: 57.0 / 255.0, blue: 123.0 / 255.0)
-
-    private let progressColor = Color(red: 139.0 / 255.0, green: 112.0 / 255.0, blue: 245.0 / 255.0)
-
-    var body: some View {
-        ZStack {
-            // Background track
-            Circle()
-                .stroke(trackColor, lineWidth: lineWidth)
-
-            // Progress arc
-            Circle()
-                .trim(from: 0, to: animatedProgress)
-                .stroke(
-                    progressColor,
-                    style: StrokeStyle(
-                        lineWidth: lineWidth,
-                        lineCap: .round
-                    )
-                )
-                .rotationEffect(.degrees(-90))
-
-            // Inner circle
-            Circle()
-                .fill(StamerleeTheme.profileCard)
-                .padding(lineWidth)
-        }
-        .frame(width: ringSize, height: ringSize)
-        .onAppear {
-            withAnimation(.easeOut(duration: 0.8)) {
-                animatedProgress = min(max(progress, 0), 1)
-            }
-        }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Daily goal progress")
-        .accessibilityValue(
-            "\(Int(progress * 100)) percent"
-        )
-    }
-}
 
 
 

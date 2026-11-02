@@ -548,51 +548,6 @@ private struct LegalDocumentSheet: View {
     }
 }
 
-private struct ProfileAvatar: View {
-    let style: Int
-    let imageData: Data?
-
-    var body: some View {
-        ZStack {
-            if let imageData, let image = UIImage(data: imageData) {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFill()
-            } else {
-                Circle()
-                    .fill(backgroundColor)
-                    .padding(8)
-
-                Circle()
-                    .fill(foregroundColor)
-                    .frame(width: 22, height: 22)
-                    .offset(y: -13)
-
-                Capsule()
-                    .fill(foregroundColor)
-                    .frame(width: 59, height: 33)
-                    .offset(y: 25)
-            }
-        }
-        .frame(width: 84, height: 84)
-        .background(Color.black)
-        .clipShape(Circle())
-        .overlay(Circle().stroke(StamerleeTheme.profileCard))
-    }
-
-    private var backgroundColor: Color {
-        switch style {
-        case 1: return StamerleeTheme.accentPurple
-        case 2: return StamerleeTheme.primaryBlue
-        default: return StamerleeTheme.profileAvatarDark
-        }
-    }
-
-    private var foregroundColor: Color {
-        style == 2 ? StamerleeTheme.profileCard : StamerleeTheme.backgroundDark
-    }
-}
-
 private struct StreakSpark: View {
     var body: some View {
         ZStack {

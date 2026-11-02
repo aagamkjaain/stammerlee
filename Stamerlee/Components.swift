@@ -710,3 +710,57 @@ public struct ExerciseAnalysisSkeletonView: View {
     }
 }
 
+// MARK: - Reusable Profile Avatar
+public struct ProfileAvatar: View {
+    public let style: Int
+    public let imageData: Data?
+    public var size: CGFloat
+
+    public init(style: Int, imageData: Data?, size: CGFloat = 84) {
+        self.style = style
+        self.imageData = imageData
+        self.size = size
+    }
+
+    public var body: some View {
+        ZStack {
+            if let imageData, let image = UIImage(data: imageData) {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                let scale = size / 84.0
+                Circle()
+                    .fill(backgroundColor)
+                    .padding(8 * scale)
+
+                Circle()
+                    .fill(foregroundColor)
+                    .frame(width: 22 * scale, height: 22 * scale)
+                    .offset(y: -13 * scale)
+
+                Capsule()
+                    .fill(foregroundColor)
+                    .frame(width: 59 * scale, height: 33 * scale)
+                    .offset(y: 25 * scale)
+            }
+        }
+        .frame(width: size, height: size)
+        .background(Color.black)
+        .clipShape(Circle())
+        .overlay(Circle().stroke(StamerleeTheme.profileCard, lineWidth: max(1, size / 42.0)))
+    }
+
+    private var backgroundColor: Color {
+        switch style {
+        case 1: return StamerleeTheme.accentPurple
+        case 2: return StamerleeTheme.primaryBlue
+        default: return StamerleeTheme.profileAvatarDark
+        }
+    }
+
+    private var foregroundColor: Color {
+        style == 2 ? StamerleeTheme.profileCard : StamerleeTheme.backgroundDark
+    }
+}
+
