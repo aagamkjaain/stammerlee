@@ -154,67 +154,19 @@ public struct PictureDescriptionEasyView: View {
         )
     }
 
-    private var localFallbackPath: String {
-        let filename: String
-        switch difficulty {
-        case "Medium":
-            filename = "PictureDescriptionMedium.imageset/picdesmedium.png"
-        case "Hard":
-            filename = "PictureDescriptionHard.imageset/picdeshard.png"
-        default:
-            filename = "PictureDescriptionEasy.imageset/picturedeseasy.png"
-        }
-        return "/Users/user15/Desktop/untitled folder/stammerlee/Stamerlee/Assets.xcassets/\(filename)"
-    }
-
-    private var loadedImage: UIImage? {
-        if let image = StamerleeImageLoader.loadHeroImage(name: pictureAssetName, fallbackPath: localFallbackPath) {
-            return image
-        }
-        if let image = StamerleeImageLoader.loadHeroImage(name: pictureAssetName, fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/\(pictureAssetName).png") {
-            return image
-        }
-        if let image = StamerleeImageLoader.loadHeroImage(name: "picturedes", fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/picturedes.png") {
-            return image
-        }
-        return nil
-    }
-
-    @ViewBuilder
     private var pictureAsset: some View {
-        Group {
-            if let image = loadedImage {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: .infinity)
-                    .frame(maxHeight: 280)
-                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20, style: .continuous)
-                            .stroke(Color.white.opacity(0.12), lineWidth: 1)
-                    )
-                    .shadow(color: Color.black.opacity(0.3), radius: 10, x: 0, y: 4)
-            } else {
+        Image(pictureAssetName)
+            .resizable()
+            .scaledToFit()
+            .frame(maxWidth: .infinity)
+            .frame(maxHeight: 280)
+            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .overlay(
                 RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .fill(Color.white.opacity(0.08))
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 240)
-                    .overlay {
-                        VStack(spacing: 8) {
-                            Image(systemName: "photo")
-                                .font(.system(size: 34))
-                            Text("Picture Description")
-                                .font(.system(size: 14, weight: .semibold, design: .rounded))
-                        }
-                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
-                    }
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20, style: .continuous)
-                            .stroke(Color.white.opacity(0.12), lineWidth: 1)
-                    )
-            }
-        }
+                    .stroke(Color.white.opacity(0.12), lineWidth: 1)
+            )
+            .shadow(color: Color.black.opacity(0.3), radius: 10, x: 0, y: 4)
+            .accessibilityLabel("Picture to describe")
     }
 
     private func completeCurrentDifficulty() {

@@ -41,7 +41,8 @@ public struct LaunchView: View {
                 logoOpacity = 1.0
                 logoScale = 1.0
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
+            Task { @MainActor in
+                try? await Task.sleep(for: .seconds(1.8))
                 if state.currentScreen == .launch {
                     state.navigate(to: .login)
                 }
@@ -334,8 +335,6 @@ public struct DailyGoalView: View {
                     VStack(spacing: 0) {
                         ForEach(goalOptions, id: \.self) { minutes in
                             Button {
-                                let impact = UIImpactFeedbackGenerator(style: .light)
-                                impact.impactOccurred()
                                 state.dailyPracticeMinutes = minutes
                             } label: {
                                 HStack {
@@ -369,7 +368,7 @@ public struct DailyGoalView: View {
                                     }
                                 }
                                 .padding(.horizontal, 16)
-                                .frame(height: 64)
+                                .frame(minHeight: 64)
                                 .background(
                                     state.dailyPracticeMinutes == minutes
                                         ? StamerleeTheme.primaryBlue.opacity(0.08)
@@ -400,6 +399,7 @@ public struct DailyGoalView: View {
                 .padding(.bottom, 24)
             }
         }
+        .sensoryFeedback(.selection, trigger: state.dailyPracticeMinutes)
     }
 }
 
@@ -414,7 +414,6 @@ public struct ExploreActivitiesView: View {
     private struct ActivityCardItem: Identifiable {
         let id: String
         let iconName: String
-        let fallbackFile: String
         let text: String
     }
 
@@ -422,25 +421,21 @@ public struct ExploreActivitiesView: View {
         ActivityCardItem(
             id: "prolonged",
             iconName: "IconProlongedSpeech",
-            fallbackFile: "/Users/user89/Documents/stammerlee/Screenshot_2026-10-21_at_11.26.10_PM-removebg-preview 2.png",
             text: "Learn smooth pacing with prolonged speech and continuous airflow exercises"
         ),
         ActivityCardItem(
             id: "picture",
             iconName: "IconPictureDesc",
-            fallbackFile: "/Users/user89/Documents/stammerlee/Screenshot_2026-10-21_at_11.46.28_PM-removebg-preview 2.png",
             text: "Build spontaneous fluency with picture description"
         ),
         ActivityCardItem(
             id: "dial",
             iconName: "IconDialScene",
-            fallbackFile: "/Users/user89/Documents/stammerlee/Firefly_RemoveBackground 2.png",
             text: "Simulate phone calls using dial scene to build conversational confidence"
         ),
         ActivityCardItem(
             id: "mirror",
             iconName: "IconMirrorNarration",
-            fallbackFile: "/Users/user89/Documents/stammerlee/Screenshot_2026-10-21_at_11.35.41_PM-removebg-preview 2.png",
             text: "Monitor your physical tension during narration with mirror exercises"
         )
     ]
@@ -481,19 +476,10 @@ public struct ExploreActivitiesView: View {
 
     private func activityCard(_ item: ActivityCardItem) -> some View {
         HStack(spacing: 16) {
-            Group {
-                if let uiImage = StamerleeImageLoader.loadHeroImage(name: item.iconName, fallbackPath: item.fallbackFile) {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 44, height: 44)
-                } else {
-                    Circle()
-                        .fill(StamerleeTheme.accentPurple.opacity(0.2))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "sparkles").foregroundStyle(StamerleeTheme.primaryBlue))
-                }
-            }
+            Image(item.iconName)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 44, height: 44)
             .frame(width: 48, height: 48)
 
             Text(item.text)

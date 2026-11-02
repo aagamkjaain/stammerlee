@@ -193,7 +193,6 @@ public final class AppState {
     public init() {}
 
     public func selectTab(_ tab: AppTab) {
-        UIImpactFeedbackGenerator(style: .light).impactOccurred()
         withAnimation(.easeInOut(duration: 0.22)) {
             selectedTab = tab
         }

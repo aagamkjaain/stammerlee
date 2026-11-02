@@ -16,6 +16,7 @@ public struct ProfileView: View {
     @State private var showLegalSheet = false
     @State private var legalSheetTitle = "Terms of Service"
     @State private var legalSheetContent = ""
+    @State private var reminderSuccessTrigger = 0
 
     public init(state: AppState) {
         self.state = state
@@ -77,6 +78,7 @@ public struct ProfileView: View {
                 isPresented: $showLegalSheet
             )
         }
+        .sensoryFeedback(.success, trigger: reminderSuccessTrigger)
     }
 
     // MARK: - Profile Header
@@ -345,7 +347,7 @@ public struct ProfileView: View {
                     .padding(.horizontal, 16)
                     .frame(height: 58)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.haptic)
 
                 Divider()
                     .padding(.horizontal, 16)
@@ -378,7 +380,7 @@ public struct ProfileView: View {
                     .padding(.horizontal, 16)
                     .frame(height: 58)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.haptic)
             }
             .background(StamerleeTheme.profileCard)
             .clipShape(RoundedRectangle(cornerRadius: 17, style: .continuous))
@@ -425,13 +427,12 @@ public struct ProfileView: View {
     // MARK: - Notification Helpers
     private func requestAndScheduleReminder(at time: Date) {
         let center = UNUserNotificationCenter.current()
-        center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, _ in
-            DispatchQueue.main.async {
-                if granted {
-                    scheduleNotification(at: time)
-                } else {
-                    state.reminderEnabled = false
-                }
+        Task { @MainActor in
+            let granted = (try? await center.requestAuthorization(options: [.alert, .sound, .badge])) ?? false
+            if granted {
+                scheduleNotification(at: time)
+            } else {
+                state.reminderEnabled = false
             }
         }
     }
@@ -450,8 +451,7 @@ public struct ProfileView: View {
         let request = UNNotificationRequest(identifier: "daily_practice_reminder", content: content, trigger: trigger)
         center.add(request)
 
-        let feedback = UINotificationFeedbackGenerator()
-        feedback.notificationOccurred(.success)
+        reminderSuccessTrigger += 1
     }
 
     private func cancelReminders() {

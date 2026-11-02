@@ -170,8 +170,6 @@ public struct SummaryView: View {
 
     private func exerciseBlockCard(item: ExerciseHighScoreItem) -> some View {
         Button {
-            let impact = UIImpactFeedbackGenerator(style: .light)
-            impact.impactOccurred()
             state.navigate(to: item.targetScreen)
         } label: {
             VStack(alignment: .leading, spacing: 0) {
@@ -241,25 +239,14 @@ public struct SummaryView: View {
             )
             .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.haptic)
     }
 
     private func summaryAssetImage(named name: String, size: CGFloat = 52) -> some View {
-        Group {
-            if let image = StamerleeImageLoader.loadHeroImage(
-                name: name,
-                fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/\(name).png"
-            ) {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: size, height: size)
-            } else {
-                Image(systemName: "photo")
-                    .font(.system(size: size * 0.6))
-                    .foregroundStyle(summaryBlue)
-            }
-        }
+        Image(name)
+            .resizable()
+            .scaledToFit()
+            .frame(width: size, height: size)
     }
 }
 

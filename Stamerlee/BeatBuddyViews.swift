@@ -38,208 +38,180 @@ private struct BeatBuddyShell<Content: View>: View {
     }
 }
 
-// MARK: - Custom Icons for Practice Selection Screen
-private struct SpeechBubbleIconView: View {
-    var color: Color = Color(red: 120 / 255, green: 105 / 255, blue: 165 / 255)
-
-    var body: some View {
-        ZStack {
-            // Speech bubble outline
-            Path { path in
-                let w: CGFloat = 44
-                let h: CGFloat = 32
-                let r: CGFloat = 12
-
-                // Top left to top right
-                path.move(to: CGPoint(x: r, y: 0))
-                path.addLine(to: CGPoint(x: w - r, y: 0))
-                path.addArc(center: CGPoint(x: w - r, y: r), radius: r, startAngle: .degrees(-90), endAngle: .degrees(0), clockwise: false)
-
-                // Right side down
-                path.addLine(to: CGPoint(x: w, y: h - r))
-                path.addArc(center: CGPoint(x: w - r, y: h - r), radius: r, startAngle: .degrees(0), endAngle: .degrees(90), clockwise: false)
-
-                // Bottom side to tail start
-                path.addLine(to: CGPoint(x: 18, y: h))
-                // Tail pointing down-left
-                path.addLine(to: CGPoint(x: 8, y: h + 7))
-                path.addLine(to: CGPoint(x: 12, y: h))
-
-                // Bottom-left arc
-                path.addArc(center: CGPoint(x: r, y: h - r), radius: r, startAngle: .degrees(90), endAngle: .degrees(180), clockwise: false)
-
-                // Left side up
-                path.addLine(to: CGPoint(x: 0, y: r))
-                path.addArc(center: CGPoint(x: r, y: r), radius: r, startAngle: .degrees(180), endAngle: .degrees(270), clockwise: false)
-                path.closeSubpath()
-            }
-            .stroke(color, style: StrokeStyle(lineWidth: 3.5, lineCap: .round, lineJoin: .round))
-
-            // Two text lines inside the bubble
-            VStack(alignment: .leading, spacing: 4.5) {
-                Capsule()
-                    .fill(color)
-                    .frame(width: 17, height: 3.5)
-                Capsule()
-                    .fill(color)
-                    .frame(width: 11, height: 3.5)
-            }
-            .offset(x: -1, y: -2)
-        }
-        .frame(width: 50, height: 42)
-    }
-}
-
-private struct WaveformIconView: View {
-    var color: Color = Color(red: 120 / 255, green: 105 / 255, blue: 165 / 255)
-
-    var body: some View {
-        HStack(alignment: .center, spacing: 4.5) {
-            Capsule()
-                .fill(color)
-                .frame(width: 4.5, height: 13)
-            Capsule()
-                .fill(color)
-                .frame(width: 4.5, height: 26)
-            Capsule()
-                .fill(color)
-                .frame(width: 4.5, height: 38)
-            Capsule()
-                .fill(color)
-                .frame(width: 4.5, height: 26)
-            Capsule()
-                .fill(color)
-                .frame(width: 4.5, height: 13)
-        }
-        .frame(width: 50, height: 42)
-    }
-}
-
 // MARK: - Practice Option Card
 private struct PracticeOptionCard: View {
     let title: String
     let subtitle: String
-    let icon: AnyView
+    let systemImage: String
     let action: () -> Void
 
     var body: some View {
         Button(action: {
-            let impact = UIImpactFeedbackGenerator(style: .medium)
-            impact.impactOccurred()
             action()
         }) {
-            HStack(alignment: .top, spacing: 14) {
-                VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .center, spacing: 14) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text(title)
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .font(.system(size: 24, weight: .bold, design: .rounded))
                         .foregroundStyle(Color(red: 18 / 255, green: 16 / 255, blue: 38 / 255))
 
                     Text(subtitle)
-                        .font(.system(size: 14, weight: .regular, design: .rounded))
+                        .font(.system(size: 13, weight: .medium, design: .rounded))
                         .foregroundStyle(Color(red: 105 / 255, green: 98 / 255, blue: 142 / 255))
-                        .lineSpacing(3)
+                        .lineSpacing(1.5)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                VStack(alignment: .trailing) {
-                    icon
-
-                    Spacer(minLength: 32)
+                VStack(alignment: .trailing, spacing: 12) {
+                    Image(systemName: systemImage)
+                        .font(.system(size: 24, weight: .semibold))
+                        .foregroundStyle(Color(red: 120 / 255, green: 105 / 255, blue: 165 / 255))
 
                     Image(systemName: "chevron.right")
-                        .font(.system(size: 18, weight: .bold))
+                        .font(.system(size: 14, weight: .bold))
                         .foregroundStyle(Color(red: 108 / 255, green: 92 / 255, blue: 168 / 255))
                 }
             }
-            .padding(.horizontal, 24)
-            .padding(.vertical, 24)
+            .padding(.horizontal, 18)
+            .padding(.vertical, 14)
             .frame(maxWidth: .infinity)
             .background(
                 ZStack(alignment: .topTrailing) {
-                    RoundedRectangle(cornerRadius: 28, style: .continuous)
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
                         .fill(Color(red: 243 / 255, green: 240 / 255, blue: 254 / 255))
 
-                    // Soft subtle lavender ambient highlight
+                    // Soft ambient highlight
                     Circle()
                         .fill(Color(red: 228 / 255, green: 220 / 255, blue: 255 / 255).opacity(0.85))
-                        .frame(width: 140, height: 140)
-                        .offset(x: 35, y: -35)
-                        .blur(radius: 10)
+                        .frame(width: 90, height: 90)
+                        .offset(x: 20, y: -20)
+                        .blur(radius: 8)
                 }
             )
-            .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
-            .shadow(color: Color.black.opacity(0.18), radius: 14, x: 0, y: 8)
+            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .shadow(color: Color.black.opacity(0.10), radius: 6, x: 0, y: 3)
         }
-        .buttonStyle(CardScaleButtonStyle())
-    }
-}
-
-private struct CardScaleButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
-            .animation(.spring(response: 0.25, dampingFraction: 0.75), value: configuration.isPressed)
+        .buttonStyle(.haptic(weight: .medium, pressedScale: 0.98))
     }
 }
 
 // MARK: - 0. Beat Buddy Practice Type Selection Screen (Words / Sounds)
 public struct BeatBuddyPracticeTypeView: View {
     @Bindable public var state: AppState
+    @State private var path: [AppScreen] = []
 
     public init(state: AppState) {
         self.state = state
     }
 
     public var body: some View {
-        ZStack {
-            StamerleeTheme.backgroundDark.ignoresSafeArea()
+        NavigationStack(path: $path) {
+            ZStack {
+                StamerleeTheme.backgroundDark.ignoresSafeArea()
 
-            VStack(alignment: .leading, spacing: 0) {
-                // Back Button
-                BackNavButton {
-                    state.navigate(to: .homeDashboard, forward: false)
-                }
-                .padding(.horizontal, 24)
-                .padding(.top, 16)
-
-                // Headings
-                Text("Practice")
-                    .font(.system(size: 34, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 24)
-                    .padding(.top, 18)
-
-                Text("Practise at your own pace with guided metronome beats.")
-                    .font(.system(size: 15, weight: .regular, design: .rounded))
-                    .foregroundStyle(Color(red: 175 / 255, green: 170 / 255, blue: 205 / 255))
-                    .padding(.horizontal, 24)
-                    .padding(.top, 8)
-                    .padding(.bottom, 28)
-
-                // Cards (Words & Sounds)
-                VStack(spacing: 16) {
-                    PracticeOptionCard(
-                        title: "Words",
-                        subtitle: "Practise words you've struggled with through guided speaking exercises.",
-                        icon: AnyView(SpeechBubbleIconView())
-                    ) {
-                        state.beatBuddyMode = .words
-                        state.navigate(to: .beatBuddyWords)
+                VStack(alignment: .leading, spacing: 0) {
+                    // Back Button
+                    BackNavButton {
+                        state.navigate(to: .homeDashboard, forward: false)
                     }
+                    .padding(.horizontal, 24)
+                    .padding(.top, 16)
 
-                    PracticeOptionCard(
-                        title: "Sounds",
-                        subtitle: "Focus on specific sounds and build confidence through short, targeted exercises.",
-                        icon: AnyView(WaveformIconView())
-                    ) {
-                        state.beatBuddyMode = .sounds
-                        state.navigate(to: .beatBuddySounds)
+                    // Headings
+                    Text("Practice")
+                        .font(.system(size: 34, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 24)
+                        .padding(.top, 18)
+
+                    Text("Practise at your own pace with guided metronome beats.")
+                        .font(.system(size: 15, weight: .regular, design: .rounded))
+                        .foregroundStyle(Color(red: 175 / 255, green: 170 / 255, blue: 205 / 255))
+                        .padding(.horizontal, 24)
+                        .padding(.top, 8)
+                        .padding(.bottom, 20)
+
+                    // Cards (Words & Sounds)
+                    VStack(spacing: 12) {
+                        PracticeOptionCard(
+                            title: "Words",
+                            subtitle: "Practise words you've struggled with through guided speaking exercises.",
+                            systemImage: "text.bubble"
+                        ) {
+                            state.beatBuddyMode = .words
+                            path.append(.beatBuddyWords)
+                        }
+
+                        PracticeOptionCard(
+                            title: "Sounds",
+                            subtitle: "Focus on specific sounds and build confidence through short, targeted exercises.",
+                            systemImage: "waveform"
+                        ) {
+                            state.beatBuddyMode = .sounds
+                            path.append(.beatBuddySounds)
+                        }
                     }
-                }
-                .padding(.horizontal, 24)
+                    .padding(.horizontal, 24)
 
-                Spacer()
+                    Spacer()
+                }
+            }
+            .toolbar(.hidden, for: .navigationBar)
+            .navigationDestination(for: AppScreen.self) { screen in
+                switch screen {
+                case .beatBuddyWords:
+                    BeatBuddyWordsView(state: state, onBack: {
+                        if !path.isEmpty {
+                            path.removeLast()
+                        } else {
+                            state.navigate(to: .beatBuddyPracticeType, forward: false)
+                        }
+                    }, onContinue: {
+                        path.append(.beatBuddyBPM)
+                    })
+                    .navigationBarBackButtonHidden(true)
+
+                case .beatBuddySounds:
+                    BeatBuddySoundsView(state: state, onBack: {
+                        if !path.isEmpty {
+                            path.removeLast()
+                        } else {
+                            state.navigate(to: .beatBuddyPracticeType, forward: false)
+                        }
+                    }, onContinue: {
+                        path.append(.beatBuddyBPM)
+                    })
+                    .navigationBarBackButtonHidden(true)
+
+                case .beatBuddyBPM:
+                    BeatBuddyBPMView(state: state, onBack: {
+                        if !path.isEmpty {
+                            path.removeLast()
+                        } else {
+                            state.navigate(to: state.beatBuddyMode == .sounds ? .beatBuddySounds : .beatBuddyWords, forward: false)
+                        }
+                    }, onStartPractice: {
+                        path.append(.beatBuddyPractice)
+                    })
+                    .navigationBarBackButtonHidden(true)
+
+                case .beatBuddyPractice:
+                    BeatBuddyPracticeView(state: state, onBack: {
+                        if !path.isEmpty {
+                            path.removeLast()
+                        } else {
+                            state.navigate(to: .beatBuddyBPM, forward: false)
+                        }
+                    }, onFinish: {
+                        path.removeAll()
+                        state.navigate(to: .homeDashboard, forward: false)
+                    })
+                    .navigationBarBackButtonHidden(true)
+
+                default:
+                    EmptyView()
+                }
             }
         }
     }
@@ -248,10 +220,14 @@ public struct BeatBuddyPracticeTypeView: View {
 // MARK: - 1. Word Selection Screen
 public struct BeatBuddyWordsView: View {
     @Bindable public var state: AppState
+    public var onBack: (() -> Void)? = nil
+    public var onContinue: (() -> Void)? = nil
     @State private var searchText = ""
 
-    public init(state: AppState) {
+    public init(state: AppState, onBack: (() -> Void)? = nil, onContinue: (() -> Void)? = nil) {
         self.state = state
+        self.onBack = onBack
+        self.onContinue = onContinue
     }
 
     private var allWords: [String] {
@@ -274,7 +250,11 @@ public struct BeatBuddyWordsView: View {
 
     public var body: some View {
         BeatBuddyShell(state: state, onBack: {
-            state.navigate(to: .beatBuddyPracticeType, forward: false)
+            if let onBack {
+                onBack()
+            } else {
+                state.navigate(to: .beatBuddyPracticeType, forward: false)
+            }
         }) {
             VStack(alignment: .leading, spacing: 0) {
                 // Screen Headings
@@ -331,8 +311,6 @@ public struct BeatBuddyWordsView: View {
                     Spacer()
 
                     Button(isAllSelected ? "Deselect all" : "Select all") {
-                        let impact = UIImpactFeedbackGenerator(style: .light)
-                        impact.impactOccurred()
                         withAnimation(.easeInOut(duration: 0.2)) {
                             if isAllSelected {
                                 for word in filteredWords {
@@ -361,8 +339,6 @@ public struct BeatBuddyWordsView: View {
                         ForEach(filteredWords, id: \.self) { word in
                             let isSelected = state.beatBuddySelectedWords.contains(word)
                             Button {
-                                let impact = UIImpactFeedbackGenerator(style: .light)
-                                impact.impactOccurred()
                                 withAnimation(.spring(response: 0.25, dampingFraction: 0.7)) {
                                     if isSelected {
                                         state.beatBuddySelectedWords.remove(word)
@@ -402,7 +378,7 @@ public struct BeatBuddyWordsView: View {
                                 )
                                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.haptic)
                         }
                     }
                     .padding(.horizontal, 24)
@@ -412,17 +388,22 @@ public struct BeatBuddyWordsView: View {
 
                 // Anchored CTA
                 VStack {
-                    PrimaryActionButton(title: "Done") {
+                    PrimaryActionButton(title: "Continue") {
                         if state.beatBuddySelectedWords.isEmpty {
                             state.beatBuddySelectedWords = ["Water", "Coffee"]
                         }
-                        state.navigate(to: .beatBuddyBPM)
+                        if let onContinue {
+                            onContinue()
+                        } else {
+                            state.navigate(to: .beatBuddyBPM)
+                        }
                     }
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
             }
         }
+        .sensoryFeedback(.selection, trigger: state.beatBuddySelectedWords)
     }
 }
 
@@ -548,20 +529,14 @@ public struct ArcBPMDialView: View {
             let frac = adjusted / 270.0
             let newBPM = Int((Double(minBPM) + frac * Double(maxBPM - minBPM)).rounded())
             if newBPM != bpm {
-                let feedback = UISelectionFeedbackGenerator()
-                feedback.selectionChanged()
                 bpm = min(max(newBPM, minBPM), maxBPM)
             }
         } else if adjusted > 270 && adjusted < 315 {
             if bpm != maxBPM {
-                let feedback = UISelectionFeedbackGenerator()
-                feedback.selectionChanged()
                 bpm = maxBPM
             }
         } else {
             if bpm != minBPM {
-                let feedback = UISelectionFeedbackGenerator()
-                feedback.selectionChanged()
                 bpm = minBPM
             }
         }
@@ -601,10 +576,14 @@ private let defaultBeatBuddySounds: [BeatBuddySoundItem] = [
 // MARK: - 2. Sound Selection Screen
 public struct BeatBuddySoundsView: View {
     @Bindable public var state: AppState
+    public var onBack: (() -> Void)? = nil
+    public var onContinue: (() -> Void)? = nil
     @State private var searchText = ""
 
-    public init(state: AppState) {
+    public init(state: AppState, onBack: (() -> Void)? = nil, onContinue: (() -> Void)? = nil) {
         self.state = state
+        self.onBack = onBack
+        self.onContinue = onContinue
     }
 
     private var filteredSounds: [BeatBuddySoundItem] {
@@ -621,7 +600,11 @@ public struct BeatBuddySoundsView: View {
 
     public var body: some View {
         BeatBuddyShell(state: state, onBack: {
-            state.navigate(to: .beatBuddyPracticeType, forward: false)
+            if let onBack {
+                onBack()
+            } else {
+                state.navigate(to: .beatBuddyPracticeType, forward: false)
+            }
         }) {
             VStack(alignment: .leading, spacing: 0) {
                 // Screen Headings
@@ -675,8 +658,6 @@ public struct BeatBuddySoundsView: View {
                     Spacer()
 
                     Button {
-                        let impact = UIImpactFeedbackGenerator(style: .light)
-                        impact.impactOccurred()
                         if isAllSelected {
                             for item in filteredSounds {
                                 state.beatBuddySelectedSounds.remove(item.title)
@@ -702,8 +683,6 @@ public struct BeatBuddySoundsView: View {
                         ForEach(filteredSounds) { item in
                             let isSelected = state.beatBuddySelectedSounds.contains(item.title)
                             Button {
-                                let impact = UIImpactFeedbackGenerator(style: .light)
-                                impact.impactOccurred()
                                 if isSelected {
                                     state.beatBuddySelectedSounds.remove(item.title)
                                 } else {
@@ -745,7 +724,7 @@ public struct BeatBuddySoundsView: View {
                                         .stroke(isSelected ? StamerleeTheme.primaryPurple : Color.white.opacity(0.08), lineWidth: isSelected ? 1.5 : 1)
                                 )
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.haptic)
                         }
                     }
                     .padding(.horizontal, 24)
@@ -759,29 +738,40 @@ public struct BeatBuddySoundsView: View {
                         if state.beatBuddySelectedSounds.isEmpty {
                             state.beatBuddySelectedSounds = ["P, B", "T, D"]
                         }
-                        state.navigate(to: .beatBuddyBPM)
+                        if let onContinue {
+                            onContinue()
+                        } else {
+                            state.navigate(to: .beatBuddyBPM)
+                        }
                     }
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
             }
         }
+        .sensoryFeedback(.selection, trigger: state.beatBuddySelectedSounds)
     }
 }
 
 // MARK: - 3. Select BPM Screen
 public struct BeatBuddyBPMView: View {
     @Bindable public var state: AppState
+    public var onBack: (() -> Void)? = nil
+    public var onStartPractice: (() -> Void)? = nil
     @State private var soundEnabled: Bool = true
     @State private var vibrationEnabled: Bool = true
 
-    public init(state: AppState) {
+    public init(state: AppState, onBack: (() -> Void)? = nil, onStartPractice: (() -> Void)? = nil) {
         self.state = state
+        self.onBack = onBack
+        self.onStartPractice = onStartPractice
     }
 
     public var body: some View {
         BeatBuddyShell(state: state, onBack: {
-            if state.beatBuddyMode == .sounds {
+            if let onBack {
+                onBack()
+            } else if state.beatBuddyMode == .sounds {
                 state.navigate(to: .beatBuddySounds, forward: false)
             } else {
                 state.navigate(to: .beatBuddyWords, forward: false)
@@ -858,18 +848,21 @@ public struct BeatBuddyBPMView: View {
                 // Primary Start Button
                 VStack {
                     PrimaryActionButton(title: "▶ Start Metronome") {
-                        state.navigate(to: .beatBuddyPractice)
+                        if let onStartPractice {
+                            onStartPractice()
+                        } else {
+                            state.navigate(to: .beatBuddyPractice)
+                        }
                     }
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
             }
         }
+        .sensoryFeedback(.selection, trigger: state.beatBuddyBPM)
     }
 
     private func adjustBPM(by delta: Int) {
-        let impact = UIImpactFeedbackGenerator(style: .medium)
-        impact.impactOccurred()
         withAnimation(.spring(response: 0.25, dampingFraction: 0.75)) {
             state.beatBuddyBPM = min(max(state.beatBuddyBPM + delta, 60), 180)
         }
@@ -877,8 +870,6 @@ public struct BeatBuddyBPMView: View {
 
     private func toggleButton(title: String, icon: String, isOn: Bool, action: @escaping () -> Void) -> some View {
         Button(action: {
-            let impact = UIImpactFeedbackGenerator(style: .light)
-            impact.impactOccurred()
             action()
         }) {
             HStack(spacing: 8) {
@@ -898,17 +889,21 @@ public struct BeatBuddyBPMView: View {
                 )
             )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.haptic)
     }
 }
 
 // MARK: - 4. Practice Session Screen
 public struct BeatBuddyPracticeView: View {
     @Bindable public var state: AppState
+    public var onBack: (() -> Void)? = nil
+    public var onFinish: (() -> Void)? = nil
     @State private var index = 0
 
-    public init(state: AppState) {
+    public init(state: AppState, onBack: (() -> Void)? = nil, onFinish: (() -> Void)? = nil) {
         self.state = state
+        self.onBack = onBack
+        self.onFinish = onFinish
     }
 
     private var words: [String] {
@@ -922,7 +917,11 @@ public struct BeatBuddyPracticeView: View {
 
     public var body: some View {
         BeatBuddyShell(state: state, onBack: {
-            state.navigate(to: .beatBuddyBPM, forward: false)
+            if let onBack {
+                onBack()
+            } else {
+                state.navigate(to: .beatBuddyBPM, forward: false)
+            }
         }) {
             VStack(spacing: 0) {
                 // Top Info Bar (Only BPM Badge, no timer, no sound icon, no camera icon)
@@ -999,7 +998,11 @@ public struct BeatBuddyPracticeView: View {
                                 index += 1
                             }
                         } else {
-                            state.navigate(to: .homeDashboard, forward: false)
+                            if let onFinish {
+                                onFinish()
+                            } else {
+                                state.navigate(to: .homeDashboard, forward: false)
+                            }
                         }
                     }
                 }

@@ -9,8 +9,6 @@ public struct DialSceneIntroView: View {
 
     @State private var breatheEffect: Bool = false
 
-    private let heroFallbackPath = "/Users/user89/Documents/stammerlee/Stamerlee/pictures/dialscenehero.png"
-
     public init(
         state: AppState,
         onBack: (() -> Void)? = nil,
@@ -58,29 +56,14 @@ public struct DialSceneIntroView: View {
                 .padding(.top, 22)
 
                 // Hero Illustration
-                ZStack {
-                    if let uiImage = StamerleeImageLoader.loadHeroImage(
-                        name: "DialSceneHero",
-                        fallbackPath: heroFallbackPath
-                    ) {
-                        Image(uiImage: uiImage)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(maxHeight: 360)
-                            .shadow(color: Color.black.opacity(0.35), radius: 20, x: 0, y: 10)
-                            .scaleEffect(breatheEffect ? 1.015 : 0.985)
-                            .animation(.easeInOut(duration: 2.8).repeatForever(autoreverses: true), value: breatheEffect)
-                    } else {
-                        RoundedRectangle(cornerRadius: 24)
-                            .fill(Color(red: 25 / 255, green: 30 / 255, blue: 65 / 255))
-                            .frame(width: 250, height: 230)
-                            .overlay(
-                                Image(systemName: "phone.fill")
-                                    .font(.system(size: 60))
-                                    .foregroundStyle(StamerleeTheme.primaryBlue)
-                            )
-                    }
-                }
+                Image("DialSceneHero")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxHeight: 360)
+                    .shadow(color: Color.black.opacity(0.35), radius: 20, x: 0, y: 10)
+                    .scaleEffect(breatheEffect ? 1.015 : 0.985)
+                    .animation(.easeInOut(duration: 2.8).repeatForever(autoreverses: true), value: breatheEffect)
+                    .accessibilityHidden(true)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 14)
 
@@ -234,7 +217,7 @@ public struct DialSceneView: View {
                             .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.white.opacity(0.08)))
                             .clipShape(RoundedRectangle(cornerRadius: 14))
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.haptic)
                     }
                 }
                 .padding(.horizontal, 24)
@@ -249,8 +232,6 @@ public struct DialSceneView: View {
                 header
                 Spacer()
                 Button {
-                    let impact = UIImpactFeedbackGenerator(style: .light)
-                    impact.impactOccurred()
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                         isDAFActive.toggle()
                     }
@@ -287,8 +268,6 @@ public struct DialSceneView: View {
             Spacer()
 
             Button {
-                let impact = UIImpactFeedbackGenerator(style: .heavy)
-                impact.impactOccurred()
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                     isListening.toggle()
                 }
@@ -315,6 +294,8 @@ public struct DialSceneView: View {
             .padding(.horizontal, 24)
             .padding(.bottom, 24)
         }
+        .sensoryFeedback(.impact(weight: .light), trigger: isDAFActive)
+        .sensoryFeedback(.impact(weight: .heavy), trigger: isListening)
     }
 
     private func bubble(_ speaker: String, _ text: String, isUser: Bool) -> some View {

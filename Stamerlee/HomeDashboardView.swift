@@ -62,8 +62,7 @@ public struct HomeDashboardView: View {
                                 title: "Prolonged Speech",
                                 subtitle: "Practice gently stretching sounds while speaking slowly",
                                 isLocked: false,
-                                iconName: "IconProlongedSpeech",
-                                fallbackPath: "/Users/user89/Documents/stammerlee/Screenshot_2026-10-21_at_11.26.10_PM-removebg-preview 2.png"
+                                iconName: "IconProlongedSpeech"
                             ) {
                                 state.navigate(
                                     to: state.hasSeenProlongedSpeechIntro
@@ -77,8 +76,7 @@ public struct HomeDashboardView: View {
                                 title: "Picture Description",
                                 subtitle: "Describe real-world scenes in detail to practice spontaneous speech flow",
                                 isLocked: false,
-                                iconName: "IconPictureDesc",
-                                fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/IconPictureDesc.png"
+                                iconName: "IconPictureDesc"
                             ) {
                                 state.navigate(
                                     to: state.hasSeenPictureDescriptionIntro
@@ -92,8 +90,7 @@ public struct HomeDashboardView: View {
                                 title: "Dial Scene",
                                 subtitle: "Practice interactive scenario-based phone calls and service counter chats",
                                 isLocked: false,
-                                iconName: "IconDialScene",
-                                fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/IconDialScene.png"
+                                iconName: "IconDialScene"
                             ) {
                                 state.navigate(
                                     to: state.hasSeenDialSceneIntro
@@ -107,8 +104,7 @@ public struct HomeDashboardView: View {
                                 title: "Narration",
                                 subtitle: "Practice reading and telling longer stories while watching yourself in the mirror",
                                 isLocked: false,
-                                iconName: "IconMirrorNarration",
-                                fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/IconMirrorNarration.png"
+                                iconName: "IconMirrorNarration"
                             ) {
                                 state.navigate(
                                     to: state.hasSeenNarrationIntro
@@ -129,8 +125,7 @@ public struct HomeDashboardView: View {
                                 title: "Beat Buddy",
                                 subtitle: "Practice speaking to a steady, rhythmic beat using an interactive metronome",
                                 isLocked: false,
-                                iconName: "BeatBuddyLogo",
-                                fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/IconMirrorNarration.png"
+                                iconName: "BeatBuddyLogo"
                             ) {
                                 state.navigate(to: .beatBuddyPracticeType)
                             }
@@ -188,8 +183,6 @@ public struct HomeDashboardView: View {
             }
 
             Button(action: {
-                let impact = UIImpactFeedbackGenerator(style: .medium)
-                impact.impactOccurred()
                 state.navigate(to: .beatBuddyPracticeType)
             }) {
                 HStack(spacing: 8) {
@@ -204,7 +197,7 @@ public struct HomeDashboardView: View {
                 .background(Color(red: 35 / 255, green: 37 / 255, blue: 62 / 255))
                 .clipShape(Capsule())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.haptic)
         }
         .padding(18)
         .background(
@@ -214,18 +207,14 @@ public struct HomeDashboardView: View {
         .shadow(color: Color.black.opacity(0.06), radius: 7, x: 0, y: 3)
     }
     
-    // MARK: - Exercise List Row
     private func exerciseRow(
         title: String,
         subtitle: String,
         isLocked: Bool,
         iconName: String? = nil,
-        fallbackPath: String? = nil,
         action: @escaping () -> Void
     ) -> some View {
         return Button(action: {
-            let impact = UIImpactFeedbackGenerator(style: isLocked ? .light : .medium)
-            impact.impactOccurred()
             action()
         }) {
             HStack(spacing: 14) {
@@ -240,18 +229,14 @@ public struct HomeDashboardView: View {
                         Image(systemName: "lock.fill")
                             .font(.system(size: 19, weight: .bold))
                             .foregroundStyle(.white)
-                    }.frame(width:75, height:75)
+                    }.frame(width: 75, height: 75)
                 } else {
-                    // Every unlocked exercise uses the same fixed icon treatment.
-                    if let iconName, let fallbackPath,
-                       let uiImage = StamerleeImageLoader.loadHeroImage(name: iconName, fallbackPath: fallbackPath) {
-                        Image(uiImage: uiImage)
+                    if let iconName {
+                        Image(iconName)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 75, height: 75)
-                     
                     }
-
                 }
                 
                 // Title and Subtitle
@@ -277,12 +262,12 @@ public struct HomeDashboardView: View {
                 }
             }
             .padding(.horizontal, 16)
-            .frame(height: 100)
+            .frame(minHeight: 100)
             .background(Color(red: 238 / 255, green: 240 / 255, blue: 250 / 255))
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             .shadow(color: Color.black.opacity(0.04), radius: 5, x: 0, y: 2)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.haptic)
     }
     
     private func triggerLockedAlert(title: String) {
@@ -334,6 +319,7 @@ public struct DashboardTabView: View {
         )
         .toolbarBackground(.visible, for: .tabBar)
         .toolbarColorScheme(.dark, for: .tabBar)
+        .sensoryFeedback(.selection, trigger: state.selectedTab)
         .preferredColorScheme(.dark)
     }
 }
