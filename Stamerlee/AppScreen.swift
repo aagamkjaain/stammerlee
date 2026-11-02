@@ -45,9 +45,17 @@ public enum AppScreen: Hashable, CaseIterable {
     case narrationIntro
     case narrationDifficulty
     case narrationPractice
+    case beatBuddyPracticeType
     case beatBuddyWords
+    case beatBuddySounds
     case beatBuddyBPM
     case beatBuddyPractice
+}
+
+// MARK: - Beat Buddy Mode
+public enum BeatBuddyMode: String, CaseIterable, Sendable {
+    case words
+    case sounds
 }
 
 // MARK: - Sound Option Model
@@ -122,7 +130,9 @@ public final class AppState {
     public var hasSeenNarrationIntro: Bool = false
     public var selectedNarrationDifficulty: String = "Easy"
     public var completedNarrationDifficulties: Set<String> = []
+    public var beatBuddyMode: BeatBuddyMode = .words
     public var beatBuddySelectedWords: Set<String> = ["Water", "University"]
+    public var beatBuddySelectedSounds: Set<String> = ["P, B", "T, D"]
     public var beatBuddyBPM: Int = 120
     public var beatBuddyDurationMinutes: Int = 2
     public var isAudioPracticing: Bool = false

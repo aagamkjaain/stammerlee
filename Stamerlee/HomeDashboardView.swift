@@ -132,7 +132,7 @@ public struct HomeDashboardView: View {
                                 iconName: "BeatBuddyLogo",
                                 fallbackPath: "/Users/user89/Documents/stammerlee/Stamerlee/IconMirrorNarration.png"
                             ) {
-                                state.navigate(to: .beatBuddyWords)
+                                state.navigate(to: .beatBuddyPracticeType)
                             }
                         }
                         
@@ -190,7 +190,7 @@ public struct HomeDashboardView: View {
             Button(action: {
                 let impact = UIImpactFeedbackGenerator(style: .medium)
                 impact.impactOccurred()
-                state.navigate(to: .beatBuddyWords)
+                state.navigate(to: .beatBuddyPracticeType)
             }) {
                 HStack(spacing: 8) {
                     Text("Start Challenge")

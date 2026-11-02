@@ -63,8 +63,14 @@ public struct ContentView: View {
                 case .narrationDifficulty, .narrationPractice:
                     NarrationPracticeView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
+                case .beatBuddyPracticeType:
+                    BeatBuddyPracticeTypeView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
                 case .beatBuddyWords:
                     BeatBuddyWordsView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
+                case .beatBuddySounds:
+                    BeatBuddySoundsView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
                 case .beatBuddyBPM:
                     BeatBuddyBPMView(state: appState)
