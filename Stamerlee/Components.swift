@@ -698,13 +698,13 @@ public struct ProfileAvatar: View {
     }
 
     public var body: some View {
+        let scale = size / 84.0
         ZStack {
             if let imageData, let image = UIImage(data: imageData) {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFill()
             } else {
-                let scale = size / 84.0
                 Circle()
                     .fill(backgroundColor)
                     .padding(8 * scale)
@@ -724,6 +724,8 @@ public struct ProfileAvatar: View {
         .background(Color.black)
         .clipShape(Circle())
         .overlay(Circle().stroke(StamerleeTheme.profileCard, lineWidth: max(1, size / 42.0)))
+        .shadow(color: StamerleeTheme.primaryBlue.opacity(0.22), radius: max(4, size / 8.0), x: 0, y: max(2, size / 20.0))
+        .contentShape(Circle())
     }
 
     private var backgroundColor: Color {
@@ -738,4 +740,43 @@ public struct ProfileAvatar: View {
         style == 2 ? StamerleeTheme.profileCard : StamerleeTheme.backgroundDark
     }
 }
+
+// MARK: - Avatar Interactive Button Style
+public struct AvatarInteractiveButtonStyle: ButtonStyle {
+    public init() {}
+    public func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.90 : 1.0)
+            .animation(.spring(response: 0.22, dampingFraction: 0.68), value: configuration.isPressed)
+    }
+}
+
+// MARK: - Bouncy Card Button Style
+public struct BouncyCardButtonStyle: ButtonStyle {
+    public init() {}
+    public func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
+            .animation(.spring(response: 0.24, dampingFraction: 0.64), value: configuration.isPressed)
+    }
+}
+
+// MARK: - Matched Geometry View Helper
+extension View {
+    @ViewBuilder
+    public func matchedGeometryEffectIfPresent<ID: Hashable>(
+        id: ID,
+        in namespace: Namespace.ID?,
+        properties: MatchedGeometryProperties = .frame,
+        anchor: UnitPoint = .center,
+        isSource: Bool = true
+    ) -> some View {
+        if let namespace {
+            self.matchedGeometryEffect(id: id, in: namespace, properties: properties, anchor: anchor, isSource: isSource)
+        } else {
+            self
+        }
+    }
+}
+
 

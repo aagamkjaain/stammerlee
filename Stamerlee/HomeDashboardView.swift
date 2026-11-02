@@ -5,12 +5,15 @@ import UIKit
 /// Main application hub with daily goals, exercise modules, and bottom tab bar.
 public struct HomeDashboardView: View {
     @Bindable public var state: AppState
+    public var profileNamespace: Namespace.ID? = nil
     
     @State private var showLockedAlert: Bool = false
     @State private var lockedAlertMessage: String = ""
+    @State private var cardsAppeared: Bool = false
     
-    public init(state: AppState) {
+    public init(state: AppState, profileNamespace: Namespace.ID? = nil) {
         self.state = state
+        self.profileNamespace = profileNamespace
     }
     
     public var body: some View {
@@ -30,14 +33,24 @@ public struct HomeDashboardView: View {
                     Spacer()
 
                     Button {
+                        withAnimation(.easeOut(duration: 0.12)) {
+                            cardsAppeared = false
+                        }
                         state.navigate(to: .profile)
                     } label: {
-                        ProfileAvatar(
-                            style: state.profileAvatarStyle,
-                            imageData: state.profileAvatarData,
-                            size: 38
-                        )
+                        if state.currentScreen == .homeDashboard {
+                            ProfileAvatar(
+                                style: state.profileAvatarStyle,
+                                imageData: state.profileAvatarData,
+                                size: 38
+                            )
+                            .matchedGeometryEffectIfPresent(id: "profileAvatarHero", in: profileNamespace)
+                        } else {
+                            Color.clear
+                                .frame(width: 38, height: 38)
+                        }
                     }
+                    .buttonStyle(AvatarInteractiveButtonStyle())
                     .accessibilityLabel("Open profile")
                     
                 }
@@ -50,6 +63,13 @@ public struct HomeDashboardView: View {
                     VStack(alignment: .leading, spacing: 20) {
                         // Daily Challenge Card
                         dailyChallengeCard
+                            .offset(y: cardsAppeared ? 0 : 36)
+                            .scaleEffect(cardsAppeared ? 1.0 : 0.94)
+                            .opacity(cardsAppeared ? 1 : 0)
+                            .animation(
+                                .spring(response: 0.52, dampingFraction: 0.65).delay(0.04),
+                                value: cardsAppeared
+                            )
                         
                         // Exercises Section
                         VStack(alignment: .leading, spacing: 12) {
@@ -113,6 +133,13 @@ public struct HomeDashboardView: View {
                                 )
                             }
                         }
+                        .offset(y: cardsAppeared ? 0 : 40)
+                        .scaleEffect(cardsAppeared ? 1.0 : 0.94)
+                        .opacity(cardsAppeared ? 1 : 0)
+                        .animation(
+                            .spring(response: 0.54, dampingFraction: 0.67).delay(0.08),
+                            value: cardsAppeared
+                        )
                         
                         // Practice Section
                         VStack(alignment: .leading, spacing: 12) {
@@ -130,6 +157,13 @@ public struct HomeDashboardView: View {
                                 state.navigate(to: .beatBuddyPracticeType)
                             }
                         }
+                        .offset(y: cardsAppeared ? 0 : 44)
+                        .scaleEffect(cardsAppeared ? 1.0 : 0.94)
+                        .opacity(cardsAppeared ? 1 : 0)
+                        .animation(
+                            .spring(response: 0.56, dampingFraction: 0.69).delay(0.12),
+                            value: cardsAppeared
+                        )
                         
                         // Extra bottom padding for floating tab bar
                         Spacer().frame(height: 90)
@@ -138,7 +172,20 @@ public struct HomeDashboardView: View {
                 }
             }
         }
-
+        .onAppear {
+            cardsAppeared = false
+            withAnimation {
+                cardsAppeared = true
+            }
+        }
+        .onChange(of: state.currentScreen) { _, newScreen in
+            if newScreen == .homeDashboard {
+                cardsAppeared = false
+                withAnimation {
+                    cardsAppeared = true
+                }
+            }
+        }
         .alert("Module Locked", isPresented: $showLockedAlert) {
             Button("OK", role: .cancel) {}
         } message: {
@@ -267,7 +314,7 @@ public struct HomeDashboardView: View {
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             .shadow(color: Color.black.opacity(0.04), radius: 5, x: 0, y: 2)
         }
-        .buttonStyle(.haptic)
+        .buttonStyle(BouncyCardButtonStyle())
     }
     
     private func triggerLockedAlert(title: String) {
@@ -287,14 +334,16 @@ public struct HomeDashboardView: View {
 
 public struct DashboardTabView: View {
     @Bindable public var state: AppState
+    public var profileNamespace: Namespace.ID? = nil
 
-    public init(state: AppState) {
+    public init(state: AppState, profileNamespace: Namespace.ID? = nil) {
         self.state = state
+        self.profileNamespace = profileNamespace
     }
 
     public var body: some View {
         TabView(selection: state.selectedTabBinding) {
-            HomeDashboardView(state: state)
+            HomeDashboardView(state: state, profileNamespace: profileNamespace)
                 .tabItem {
                     Label(
                         AppTab.home.title,

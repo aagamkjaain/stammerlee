@@ -7,8 +7,10 @@ import UserNotifications
 /// Personal progress and settings screen presented from the dashboard's Profile tab.
 public struct ProfileView: View {
     @Bindable public var state: AppState
+    public var profileNamespace: Namespace.ID? = nil
     @State private var isEditingProfile = false
     @State private var selectedPhoto: PhotosPickerItem?
+    @State private var didAppearContent = false
 
     // Alerts and sheets
     @State private var showLogoutConfirmation = false
@@ -18,8 +20,9 @@ public struct ProfileView: View {
     @State private var legalSheetContent = ""
     @State private var reminderSuccessTrigger = 0
 
-    public init(state: AppState) {
+    public init(state: AppState, profileNamespace: Namespace.ID? = nil) {
         self.state = state
+        self.profileNamespace = profileNamespace
     }
 
     private var formattedReminderTime: String {
@@ -51,10 +54,17 @@ public struct ProfileView: View {
                     .padding(.horizontal, 24)
                     .padding(.top, 22)
                     .padding(.bottom, 36)
+                    .offset(y: didAppearContent ? 0 : 22)
+                    .opacity(didAppearContent ? 1 : 0)
                 }
             }
         }
         .preferredColorScheme(.dark)
+        .onAppear {
+            withAnimation(.spring(response: 0.44, dampingFraction: 0.84).delay(0.04)) {
+                didAppearContent = true
+            }
+        }
         .alert("Log Out", isPresented: $showLogoutConfirmation) {
             Button("Cancel", role: .cancel) {}
             Button("Log Out", role: .destructive) {
@@ -88,6 +98,9 @@ public struct ProfileView: View {
                 .frame(height: 184)
 
             BackNavButton {
+                withAnimation(.easeOut(duration: 0.14)) {
+                    didAppearContent = false
+                }
                 state.navigate(to: .homeDashboard, forward: false)
             }
             .padding(.top, 18)
@@ -95,53 +108,82 @@ public struct ProfileView: View {
             .frame(maxWidth: .infinity, alignment: .topLeading)
 
             VStack(spacing: 9) {
-                ProfileAvatar(style: state.profileAvatarStyle, imageData: state.profileAvatarData)
+                ZStack(alignment: .topTrailing) {
+                    if state.currentScreen == .profile {
+                        ProfileAvatar(
+                            style: state.profileAvatarStyle,
+                            imageData: state.profileAvatarData,
+                            size: 84
+                        )
+                        .matchedGeometryEffectIfPresent(id: "profileAvatarHero", in: profileNamespace)
+                    } else {
+                        Color.clear
+                            .frame(width: 84, height: 84)
+                    }
+
+                    if state.currentScreen == .profile {
+                        Button {
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                                isEditingProfile.toggle()
+                            }
+                        } label: {
+                            ZStack {
+                                Circle()
+                                    .fill(StamerleeTheme.primaryBlue)
+                                    .frame(width: 26, height: 26)
+                                    .overlay(
+                                        Circle()
+                                            .stroke(StamerleeTheme.backgroundDark, lineWidth: 2)
+                                    )
+                                    .shadow(color: .black.opacity(0.35), radius: 3, x: 0, y: 1.5)
+
+                                Image(systemName: isEditingProfile ? "checkmark" : "pencil")
+                                    .font(.system(size: 11, weight: .bold))
+                                    .foregroundStyle(.white)
+                            }
+                        }
+                        .offset(x: 2, y: -2)
+                        .scaleEffect(didAppearContent ? 1.0 : 0.4)
+                        .opacity(didAppearContent ? 1 : 0)
+                        .accessibilityLabel(isEditingProfile ? "Done editing" : "Edit profile picture")
+                        .transition(.opacity.combined(with: .scale(scale: 0.8)))
+                    }
+                }
+                .frame(width: 84, height: 84)
 
                 if isEditingProfile {
                     avatarStylePicker
                 }
 
-                if isEditingProfile {
-                    TextField("Username", text: $state.profileName)
-                        .font(.system(size: 22, weight: .bold, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textPrimaryLight)
-                        .multilineTextAlignment(.center)
-                        .textInputAutocapitalization(.words)
-                        .autocorrectionDisabled()
-                        .padding(.horizontal, 14)
-                        .frame(height: 38)
-                        .background(StamerleeTheme.profileCard)
-                        .clipShape(Capsule())
-                        .padding(.horizontal, 48)
-                } else {
-                    Text(state.profileName)
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textPrimaryDark)
-                        .minimumScaleFactor(0.8)
-                }
+                Group {
+                    if isEditingProfile {
+                        TextField("Username", text: $state.profileName)
+                            .font(.system(size: 22, weight: .bold, design: .rounded))
+                            .foregroundStyle(StamerleeTheme.textPrimaryLight)
+                            .multilineTextAlignment(.center)
+                            .textInputAutocapitalization(.words)
+                            .autocorrectionDisabled()
+                            .padding(.horizontal, 14)
+                            .frame(height: 38)
+                            .background(StamerleeTheme.profileCard)
+                            .clipShape(Capsule())
+                            .padding(.horizontal, 48)
+                    } else {
+                        Text(state.profileName)
+                            .font(.system(size: 28, weight: .bold, design: .rounded))
+                            .foregroundStyle(StamerleeTheme.textPrimaryDark)
+                            .minimumScaleFactor(0.8)
+                    }
 
-                Text("Joined in October 2026")
-                    .font(.system(size: 14, weight: .regular, design: .rounded))
-                    .foregroundStyle(StamerleeTheme.textSecondaryDark)
+                    Text("Joined in October 2026")
+                        .font(.system(size: 14, weight: .regular, design: .rounded))
+                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
+                }
+                .offset(y: didAppearContent ? 0 : 8)
+                .opacity(didAppearContent ? 1 : 0)
             }
             .frame(maxWidth: .infinity)
             .padding(.top, 44)
-
-            Button {
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    isEditingProfile.toggle()
-                }
-            } label: {
-                Image(systemName: isEditingProfile ? "checkmark" : "pencil")
-                    .font(.system(size: 15, weight: .bold))
-                    .foregroundStyle(StamerleeTheme.textPrimaryLight)
-                    .frame(width: 38, height: 38)
-                    .background(StamerleeTheme.profileCard)
-                    .clipShape(Circle())
-            }
-            .padding(.top, 18)
-            .padding(.trailing, 20)
-            .accessibilityLabel(isEditingProfile ? "Save profile" : "Edit profile")
         }
         .task(id: selectedPhoto) {
             guard let selectedPhoto else { return }

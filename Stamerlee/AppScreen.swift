@@ -94,7 +94,13 @@ extension SoundOption {
 @Observable
 public final class AppState {
     public var currentScreen: AppScreen = .launch
+    public var previousScreen: AppScreen? = nil
     public var navigationDirection: Edge = .trailing
+    
+    public var isProfileTransition: Bool {
+        (currentScreen == .profile && previousScreen == .homeDashboard) ||
+        (currentScreen == .homeDashboard && previousScreen == .profile)
+    }
     
     // Auth State (read-only outside AppState; mutate via signIn/logout/deleteAccount)
     public private(set) var userEmail: String = ""
@@ -200,7 +206,14 @@ public final class AppState {
     
     // MARK: - Navigation Actions
     public func navigate(to screen: AppScreen, forward: Bool = true) {
-        withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
+        let isHero = (screen == .profile && currentScreen == .homeDashboard) ||
+                     (screen == .homeDashboard && currentScreen == .profile)
+        let animation: Animation = isHero
+            ? .spring(response: 0.44, dampingFraction: 0.82)
+            : .spring(response: 0.45, dampingFraction: 0.85)
+
+        withAnimation(animation) {
+            self.previousScreen = self.currentScreen
             self.navigationDirection = forward ? .trailing : .leading
             self.currentScreen = screen
         }

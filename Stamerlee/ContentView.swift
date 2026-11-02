@@ -5,6 +5,7 @@ import SwiftUI
 public struct ContentView: View {
     @State private var appState = AppState()
     @State private var showScreenPicker: Bool = false
+    @Namespace private var profileAnimation
     
     public init() {}
     
@@ -42,11 +43,21 @@ public struct ContentView: View {
                     ExploreActivitiesView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
                 case .homeDashboard:
-                    DashboardTabView(state: appState)
-                        .transition(slideTransition(for: appState.navigationDirection))
+                    DashboardTabView(state: appState, profileNamespace: profileAnimation)
+                        .zIndex(appState.currentScreen == .homeDashboard ? 2 : 1)
+                        .transition(
+                            appState.isProfileTransition
+                                ? .opacity
+                                : slideTransition(for: appState.navigationDirection)
+                        )
                 case .profile:
-                    ProfileView(state: appState)
-                        .transition(slideTransition(for: appState.navigationDirection))
+                    ProfileView(state: appState, profileNamespace: profileAnimation)
+                        .zIndex(appState.currentScreen == .profile ? 2 : 1)
+                        .transition(
+                            appState.isProfileTransition
+                                ? .opacity
+                                : slideTransition(for: appState.navigationDirection)
+                        )
                 case .prolongedSpeechIntro:
                     ProlongedSpeechIntroView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
@@ -99,7 +110,12 @@ public struct ContentView: View {
                         .transition(slideTransition(for: appState.navigationDirection))
                 }
             }
-            .animation(.spring(response: 0.45, dampingFraction: 0.88), value: appState.currentScreen)
+            .animation(
+                appState.isProfileTransition
+                    ? .spring(response: 0.44, dampingFraction: 0.82)
+                    : .spring(response: 0.45, dampingFraction: 0.88),
+                value: appState.currentScreen
+            )
             
             // Quick Screen Navigation Pill (for easy previewing & testing)
             if showScreenPicker {
