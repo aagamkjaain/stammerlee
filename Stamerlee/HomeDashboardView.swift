@@ -371,73 +371,66 @@ public struct DashboardTabView: View {
     }
 
     public var body: some View {
-        ZStack(alignment: .bottom) {
-            Group {
-                switch state.selectedTab {
-                case .home:
-                    HomeDashboardView(state: state, profileNamespace: profileNamespace)
-                case .summary:
-                    SummaryView(state: state)
-                }
+        Group {
+            if #available(iOS 18.0, *) {
+                modernTabView
+            } else {
+                legacyTabView
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-            floatingGlassTabBar
         }
-        .ignoresSafeArea(.keyboard, edges: .bottom)
         .preferredColorScheme(.dark)
     }
 
-    // MARK: - Floating Glass Navbar
-    private var floatingGlassTabBar: some View {
-        HStack(spacing: 8) {
-            ForEach(AppTab.allCases, id: \.self) { tab in
-                let isSelected = state.selectedTab == tab
-                Button {
-                    state.selectTab(tab)
-                } label: {
-                    VStack(spacing: 3) {
-                        Image(systemName: tab.systemImage)
-                            .font(.system(size: 20, weight: isSelected ? .semibold : .regular))
-                        Text(tab.title)
-                            .font(.system(size: 11, weight: isSelected ? .semibold : .regular, design: .rounded))
-                    }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 56)
-                    .foregroundStyle(isSelected ? StamerleeTheme.primaryBlue : Color.white.opacity(0.80))
-                    .background {
-                        if #available(iOS 26.0, *), isSelected {
-                            Capsule()
-                                .fill(.clear)
-                                .glassEffect(.regular.tint(StamerleeTheme.primaryBlue.opacity(0.25)).interactive(), in: .capsule)
-                        } else if isSelected {
-                            Capsule()
-                                .fill(StamerleeTheme.primaryBlue.opacity(0.20))
-                        }
-                    }
-                }
-                .buttonStyle(.plain)
+    @available(iOS 18.0, *)
+    private var modernTabView: some View {
+        TabView(selection: state.selectedTabBinding) {
+            Tab(
+                AppTab.home.title,
+                systemImage: AppTab.home.systemImage,
+                value: AppTab.home
+            ) {
+                HomeDashboardView(state: state, profileNamespace: profileNamespace)
+            }
+
+            Tab(
+                AppTab.summary.title,
+                systemImage: AppTab.summary.systemImage,
+                value: AppTab.summary
+            ) {
+                SummaryView(state: state)
             }
         }
-        .padding(6)
-        .background(.ultraThinMaterial, in: Capsule())
-        .overlay {
-            Capsule()
-                .stroke(
-                    LinearGradient(
-                        colors: [
-                            Color.white.opacity(0.30),
-                            Color.white.opacity(0.10)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    lineWidth: 1
-                )
+        .tint(StamerleeTheme.primaryBlue)
+        .sensoryFeedback(.selection, trigger: state.selectedTab)
+    }
+
+    private var legacyTabView: some View {
+        TabView(selection: state.selectedTabBinding) {
+            HomeDashboardView(state: state, profileNamespace: profileNamespace)
+                .tabItem {
+                    Label(
+                        AppTab.home.title,
+                        systemImage: AppTab.home.systemImage
+                    )
+                }
+                .tag(AppTab.home)
+
+            SummaryView(state: state)
+                .tabItem {
+                    Label(
+                        AppTab.summary.title,
+                        systemImage: AppTab.summary.systemImage
+                    )
+                }
+                .tag(AppTab.summary)
         }
-        .shadow(color: Color.black.opacity(0.35), radius: 18, x: 0, y: 9)
-        .padding(.horizontal, 24)
-        .padding(.bottom, 10)
+        .tint(StamerleeTheme.primaryBlue)
+        .toolbarBackground(
+            StamerleeTheme.backgroundDark,
+            for: .tabBar
+        )
+        .toolbarBackground(.visible, for: .tabBar)
+        .toolbarColorScheme(.dark, for: .tabBar)
         .sensoryFeedback(.selection, trigger: state.selectedTab)
     }
 }
