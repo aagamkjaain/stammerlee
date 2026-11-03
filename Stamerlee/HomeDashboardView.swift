@@ -253,60 +253,13 @@ public struct HomeDashboardView: View {
         iconName: String? = nil,
         action: @escaping () -> Void
     ) -> some View {
-        return Button(action: {
-            action()
-        }) {
-            HStack(spacing: 14) {
-                // Leading Icon
-                if isLocked {
-                    // Blue Lock Circle
-                    ZStack {
-                        Circle()
-                            .fill(Color(red: 90 / 255, green: 105 / 255, blue: 180 / 255))
-                            .frame(width: 50, height: 50)
-                        
-                        Image(systemName: "lock.fill")
-                            .font(.system(size: 19, weight: .bold))
-                            .foregroundStyle(.white)
-                    }.frame(width: 75, height: 75)
-                } else {
-                    if let iconName {
-                        Image(iconName)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 75, height: 75)
-                    }
-                }
-                
-                // Title and Subtitle
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(title)
-                        .font(.system(size: 15, weight: .bold, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textPrimaryLight)
-                    
-                    Text(subtitle)
-                        .font(.system(size: 12, weight: .regular, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textSecondaryLight)
-                        .lineLimit(3)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                
-                Spacer()
-                
-                // Trailing Chevron
-                if !isLocked {
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(Color.gray.opacity(0.5))
-                }
-            }
-            .padding(.horizontal, 16)
-            .frame(minHeight: 100)
-            .background(Color(red: 238 / 255, green: 240 / 255, blue: 250 / 255))
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-            .shadow(color: Color.black.opacity(0.04), radius: 5, x: 0, y: 2)
-        }
-        .buttonStyle(BouncyCardButtonStyle())
+        ExerciseRowCard(
+            title: title,
+            subtitle: subtitle,
+            isLocked: isLocked,
+            iconName: iconName,
+            action: action
+        )
     }
     
     private func triggerLockedAlert(title: String) {
@@ -319,7 +272,91 @@ public struct HomeDashboardView: View {
     }
 }
 
+// MARK: - Exercise Row Card
+/// Card that keeps the original lavender look but gains the native iOS 26 glass
+/// "bumpy" press physics via .buttonStyle(.glass). Falls back to BouncyCardButtonStyle
+/// on iOS < 26 so the card colour is always identical.
+private struct ExerciseRowCard: View {
+    let title: String
+    let subtitle: String
+    let isLocked: Bool
+    let iconName: String?
+    let action: () -> Void
 
+    // The original card colour that matches every other card in the app
+    private let cardColor = Color(red: 238 / 255, green: 240 / 255, blue: 250 / 255)
+
+    var body: some View {
+        if #available(iOS 26.0, *) {
+            // Native glass button — .interactive() gives the bumpy spring press
+            // .tint(cardColor) preserves the existing lavender look
+            Button(action: action) { cardContent }
+                .buttonStyle(.glass(.regular.tint(cardColor).interactive()))
+                .buttonBorderShape(.roundedRectangle(radius: 16))
+                .frame(maxWidth: .infinity)
+        } else {
+            Button(action: action) { cardContent }
+                .buttonStyle(BouncyCardButtonStyle())
+                .frame(maxWidth: .infinity)
+        }
+    }
+
+    private var cardContent: some View {
+        HStack(alignment: .center, spacing: 14) {
+            // Leading Icon — fixed width so text always starts at the same X
+            if isLocked {
+                ZStack {
+                    Circle()
+                        .fill(Color(red: 90 / 255, green: 105 / 255, blue: 180 / 255))
+                        .frame(width: 50, height: 50)
+                    Image(systemName: "lock.fill")
+                        .font(.system(size: 19, weight: .bold))
+                        .foregroundStyle(.white)
+                }
+                .frame(width: 75, height: 75)
+            } else if let iconName {
+                Image(iconName)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 75, height: 75)
+            }
+
+            // Title + Subtitle — explicitly left-aligned and expanding
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title)
+                    .font(.system(size: 15, weight: .bold, design: .rounded))
+                    .foregroundStyle(StamerleeTheme.textPrimaryLight)
+                    .multilineTextAlignment(.leading)
+                Text(subtitle)
+                    .font(.system(size: 12, weight: .regular, design: .rounded))
+                    .foregroundStyle(StamerleeTheme.textSecondaryLight)
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(3)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            // Chevron
+            if !isLocked {
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(Color.gray.opacity(0.5))
+            }
+        }
+        .padding(.horizontal, 16)
+        .frame(maxWidth: .infinity, minHeight: 100, alignment: .leading)
+        // On iOS < 26 draw the card background manually; on iOS 26 the glass style owns rendering
+        .background {
+            if #available(iOS 26.0, *) {
+                Color.clear
+            } else {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(cardColor)
+                    .shadow(color: Color.black.opacity(0.04), radius: 5, x: 0, y: 2)
+            }
+        }
+    }
+}
 
 
 

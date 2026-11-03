@@ -40,7 +40,7 @@ public struct PrimaryActionButton: View {
     public let isEnabled: Bool
     public let isLoading: Bool
     public let action: () -> Void
-    
+
     public init(
         title: String,
         icon: String? = nil,
@@ -54,26 +54,43 @@ public struct PrimaryActionButton: View {
         self.isLoading = isLoading
         self.action = action
     }
-    
+
     public var body: some View {
-        Button(action: action) {
-            HStack(spacing: 8) {
-                if isLoading {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                        .scaleEffect(0.9)
-                } else {
-                    if let icon = icon {
-                        Image(systemName: icon)
-                            .font(.system(size: 16, weight: .bold))
-                    }
-                    Text(title)
-                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+        if #available(iOS 26.0, *) {
+            Button(action: action) { label }
+                .buttonStyle(.glass(.regular.tint(StamerleeTheme.primaryBlue).interactive()))
+                .buttonBorderShape(.capsule)
+                .frame(maxWidth: .infinity)
+                .disabled(!isEnabled || isLoading)
+        } else {
+            Button(action: action) { label }
+                .buttonStyle(.haptic(weight: .medium, pressedScale: 0.97))
+                .disabled(!isEnabled || isLoading)
+        }
+    }
+
+    private var label: some View {
+        HStack(spacing: 8) {
+            if isLoading {
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                    .scaleEffect(0.9)
+            } else {
+                if let icon = icon {
+                    Image(systemName: icon)
+                        .font(.system(size: 16, weight: .bold))
                 }
+                Text(title)
+                    .font(.system(size: 16, weight: .semibold, design: .rounded))
             }
-            .foregroundStyle(.white)
-            .frame(maxWidth: .infinity, minHeight: 52)
-            .background(
+        }
+        .foregroundStyle(.white)
+        .frame(maxWidth: .infinity, minHeight: 52)
+        .background {
+            if #available(iOS 26.0, *) {
+                // glass style owns the background
+                Color.clear
+            } else {
                 Group {
                     if isEnabled {
                         StamerleeTheme.primaryBlue
@@ -81,12 +98,10 @@ public struct PrimaryActionButton: View {
                         StamerleeTheme.primaryBlue.opacity(0.4)
                     }
                 }
-            )
-            .clipShape(Capsule())
-            .shadow(color: isEnabled ? StamerleeTheme.primaryBlue.opacity(0.3) : .clear, radius: 10, x: 0, y: 5)
+                .clipShape(Capsule())
+                .shadow(color: isEnabled ? StamerleeTheme.primaryBlue.opacity(0.3) : .clear, radius: 10, x: 0, y: 5)
+            }
         }
-        .buttonStyle(.haptic(weight: .medium, pressedScale: 0.97))
-        .disabled(!isEnabled || isLoading)
     }
 }
 
@@ -109,38 +124,53 @@ public enum SocialAuthType {
 public struct SocialAuthRow: View {
     public let type: SocialAuthType
     public let action: () -> Void
-    
+
     public init(type: SocialAuthType, action: @escaping () -> Void) {
         self.type = type
         self.action = action
     }
-    
+
     public var body: some View {
-        Button(action: action) {
-            HStack(spacing: 14) {
-                // Leading Icon
-                iconView
-                    .frame(width: 24, height: 24)
-                
-                // Title
-                Text(type.title)
-                    .font(.system(size: 15, weight: .medium, design: .rounded))
-                    .foregroundStyle(StamerleeTheme.textPrimaryLight)
-                
-                Spacer()
-                
-                // Trailing Chevron
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(Color.gray.opacity(0.6))
-            }
-            .padding(.horizontal, 18)
-            .frame(minHeight: 65)
-            .background(StamerleeTheme.cardLight)
-            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-            .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
+        if #available(iOS 26.0, *) {
+            Button(action: action) { rowContent }
+                .buttonStyle(.glass(.regular.tint(StamerleeTheme.cardLight).interactive()))
+                .buttonBorderShape(.roundedRectangle(radius: 14))
+                .frame(maxWidth: .infinity)
+        } else {
+            Button(action: action) { rowContent }
+                .buttonStyle(.haptic(pressedScale: 0.98))
         }
-        .buttonStyle(.haptic(pressedScale: 0.98))
+    }
+
+    private var rowContent: some View {
+        HStack(spacing: 14) {
+            // Leading Icon
+            iconView
+                .frame(width: 24, height: 24)
+
+            // Title
+            Text(type.title)
+                .font(.system(size: 15, weight: .medium, design: .rounded))
+                .foregroundStyle(StamerleeTheme.textPrimaryLight)
+
+            Spacer()
+
+            // Trailing Chevron
+            Image(systemName: "chevron.right")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(Color.gray.opacity(0.6))
+        }
+        .padding(.horizontal, 18)
+        .frame(maxWidth: .infinity, minHeight: 65, alignment: .leading)
+        .background {
+            if #available(iOS 26.0, *) {
+                Color.clear
+            } else {
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(StamerleeTheme.cardLight)
+                    .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
+            }
+        }
     }
     
     @ViewBuilder
