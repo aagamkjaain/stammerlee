@@ -2,11 +2,6 @@ import SwiftUI
 
 public struct FluencyLapPracticeView: View {
     @Bindable public var state: AppState
-    @State private var currentWordIndex = 0
-    @State private var isDAFEnabled = true
-    @State private var isListening = false
-    @State private var pulse = false
-    @State private var advanceTask: Task<Void, Never>?
 
     private let words = [
         "Wattttter",
@@ -36,6 +31,55 @@ public struct FluencyLapPracticeView: View {
     }
 
     public var body: some View {
+        SpeakPracticeScreen(
+            prompts: Array(words.prefix(max(state.fluencyLapWordCount, 1))),
+            onBack: {
+                state.navigate(to: .fluencyLap, forward: false)
+            },
+            onFinish: {
+                state.navigate(to: .homeDashboard, forward: false)
+            }
+        )
+    }
+}
+
+public struct SpeakPracticeScreen: View {
+    let prompts: [String]
+    let instruction: String
+    let onBack: () -> Void
+    let onFinish: () -> Void
+    let allowsMultilinePrompt: Bool
+
+    @State private var currentWordIndex = 0
+    @State private var isDAFEnabled = true
+    @State private var isListening = false
+    @State private var pulse = false
+    @State private var advanceTask: Task<Void, Never>?
+
+    public init(
+        prompts: [String],
+        instruction: String = "Stretch the sounds gently as you speak, keeping each word slow, smooth, and relaxed.",
+        allowsMultilinePrompt: Bool = false,
+        onBack: @escaping () -> Void,
+        onFinish: @escaping () -> Void
+    ) {
+        self.prompts = prompts
+        self.instruction = instruction
+        self.allowsMultilinePrompt = allowsMultilinePrompt
+        self.onBack = onBack
+        self.onFinish = onFinish
+    }
+
+    private var promptCount: Int {
+        max(prompts.count, 1)
+    }
+
+    private var currentPrompt: String {
+        guard !prompts.isEmpty else { return "" }
+        return prompts[min(currentWordIndex, prompts.count - 1)]
+    }
+
+    public var body: some View {
         ZStack {
             StamerleeTheme.backgroundDark
                 .ignoresSafeArea()
@@ -43,12 +87,18 @@ public struct FluencyLapPracticeView: View {
             VStack(spacing: 0) {
                 topBar
 
-                instruction
+                Text(instruction)
+                    .font(.system(size: 15, weight: .regular, design: .rounded))
+                    .foregroundStyle(Color(red: 190 / 255, green: 188 / 255, blue: 214 / 255))
+                    .lineSpacing(5)
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .fixedSize(horizontal: false, vertical: true)
                     .padding(.top, 28)
 
                 Spacer(minLength: 12)
 
-                wordDisplay
+                promptDisplay
 
                 progress
                     .padding(.top, 22)
@@ -57,7 +107,7 @@ public struct FluencyLapPracticeView: View {
 
                 microphoneControl
 
-                Text("Tap and speak the word")
+                Text(allowsMultilinePrompt ? "Tap and speak the prompt" : "Tap and speak the word")
                     .font(.system(size: 14, weight: .regular, design: .rounded))
                     .foregroundStyle(Color(red: 194 / 255, green: 192 / 255, blue: 218 / 255))
                     .padding(.top, 8)
@@ -73,7 +123,7 @@ public struct FluencyLapPracticeView: View {
                     }
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 58)
+                    .frame(height: 52)
                 }
                 .buttonStyle(FluencyFinishButtonStyle())
                 .padding(.top, 22)
@@ -92,7 +142,7 @@ public struct FluencyLapPracticeView: View {
         HStack {
             BackNavButton {
                 advanceTask?.cancel()
-                state.navigate(to: .fluencyLap, forward: false)
+                onBack()
             }
 
             Spacer()
@@ -111,42 +161,42 @@ public struct FluencyLapPracticeView: View {
         }
     }
 
-    private var instruction: some View {
-        Text("Stretch the sounds gently as you speak, keeping each word slow, smooth, and relaxed.")
-            .font(.system(size: 15, weight: .regular, design: .rounded))
-            .foregroundStyle(Color(red: 190 / 255, green: 188 / 255, blue: 214 / 255))
-            .lineSpacing(5)
-            .multilineTextAlignment(.leading)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .fixedSize(horizontal: false, vertical: true)
-    }
-
-    private var wordDisplay: some View {
-        let word = words[currentWordIndex % words.count]
-        return (
-            Text(String(word.prefix(1)))
+    private var promptDisplay: some View {
+        let prompt = currentPrompt
+        let highlighted = (
+            Text(String(prompt.prefix(1)))
                 .foregroundStyle(StamerleeTheme.accentPurpleLight)
-            + Text(String(word.dropFirst()))
+            + Text(String(prompt.dropFirst()))
                 .foregroundStyle(.white)
         )
-        .font(.system(size: 46, weight: .bold, design: .rounded))
+        .font(.system(size: promptFontSize, weight: .bold, design: .rounded))
+        .multilineTextAlignment(.center)
         .minimumScaleFactor(0.7)
-        .lineLimit(1)
+        .lineLimit(allowsMultilinePrompt ? 4 : 1)
         .frame(maxWidth: .infinity)
         .id(currentWordIndex)
         .transition(.opacity.combined(with: .scale(scale: 0.96)))
+
+        return highlighted
+    }
+
+    private var promptFontSize: CGFloat {
+        if !allowsMultilinePrompt {
+            return 46
+        }
+        return currentPrompt.count > 42 ? 24 : 28
     }
 
     private var progress: some View {
         VStack(spacing: 10) {
-            Text("\(currentWordIndex + 1) of \(state.fluencyLapWordCount)")
+            Text("\(currentWordIndex + 1) of \(promptCount)")
                 .font(.system(size: 13, weight: .regular, design: .rounded))
                 .foregroundStyle(Color(red: 147 / 255, green: 145 / 255, blue: 175 / 255))
 
             HStack(spacing: 7) {
-                ForEach(0..<min(state.fluencyLapWordCount, 8), id: \.self) { index in
+                ForEach(0..<min(promptCount, 8), id: \.self) { index in
                     Circle()
-                        .fill(index == currentWordIndex % min(state.fluencyLapWordCount, 8) ? .white : Color(red: 80 / 255, green: 79 / 255, blue: 111 / 255))
+                        .fill(index == currentWordIndex % min(promptCount, 8) ? .white : Color(red: 80 / 255, green: 79 / 255, blue: 111 / 255))
                         .frame(width: 7, height: 7)
                 }
             }
@@ -217,7 +267,7 @@ public struct FluencyLapPracticeView: View {
             withAnimation(.easeInOut(duration: 0.22)) {
                 pulse = false
                 isListening = false
-                if currentWordIndex + 1 < state.fluencyLapWordCount {
+                if currentWordIndex + 1 < promptCount {
                     currentWordIndex += 1
                 }
             }
@@ -228,7 +278,7 @@ public struct FluencyLapPracticeView: View {
         advanceTask?.cancel()
         isListening = false
         pulse = false
-        state.navigate(to: .homeDashboard, forward: false)
+        onFinish()
     }
 }
 

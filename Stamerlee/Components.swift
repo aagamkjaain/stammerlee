@@ -39,6 +39,7 @@ public struct PrimaryActionButton: View {
     public let icon: String?
     public let isEnabled: Bool
     public let isLoading: Bool
+    public let compact: Bool
     public let action: () -> Void
 
     public init(
@@ -46,12 +47,14 @@ public struct PrimaryActionButton: View {
         icon: String? = nil,
         isEnabled: Bool = true,
         isLoading: Bool = false,
+        compact: Bool = false,
         action: @escaping () -> Void
     ) {
         self.title = title
         self.icon = icon
         self.isEnabled = isEnabled
         self.isLoading = isLoading
+        self.compact = compact
         self.action = action
     }
 
@@ -70,22 +73,22 @@ public struct PrimaryActionButton: View {
     }
 
     private var label: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: compact ? 6 : 8) {
             if isLoading {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                    .scaleEffect(0.9)
+                    .scaleEffect(compact ? 0.8 : 0.9)
             } else {
                 if let icon = icon {
                     Image(systemName: icon)
-                        .font(.system(size: 16, weight: .bold))
+                        .font(.system(size: compact ? 13 : 16, weight: .bold))
                 }
                 Text(title)
-                    .font(.system(size: 16, weight: .semibold, design: .rounded))
+                    .font(.system(size: compact ? 15 : 16, weight: .semibold, design: .rounded))
             }
         }
         .foregroundStyle(.white)
-        .frame(maxWidth: .infinity, minHeight: 52)
+        .frame(maxWidth: .infinity, minHeight: compact ? 44 : 52)
         .background {
             if #available(iOS 26.0, *) {
                 // glass style owns the background

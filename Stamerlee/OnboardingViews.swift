@@ -294,7 +294,7 @@ public struct OnboardingStepOneView: View {
 
                 Spacer()
 
-                PrimaryActionButton(title: "Next") {
+                PrimaryActionButton(title: "Next", compact: true) {
                     state.navigate(to: .onboarding2, forward: true)
                 }
                 .padding(.horizontal, 28)
@@ -348,7 +348,7 @@ public struct OnboardingStepTwoView: View {
 
                 Spacer()
 
-                PrimaryActionButton(title: "Next") {
+                PrimaryActionButton(title: "Next", compact: true) {
                     state.navigate(to: .dailyGoal, forward: true)
                 }
                 .padding(.horizontal, 28)
@@ -458,7 +458,8 @@ public struct DailyGoalView: View {
                 Spacer()
 
                 PrimaryActionButton(
-                    title: "Next"
+                    title: "Next",
+                    compact: true
                 ) {
                     state.navigate(to: .exploreActivities, forward: true)
                 }
@@ -550,7 +551,7 @@ public struct ExploreActivitiesView: View {
 
                 Spacer()
 
-                PrimaryActionButton(title: "Begin") {
+                PrimaryActionButton(title: "Begin", compact: true) {
                     state.navigate(to: .homeDashboard, forward: true)
                 }
                 .padding(.horizontal, 24)
