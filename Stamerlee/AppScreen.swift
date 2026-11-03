@@ -206,13 +206,7 @@ public final class AppState {
     
     // MARK: - Navigation Actions
     public func navigate(to screen: AppScreen, forward: Bool = true) {
-        let isHero = (screen == .profile && currentScreen == .homeDashboard) ||
-                     (screen == .homeDashboard && currentScreen == .profile)
-        let animation: Animation = isHero
-            ? .spring(response: 0.44, dampingFraction: 0.82)
-            : .spring(response: 0.45, dampingFraction: 0.85)
-
-        withAnimation(animation) {
+        withAnimation(.spring(response: 0.5, dampingFraction: 0.82)) {
             self.previousScreen = self.currentScreen
             self.navigationDirection = forward ? .trailing : .leading
             self.currentScreen = screen
