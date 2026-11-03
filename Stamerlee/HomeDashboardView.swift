@@ -53,8 +53,8 @@ public struct HomeDashboardView: View {
                 // Scrollable Body Content
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 20) {
-                        // Daily Challenge Card
-                        dailyChallengeCard
+                        // Fluency Lap Card
+                        fluencyLapCard
                             .offset(y: cardsAppeared ? 0 : 36)
                             .scaleEffect(cardsAppeared ? 1.0 : 0.94)
                             .opacity(cardsAppeared ? 1 : 0)
@@ -185,47 +185,45 @@ public struct HomeDashboardView: View {
         }
     }
     
-    // MARK: - Daily Challenge Card
-    private var dailyChallengeCard: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            HStack(alignment: .center, spacing: 16) {
-                // Calendar illustration on the LEFT
-                ZStack {
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .fill(Color(red: 226 / 255, green: 224 / 255, blue: 252 / 255).opacity(0.85))
-                        .frame(width: 68, height: 68)
-                        .rotationEffect(.degrees(-5))
+    // MARK: - Fluency Lap Card
+    private var fluencyLapCard: some View {
+        Button(action: {
+            state.navigate(to: .fluencyLap)
+        }) {
+            VStack(alignment: .leading, spacing: 14) {
+                HStack(alignment: .center, spacing: 16) {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 20, style: .continuous)
+                            .fill(Color(red: 226 / 255, green: 224 / 255, blue: 252 / 255).opacity(0.85))
+                            .frame(width: 68, height: 68)
+                            .rotationEffect(.degrees(-5))
 
-                    Image(systemName: "calendar.badge.checkmark")
-                        .font(.system(size: 24, weight: .semibold))
-                        .foregroundStyle(StamerleeTheme.primaryPurple)
-                        .frame(width: 48, height: 48)
-                        .background(Color.white.opacity(0.95), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
-                        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 3)
+                        Image(systemName: "calendar.badge.checkmark")
+                            .font(.system(size: 24, weight: .semibold))
+                            .foregroundStyle(StamerleeTheme.primaryPurple)
+                            .frame(width: 48, height: 48)
+                            .background(Color.white.opacity(0.95), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
+                            .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 3)
+                    }
+                    .frame(width: 68, height: 68)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Fluency Lap")
+                            .font(.system(size: 20, weight: .bold, design: .rounded))
+                            .foregroundStyle(Color(red: 20 / 255, green: 22 / 255, blue: 35 / 255))
+
+                        Text("A short, focused practice session to build fluency and confidence in your speech.")
+                            .font(.system(size: 13, weight: .medium, design: .rounded))
+                            .foregroundStyle(StamerleeTheme.textSecondaryLight)
+                            .lineSpacing(2)
+                            .lineLimit(3)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .frame(width: 68, height: 68)
 
-                // Title and subtitle on the RIGHT
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Daily Challenge")
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
-                        .foregroundStyle(Color(red: 20 / 255, green: 22 / 255, blue: 35 / 255))
-
-                    Text("A short, focused practice session to build fluency and confidence in your speech.")
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textSecondaryLight)
-                        .lineSpacing(2)
-                        .lineLimit(3)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-
-            Button(action: {
-                state.navigate(to: .beatBuddyPracticeType)
-            }) {
                 HStack(spacing: 8) {
-                    Text("Start Challenge")
+                    Text("Start Fluency Lap")
                         .font(.system(size: 15, weight: .bold, design: .rounded))
                     Image(systemName: "chevron.right")
                         .font(.system(size: 12, weight: .bold))
@@ -236,13 +234,10 @@ public struct HomeDashboardView: View {
                 .background(Color(red: 35 / 255, green: 37 / 255, blue: 62 / 255))
                 .clipShape(Capsule())
             }
-            .buttonStyle(.haptic)
         }
+        .buttonStyle(.plain)
         .padding(18)
-        .background(
-            Color(red: 242 / 255, green: 243 / 255, blue: 252 / 255),
-            in: RoundedRectangle(cornerRadius: 24, style: .continuous)
-        )
+        .background(Color(red: 242 / 255, green: 243 / 255, blue: 252 / 255), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
         .shadow(color: Color.black.opacity(0.06), radius: 7, x: 0, y: 3)
     }
     

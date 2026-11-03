@@ -33,6 +33,8 @@ public enum AppScreen: Hashable, CaseIterable {
     case exploreActivities
     case homeDashboard
     case profile
+    case fluencyLap
+    case fluencyLapPractice
     case prolongedSpeechIntro
     case prolongedSpeechDifficulty
     case prolongedPractice
@@ -113,6 +115,7 @@ public final class AppState {
     
     // Dashboard & Tab State
     public var selectedTab: AppTab = .home
+    public var fluencyLapWordCount: Int = 15
     public var dailyPracticeMinutes: Int = 10
     public var currentStreakDays: Int = 3
     public var profileName: String = "John doe"
