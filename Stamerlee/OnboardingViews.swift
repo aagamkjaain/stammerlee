@@ -58,6 +58,7 @@ public struct LoginView: View {
     @State private var emailInput: String = ""
     @State private var passwordInput: String = ""
     @State private var activeSheet: ActiveSheet? = nil
+    @State private var sheetAppeared: Bool = false
 
     private enum ActiveSheet: Identifiable {
         case emailSignIn, terms, privacy
@@ -72,6 +73,7 @@ public struct LoginView: View {
         ZStack(alignment: .bottom) {
             StamerleeTheme.backgroundDark.ignoresSafeArea()
 
+            // Logo — slides up from center in sync with the sheet rising from below
             VStack {
                 Spacer()
                 Text("Stamerlee")
@@ -81,7 +83,10 @@ public struct LoginView: View {
                 Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .offset(y: sheetAppeared ? -190 : 0)
+            .animation(.spring(response: 0.65, dampingFraction: 0.82), value: sheetAppeared)
 
+            // "Get started" tab/sheet — slides up from below
             VStack(alignment: .leading, spacing: 20) {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Get started")
@@ -150,6 +155,14 @@ public struct LoginView: View {
                     )
                     .ignoresSafeArea(edges: .bottom)
             )
+            .offset(y: sheetAppeared ? 0 : 520)
+            .animation(.spring(response: 0.65, dampingFraction: 0.82), value: sheetAppeared)
+        }
+        .onAppear {
+            sheetAppeared = false
+            withAnimation(.spring(response: 0.65, dampingFraction: 0.82).delay(0.06)) {
+                sheetAppeared = true
+            }
         }
         .sheet(item: $activeSheet) { sheet in
             sheetView(for: sheet)

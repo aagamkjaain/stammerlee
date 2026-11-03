@@ -26,7 +26,7 @@ public struct ContentView: View {
                     LoginView(state: appState)
                         .transition(
                             .asymmetric(
-                                insertion: .move(edge: .bottom).combined(with: .opacity),
+                                insertion: .opacity,
                                 removal: slideTransition(for: appState.navigationDirection)
                             )
                         )
@@ -44,20 +44,12 @@ public struct ContentView: View {
                         .transition(slideTransition(for: appState.navigationDirection))
                 case .homeDashboard:
                     DashboardTabView(state: appState, profileNamespace: profileAnimation)
-                        .zIndex(appState.currentScreen == .homeDashboard ? 2 : 1)
-                        .transition(
-                            appState.isProfileTransition
-                                ? .opacity
-                                : slideTransition(for: appState.navigationDirection)
-                        )
+                        .zIndex(1)
+                        .transition(.opacity)
                 case .profile:
                     ProfileView(state: appState, profileNamespace: profileAnimation)
-                        .zIndex(appState.currentScreen == .profile ? 2 : 1)
-                        .transition(
-                            appState.isProfileTransition
-                                ? .opacity
-                                : slideTransition(for: appState.navigationDirection)
-                        )
+                        .zIndex(2)
+                        .transition(.opacity)
                 case .prolongedSpeechIntro:
                     ProlongedSpeechIntroView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
