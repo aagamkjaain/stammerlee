@@ -1,11 +1,30 @@
 import SwiftUI
 
+enum ProfileAvatarSlot {
+    case home
+    case profile
+}
+
+private struct ProfileAvatarFrameReporterKey: EnvironmentKey {
+    static let defaultValue: ((ProfileAvatarSlot, CGRect) -> Void)? = nil
+}
+
+extension EnvironmentValues {
+    var profileAvatarFrameReporter: ((ProfileAvatarSlot, CGRect) -> Void)? {
+        get { self[ProfileAvatarFrameReporterKey.self] }
+        set { self[ProfileAvatarFrameReporterKey.self] = newValue }
+    }
+}
+
 // MARK: - Root Content View
 /// Master container managing transitions across all onboarding, exploration, and practice screens.
 public struct ContentView: View {
     @State private var appState = AppState()
     @State private var showScreenPicker: Bool = false
-    @Namespace private var profileAnimation
+    @State private var homeAvatarFrame: CGRect = .zero
+    @State private var profileAvatarFrame: CGRect = .zero
+    @State private var floatingAvatarFrame: CGRect = .zero
+    @State private var showFloatingAvatar = false
     
     public init() {}
     
@@ -42,13 +61,9 @@ public struct ContentView: View {
                 case .exploreActivities:
                     ExploreActivitiesView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
-                case .homeDashboard:
-                    DashboardTabView(state: appState, profileNamespace: profileAnimation)
+                case .homeDashboard, .profile:
+                    DashboardTabView(state: appState)
                         .zIndex(1)
-                        .transition(.identity)
-                case .profile:
-                    ProfileView(state: appState, profileNamespace: profileAnimation)
-                        .zIndex(2)
                         .transition(.identity)
                 case .fluencyLap:
                     FluencyLapView(state: appState)
@@ -119,12 +134,69 @@ public struct ContentView: View {
             if showScreenPicker {
                 screenPickerOverlay
             }
+
+            if appState.currentScreen == .profile {
+                ProfileView(state: appState)
+                    .zIndex(2)
+            }
+
+            if showFloatingAvatar, floatingAvatarFrame != .zero {
+                GeometryReader { proxy in
+                    ProfileAvatar(
+                        style: appState.profileAvatarStyle,
+                        imageData: appState.profileAvatarData,
+                        size: floatingAvatarFrame.width
+                    )
+                    .frame(
+                        width: floatingAvatarFrame.width,
+                        height: floatingAvatarFrame.height
+                    )
+                    .position(
+                        x: floatingAvatarFrame.midX - proxy.frame(in: .global).minX,
+                        y: floatingAvatarFrame.midY - proxy.frame(in: .global).minY
+                    )
+                    .allowsHitTesting(false)
+                }
+                .zIndex(10)
+            }
+        }
+        .environment(\.profileAvatarFrameReporter) { slot, frame in
+            switch slot {
+            case .home:
+                homeAvatarFrame = frame
+            case .profile:
+                profileAvatarFrame = frame
+            }
         }
         .preferredColorScheme(.dark)
         // Two finger tap anywhere to toggle the quick screen jump bar
         .onTapGesture(count: 2) {
             withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
                 showScreenPicker.toggle()
+            }
+        }
+        .onChange(of: appState.currentScreen) { oldScreen, newScreen in
+            guard oldScreen != newScreen else { return }
+
+            if newScreen == .profile {
+                showFloatingAvatar = true
+                floatingAvatarFrame = homeAvatarFrame
+                DispatchQueue.main.async {
+                    withAnimation(.spring(response: 0.52, dampingFraction: 0.82)) {
+                        floatingAvatarFrame = profileAvatarFrame
+                    }
+                }
+            } else if oldScreen == .profile {
+                showFloatingAvatar = true
+                floatingAvatarFrame = profileAvatarFrame
+                DispatchQueue.main.async {
+                    withAnimation(.spring(response: 0.48, dampingFraction: 0.84)) {
+                        floatingAvatarFrame = homeAvatarFrame
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        showFloatingAvatar = false
+                    }
+                }
             }
         }
     }
