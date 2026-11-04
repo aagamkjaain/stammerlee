@@ -50,6 +50,12 @@ public struct ContentView: View {
                     ProfileView(state: appState, profileNamespace: profileAnimation)
                         .zIndex(2)
                         .transition(.opacity)
+                case .fluencyLap:
+                    FluencyLapView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
+                case .fluencyLapPractice:
+                    FluencyLapPracticeView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
                 case .prolongedSpeechIntro:
                     ProlongedSpeechIntroView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))

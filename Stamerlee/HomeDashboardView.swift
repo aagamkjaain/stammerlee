@@ -53,8 +53,8 @@ public struct HomeDashboardView: View {
                 // Scrollable Body Content
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 20) {
-                        // Daily Challenge Card
-                        dailyChallengeCard
+                        // Fluency Lap Card
+                        fluencyLapCard
                             .offset(y: cardsAppeared ? 0 : 36)
                             .scaleEffect(cardsAppeared ? 1.0 : 0.94)
                             .opacity(cardsAppeared ? 1 : 0)
@@ -64,7 +64,7 @@ public struct HomeDashboardView: View {
                             )
                         
                         // Exercises Section
-                        VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: 8) {
                             Text("Exercises")
                                 .font(.system(size: 17, weight: .bold, design: .rounded))
                                 .foregroundStyle(StamerleeTheme.textPrimaryDark)
@@ -134,7 +134,7 @@ public struct HomeDashboardView: View {
                         )
                         
                         // Practice Section
-                        VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: 8) {
                             Text("Practice")
                                 .font(.system(size: 17, weight: .bold, design: .rounded))
                                 .foregroundStyle(StamerleeTheme.textPrimaryDark)
@@ -185,47 +185,45 @@ public struct HomeDashboardView: View {
         }
     }
     
-    // MARK: - Daily Challenge Card
-    private var dailyChallengeCard: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            HStack(alignment: .center, spacing: 16) {
-                // Calendar illustration on the LEFT
-                ZStack {
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .fill(Color(red: 226 / 255, green: 224 / 255, blue: 252 / 255).opacity(0.85))
-                        .frame(width: 68, height: 68)
-                        .rotationEffect(.degrees(-5))
+    // MARK: - Fluency Lap Card
+    private var fluencyLapCard: some View {
+        Button(action: {
+            state.navigate(to: .fluencyLap)
+        }) {
+            VStack(alignment: .leading, spacing: 14) {
+                HStack(alignment: .center, spacing: 16) {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 20, style: .continuous)
+                            .fill(Color(red: 226 / 255, green: 224 / 255, blue: 252 / 255).opacity(0.85))
+                            .frame(width: 68, height: 68)
+                            .rotationEffect(.degrees(-5))
 
-                    Image(systemName: "calendar.badge.checkmark")
-                        .font(.system(size: 24, weight: .semibold))
-                        .foregroundStyle(StamerleeTheme.primaryPurple)
-                        .frame(width: 48, height: 48)
-                        .background(Color.white.opacity(0.95), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
-                        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 3)
+                        Image(systemName: "calendar.badge.checkmark")
+                            .font(.system(size: 24, weight: .semibold))
+                            .foregroundStyle(StamerleeTheme.primaryPurple)
+                            .frame(width: 48, height: 48)
+                            .background(Color.white.opacity(0.95), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
+                            .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 3)
+                    }
+                    .frame(width: 68, height: 68)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Fluency Lap")
+                            .font(.system(size: 20, weight: .bold, design: .rounded))
+                            .foregroundStyle(Color(red: 20 / 255, green: 22 / 255, blue: 35 / 255))
+
+                        Text("A short, focused practice session to build fluency and confidence in your speech.")
+                            .font(.system(size: 13, weight: .medium, design: .rounded))
+                            .foregroundStyle(StamerleeTheme.textSecondaryLight)
+                            .lineSpacing(2)
+                            .lineLimit(3)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .frame(width: 68, height: 68)
 
-                // Title and subtitle on the RIGHT
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Daily Challenge")
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
-                        .foregroundStyle(Color(red: 20 / 255, green: 22 / 255, blue: 35 / 255))
-
-                    Text("A short, focused practice session to build fluency and confidence in your speech.")
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textSecondaryLight)
-                        .lineSpacing(2)
-                        .lineLimit(3)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-
-            Button(action: {
-                state.navigate(to: .beatBuddyPracticeType)
-            }) {
                 HStack(spacing: 8) {
-                    Text("Start Challenge")
+                    Text("Start Fluency Lap")
                         .font(.system(size: 15, weight: .bold, design: .rounded))
                     Image(systemName: "chevron.right")
                         .font(.system(size: 12, weight: .bold))
@@ -236,13 +234,10 @@ public struct HomeDashboardView: View {
                 .background(Color(red: 35 / 255, green: 37 / 255, blue: 62 / 255))
                 .clipShape(Capsule())
             }
-            .buttonStyle(.haptic)
         }
+        .buttonStyle(.plain)
         .padding(18)
-        .background(
-            Color(red: 242 / 255, green: 243 / 255, blue: 252 / 255),
-            in: RoundedRectangle(cornerRadius: 24, style: .continuous)
-        )
+        .background(Color(red: 242 / 255, green: 243 / 255, blue: 252 / 255), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
         .shadow(color: Color.black.opacity(0.06), radius: 7, x: 0, y: 3)
     }
     
@@ -302,36 +297,36 @@ private struct ExerciseRowCard: View {
     }
 
     private var cardContent: some View {
-        HStack(alignment: .center, spacing: 14) {
+        HStack(alignment: .center, spacing: 12) {
             // Leading Icon — fixed width so text always starts at the same X
             if isLocked {
                 ZStack {
                     Circle()
                         .fill(Color(red: 90 / 255, green: 105 / 255, blue: 180 / 255))
-                        .frame(width: 50, height: 50)
+                        .frame(width: 38, height: 38)
                     Image(systemName: "lock.fill")
-                        .font(.system(size: 19, weight: .bold))
+                        .font(.system(size: 15, weight: .bold))
                         .foregroundStyle(.white)
                 }
-                .frame(width: 75, height: 75)
+                .frame(width: 56, height: 56)
             } else if let iconName {
                 Image(iconName)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 75, height: 75)
+                    .frame(width: 56, height: 56)
             }
 
             // Title + Subtitle — explicitly left-aligned and expanding
-            VStack(alignment: .leading, spacing: 3) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.system(size: 15, weight: .bold, design: .rounded))
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
                     .foregroundStyle(StamerleeTheme.textPrimaryLight)
                     .multilineTextAlignment(.leading)
                 Text(subtitle)
-                    .font(.system(size: 12, weight: .regular, design: .rounded))
+                    .font(.system(size: 11, weight: .regular, design: .rounded))
                     .foregroundStyle(StamerleeTheme.textSecondaryLight)
                     .multilineTextAlignment(.leading)
-                    .lineLimit(3)
+                    .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -339,12 +334,13 @@ private struct ExerciseRowCard: View {
             // Chevron
             if !isLocked {
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.system(size: 11, weight: .semibold))
                     .foregroundStyle(Color.gray.opacity(0.5))
             }
         }
-        .padding(.horizontal, 16)
-        .frame(maxWidth: .infinity, minHeight: 100, alignment: .leading)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .frame(maxWidth: .infinity, minHeight: 72, alignment: .leading)
         // On iOS < 26 draw the card background manually; on iOS 26 the glass style owns rendering
         .background {
             if #available(iOS 26.0, *) {
@@ -371,73 +367,66 @@ public struct DashboardTabView: View {
     }
 
     public var body: some View {
-        ZStack(alignment: .bottom) {
-            Group {
-                switch state.selectedTab {
-                case .home:
-                    HomeDashboardView(state: state, profileNamespace: profileNamespace)
-                case .summary:
-                    SummaryView(state: state)
-                }
+        Group {
+            if #available(iOS 18.0, *) {
+                modernTabView
+            } else {
+                legacyTabView
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-            floatingGlassTabBar
         }
-        .ignoresSafeArea(.keyboard, edges: .bottom)
         .preferredColorScheme(.dark)
     }
 
-    // MARK: - Floating Glass Navbar
-    private var floatingGlassTabBar: some View {
-        HStack(spacing: 8) {
-            ForEach(AppTab.allCases, id: \.self) { tab in
-                let isSelected = state.selectedTab == tab
-                Button {
-                    state.selectTab(tab)
-                } label: {
-                    VStack(spacing: 3) {
-                        Image(systemName: tab.systemImage)
-                            .font(.system(size: 20, weight: isSelected ? .semibold : .regular))
-                        Text(tab.title)
-                            .font(.system(size: 11, weight: isSelected ? .semibold : .regular, design: .rounded))
-                    }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 56)
-                    .foregroundStyle(isSelected ? StamerleeTheme.primaryBlue : Color.white.opacity(0.80))
-                    .background {
-                        if #available(iOS 26.0, *), isSelected {
-                            Capsule()
-                                .fill(.clear)
-                                .glassEffect(.regular.tint(StamerleeTheme.primaryBlue.opacity(0.25)).interactive(), in: .capsule)
-                        } else if isSelected {
-                            Capsule()
-                                .fill(StamerleeTheme.primaryBlue.opacity(0.20))
-                        }
-                    }
-                }
-                .buttonStyle(.plain)
+    @available(iOS 18.0, *)
+    private var modernTabView: some View {
+        TabView(selection: state.selectedTabBinding) {
+            Tab(
+                AppTab.home.title,
+                systemImage: AppTab.home.systemImage,
+                value: AppTab.home
+            ) {
+                HomeDashboardView(state: state, profileNamespace: profileNamespace)
+            }
+
+            Tab(
+                AppTab.summary.title,
+                systemImage: AppTab.summary.systemImage,
+                value: AppTab.summary
+            ) {
+                SummaryView(state: state)
             }
         }
-        .padding(6)
-        .background(.ultraThinMaterial, in: Capsule())
-        .overlay {
-            Capsule()
-                .stroke(
-                    LinearGradient(
-                        colors: [
-                            Color.white.opacity(0.30),
-                            Color.white.opacity(0.10)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    lineWidth: 1
-                )
+        .tint(StamerleeTheme.primaryBlue)
+        .sensoryFeedback(.selection, trigger: state.selectedTab)
+    }
+
+    private var legacyTabView: some View {
+        TabView(selection: state.selectedTabBinding) {
+            HomeDashboardView(state: state, profileNamespace: profileNamespace)
+                .tabItem {
+                    Label(
+                        AppTab.home.title,
+                        systemImage: AppTab.home.systemImage
+                    )
+                }
+                .tag(AppTab.home)
+
+            SummaryView(state: state)
+                .tabItem {
+                    Label(
+                        AppTab.summary.title,
+                        systemImage: AppTab.summary.systemImage
+                    )
+                }
+                .tag(AppTab.summary)
         }
-        .shadow(color: Color.black.opacity(0.35), radius: 18, x: 0, y: 9)
-        .padding(.horizontal, 24)
-        .padding(.bottom, 10)
+        .tint(StamerleeTheme.primaryBlue)
+        .toolbarBackground(
+            StamerleeTheme.backgroundDark,
+            for: .tabBar
+        )
+        .toolbarBackground(.visible, for: .tabBar)
+        .toolbarColorScheme(.dark, for: .tabBar)
         .sensoryFeedback(.selection, trigger: state.selectedTab)
     }
 }
