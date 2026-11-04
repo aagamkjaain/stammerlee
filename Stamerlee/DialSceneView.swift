@@ -99,7 +99,7 @@ public struct DialSceneView: View {
     @State private var stage: Stage
     @State private var isDAFActive: Bool = false
     @State private var isListening: Bool = false
-    @State private var selectedWords: Set<String> = ["Medium", "Special"]
+    @State private var conversationStep = 0
 
     private enum Stage {
         case intro
@@ -257,31 +257,24 @@ public struct DialSceneView: View {
                 .padding(.top, 20)
 
             VStack(alignment: .leading, spacing: 14) {
-                bubble("Barista", "Hi! What can I get for you today?", isUser: false)
-                bubble("You", "A medium iced latte with whole milk and one pump of vanilla, please.", isUser: true)
-                bubble("Barista", "Of course! One medium iced vanilla latte. Anything else on the side?", isUser: false)
-                bubble("You", "What about today's special?", isUser: true)
+                ForEach(Array(conversationMessages.prefix(conversationStep + 1).enumerated()), id: \.offset) { _, message in
+                    bubble(message.speaker, message.text, isUser: message.isUser)
+                }
             }
             .padding(.horizontal, 24)
             .padding(.top, 24)
 
             Spacer()
 
-            Button {
+            SpeechMicrophoneButton(isListening: $isListening) {
+                guard conversationStep + 1 < conversationMessages.count else { return }
+                isListening = true
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                    isListening.toggle()
+                    conversationStep += 1
                 }
-            } label: {
-                ZStack {
-                    Circle()
-                        .fill(Color(red: 205 / 255, green: 215 / 255, blue: 245 / 255))
-                        .frame(width: 76, height: 76)
-                    Circle()
-                        .fill(StamerleeTheme.backgroundDark)
-                        .frame(width: 52, height: 52)
-                    Image(systemName: isListening ? "waveform" : "mic.fill")
-                        .foregroundStyle(isListening ? StamerleeTheme.primaryBlue : .white)
-                        .font(.system(size: 22, weight: .bold))
+                Task { @MainActor in
+                    try? await Task.sleep(for: .milliseconds(500))
+                    isListening = false
                 }
             }
             .frame(maxWidth: .infinity)
@@ -296,6 +289,15 @@ public struct DialSceneView: View {
         }
         .sensoryFeedback(.impact(weight: .light), trigger: isDAFActive)
         .sensoryFeedback(.impact(weight: .heavy), trigger: isListening)
+    }
+
+    private var conversationMessages: [(speaker: String, text: String, isUser: Bool)] {
+        [
+            ("Barista", "Hi! What can I get for you today?", false),
+            ("You", "A medium iced latte with whole milk and one pump of vanilla, please.", true),
+            ("Barista", "Of course! One medium iced vanilla latte. Anything else on the side?", false),
+            ("You", "What about today's special?", true)
+        ]
     }
 
     private func bubble(_ speaker: String, _ text: String, isUser: Bool) -> some View {
@@ -320,10 +322,8 @@ public struct DialSceneView: View {
         ExerciseAnalysisSkeletonView(
             scoreText: "8.4",
             maxScoreText: "/ 10",
-            subtitle: "Choose words to practice using Beat Buddy",
+            subtitle: "Here's a summary of your conversation.",
             affirmation: "Great progress today!",
-            wordsList: sampleWords,
-            selectedWords: $selectedWords,
             onDone: {
                 state.navigate(to: .homeDashboard)
             }

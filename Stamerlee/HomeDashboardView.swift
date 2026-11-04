@@ -146,7 +146,8 @@ public struct HomeDashboardView: View {
                                 isLocked: false,
                                 iconName: "BeatBuddyLogo"
                             ) {
-                                state.navigate(to: .beatBuddyPracticeType)
+                                state.beatBuddyMode = .words
+                                state.navigate(to: .beatBuddyWords)
                             }
                         }
                         .offset(y: cardsAppeared ? 0 : 44)

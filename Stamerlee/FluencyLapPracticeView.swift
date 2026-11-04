@@ -53,7 +53,6 @@ public struct SpeakPracticeScreen: View {
     @State private var currentWordIndex = 0
     @State private var isDAFEnabled = true
     @State private var isListening = false
-    @State private var pulse = false
     @State private var advanceTask: Task<Void, Never>?
 
     public init(
@@ -204,22 +203,59 @@ public struct SpeakPracticeScreen: View {
     }
 
     private var microphoneControl: some View {
-        Button {
+        SpeechMicrophoneButton(isListening: $isListening) {
             startListening()
-        } label: {
+        }
+    }
+
+    private func startListening() {
+        guard !isListening else { return }
+
+        advanceTask?.cancel()
+        isListening = true
+
+        advanceTask = Task { @MainActor in
+            try? await Task.sleep(for: .seconds(2))
+            guard !Task.isCancelled else { return }
+
+            withAnimation(.easeInOut(duration: 0.22)) {
+                isListening = false
+                if currentWordIndex + 1 < promptCount {
+                    currentWordIndex += 1
+                }
+            }
+        }
+    }
+
+    private func finishPractice() {
+        advanceTask?.cancel()
+        isListening = false
+        onFinish()
+    }
+}
+
+public struct SpeechMicrophoneButton: View {
+    @Binding public var isListening: Bool
+    public let action: () -> Void
+    @State private var pulse = false
+
+    public init(isListening: Binding<Bool>, action: @escaping () -> Void) {
+        self._isListening = isListening
+        self.action = action
+    }
+
+    public var body: some View {
+        Button(action: action) {
             ZStack {
                 Circle()
                     .stroke(Color.white.opacity(0.08), lineWidth: 1)
                     .frame(width: 148, height: 148)
                     .scaleEffect(isListening && pulse ? 1.12 : 1)
                     .opacity(isListening ? (pulse ? 0.35 : 0.9) : 1)
-
                 Circle()
                     .stroke(StamerleeTheme.primaryPurple.opacity(isListening ? 0.45 : 0.25), lineWidth: 12)
                     .frame(width: 126, height: 126)
                     .scaleEffect(isListening && pulse ? 1.08 : 1)
-                    .opacity(isListening ? (pulse ? 0.55 : 1) : 1)
-
                 Circle()
                     .fill(
                         RadialGradient(
@@ -232,7 +268,6 @@ public struct SpeakPracticeScreen: View {
                     .frame(width: 96, height: 96)
                     .shadow(color: StamerleeTheme.primaryPurple.opacity(isListening ? 0.95 : 0.7), radius: isListening ? 22 : 16)
                     .scaleEffect(isListening && pulse ? 1.05 : 1)
-
                 Image(systemName: "mic.fill")
                     .font(.system(size: 34, weight: .medium))
                     .foregroundStyle(.white)
@@ -240,45 +275,20 @@ public struct SpeakPracticeScreen: View {
             }
             .frame(width: 168, height: 168)
             .contentShape(Circle())
-            .animation(
-                isListening
-                    ? .easeInOut(duration: 0.75).repeatForever(autoreverses: true)
-                    : .easeOut(duration: 0.2),
-                value: pulse
-            )
         }
         .buttonStyle(.haptic(weight: .medium, pressedScale: 0.96))
         .disabled(isListening)
-        .accessibilityLabel(isListening ? "Listening" : "Speak word")
+        .accessibilityLabel(isListening ? "Listening" : "Speak")
         .sensoryFeedback(.impact(weight: .medium), trigger: isListening)
-    }
-
-    private func startListening() {
-        guard !isListening else { return }
-
-        advanceTask?.cancel()
-        isListening = true
-        pulse = true
-
-        advanceTask = Task { @MainActor in
-            try? await Task.sleep(for: .seconds(2))
-            guard !Task.isCancelled else { return }
-
-            withAnimation(.easeInOut(duration: 0.22)) {
-                pulse = false
-                isListening = false
-                if currentWordIndex + 1 < promptCount {
-                    currentWordIndex += 1
-                }
-            }
+        .onChange(of: isListening) { _, listening in
+            pulse = listening
         }
-    }
-
-    private func finishPractice() {
-        advanceTask?.cancel()
-        isListening = false
-        pulse = false
-        onFinish()
+        .animation(
+            isListening
+                ? .easeInOut(duration: 0.75).repeatForever(autoreverses: true)
+                : .easeOut(duration: 0.2),
+            value: pulse
+        )
     }
 }
 

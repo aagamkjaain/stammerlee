@@ -45,11 +45,11 @@ public struct ContentView: View {
                 case .homeDashboard:
                     DashboardTabView(state: appState, profileNamespace: profileAnimation)
                         .zIndex(1)
-                        .transition(.opacity)
+                        .transition(.identity)
                 case .profile:
                     ProfileView(state: appState, profileNamespace: profileAnimation)
                         .zIndex(2)
-                        .transition(.opacity)
+                        .transition(.identity)
                 case .fluencyLap:
                     FluencyLapView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
@@ -92,7 +92,7 @@ public struct ContentView: View {
                     NarrationPracticeView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
                 case .beatBuddyPracticeType:
-                    BeatBuddyPracticeTypeView(state: appState)
+                    BeatBuddyWordsView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
                 case .beatBuddyWords:
                     BeatBuddyWordsView(state: appState)
