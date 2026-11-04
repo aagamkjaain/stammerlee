@@ -6,7 +6,7 @@ import AVFoundation
 public struct NarrationPracticeView: View {
     @Bindable public var state: AppState
     @State private var showAnalysis = false
-    @State private var selectedWords: Set<String> = ["Dance", "University"]
+    @State private var isListening = false
 
     public init(state: AppState) {
         self.state = state
@@ -76,14 +76,9 @@ public struct NarrationPracticeView: View {
 
             Spacer()
 
-            Button {
+            SpeechMicrophoneButton(isListening: $isListening) {
+                isListening = true
                 complete()
-            } label: {
-                ZStack {
-                    Circle().fill(Color(red: 205 / 255, green: 215 / 255, blue: 245 / 255)).frame(width: 78, height: 78)
-                    Circle().fill(StamerleeTheme.backgroundDark).frame(width: 52, height: 52)
-                    Image(systemName: "mic.fill").foregroundStyle(.white).font(.system(size: 23, weight: .bold))
-                }
             }
             .frame(maxWidth: .infinity)
             .padding(.bottom, 26)
@@ -132,8 +127,6 @@ public struct NarrationPracticeView: View {
         ExerciseAnalysisSkeletonView(
             scoreText: scoreText,
             maxScoreText: "/ 10",
-            wordsList: wordsList,
-            selectedWords: $selectedWords,
             onDone: {
                 state.navigate(to: .homeDashboard)
             }

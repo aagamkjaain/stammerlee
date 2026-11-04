@@ -5,7 +5,7 @@ import SwiftUI
 public struct PictureDescriptionEasyView: View {
     @Bindable public var state: AppState
     @State private var isAnalysisVisible = false
-    @State private var selectedWords: Set<String> = ["Sitting", "Smiling"]
+    @State private var isListening = false
 
     private var difficulty: String {
         state.selectedPictureDescriptionDifficulty
@@ -76,22 +76,11 @@ public struct PictureDescriptionEasyView: View {
 
             Spacer(minLength: 16)
 
-            Button {
+            SpeechMicrophoneButton(isListening: $isListening) {
+                isListening = true
                 completeCurrentDifficulty()
                 withAnimation(.easeInOut(duration: 0.25)) {
                     isAnalysisVisible = true
-                }
-            } label: {
-                ZStack {
-                    Circle()
-                        .fill(Color(red: 205 / 255, green: 215 / 255, blue: 245 / 255))
-                        .frame(width: 78, height: 78)
-                    Circle()
-                        .fill(StamerleeTheme.backgroundDark)
-                        .frame(width: 52, height: 52)
-                    Image(systemName: "mic.fill")
-                        .font(.system(size: 23, weight: .bold))
-                        .foregroundStyle(.white)
                 }
             }
             .frame(maxWidth: .infinity)
@@ -146,8 +135,6 @@ public struct PictureDescriptionEasyView: View {
         ExerciseAnalysisSkeletonView(
             scoreText: scoreText,
             maxScoreText: "/ 10",
-            wordsList: wordsList,
-            selectedWords: $selectedWords,
             onDone: {
                 state.navigate(to: .homeDashboard)
             }

@@ -232,6 +232,7 @@ public struct BeatBuddyWordsView: View {
     public var onBack: (() -> Void)? = nil
     public var onContinue: (() -> Void)? = nil
     @State private var searchText = ""
+    @State private var customWordCountText = ""
 
     public init(state: AppState, onBack: (() -> Void)? = nil, onContinue: (() -> Void)? = nil) {
         self.state = state
@@ -262,7 +263,7 @@ public struct BeatBuddyWordsView: View {
             if let onBack {
                 onBack()
             } else {
-                state.navigate(to: .beatBuddyPracticeType, forward: false)
+                state.navigate(to: .homeDashboard, forward: false)
             }
         }) {
             VStack(alignment: .leading, spacing: 0) {
@@ -278,6 +279,57 @@ public struct BeatBuddyWordsView: View {
                     .foregroundStyle(StamerleeTheme.textSecondaryDark)
                     .padding(.horizontal, 24)
                     .padding(.top, 8)
+
+                HStack(spacing: 10) {
+                    Button {
+                        randomizeWords()
+                    } label: {
+                        Label("Randomize", systemImage: "shuffle")
+                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 14)
+                            .frame(height: 40)
+                            .background(StamerleeTheme.primaryBlue, in: Capsule())
+                    }
+
+                    Menu {
+                        ForEach([10, 15, 20], id: \.self) { count in
+                            Button("\(count) words") {
+                                state.beatBuddyWordCount = count
+                                state.beatBuddyUsesCustomWordCount = false
+                                randomizeWords()
+                            }
+                        }
+                        Button("Custom") {
+                            state.beatBuddyUsesCustomWordCount = true
+                        }
+                    } label: {
+                        Label(
+                            state.beatBuddyUsesCustomWordCount ? "\(state.beatBuddyWordCount) words" : "\(state.beatBuddyWordCount) words",
+                            systemImage: "chevron.down"
+                        )
+                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .foregroundStyle(StamerleeTheme.textPrimaryDark)
+                        .padding(.horizontal, 14)
+                        .frame(height: 40)
+                        .background(Color.white.opacity(0.1), in: Capsule())
+                    }
+
+                    if state.beatBuddyUsesCustomWordCount {
+                        TextField("Count", text: $customWordCountText)
+                            .keyboardType(.numberPad)
+                            .font(.system(size: 13, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.white)
+                            .frame(width: 56, height: 40)
+                            .multilineTextAlignment(.center)
+                            .background(Color.white.opacity(0.1), in: Capsule())
+                            .onSubmit {
+                                applyCustomWordCount()
+                            }
+                    }
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 16)
 
                 // Search Bar
                 HStack(spacing: 12) {
@@ -369,16 +421,16 @@ public struct BeatBuddyWordsView: View {
                                     }
                                 }
                                 .frame(maxWidth: .infinity)
-                                .frame(height: 64)
+                                .frame(height: 44)
                                 .background(
-                                    RoundedRectangle(cornerRadius: 18, style: .continuous).fill(
+                                    Capsule().fill(
                                         isSelected
                                             ? StamerleeTheme.primaryBlue.opacity(0.38)
                                             : Color.white.opacity(0.07)
                                     )
                                 )
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: 18, style: .continuous).stroke(
+                                    Capsule().stroke(
                                         isSelected
                                             ? StamerleeTheme.primaryBlue
                                             : Color.white.opacity(0.12),
@@ -389,6 +441,7 @@ public struct BeatBuddyWordsView: View {
                             }
                             .buttonStyle(.haptic)
                         }
+
                     }
                     .padding(.horizontal, 24)
                     .padding(.top, 8)
@@ -413,6 +466,17 @@ public struct BeatBuddyWordsView: View {
             }
         }
         .sensoryFeedback(.selection, trigger: state.beatBuddySelectedWords)
+    }
+
+    private func applyCustomWordCount() {
+        let count = min(max(Int(customWordCountText) ?? state.beatBuddyWordCount, 1), allWords.count)
+        state.beatBuddyWordCount = count
+        randomizeWords()
+    }
+
+    private func randomizeWords() {
+        let count = min(max(state.beatBuddyWordCount, 1), allWords.count)
+        state.beatBuddySelectedWords = Set(allWords.shuffled().prefix(count))
     }
 }
 

@@ -141,6 +141,8 @@ public final class AppState {
     public var completedNarrationDifficulties: Set<String> = []
     public var beatBuddyMode: BeatBuddyMode = .words
     public var beatBuddySelectedWords: Set<String> = ["Water", "University"]
+    public var beatBuddyWordCount: Int = 10
+    public var beatBuddyUsesCustomWordCount: Bool = false
     public var beatBuddySelectedSounds: Set<String> = ["P, B", "T, D"]
     public var beatBuddyBPM: Int = 120
     public var beatBuddyDurationMinutes: Int = 2
