@@ -41,7 +41,7 @@ public struct ProfileView: View {
                     profileHeader
 
                     VStack(alignment: .leading, spacing: 22) {
-                        statsSection
+//                        statsSection
 
                         dailyGoalCard
 
@@ -199,50 +199,50 @@ public struct ProfileView: View {
         .frame(height: 42)
     }
 
-    // MARK: - Stats Section
-    private var statsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                sectionTitle("Stats")
-
-                Spacer()
-
-                Button {
-                    withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
-                        isEditingProfile.toggle()
-                    }
-                } label: {
-                    HStack(spacing: 5) {
-                        Image(systemName: isEditingProfile ? "checkmark" : "pencil")
-                            .font(.system(size: 11, weight: .bold))
-                        Text(isEditingProfile ? "Done" : "Edit")
-                            .font(.system(size: 13, weight: .bold, design: .rounded))
-                    }
-                    .foregroundStyle(isEditingProfile ? Color.white : StamerleeTheme.primaryBlue)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(
-                        isEditingProfile
-                            ? StamerleeTheme.primaryBlue
-                            : StamerleeTheme.profileCard,
-                        in: Capsule()
-                    )
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel(isEditingProfile ? "Done editing profile" : "Edit name and avatar")
-            }
-
-            VStack(alignment: .leading, spacing: 15) {
-                stat(title: "8 minutes", subtitle: "Average session length")
-                stat(title: "2 sessions", subtitle: "Sessions completed")
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 16)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(StamerleeTheme.profileCard)
-            .clipShape(RoundedRectangle(cornerRadius: 17, style: .continuous))
-        }
-    }
+//    // MARK: - Stats Section
+//    private var statsSection: some View {
+//        VStack(alignment: .leading, spacing: 12) {
+//            HStack {
+//                sectionTitle("Stats")
+//
+//                Spacer()
+//
+//                Button {
+//                    withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+//                        isEditingProfile.toggle()
+//                    }
+//                } label: {
+//                    HStack(spacing: 5) {
+//                        Image(systemName: isEditingProfile ? "checkmark" : "pencil")
+//                            .font(.system(size: 11, weight: .bold))
+//                        Text(isEditingProfile ? "Done" : "Edit")
+//                            .font(.system(size: 13, weight: .bold, design: .rounded))
+//                    }
+//                    .foregroundStyle(isEditingProfile ? Color.white : StamerleeTheme.primaryBlue)
+//                    .padding(.horizontal, 12)
+//                    .padding(.vertical, 6)
+//                    .background(
+//                        isEditingProfile
+//                            ? StamerleeTheme.primaryBlue
+//                            : StamerleeTheme.profileCard,
+//                        in: Capsule()
+//                    )
+//                }
+//                .buttonStyle(.plain)
+//                .accessibilityLabel(isEditingProfile ? "Done editing profile" : "Edit name and avatar")
+//            }
+//
+//            VStack(alignment: .leading, spacing: 15) {
+//                stat(title: "8 minutes", subtitle: "Average session length")
+//                stat(title: "2 sessions", subtitle: "Sessions completed")
+//            }
+//            .padding(.horizontal, 16)
+//            .padding(.vertical, 16)
+//            .frame(maxWidth: .infinity, alignment: .leading)
+//            .background(StamerleeTheme.profileCard)
+//            .clipShape(RoundedRectangle(cornerRadius: 17, style: .continuous))
+//        }
+//    }
 
     // MARK: - Daily Goal Card
     private var dailyGoalCard: some View {
@@ -397,9 +397,7 @@ public struct ProfileView: View {
                             Text("Delete Account")
                                 .font(.system(size: 15, weight: .bold, design: .rounded))
                                 .foregroundStyle(Color.red)
-                            Text("Permanently erase your account and speech progress")
-                                .font(.system(size: 12, weight: .regular, design: .rounded))
-                                .foregroundStyle(Color.red.opacity(0.75))
+                            
                         }
 
                         Spacer()
