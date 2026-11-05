@@ -5,15 +5,13 @@ import UIKit
 /// Main application hub with daily goals, exercise modules, and bottom tab bar.
 public struct HomeDashboardView: View {
     @Bindable public var state: AppState
-    public var profileNamespace: Namespace.ID? = nil
     
     @State private var showLockedAlert: Bool = false
     @State private var lockedAlertMessage: String = ""
     @State private var cardsAppeared: Bool = false
     
-    public init(state: AppState, profileNamespace: Namespace.ID? = nil) {
+    public init(state: AppState) {
         self.state = state
-        self.profileNamespace = profileNamespace
     }
     
     public var body: some View {
@@ -40,12 +38,14 @@ public struct HomeDashboardView: View {
                             imageData: state.profileAvatarData,
                             size: 38
                         )
-                        .matchedGeometryEffectIfPresent(id: "profileAvatarHero", in: profileNamespace)
+                        .opacity(state.currentScreen == .profile ? 0 : 1)
+                        .reportProfileAvatarFrame(.home)
                     }
                     .buttonStyle(AvatarInteractiveButtonStyle())
                     .accessibilityLabel("Open profile")
                     
                 }
+
                 .padding(.horizontal, 24)
                 .padding(.top, 16)
                 .padding(.bottom, 14)
@@ -146,7 +146,6 @@ public struct HomeDashboardView: View {
                                 isLocked: false,
                                 iconName: "BeatBuddyLogo"
                             ) {
-                                state.beatBuddyMode = .words
                                 state.navigate(to: .beatBuddyWords)
                             }
                         }
@@ -185,7 +184,7 @@ public struct HomeDashboardView: View {
             Text(lockedAlertMessage)
         }
     }
-    
+
     // MARK: - Fluency Lap Card
     private var fluencyLapCard: some View {
         Button(action: {
@@ -360,11 +359,9 @@ private struct ExerciseRowCard: View {
 
 public struct DashboardTabView: View {
     @Bindable public var state: AppState
-    public var profileNamespace: Namespace.ID? = nil
 
-    public init(state: AppState, profileNamespace: Namespace.ID? = nil) {
+    public init(state: AppState) {
         self.state = state
-        self.profileNamespace = profileNamespace
     }
 
     public var body: some View {
@@ -386,7 +383,7 @@ public struct DashboardTabView: View {
                 systemImage: AppTab.home.systemImage,
                 value: AppTab.home
             ) {
-                HomeDashboardView(state: state, profileNamespace: profileNamespace)
+                HomeDashboardView(state: state)
             }
 
             Tab(
@@ -403,7 +400,7 @@ public struct DashboardTabView: View {
 
     private var legacyTabView: some View {
         TabView(selection: state.selectedTabBinding) {
-            HomeDashboardView(state: state, profileNamespace: profileNamespace)
+            HomeDashboardView(state: state)
                 .tabItem {
                     Label(
                         AppTab.home.title,

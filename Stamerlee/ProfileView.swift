@@ -3,11 +3,45 @@ import PhotosUI
 import UIKit
 import UserNotifications
 
+private struct ProfileAvatarFrameReportingModifier: ViewModifier {
+    let slot: ProfileAvatarSlot
+    @Environment(\.profileAvatarFrameReporter) private var report
+
+    func body(content: Content) -> some View {
+        content.background {
+            GeometryReader { proxy in
+                Color.clear
+                    .onGeometryChange(for: CGRect.self) {
+                        $0.frame(in: .global)
+                    } action: { frame in
+                        report?(slot, frame)
+                    }
+            }
+        }
+    }
+}
+
+extension View {
+    func reportProfileAvatarFrame(_ slot: ProfileAvatarSlot) -> some View {
+        modifier(ProfileAvatarFrameReportingModifier(slot: slot))
+    }
+
+    func dropIn(_ shown: Bool, index: Int) -> some View {
+        offset(y: shown ? 0 : -48)
+            .opacity(shown ? 1 : 0)
+            .animation(
+                .spring(response: 0.52, dampingFraction: 0.84)
+                    .delay(Double(index) * 0.09),
+                value: shown
+            )
+    }
+}
+
 // MARK: - Profile
 /// Personal progress and settings screen presented from the dashboard's Profile tab.
 public struct ProfileView: View {
     @Bindable public var state: AppState
-    public var profileNamespace: Namespace.ID? = nil
+    @Environment(\.profileAvatarFrameReporter) private var reportAvatarFrame
     @State private var isEditingProfile = false
     @State private var selectedPhoto: PhotosPickerItem?
     @State private var didAppearContent = false
@@ -20,9 +54,8 @@ public struct ProfileView: View {
     @State private var legalSheetContent = ""
     @State private var reminderSuccessTrigger = 0
 
-    public init(state: AppState, profileNamespace: Namespace.ID? = nil) {
+    public init(state: AppState) {
         self.state = state
-        self.profileNamespace = profileNamespace
     }
 
     private var formattedReminderTime: String {
@@ -41,27 +74,29 @@ public struct ProfileView: View {
                     profileHeader
 
                     VStack(alignment: .leading, spacing: 22) {
-                        statsSection
+//                        statsSection
 
                         dailyGoalCard
+                            .dropIn(didAppearContent, index: 0)
 
                         reminderCard
+                            .dropIn(didAppearContent, index: 1)
 
                         accountSection
+                            .dropIn(didAppearContent, index: 2)
 
                         legalHypertextSection
+                            .dropIn(didAppearContent, index: 3)
                     }
                     .padding(.horizontal, 24)
                     .padding(.top, 22)
                     .padding(.bottom, 36)
-                    .offset(y: didAppearContent ? 0 : 22)
-                    .opacity(didAppearContent ? 1 : 0)
                 }
             }
         }
         .preferredColorScheme(.dark)
         .onAppear {
-            withAnimation(.spring(response: 0.44, dampingFraction: 0.84).delay(0.04)) {
+            withAnimation(.spring(response: 0.48, dampingFraction: 0.84)) {
                 didAppearContent = true
             }
         }
@@ -110,7 +145,8 @@ public struct ProfileView: View {
                     imageData: state.profileAvatarData,
                     size: 84
                 )
-                .matchedGeometryEffectIfPresent(id: "profileAvatarHero", in: profileNamespace)
+                .opacity(0)
+                .reportProfileAvatarFrame(.profile)
 
                 if isEditingProfile {
                     avatarStylePicker
@@ -142,6 +178,10 @@ public struct ProfileView: View {
                 }
                 .offset(y: didAppearContent ? 0 : 8)
                 .opacity(didAppearContent ? 1 : 0)
+                .animation(
+                    .spring(response: 0.44, dampingFraction: 0.84).delay(0.08),
+                    value: didAppearContent
+                )
             }
             .frame(maxWidth: .infinity)
             .padding(.top, 44)
@@ -199,50 +239,50 @@ public struct ProfileView: View {
         .frame(height: 42)
     }
 
-    // MARK: - Stats Section
-    private var statsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                sectionTitle("Stats")
-
-                Spacer()
-
-                Button {
-                    withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
-                        isEditingProfile.toggle()
-                    }
-                } label: {
-                    HStack(spacing: 5) {
-                        Image(systemName: isEditingProfile ? "checkmark" : "pencil")
-                            .font(.system(size: 11, weight: .bold))
-                        Text(isEditingProfile ? "Done" : "Edit")
-                            .font(.system(size: 13, weight: .bold, design: .rounded))
-                    }
-                    .foregroundStyle(isEditingProfile ? Color.white : StamerleeTheme.primaryBlue)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(
-                        isEditingProfile
-                            ? StamerleeTheme.primaryBlue
-                            : StamerleeTheme.profileCard,
-                        in: Capsule()
-                    )
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel(isEditingProfile ? "Done editing profile" : "Edit name and avatar")
-            }
-
-            VStack(alignment: .leading, spacing: 15) {
-                stat(title: "8 minutes", subtitle: "Average session length")
-                stat(title: "2 sessions", subtitle: "Sessions completed")
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 16)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(StamerleeTheme.profileCard)
-            .clipShape(RoundedRectangle(cornerRadius: 17, style: .continuous))
-        }
-    }
+//    // MARK: - Stats Section
+//    private var statsSection: some View {
+//        VStack(alignment: .leading, spacing: 12) {
+//            HStack {
+//                sectionTitle("Stats")
+//
+//                Spacer()
+//
+//                Button {
+//                    withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+//                        isEditingProfile.toggle()
+//                    }
+//                } label: {
+//                    HStack(spacing: 5) {
+//                        Image(systemName: isEditingProfile ? "checkmark" : "pencil")
+//                            .font(.system(size: 11, weight: .bold))
+//                        Text(isEditingProfile ? "Done" : "Edit")
+//                            .font(.system(size: 13, weight: .bold, design: .rounded))
+//                    }
+//                    .foregroundStyle(isEditingProfile ? Color.white : StamerleeTheme.primaryBlue)
+//                    .padding(.horizontal, 12)
+//                    .padding(.vertical, 6)
+//                    .background(
+//                        isEditingProfile
+//                            ? StamerleeTheme.primaryBlue
+//                            : StamerleeTheme.profileCard,
+//                        in: Capsule()
+//                    )
+//                }
+//                .buttonStyle(.plain)
+//                .accessibilityLabel(isEditingProfile ? "Done editing profile" : "Edit name and avatar")
+//            }
+//
+//            VStack(alignment: .leading, spacing: 15) {
+//                stat(title: "8 minutes", subtitle: "Average session length")
+//                stat(title: "2 sessions", subtitle: "Sessions completed")
+//            }
+//            .padding(.horizontal, 16)
+//            .padding(.vertical, 16)
+//            .frame(maxWidth: .infinity, alignment: .leading)
+//            .background(StamerleeTheme.profileCard)
+//            .clipShape(RoundedRectangle(cornerRadius: 17, style: .continuous))
+//        }
+//    }
 
     // MARK: - Daily Goal Card
     private var dailyGoalCard: some View {
@@ -397,9 +437,7 @@ public struct ProfileView: View {
                             Text("Delete Account")
                                 .font(.system(size: 15, weight: .bold, design: .rounded))
                                 .foregroundStyle(Color.red)
-                            Text("Permanently erase your account and speech progress")
-                                .font(.system(size: 12, weight: .regular, design: .rounded))
-                                .foregroundStyle(Color.red.opacity(0.75))
+                            
                         }
 
                         Spacer()
