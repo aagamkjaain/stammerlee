@@ -222,75 +222,6 @@ public struct BackNavButton: View {
     }
 }
 
-// MARK: - Option Selection Row (Radio / Checkmark)
-public struct OptionSelectRow: View {
-    public let option: SoundOption
-    public let isSelected: Bool
-    public let onSelect: () -> Void
-    
-    public init(option: SoundOption, isSelected: Bool, onSelect: @escaping () -> Void) {
-        self.option = option
-        self.isSelected = isSelected
-        self.onSelect = onSelect
-    }
-
-    public var body: some View {
-        Button(action: {
-            onSelect()
-        }) {
-            HStack(spacing: 12) {
-                // Title and optional example subtitle
-                VStack(alignment: .leading, spacing: 3) {
-                    if let subtitle = option.subtitle {
-                        HStack(spacing: 4) {
-                            Text(option.title)
-                                .font(.system(size: 15, weight: .semibold, design: .rounded))
-                                .foregroundStyle(StamerleeTheme.textPrimaryLight)
-                            
-                            Text("(\(subtitle))")
-                                .font(.system(size: 14, weight: .regular, design: .rounded))
-                                .foregroundStyle(StamerleeTheme.textSecondaryLight)
-                        }
-                    } else {
-                        Text(option.title)
-                            .font(.system(size: 15, weight: .medium, design: .rounded))
-                            .foregroundStyle(StamerleeTheme.textPrimaryLight)
-                    }
-                }
-                
-                Spacer()
-                
-                // Custom Radio / Checked Indicator
-                ZStack {
-                    if isSelected {
-                        Circle()
-                            .fill(StamerleeTheme.primaryBlue)
-                            .frame(width: 22, height: 22)
-                        
-                        Image(systemName: "checkmark")
-                            .font(.system(size: 11, weight: .bold))
-                            .foregroundStyle(.white)
-                            .transition(.scale.combined(with: .opacity))
-                    } else {
-                        Circle()
-                            .stroke(Color(red: 210 / 255, green: 215 / 255, blue: 228 / 255), lineWidth: 1.8)
-                            .frame(width: 22, height: 22)
-                    }
-                }
-                .animation(.spring(response: 0.25, dampingFraction: 0.7), value: isSelected)
-            }
-            .padding(.vertical, 14)
-            .padding(.horizontal, 16)
-            .background(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(isSelected ? StamerleeTheme.primaryBlue.opacity(0.06) : Color.clear)
-            )
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.haptic)
-    }
-}
-
 // MARK: - Universal Difficulty Card
 public struct DifficultyCard: View {
     public let title: String
@@ -452,6 +383,8 @@ public struct ExerciseAnalysisSkeletonView: View {
     public let maxScoreText: String
     public let subtitle: String
     public let affirmation: String?
+    public let previousScoreText: String
+    public let highScoreText: String
     public let onDone: () -> Void
 
     public init(
@@ -459,12 +392,16 @@ public struct ExerciseAnalysisSkeletonView: View {
         maxScoreText: String = "/ 10",
         subtitle: String = "Here's a summary of this exercise.",
         affirmation: String? = nil,
+        previousScoreText: String = "8.4",
+        highScoreText: String = "9.6",
         onDone: @escaping () -> Void
     ) {
         self.scoreText = scoreText
         self.maxScoreText = maxScoreText
         self.subtitle = subtitle
         self.affirmation = affirmation
+        self.previousScoreText = previousScoreText
+        self.highScoreText = highScoreText
         self.onDone = onDone
     }
 
@@ -475,7 +412,7 @@ public struct ExerciseAnalysisSkeletonView: View {
         let clean = scoreText.replacingOccurrences(of: "%", with: "").trimmingCharacters(in: .whitespaces)
         let value = Double(clean) ?? 8.0
         if value >= 8.5 {
-            return "You did great today!!"
+            return "You did great today 🎉"
         } else if value >= 7.5 {
             return "Great progress today!"
         } else {
@@ -489,53 +426,56 @@ public struct ExerciseAnalysisSkeletonView: View {
                 .ignoresSafeArea()
 
             VStack(alignment: .leading, spacing: 0) {
-                // Top Title Bar
+                HStack(spacing: 8) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 13, weight: .medium))
+                    Text("Back")
+                        .font(.system(size: 14, weight: .medium, design: .rounded))
+                }
+                .foregroundStyle(StamerleeTheme.textSecondaryDark)
+                .padding(.horizontal, 24)
+                .padding(.top, 18)
+
                 Text("Analysis")
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .font(.system(size: 24, weight: .bold, design: .rounded))
                     .foregroundStyle(StamerleeTheme.textPrimaryDark)
                     .padding(.horizontal, 24)
-                    .padding(.top, 24)
-                    .padding(.bottom, 16)
+                    .padding(.top, 14)
 
-                // Big Affirmation & Prominent Score Display (Made bigger to occupy the upper area)
-                VStack(spacing: 12) {
+                VStack(spacing: 10) {
                     Text(computedAffirmation)
-                        .font(.system(size: 30, weight: .bold, design: .rounded))
+                        .font(.system(size: 20, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 24)
 
                     Text("YOU SCORED")
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                        .font(.system(size: 14, weight: .bold, design: .rounded))
                         .foregroundStyle(StamerleeTheme.textSecondaryDark)
                         .tracking(1.4)
-                        .padding(.top, 4)
+                        .padding(.top, 2)
 
-                    HStack(alignment: .firstTextBaseline, spacing: 6) {
-                        Text(scoreText)
-                            .font(.system(size: 72, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
-                        if !maxScoreText.isEmpty {
-                            Text(maxScoreText)
-                                .font(.system(size: 28, weight: .bold, design: .rounded))
-                                .foregroundStyle(StamerleeTheme.textSecondaryDark)
-                        }
-                    }
+                    scoreRing
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.top, 36)
-                .padding(.bottom, 48)
+                .padding(.bottom, 38)
 
-                // Summary Subtitle
-                Text(subtitle)
-                    .font(.system(size: 13, weight: .regular, design: .rounded))
-                    .foregroundStyle(StamerleeTheme.textSecondaryDark)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.bottom, 18)
+                HStack(spacing: 0) {
+                    scoreSummary(title: "PREVIOUS SESSION", value: previousScoreText)
+                    Divider()
+                        .frame(height: 52)
+                        .overlay(Color.white.opacity(0.18))
+                    scoreSummary(title: "HIGH SCORE", value: highScoreText)
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 74)
+                .background(Color(red: 238 / 255, green: 236 / 255, blue: 255 / 255))
+                .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                .padding(.horizontal, 56)
 
-                Spacer(minLength: 20)
+                Spacer()
 
-                // Bottom CTA Button ("Done")
                 VStack {
                     PrimaryActionButton(title: "Done", action: onDone)
                 }
@@ -543,6 +483,51 @@ public struct ExerciseAnalysisSkeletonView: View {
                 .padding(.bottom, 24)
             }
         }
+    }
+
+    private var scoreRing: some View {
+        let score = min(max(Double(scoreText.replacingOccurrences(of: "%", with: "")) ?? 0, 0), 10)
+        let progress = CGFloat(score / 10)
+
+        return ZStack {
+            Circle()
+                .stroke(Color.purple.opacity(0.18), lineWidth: 14)
+            Circle()
+                .trim(from: 0, to: progress)
+                .stroke(
+                    AngularGradient(
+                        colors: [.purple, .pink.opacity(0.9), .purple],
+                        center: .center
+                    ),
+                    style: StrokeStyle(lineWidth: 14, lineCap: .round)
+                )
+                .rotationEffect(.degrees(135))
+                .shadow(color: .purple.opacity(0.7), radius: 10)
+
+            VStack(spacing: 0) {
+                Text(scoreText)
+                    .font(.system(size: 42, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+                Text(maxScoreText)
+                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                    .foregroundStyle(StamerleeTheme.textSecondaryDark)
+            }
+        }
+        .frame(width: 132, height: 132)
+        .padding(.top, 2)
+    }
+
+    private func scoreSummary(title: String, value: String) -> some View {
+        VStack(spacing: 6) {
+            Text(title)
+                .font(.system(size: 6, weight: .bold, design: .rounded))
+                .tracking(1.2)
+                .foregroundStyle(Color.indigo.opacity(0.55))
+            Text(value)
+                .font(.system(size: 24, weight: .bold, design: .rounded))
+                .foregroundStyle(Color(red: 18 / 255, green: 22 / 255, blue: 58 / 255))
+        }
+        .frame(maxWidth: .infinity)
     }
 }
 
@@ -647,4 +632,3 @@ extension View {
         }
     }
 }
-

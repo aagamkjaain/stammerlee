@@ -112,9 +112,6 @@ public struct ContentView: View {
                 case .beatBuddyWords:
                     BeatBuddyWordsView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
-                case .beatBuddySounds:
-                    BeatBuddySoundsView(state: appState)
-                        .transition(slideTransition(for: appState.navigationDirection))
                 case .beatBuddyBPM:
                     BeatBuddyBPMView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))

@@ -146,7 +146,6 @@ public struct HomeDashboardView: View {
                                 isLocked: false,
                                 iconName: "BeatBuddyLogo"
                             ) {
-                                state.beatBuddyMode = .words
                                 state.navigate(to: .beatBuddyWords)
                             }
                         }

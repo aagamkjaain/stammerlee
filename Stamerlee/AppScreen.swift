@@ -49,47 +49,8 @@ public enum AppScreen: Hashable, CaseIterable {
     case narrationPractice
     case beatBuddyPracticeType
     case beatBuddyWords
-    case beatBuddySounds
     case beatBuddyBPM
     case beatBuddyPractice
-}
-
-// MARK: - Beat Buddy Mode
-public enum BeatBuddyMode: String, CaseIterable, Sendable {
-    case words
-    case sounds
-}
-
-// MARK: - Sound Option Model
-public struct SoundOption: Identifiable, Hashable {
-    public let id: String
-    public let title: String
-    public let subtitle: String?
-    public let isCustom: Bool
-    
-    public init(id: String, title: String, subtitle: String? = nil, isCustom: Bool = false) {
-        self.id = id
-        self.title = title
-        self.subtitle = subtitle
-        self.isCustom = isCustom
-    }
-    
-    public var displayLabel: String {
-        if let subtitle = subtitle {
-            return "\(title) (\(subtitle))"
-        }
-        return title
-    }
-}
-
-// MARK: - Predefined Sound Options
-extension SoundOption {
-    public static let sampleOptions: [SoundOption] = [
-        SoundOption(id: "pb", title: "P, B", subtitle: "Please, book"),
-        SoundOption(id: "td", title: "T, D", subtitle: "Today, do"),
-        SoundOption(id: "kg", title: "K, G", subtitle: "Come, go"),
-        SoundOption(id: "other", title: "Something else", subtitle: nil, isCustom: true)
-    ]
 }
 
 // MARK: - App State (Modern @Observable)
@@ -108,10 +69,6 @@ public final class AppState {
     public private(set) var userEmail: String = ""
     public private(set) var isAuthenticated: Bool = false
     public private(set) var authMethod: String? = nil
-    
-    // Challenging Sounds Selection
-    public var selectedSoundIds: Set<String> = ["td"] // Default "T, D" selected as in screenshot
-    public var customSoundInput: String = ""
     
     // Dashboard & Tab State
     public var selectedTab: AppTab = .home
@@ -139,11 +96,9 @@ public final class AppState {
     public var hasSeenNarrationIntro: Bool = false
     public var selectedNarrationDifficulty: String = "Easy"
     public var completedNarrationDifficulties: Set<String> = []
-    public var beatBuddyMode: BeatBuddyMode = .words
     public var beatBuddySelectedWords: Set<String> = ["Water", "University"]
     public var beatBuddyWordCount: Int = 10
     public var beatBuddyUsesCustomWordCount: Bool = false
-    public var beatBuddySelectedSounds: Set<String> = ["P, B", "T, D"]
     public var beatBuddyBPM: Int = 120
     public var beatBuddyDurationMinutes: Int = 2
     public var isAudioPracticing: Bool = false
@@ -218,20 +173,6 @@ public final class AppState {
         }
     }
     
-    public func toggleSound(id: String) {
-        withAnimation(.easeInOut(duration: 0.2)) {
-            if selectedSoundIds.contains(id) {
-                selectedSoundIds.remove(id)
-            } else {
-                selectedSoundIds.insert(id)
-            }
-        }
-    }
-    
-    public func isSoundSelected(id: String) -> Bool {
-        selectedSoundIds.contains(id)
-    }
-
     public func isProlongedDifficultyUnlocked(_ difficulty: String) -> Bool {
         true
     }
