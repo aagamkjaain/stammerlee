@@ -208,13 +208,12 @@ public struct ContentView: View {
             return
         }
 
-        let springDuration = 0.52
-
-        withAnimation(.spring(response: 0.52, dampingFraction: 0.82)) {
+        withAnimation(
+            .spring(response: 0.52, dampingFraction: 0.82),
+            completionCriteria: .logicallyComplete
+        ) {
             avatarHeroFrame = targetFrame
-        }
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + springDuration) {
+        } completion: {
             avatarHeroVisible = false
             appState.heroAvatarHiddenSlot = nil
             appState.isHeroAvatarTransitionActive = false

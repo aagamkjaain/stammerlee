@@ -222,6 +222,85 @@ public struct BackNavButton: View {
     }
 }
 
+// MARK: - Option Selection Row (Radio / Checkmark)
+public struct SoundOption: Hashable {
+    public let title: String
+    public let subtitle: String?
+
+    public init(title: String, subtitle: String? = nil) {
+        self.title = title
+        self.subtitle = subtitle
+    }
+}
+
+public struct OptionSelectRow: View {
+    public let option: SoundOption
+    public let isSelected: Bool
+    public let onSelect: () -> Void
+    
+    public init(option: SoundOption, isSelected: Bool, onSelect: @escaping () -> Void) {
+        self.option = option
+        self.isSelected = isSelected
+        self.onSelect = onSelect
+    }
+
+    public var body: some View {
+        Button(action: {
+            onSelect()
+        }) {
+            HStack(spacing: 12) {
+                // Title and optional example subtitle
+                VStack(alignment: .leading, spacing: 3) {
+                    if let subtitle = option.subtitle {
+                        HStack(spacing: 4) {
+                            Text(option.title)
+                                .font(.system(size: 15, weight: .semibold, design: .rounded))
+                                .foregroundStyle(StamerleeTheme.textPrimaryLight)
+                            
+                            Text("(\(subtitle))")
+                                .font(.system(size: 14, weight: .regular, design: .rounded))
+                                .foregroundStyle(StamerleeTheme.textSecondaryLight)
+                        }
+                    } else {
+                        Text(option.title)
+                            .font(.system(size: 15, weight: .medium, design: .rounded))
+                            .foregroundStyle(StamerleeTheme.textPrimaryLight)
+                    }
+                }
+                
+                Spacer()
+                
+                // Custom Radio / Checked Indicator
+                ZStack {
+                    if isSelected {
+                        Circle()
+                            .fill(StamerleeTheme.primaryBlue)
+                            .frame(width: 22, height: 22)
+                        
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundStyle(.white)
+                            .transition(.scale.combined(with: .opacity))
+                    } else {
+                        Circle()
+                            .stroke(Color(red: 210 / 255, green: 215 / 255, blue: 228 / 255), lineWidth: 1.8)
+                            .frame(width: 22, height: 22)
+                    }
+                }
+                .animation(.spring(response: 0.25, dampingFraction: 0.7), value: isSelected)
+            }
+            .padding(.vertical, 14)
+            .padding(.horizontal, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(isSelected ? StamerleeTheme.primaryBlue.opacity(0.06) : Color.clear)
+            )
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.haptic)
+    }
+}
+
 // MARK: - Universal Difficulty Card
 public struct DifficultyCard: View {
     public let title: String
@@ -376,6 +455,36 @@ public struct ExerciseIntroSkeletonView: View {
     }
 }
 
+// MARK: - Speech Microphone Button
+public struct SpeechMicrophoneButton: View {
+    @Binding public var isListening: Bool
+    public let action: () -> Void
+
+    public init(isListening: Binding<Bool>, action: @escaping () -> Void) {
+        self._isListening = isListening
+        self.action = action
+    }
+
+    public var body: some View {
+        Button(action: action) {
+            HStack(spacing: 10) {
+                Image(systemName: isListening ? "waveform" : "mic.fill")
+                    .font(.system(size: 18, weight: .bold))
+
+                Text(isListening ? "Listening..." : "Tap to speak")
+                    .font(.system(size: 16, weight: .semibold, design: .rounded))
+            }
+            .foregroundStyle(.white)
+            .frame(maxWidth: .infinity, minHeight: 52)
+            .background(StamerleeTheme.primaryBlue)
+            .clipShape(Capsule())
+        }
+        .buttonStyle(.haptic(weight: .medium, pressedScale: 0.97))
+        .padding(.horizontal, 24)
+        .accessibilityLabel(isListening ? "Listening" : "Tap to speak")
+    }
+}
+
 // MARK: - Exercise Analysis Skeleton View
 /// Standardized result/analysis screen matching the Prolonged Speech design for all exercises.
 public struct ExerciseAnalysisSkeletonView: View {
@@ -383,26 +492,46 @@ public struct ExerciseAnalysisSkeletonView: View {
     public let maxScoreText: String
     public let subtitle: String
     public let affirmation: String?
-    public let previousScoreText: String
-    public let highScoreText: String
+    public let wordsList: [String]
+    @Binding public var selectedWords: Set<String>
     public let onDone: () -> Void
+
+    @State private var showAllWordsSheet: Bool = false
 
     public init(
         scoreText: String,
         maxScoreText: String = "/ 10",
-        subtitle: String = "Here's a summary of this exercise.",
+        subtitle: String = "Tap words you want Beat Buddy to revisit",
         affirmation: String? = nil,
-        previousScoreText: String = "8.4",
-        highScoreText: String = "9.6",
+        wordsList: [String],
+        selectedWords: Binding<Set<String>>,
         onDone: @escaping () -> Void
     ) {
         self.scoreText = scoreText
         self.maxScoreText = maxScoreText
         self.subtitle = subtitle
         self.affirmation = affirmation
-        self.previousScoreText = previousScoreText
-        self.highScoreText = highScoreText
+        self.wordsList = wordsList
+        self._selectedWords = selectedWords
         self.onDone = onDone
+    }
+
+    public init(
+        scoreText: String,
+        maxScoreText: String = "/ 10",
+        subtitle: String = "Here's a summary of this exercise.",
+        affirmation: String? = nil,
+        onDone: @escaping () -> Void
+    ) {
+        self.init(
+            scoreText: scoreText,
+            maxScoreText: maxScoreText,
+            subtitle: subtitle,
+            affirmation: affirmation,
+            wordsList: [],
+            selectedWords: .constant([]),
+            onDone: onDone
+        )
     }
 
     private var computedAffirmation: String {
@@ -412,11 +541,25 @@ public struct ExerciseAnalysisSkeletonView: View {
         let clean = scoreText.replacingOccurrences(of: "%", with: "").trimmingCharacters(in: .whitespaces)
         let value = Double(clean) ?? 8.0
         if value >= 8.5 {
-            return "You did great today 🎉"
+            return "You did great today!!"
         } else if value >= 7.5 {
             return "Great progress today!"
         } else {
             return "You can improve, keep practicing!"
+        }
+    }
+
+    private var isAllSelected: Bool {
+        !wordsList.isEmpty && selectedWords.count >= wordsList.count
+    }
+
+    private func toggleSelectAll() {
+        withAnimation(.easeInOut(duration: 0.2)) {
+            if isAllSelected {
+                selectedWords.removeAll()
+            } else {
+                selectedWords = Set(wordsList)
+            }
         }
     }
 
@@ -426,59 +569,99 @@ public struct ExerciseAnalysisSkeletonView: View {
                 .ignoresSafeArea()
 
             VStack(alignment: .leading, spacing: 0) {
-                HStack(spacing: 8) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 13, weight: .medium))
-                    Text("Back")
-                        .font(.system(size: 14, weight: .medium, design: .rounded))
-                }
-                .foregroundStyle(StamerleeTheme.textSecondaryDark)
-                .padding(.horizontal, 24)
-                .padding(.top, 18)
-
+                // Top Title Bar
                 Text("Analysis")
-                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                    .font(.system(size: 32, weight: .bold, design: .rounded))
                     .foregroundStyle(StamerleeTheme.textPrimaryDark)
                     .padding(.horizontal, 24)
-                    .padding(.top, 14)
+                    .padding(.top, 24)
+                    .padding(.bottom, 16)
 
-                VStack(alignment: .center, spacing: 10) {
+                // Big Affirmation & Prominent Score Display (Made bigger to occupy the upper area)
+                VStack(spacing: 12) {
                     Text(computedAffirmation)
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                        .font(.system(size: 30, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 24)
 
                     Text("YOU SCORED")
-                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .font(.system(size: 20, weight: .bold, design: .rounded))
                         .foregroundStyle(StamerleeTheme.textSecondaryDark)
                         .tracking(1.4)
-                        .padding(.top, 2)
+                        .padding(.top, 4)
 
-                    scoreRing
-                        .padding(.top, 8)
+                    HStack(alignment: .firstTextBaseline, spacing: 6) {
+                        Text(scoreText)
+                            .font(.system(size: 72, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
+                        if !maxScoreText.isEmpty {
+                            Text(maxScoreText)
+                                .font(.system(size: 28, weight: .bold, design: .rounded))
+                                .foregroundStyle(StamerleeTheme.textSecondaryDark)
+                        }
+                    }
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.top, 24)
-                .padding(.bottom, 20)
+                .padding(.top, 36)
+                .padding(.bottom, 48)
 
-                Spacer(minLength: 12)
+                // Instructions Subtitle
+                Text(subtitle)
+                    .font(.system(size: 13, weight: .regular, design: .rounded))
+                    .foregroundStyle(StamerleeTheme.textSecondaryDark)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding(.bottom, 18)
 
-                HStack(spacing: 0) {
-                    scoreSummary(title: "PREVIOUS SESSION", value: previousScoreText)
-                    Divider()
-                        .frame(height: 52)
-                        .overlay(Color.white.opacity(0.18))
-                    scoreSummary(title: "HIGH SCORE", value: highScoreText)
+                // Action Row: Counter + Single "Select all / Deselect all" Toggle Button
+                HStack {
+                    Text("\(selectedWords.count) selected")
+                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
+
+                    Spacer()
+
+                    Button(isAllSelected ? "Deselect all" : "Select all") {
+                        toggleSelectAll()
+                    }
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .foregroundStyle(StamerleeTheme.primaryBlue)
                 }
-                .frame(maxWidth: .infinity)
-                .frame(height: 88)
-                .background(Color(red: 238 / 255, green: 236 / 255, blue: 255 / 255))
-                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                .padding(.horizontal, 20)
+                .padding(.horizontal, 24)
+                .padding(.bottom, 14)
 
-                Spacer()
+                // 2-Column Word Grid (Older sleek capsule design)
+                LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
+                    ForEach(Array(wordsList.prefix(6)), id: \.self) { word in
+                        let isSelected = selectedWords.contains(word)
+                        wordButton(word: word, isSelected: isSelected) {
+                            toggleWordSelection(word)
+                        }
+                    }
+                }
+                .padding(.horizontal, 24)
 
+                // Hyperlink-style "View more" button
+                if wordsList.count > 6 {
+                    Button {
+                        showAllWordsSheet = true
+                    } label: {
+                        HStack(spacing: 4) {
+                            Text("View more")
+                                .underline()
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 11, weight: .semibold))
+                        }
+                        .font(.system(size: 13.5, weight: .semibold, design: .rounded))
+                        .foregroundStyle(StamerleeTheme.primaryBlue)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding(.top, 14)
+                }
+
+                Spacer(minLength: 20)
+
+                // Bottom CTA Button ("Done")
                 VStack {
                     PrimaryActionButton(title: "Done", action: onDone)
                 }
@@ -486,50 +669,110 @@ public struct ExerciseAnalysisSkeletonView: View {
                 .padding(.bottom, 24)
             }
         }
+        .sensoryFeedback(.selection, trigger: selectedWords)
+        .sheet(isPresented: $showAllWordsSheet) {
+            wordsSheetView
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+                .presentationBackground(StamerleeTheme.backgroundDark)
+                .ignoresSafeArea()
+        }
     }
 
-    private var scoreRing: some View {
-        let score = min(max(Double(scoreText.replacingOccurrences(of: "%", with: "")) ?? 0, 0), 10)
-        let progress = CGFloat(score / 10)
+    private var wordsSheetView: some View {
+        NavigationStack {
+            ZStack {
+                StamerleeTheme.backgroundDark
+                    .ignoresSafeArea()
 
-        return ZStack {
-            Circle()
-                .stroke(Color.purple.opacity(0.14), lineWidth: 12)
-            Circle()
-                .trim(from: 0, to: progress)
-                .stroke(
-                    AngularGradient(
-                        colors: [.purple, .pink.opacity(0.9), .purple],
-                        center: .center
-                    ),
-                    style: StrokeStyle(lineWidth: 12, lineCap: .round)
-                )
-                .rotationEffect(.degrees(135))
-                .shadow(color: .purple.opacity(0.18), radius: 7)
+                ScrollView(.vertical, showsIndicators: true) {
+                    VStack(alignment: .leading, spacing: 16) {
+                        HStack {
+                            Text("\(selectedWords.count) of \(wordsList.count) selected")
+                                .font(.system(size: 13, weight: .medium, design: .rounded))
+                                .foregroundStyle(StamerleeTheme.textSecondaryDark)
 
-            VStack(spacing: 2) {
-                Text(scoreText)
-                    .font(.system(size: 42, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
-                Text(maxScoreText)
-                    .font(.system(size: 16, weight: .bold, design: .rounded))
-                    .foregroundStyle(StamerleeTheme.textSecondaryDark)
+                            Spacer()
+
+                            Button(isAllSelected ? "Deselect all" : "Select all") {
+                                toggleSelectAll()
+                            }
+                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                            .foregroundStyle(StamerleeTheme.primaryBlue)
+                        }
+                        .padding(.horizontal, 24)
+                        .padding(.top, 12)
+
+                        LazyVGrid(
+                            columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)],
+                            spacing: 12
+                        ) {
+                            ForEach(wordsList, id: \.self) { word in
+                                let isSelected = selectedWords.contains(word)
+                                wordButton(word: word, isSelected: isSelected) {
+                                    toggleWordSelection(word)
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 24)
+                        .padding(.bottom, 32)
+                    }
+                }
+            }
+            .navigationTitle("Practice Words")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(StamerleeTheme.backgroundDark, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") {
+                        showAllWordsSheet = false
+                    }
+                    .font(.system(size: 15, weight: .bold, design: .rounded))
+                    .foregroundStyle(StamerleeTheme.primaryBlue)
+                }
             }
         }
-        .frame(width: 172, height: 172)
+        .ignoresSafeArea()
     }
 
-    private func scoreSummary(title: String, value: String) -> some View {
-        VStack(spacing: 6) {
-            Text(title)
-                .font(.system(size: 6, weight: .bold, design: .rounded))
-                .tracking(1.2)
-                .foregroundStyle(Color.indigo.opacity(0.55))
-            Text(value)
-                .font(.system(size: 24, weight: .bold, design: .rounded))
-                .foregroundStyle(Color(red: 18 / 255, green: 22 / 255, blue: 58 / 255))
+    private func toggleWordSelection(_ word: String) {
+        withAnimation(.spring(response: 0.25, dampingFraction: 0.7)) {
+            if selectedWords.contains(word) {
+                selectedWords.remove(word)
+            } else {
+                selectedWords.insert(word)
+            }
         }
-        .frame(maxWidth: .infinity)
+    }
+
+    // MARK: - Word Selection Pill (Older clean capsule design)
+    private func wordButton(word: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(word)
+                .font(.system(size: 13.5, weight: isSelected ? .bold : .medium, design: .rounded))
+                .foregroundStyle(isSelected ? .white : StamerleeTheme.textSecondaryDark)
+                .frame(maxWidth: .infinity)
+                .frame(height: 44)
+                .background(
+                    Group {
+                        if isSelected {
+                            Color(red: 20 / 255, green: 45 / 255, blue: 105 / 255)
+                        } else {
+                            Color(red: 16 / 255, green: 18 / 255, blue: 36 / 255)
+                        }
+                    }
+                )
+                .overlay(
+                    Capsule()
+                        .stroke(
+                            isSelected ? StamerleeTheme.primaryBlue : Color.white.opacity(0.06),
+                            lineWidth: isSelected ? 2 : 1
+                        )
+                )
+                .clipShape(Capsule())
+        }
+        .buttonStyle(.haptic)
     }
 }
 

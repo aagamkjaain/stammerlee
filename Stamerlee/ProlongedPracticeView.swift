@@ -71,6 +71,8 @@ public struct ProlongedPracticeView: View {
 public struct ProlongedAnalysisView: View {
     @Bindable public var state: AppState
     
+    @State private var selectedWords: Set<String> = []
+    
     private var level: String {
         state.selectedDifficulty
     }
@@ -117,6 +119,8 @@ public struct ProlongedAnalysisView: View {
         ExerciseAnalysisSkeletonView(
             scoreText: scoreText,
             maxScoreText: "/ 10",
+            wordsList: wordsList,
+            selectedWords: $selectedWords,
             onDone: {
                 let score = Double(scoreText) ?? 8.8
                 state.recordProlongedScore(difficulty: level, score: score)
@@ -124,6 +128,7 @@ public struct ProlongedAnalysisView: View {
             }
         )
         .onAppear {
+            selectedWords = Set(wordsList.prefix(2))
             let score = Double(scoreText) ?? 8.8
             state.recordProlongedScore(difficulty: level, score: score)
         }
