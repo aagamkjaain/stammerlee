@@ -38,7 +38,7 @@ public struct HomeDashboardView: View {
                             imageData: state.profileAvatarData,
                             size: 38
                         )
-                        .opacity(state.currentScreen == .profile ? 0 : 1)
+                        .opacity(state.isHeroAvatarTransitionActive ? 0 : 1)
                         .reportProfileAvatarFrame(.home)
                     }
                     .buttonStyle(AvatarInteractiveButtonStyle())

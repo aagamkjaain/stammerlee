@@ -145,7 +145,7 @@ public struct ProfileView: View {
                     imageData: state.profileAvatarData,
                     size: 84
                 )
-                .opacity(0)
+                .opacity(state.isHeroAvatarTransitionActive ? 0 : 1)
                 .reportProfileAvatarFrame(.profile)
 
                 if isEditingProfile {
