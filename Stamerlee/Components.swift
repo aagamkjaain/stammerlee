@@ -442,7 +442,7 @@ public struct ExerciseAnalysisSkeletonView: View {
                     .padding(.horizontal, 24)
                     .padding(.top, 14)
 
-                VStack(spacing: 10) {
+                VStack(alignment: .center, spacing: 10) {
                     Text(computedAffirmation)
                         .font(.system(size: 20, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
@@ -456,10 +456,13 @@ public struct ExerciseAnalysisSkeletonView: View {
                         .padding(.top, 2)
 
                     scoreRing
+                        .padding(.top, 8)
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.top, 36)
-                .padding(.bottom, 38)
+                .padding(.top, 24)
+                .padding(.bottom, 20)
+
+                Spacer(minLength: 12)
 
                 HStack(spacing: 0) {
                     scoreSummary(title: "PREVIOUS SESSION", value: previousScoreText)
@@ -469,10 +472,10 @@ public struct ExerciseAnalysisSkeletonView: View {
                     scoreSummary(title: "HIGH SCORE", value: highScoreText)
                 }
                 .frame(maxWidth: .infinity)
-                .frame(height: 74)
+                .frame(height: 88)
                 .background(Color(red: 238 / 255, green: 236 / 255, blue: 255 / 255))
-                .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
-                .padding(.horizontal, 56)
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .padding(.horizontal, 20)
 
                 Spacer()
 
@@ -491,7 +494,7 @@ public struct ExerciseAnalysisSkeletonView: View {
 
         return ZStack {
             Circle()
-                .stroke(Color.purple.opacity(0.18), lineWidth: 14)
+                .stroke(Color.purple.opacity(0.14), lineWidth: 12)
             Circle()
                 .trim(from: 0, to: progress)
                 .stroke(
@@ -499,12 +502,12 @@ public struct ExerciseAnalysisSkeletonView: View {
                         colors: [.purple, .pink.opacity(0.9), .purple],
                         center: .center
                     ),
-                    style: StrokeStyle(lineWidth: 14, lineCap: .round)
+                    style: StrokeStyle(lineWidth: 12, lineCap: .round)
                 )
                 .rotationEffect(.degrees(135))
-                .shadow(color: .purple.opacity(0.7), radius: 10)
+                .shadow(color: .purple.opacity(0.18), radius: 7)
 
-            VStack(spacing: 0) {
+            VStack(spacing: 2) {
                 Text(scoreText)
                     .font(.system(size: 42, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
@@ -513,8 +516,7 @@ public struct ExerciseAnalysisSkeletonView: View {
                     .foregroundStyle(StamerleeTheme.textSecondaryDark)
             }
         }
-        .frame(width: 132, height: 132)
-        .padding(.top, 2)
+        .frame(width: 172, height: 172)
     }
 
     private func scoreSummary(title: String, value: String) -> some View {
