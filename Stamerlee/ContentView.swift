@@ -23,8 +23,8 @@ public struct ContentView: View {
     @State private var showScreenPicker: Bool = false
     @State private var homeAvatarFrame: CGRect = .zero
     @State private var profileAvatarFrame: CGRect = .zero
-    @State private var floatingAvatarFrame: CGRect = .zero
-    @State private var showFloatingAvatar = false
+    @State private var avatarHeroFrame: CGRect = .zero
+    @State private var avatarHeroVisible = false
     
     public init() {}
     
@@ -137,20 +137,20 @@ public struct ContentView: View {
                     .zIndex(2)
             }
 
-            if showFloatingAvatar, floatingAvatarFrame != .zero {
+            if avatarHeroVisible, avatarHeroFrame != .zero {
                 GeometryReader { proxy in
                     ProfileAvatar(
                         style: appState.profileAvatarStyle,
                         imageData: appState.profileAvatarData,
-                        size: floatingAvatarFrame.width
+                        size: avatarHeroFrame.width
                     )
                     .frame(
-                        width: floatingAvatarFrame.width,
-                        height: floatingAvatarFrame.height
+                        width: avatarHeroFrame.width,
+                        height: avatarHeroFrame.height
                     )
                     .position(
-                        x: floatingAvatarFrame.midX - proxy.frame(in: .global).minX,
-                        y: floatingAvatarFrame.midY - proxy.frame(in: .global).minY
+                        x: avatarHeroFrame.midX - proxy.frame(in: .global).minX,
+                        y: avatarHeroFrame.midY - proxy.frame(in: .global).minY
                     )
                     .allowsHitTesting(false)
                 }
@@ -175,26 +175,48 @@ public struct ContentView: View {
         .onChange(of: appState.currentScreen) { oldScreen, newScreen in
             guard oldScreen != newScreen else { return }
 
-            if newScreen == .profile {
-                showFloatingAvatar = true
-                floatingAvatarFrame = homeAvatarFrame
-                DispatchQueue.main.async {
-                    withAnimation(.spring(response: 0.52, dampingFraction: 0.82)) {
-                        floatingAvatarFrame = profileAvatarFrame
-                    }
-                }
-            } else if oldScreen == .profile {
-                showFloatingAvatar = true
-                floatingAvatarFrame = profileAvatarFrame
-                DispatchQueue.main.async {
-                    withAnimation(.spring(response: 0.48, dampingFraction: 0.84)) {
-                        floatingAvatarFrame = homeAvatarFrame
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        showFloatingAvatar = false
-                    }
-                }
+            let isProfileAvatarTransition = (oldScreen == .homeDashboard && newScreen == .profile) ||
+                (oldScreen == .profile && newScreen == .homeDashboard)
+
+            guard isProfileAvatarTransition else {
+                avatarHeroVisible = false
+                appState.heroAvatarHiddenSlot = nil
+                appState.isHeroAvatarTransitionActive = false
+                return
             }
+
+            let sourceSlot: ProfileAvatarSlot = oldScreen == .homeDashboard ? .home : .profile
+            let sourceFrame = sourceSlot == .home ? homeAvatarFrame : profileAvatarFrame
+            let destinationSlot: ProfileAvatarSlot = newScreen == .profile ? .profile : .home
+
+            guard sourceFrame != .zero else { return }
+
+            avatarHeroFrame = sourceFrame
+            avatarHeroVisible = true
+
+            animateAvatarHero(to: destinationSlot)
+        }
+    }
+
+    private func animateAvatarHero(to destinationSlot: ProfileAvatarSlot) {
+        let targetFrame = destinationSlot == .home ? homeAvatarFrame : profileAvatarFrame
+
+        if targetFrame == .zero {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.016) {
+                animateAvatarHero(to: destinationSlot)
+            }
+            return
+        }
+
+        withAnimation(
+            .spring(response: 0.52, dampingFraction: 0.82),
+            completionCriteria: .logicallyComplete
+        ) {
+            avatarHeroFrame = targetFrame
+        } completion: {
+            avatarHeroVisible = false
+            appState.heroAvatarHiddenSlot = nil
+            appState.isHeroAvatarTransitionActive = false
         }
     }
     

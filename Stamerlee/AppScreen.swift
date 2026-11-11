@@ -3,6 +3,11 @@ import SwiftUI
 import Observation
 import UserNotifications
 
+public enum AvatarHeroSlot: String, Hashable {
+    case home
+    case profile
+}
+
 // MARK: - App Tabs
 public enum AppTab: Int, CaseIterable, Hashable {
     case home
@@ -59,6 +64,8 @@ public final class AppState {
     public var currentScreen: AppScreen = .launch
     public var previousScreen: AppScreen? = nil
     public var navigationDirection: Edge = .trailing
+    public var heroAvatarHiddenSlot: AvatarHeroSlot? = nil
+    public var isHeroAvatarTransitionActive = false
     
     public var isProfileTransition: Bool {
         (currentScreen == .profile && previousScreen == .homeDashboard) ||
@@ -166,8 +173,17 @@ public final class AppState {
     
     // MARK: - Navigation Actions
     public func navigate(to screen: AppScreen, forward: Bool = true) {
+        let sourceScreen = self.currentScreen
+        if (sourceScreen == .homeDashboard && screen == .profile) || (sourceScreen == .profile && screen == .homeDashboard) {
+            self.heroAvatarHiddenSlot = sourceScreen == .homeDashboard ? .home : .profile
+            self.isHeroAvatarTransitionActive = true
+        } else {
+            self.heroAvatarHiddenSlot = nil
+            self.isHeroAvatarTransitionActive = false
+        }
+
         withAnimation(.spring(response: 0.5, dampingFraction: 0.82)) {
-            self.previousScreen = self.currentScreen
+            self.previousScreen = sourceScreen
             self.navigationDirection = forward ? .trailing : .leading
             self.currentScreen = screen
         }

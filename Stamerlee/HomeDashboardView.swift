@@ -38,14 +38,13 @@ public struct HomeDashboardView: View {
                             imageData: state.profileAvatarData,
                             size: 38
                         )
-                        .opacity(state.currentScreen == .profile ? 0 : 1)
+                        .opacity(state.isHeroAvatarTransitionActive ? 0 : 1)
                         .reportProfileAvatarFrame(.home)
                     }
                     .buttonStyle(AvatarInteractiveButtonStyle())
                     .accessibilityLabel("Open profile")
                     
                 }
-
                 .padding(.horizontal, 24)
                 .padding(.top, 16)
                 .padding(.bottom, 14)
@@ -146,7 +145,7 @@ public struct HomeDashboardView: View {
                                 isLocked: false,
                                 iconName: "BeatBuddyLogo"
                             ) {
-                                state.navigate(to: .beatBuddyWords)
+                                state.navigate(to: .beatBuddyPracticeType)
                             }
                         }
                         .offset(y: cardsAppeared ? 0 : 44)
@@ -184,7 +183,7 @@ public struct HomeDashboardView: View {
             Text(lockedAlertMessage)
         }
     }
-
+    
     // MARK: - Fluency Lap Card
     private var fluencyLapCard: some View {
         Button(action: {
