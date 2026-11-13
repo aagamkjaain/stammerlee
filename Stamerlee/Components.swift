@@ -607,50 +607,53 @@ public struct ExerciseAnalysisSkeletonView: View {
                 .padding(.bottom, 48)
 
                 // Instructions Subtitle
-                Text(subtitle)
-                    .font(.system(size: 13, weight: .regular, design: .rounded))
-                    .foregroundStyle(StamerleeTheme.textSecondaryDark)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.bottom, 18)
-
-                // Action Row: Counter + Single "Select all / Deselect all" Toggle Button
-                HStack {
-                    Text("\(selectedWords.count) selected")
-                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                if !subtitle.isEmpty {
+                    Text(subtitle)
+                        .font(.system(size: 13, weight: .regular, design: .rounded))
                         .foregroundStyle(StamerleeTheme.textSecondaryDark)
-
-                    Spacer()
-
-                    Button(isAllSelected ? "Deselect all" : "Select all") {
-                        toggleSelectAll()
-                    }
-                    .font(.system(size: 13, weight: .bold, design: .rounded))
-                    .foregroundStyle(StamerleeTheme.primaryBlue)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.bottom, 18)
                 }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 14)
 
-                // 2-Column Word Grid (Older sleek capsule design)
-                LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
-                    ForEach(Array(wordsList.prefix(6)), id: \.self) { word in
-                        let isSelected = selectedWords.contains(word)
-                        wordButton(word: word, isSelected: isSelected) {
-                            toggleWordSelection(word)
+                if !wordsList.isEmpty {
+                    // Action Row: Counter + Single "Select all / Deselect all" Toggle Button
+                    HStack {
+                        Text("\(selectedWords.count) selected")
+                            .font(.system(size: 13, weight: .semibold, design: .rounded))
+                            .foregroundStyle(StamerleeTheme.textSecondaryDark)
+
+                        Spacer()
+
+                        Button(isAllSelected ? "Deselect all" : "Select all") {
+                            toggleSelectAll()
+                        }
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                        .foregroundStyle(StamerleeTheme.primaryBlue)
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 14)
+
+                    // 2-Column Word Grid (Older sleek capsule design)
+                    LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
+                        ForEach(Array(wordsList.prefix(6)), id: \.self) { word in
+                            let isSelected = selectedWords.contains(word)
+                            wordButton(word: word, isSelected: isSelected) {
+                                toggleWordSelection(word)
+                            }
                         }
                     }
-                }
-                .padding(.horizontal, 24)
+                    .padding(.horizontal, 24)
 
-                // Hyperlink-style "View more" button
-                if wordsList.count > 6 {
-                    Button {
-                        showAllWordsSheet = true
-                    } label: {
-                        HStack(spacing: 4) {
-                            Text("View more")
-                                .underline()
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 11, weight: .semibold))
+                    // Hyperlink-style "View more" button
+                    if wordsList.count > 6 {
+                        Button {
+                            showAllWordsSheet = true
+                        } label: {
+                            HStack(spacing: 4) {
+                                Text("View more")
+                                    .underline()
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 11, weight: .semibold))
                         }
                         .font(.system(size: 13.5, weight: .semibold, design: .rounded))
                         .foregroundStyle(StamerleeTheme.primaryBlue)
@@ -658,6 +661,7 @@ public struct ExerciseAnalysisSkeletonView: View {
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.top, 14)
                 }
+            }
 
                 Spacer(minLength: 20)
 
