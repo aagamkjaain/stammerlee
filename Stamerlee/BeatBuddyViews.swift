@@ -8,6 +8,37 @@ private let defaultBeatBuddyWords = [
     "Connection", "Confidence", "Smooth", "Presence", "Story", "Clarity"
 ]
 
+public enum BeatBuddySoundCategory: String, CaseIterable, Identifiable {
+    case randomized = "Randomized"
+    case kSound = "K Sound"
+    case mSound = "M Sound"
+    case sSound = "S Sound"
+    case pSound = "P Sound"
+    case tSound = "T Sound"
+    case bSound = "B Sound"
+
+    public var id: String { rawValue }
+
+    public var words: [String] {
+        switch self {
+        case .randomized:
+            return defaultBeatBuddyWords.shuffled()
+        case .kSound:
+            return ["Coffee", "Computer", "Courage", "Clarity", "Keep", "Care", "Kitchen", "Key", "Kite", "Candle"]
+        case .mSound:
+            return ["Morning", "Memory", "Mind", "Music", "Motion", "Master", "Moment", "Manage", "Market", "Message"]
+        case .sSound:
+            return ["Speech", "Smooth", "Scale", "Swift", "Story", "Silence", "Steady", "Start", "Simple", "Sunlight"]
+        case .pSound:
+            return ["Please", "Pacing", "Protocol", "Progress", "Presence", "Peace", "Power", "Practice", "Paper", "Picture"]
+        case .tSound:
+            return ["Together", "Today", "Time", "Topic", "Travel", "Target", "Trust", "Training", "Tomorrow", "Table"]
+        case .bSound:
+            return ["Breathe", "Balance", "Breaking", "Bright", "Begin", "Build", "Belief", "Better", "Bridge", "Button"]
+        }
+    }
+}
+
 private struct BeatBuddyShell<Content: View>: View {
     @Bindable var state: AppState
     var onBack: (() -> Void)? = nil
@@ -106,14 +137,12 @@ private struct PracticeOptionCard: View {
 }
 
 
-// MARK: - 1. Word Selection Screen
+// MARK: - 1. Words Screen
 public struct BeatBuddyWordsView: View {
     @Bindable public var state: AppState
     public var onBack: (() -> Void)? = nil
     public var onContinue: (() -> Void)? = nil
-    @State private var searchText = ""
     @State private var customWordCountText = ""
-    @State private var showInfo = false
 
     public init(state: AppState, onBack: (() -> Void)? = nil, onContinue: (() -> Void)? = nil) {
         self.state = state
@@ -131,12 +160,13 @@ public struct BeatBuddyWordsView: View {
         return words
     }
 
-    private var filteredWords: [String] {
-        allWords.filter { searchText.isEmpty || $0.localizedCaseInsensitiveContains(searchText) }
-    }
-
-    private var isAllSelected: Bool {
-        !filteredWords.isEmpty && filteredWords.allSatisfy { state.beatBuddySelectedWords.contains($0) }
+    private var displayWords: [String] {
+        let count = min(max(state.beatBuddyWordCount, 1), allWords.count)
+        if state.beatBuddySelectedWords.isEmpty {
+            return Array(allWords.prefix(count))
+        }
+        let selectedList = allWords.filter { state.beatBuddySelectedWords.contains($0) }
+        return Array(selectedList.prefix(count))
     }
 
     public var body: some View {
@@ -149,28 +179,13 @@ public struct BeatBuddyWordsView: View {
         }) {
             VStack(alignment: .leading, spacing: 0) {
                 // Screen Headings
-                HStack(alignment: .top) {
-                    Text("Select Words")
-                        .font(.system(size: 30, weight: .bold, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textPrimaryDark)
+                Text("Beat buddy")
+                    .font(.system(size: 35, weight: .bold, design: .rounded))
+                    .foregroundStyle(StamerleeTheme.textPrimaryDark)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 18)
 
-                    Spacer()
-
-                    Button {
-                        showInfo = true
-                    } label: {
-                        Image(systemName: "info.circle.fill")
-                            .font(.system(size: 22, weight: .semibold))
-                            .foregroundStyle(StamerleeTheme.primaryBlue)
-                            .frame(width: 44, height: 44)
-                            .contentShape(Rectangle())
-                    }
-                    .accessibilityLabel("About Beat Buddy words")
-                }
-                .padding(.horizontal, 24)
-                .padding(.top, 20)
-
-                Text("Choose the words you want to practice with Beat Buddy")
+                Text("Practice words with Beat Buddy at your chosen tempo")
                     .font(.system(size: 16, weight: .regular, design: .rounded))
                     .foregroundStyle(StamerleeTheme.textSecondaryDark)
                     .padding(.horizontal, 24)
@@ -202,7 +217,7 @@ public struct BeatBuddyWordsView: View {
                         }
                     } label: {
                         Label(
-                            state.beatBuddyUsesCustomWordCount ? "\(state.beatBuddyWordCount) words" : "\(state.beatBuddyWordCount) words",
+                            "\(state.beatBuddyWordCount) words",
                             systemImage: "chevron.down"
                         )
                         .font(.system(size: 13, weight: .semibold, design: .rounded))
@@ -227,129 +242,45 @@ public struct BeatBuddyWordsView: View {
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 16)
+                .padding(.bottom, 14)
 
-                // Search Bar
-                HStack(spacing: 12) {
-                    Image(systemName: "magnifyingglass")
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
-
-                    TextField("Search words...", text: $searchText)
-                        .font(.system(size: 15, weight: .medium, design: .rounded))
-                        .foregroundStyle(.white)
-                        .tint(StamerleeTheme.primaryBlue)
-
-                    if !searchText.isEmpty {
-                        Button {
-                            searchText = ""
-                        } label: {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundStyle(StamerleeTheme.textSecondaryDark)
-                                .font(.system(size: 16))
-                        }
-                    }
-                }
-                .padding(.horizontal, 16)
-                .frame(height: 50)
-                .background(Color.white.opacity(0.07))
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                )
-                .padding(.horizontal, 24)
-                .padding(.top, 20)
-
-                // Action Row: Counter + Single Toggle Button
-                HStack {
-                    Text("\(state.beatBuddySelectedWords.count) selected")
-                        .font(.system(size: 13, weight: .semibold, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
-
-                    Spacer()
-
-                    Button(isAllSelected ? "Deselect all" : "Select all") {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            if isAllSelected {
-                                for word in filteredWords {
-                                    state.beatBuddySelectedWords.remove(word)
-                                }
-                            } else {
-                                for word in filteredWords {
-                                    state.beatBuddySelectedWords.insert(word)
-                                }
-                            }
-                        }
-                    }
-                    .font(.system(size: 13, weight: .bold, design: .rounded))
-                    .foregroundStyle(StamerleeTheme.primaryBlue)
-                }
-                .padding(.horizontal, 24)
-                .padding(.top, 14)
-                .padding(.bottom, 6)
-
-                // Scrollable Words Grid (Larger Cards)
-                ScrollView(showsIndicators: false) {
+                // Scrollable Words List (Clean display cards without selection)
+                ScrollView {
                     LazyVGrid(
                         columns: [GridItem(.flexible(), spacing: 14), GridItem(.flexible(), spacing: 14)],
                         spacing: 14
                     ) {
-                        ForEach(filteredWords, id: \.self) { word in
-                            let isSelected = state.beatBuddySelectedWords.contains(word)
-                            Button {
-                                withAnimation(.spring(response: 0.25, dampingFraction: 0.7)) {
-                                    if isSelected {
-                                        state.beatBuddySelectedWords.remove(word)
-                                    } else {
-                                        state.beatBuddySelectedWords.insert(word)
-                                    }
-                                }
-                            } label: {
-                                HStack(spacing: 10) {
-                                    Text(word)
-                                        .font(.system(size: 16, weight: .bold, design: .rounded))
-                                        .foregroundStyle(isSelected ? .white : StamerleeTheme.textPrimaryDark)
-
-                                    if isSelected {
-                                        Image(systemName: "checkmark.circle.fill")
-                                            .font(.system(size: 17, weight: .bold))
-                                            .foregroundStyle(StamerleeTheme.primaryBlue)
-                                            .transition(.scale.combined(with: .opacity))
-                                    }
-                                }
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 44)
-                                .background(
-                                    Capsule().fill(
-                                        isSelected
-                                            ? StamerleeTheme.primaryBlue.opacity(0.38)
-                                            : Color.white.opacity(0.07)
-                                    )
-                                )
-                                .overlay(
-                                    Capsule().stroke(
-                                        isSelected
-                                            ? StamerleeTheme.primaryBlue
-                                            : Color.white.opacity(0.12),
-                                        lineWidth: isSelected ? 1.5 : 1
-                                    )
-                                )
-                                .clipShape(Capsule())
+                        ForEach(displayWords, id: \.self) { word in
+                            HStack(spacing: 10) {
+                                Text(word)
+                                    .font(.system(size: 16, weight: .semibold, design: .rounded))
+                                    .foregroundStyle(.white)
                             }
-                            .buttonStyle(.haptic)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 44)
+                            .background(
+                                Capsule().fill(Color.white.opacity(0.08))
+                            )
+                            .overlay(
+                                Capsule().stroke(
+                                    Color.white.opacity(0.12),
+                                    lineWidth: 1
+                                )
+                            )
+                            .clipShape(Capsule())
                         }
-
                     }
                     .padding(.horizontal, 24)
                     .padding(.top, 8)
                     .padding(.bottom, 24)
                 }
+                .scrollIndicators(.hidden)
 
                 // Anchored CTA
                 VStack {
                     PrimaryActionButton(title: "Continue") {
                         if state.beatBuddySelectedWords.isEmpty {
-                            state.beatBuddySelectedWords = ["Water", "Coffee"]
+                            randomizeWords()
                         }
                         if let onContinue {
                             onContinue()
@@ -362,11 +293,10 @@ public struct BeatBuddyWordsView: View {
                 .padding(.bottom, 24)
             }
         }
-        .sensoryFeedback(.selection, trigger: state.beatBuddySelectedWords)
-        .alert("Beat Buddy Words", isPresented: $showInfo) {
-            Button("Got it", role: .cancel) {}
-        } message: {
-            Text("These are words you’ve previously stuttered on. Practice them repeatedly with a metronome beat to build smoother, more confident speech.")
+        .onAppear {
+            if state.beatBuddySelectedWords.isEmpty {
+                randomizeWords()
+            }
         }
     }
 
@@ -536,6 +466,7 @@ public struct BeatBuddyBPMView: View {
     public var onStartPractice: (() -> Void)? = nil
     @State private var soundEnabled: Bool = true
     @State private var vibrationEnabled: Bool = true
+    @State private var selectedCategory: BeatBuddySoundCategory = .randomized
 
     public init(state: AppState, onBack: (() -> Void)? = nil, onStartPractice: (() -> Void)? = nil) {
         self.state = state
@@ -548,7 +479,7 @@ public struct BeatBuddyBPMView: View {
             if let onBack {
                 onBack()
             } else {
-                state.navigate(to: .beatBuddyWords, forward: false)
+                state.navigate(to: .homeDashboard, forward: false)
             }
         }) {
             VStack(alignment: .leading, spacing: 0) {
@@ -557,24 +488,64 @@ public struct BeatBuddyBPMView: View {
                     .font(.system(size: 30, weight: .bold, design: .rounded))
                     .foregroundStyle(StamerleeTheme.textPrimaryDark)
                     .padding(.horizontal, 24)
-                    .padding(.top, 18)
+                    .padding(.top, 16)
 
                 Text("Speak with the steady beat")
                     .font(.system(size: 14, weight: .regular, design: .rounded))
                     .foregroundStyle(StamerleeTheme.textSecondaryDark)
                     .padding(.horizontal, 24)
-                    .padding(.top, 6)
+                    .padding(.top, 4)
 
-                Spacer(minLength: 24)
+                // Sound Category Picker
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Sound Focus")
+                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
+
+                    Menu {
+                        Picker("Sound Focus", selection: $selectedCategory) {
+                            ForEach(BeatBuddySoundCategory.allCases) { category in
+                                Text(category.rawValue).tag(category)
+                            }
+                        }
+                    } label: {
+                        HStack(spacing: 10) {
+                            Image(systemName: "waveform")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(Color.cyan)
+
+                            Text(selectedCategory.rawValue)
+                                .font(.system(size: 15, weight: .semibold, design: .rounded))
+                                .foregroundStyle(.white)
+
+                            Spacer()
+
+                            Image(systemName: "chevron.up.chevron.down")
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundStyle(StamerleeTheme.textSecondaryDark)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                        )
+                    }
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 14)
+
+                Spacer(minLength: 16)
 
                 // Arc Dial Centered
                 HStack {
                     Spacer()
-                    ArcBPMDialView(bpm: $state.beatBuddyBPM, size: 250)
+                    ArcBPMDialView(bpm: $state.beatBuddyBPM, size: 240)
                     Spacer()
                 }
 
-                Spacer(minLength: 20)
+                Spacer(minLength: 14)
 
                 // Stepper Buttons (- and +)
                 HStack {
@@ -622,18 +593,34 @@ public struct BeatBuddyBPMView: View {
                 // Primary Start Button
                 VStack {
                     PrimaryActionButton(title: "▶ Start Metronome") {
-                        if let onStartPractice {
-                            onStartPractice()
-                        } else {
-                            state.navigate(to: .beatBuddyPractice)
-                        }
+                        startSession()
                     }
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
             }
         }
+        .onAppear {
+            if let cat = BeatBuddySoundCategory(rawValue: state.beatBuddySoundCategory) {
+                selectedCategory = cat
+            } else {
+                selectedCategory = .randomized
+            }
+        }
         .sensoryFeedback(.selection, trigger: state.beatBuddyBPM)
+        .sensoryFeedback(.selection, trigger: selectedCategory)
+    }
+
+    private func startSession() {
+        state.beatBuddySoundCategory = selectedCategory.rawValue
+        let wordsList = selectedCategory.words
+        state.beatBuddyPracticeWords = wordsList
+        state.beatBuddySelectedWords = Set(wordsList)
+        if let onStartPractice {
+            onStartPractice()
+        } else {
+            state.navigate(to: .beatBuddyPractice)
+        }
     }
 
     private func adjustBPM(by delta: Int) {
@@ -681,7 +668,13 @@ public struct BeatBuddyPracticeView: View {
     }
 
     private var words: [String] {
-        return Array(state.beatBuddySelectedWords.isEmpty ? Set(["Water", "Coffee"]) : state.beatBuddySelectedWords)
+        if !state.beatBuddyPracticeWords.isEmpty {
+            return state.beatBuddyPracticeWords
+        }
+        if !state.beatBuddySelectedWords.isEmpty {
+            return Array(state.beatBuddySelectedWords)
+        }
+        return BeatBuddySoundCategory.randomized.words
     }
 
     public var body: some View {
@@ -693,8 +686,20 @@ public struct BeatBuddyPracticeView: View {
             }
         }) {
             VStack(spacing: 0) {
-                // Top Info Bar (Only BPM Badge, no timer, no sound icon, no camera icon)
-                HStack {
+                // Top Info Bar (Sound Category Badge and BPM Badge)
+                HStack(spacing: 8) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "waveform")
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(.cyan)
+                        Text(state.beatBuddySoundCategory)
+                            .font(.system(size: 12, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(Color.white.opacity(0.08), in: Capsule())
+
                     Spacer()
 
                     // BPM Badge

@@ -18,22 +18,52 @@ public struct SummaryView: View {
     }
 
     public var body: some View {
-        ZStack {
+        ZStack(alignment: .top) {
             StamerleeTheme.backgroundDark.ignoresSafeArea()
 
-            ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 28) {
+            VStack(alignment: .leading, spacing: 0) {
+                // Top Header Banner
+                headerImageView
+
+                // Title
+                HStack {
                     Text("Summary")
                         .font(.system(size: 32, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
-                        .padding(.top, 18)
-
-                    practiceStreakCard
-                    exerciseBlocksSection
-                    Spacer(minLength: 86)
+                    Spacer()
                 }
                 .padding(.horizontal, 24)
+                .padding(.top, -48)
+                .padding(.bottom, 10)
+
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 20) {
+                        practiceStreakCard
+                        exerciseBlocksSection
+                        Spacer(minLength: 86)
+                    }
+                    .padding(.horizontal, 24)
+                }
+                .scrollIndicators(.hidden)
             }
+        }
+    }
+
+    // MARK: - Top Header Image
+    @ViewBuilder
+    private var headerImageView: some View {
+        if let uiImage = UIImage(named: "header") ?? UIImage(named: "Header") {
+            Image(uiImage: uiImage)
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: .infinity)
+                .ignoresSafeArea(edges: .top)
+        } else {
+            Image("Header")
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: .infinity)
+                .ignoresSafeArea(edges: .top)
         }
     }
 

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2352B30A30A7221700195DEF /* prolongedvideo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 2352B30930A7221700195DEF /* prolongedvideo.mp4 */; };
+		2352B30B30A727A400195DEF /* header.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B30A30A727A400195DEF /* header.png */; };
 		AA000001001 /* StamerleeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002001 /* StamerleeApp.swift */; };
 		AA000001002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002002 /* ContentView.swift */; };
 		AA000001003 /* ColorTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002003 /* ColorTheme.swift */; };
@@ -30,9 +32,13 @@
 		AA000001034 /* AppTabNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002034 /* AppTabNavigation.swift */; };
 		AA000001035 /* FluencyLapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002035 /* FluencyLapView.swift */; };
 		AA000001036 /* FluencyLapPracticeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002036 /* FluencyLapPracticeView.swift */; };
+		AA000001037 /* ChromaKeyVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002037 /* ChromaKeyVideoView.swift */; };
+		AA000001038 /* LaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002038 /* LaunchView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2352B30930A7221700195DEF /* prolongedvideo.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = prolongedvideo.mp4; sourceTree = "<group>"; };
+		2352B30A30A727A400195DEF /* header.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = header.png; sourceTree = "<group>"; };
 		AA000002001 /* StamerleeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StamerleeApp.swift; sourceTree = "<group>"; };
 		AA000002002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		AA000002003 /* ColorTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorTheme.swift; sourceTree = "<group>"; };
@@ -56,6 +62,8 @@
 		AA000002034 /* AppTabNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTabNavigation.swift; sourceTree = "<group>"; };
 		AA000002035 /* FluencyLapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FluencyLapView.swift; sourceTree = "<group>"; };
 		AA000002036 /* FluencyLapPracticeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FluencyLapPracticeView.swift; sourceTree = "<group>"; };
+		AA000002037 /* ChromaKeyVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChromaKeyVideoView.swift; sourceTree = "<group>"; };
+		AA000002038 /* LaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchView.swift; sourceTree = "<group>"; };
 		AA000003001 /* Stamerlee.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stamerlee.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -104,6 +112,10 @@
 				AA000002034 /* AppTabNavigation.swift */,
 				AA000002035 /* FluencyLapView.swift */,
 				AA000002036 /* FluencyLapPracticeView.swift */,
+				AA000002037 /* ChromaKeyVideoView.swift */,
+				AA000002038 /* LaunchView.swift */,
+				2352B30930A7221700195DEF /* prolongedvideo.mp4 */,
+				2352B30A30A727A400195DEF /* header.png */,
 			);
 			path = Stamerlee;
 			sourceTree = "<group>";
@@ -173,7 +185,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2352B30B30A727A400195DEF /* header.png in Resources */,
 				AA000001012 /* Assets.xcassets in Resources */,
+				2352B30A30A7221700195DEF /* prolongedvideo.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -206,6 +220,8 @@
 				AA000001034 /* AppTabNavigation.swift in Sources */,
 				AA000001035 /* FluencyLapView.swift in Sources */,
 				AA000001036 /* FluencyLapPracticeView.swift in Sources */,
+				AA000001037 /* ChromaKeyVideoView.swift in Sources */,
+				AA000001038 /* LaunchView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

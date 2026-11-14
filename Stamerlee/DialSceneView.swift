@@ -184,7 +184,7 @@ public struct DialSceneView: View {
                 .padding(.top, 10)
                 .padding(.bottom, 24)
 
-            ScrollView(showsIndicators: false) {
+            ScrollView {
                 VStack(spacing: 10) {
                     ForEach(scenarios, id: \.0) { scenario in
                         Button {
@@ -222,6 +222,7 @@ public struct DialSceneView: View {
                 }
                 .padding(.horizontal, 24)
             }
+            .scrollIndicators(.hidden)
             Spacer()
         }
     }

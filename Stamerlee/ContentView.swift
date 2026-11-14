@@ -106,13 +106,7 @@ public struct ContentView: View {
                 case .narrationDifficulty, .narrationPractice:
                     NarrationPracticeView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
-                case .beatBuddyPracticeType:
-                    BeatBuddyWordsView(state: appState)
-                        .transition(slideTransition(for: appState.navigationDirection))
-                case .beatBuddyWords:
-                    BeatBuddyWordsView(state: appState)
-                        .transition(slideTransition(for: appState.navigationDirection))
-                case .beatBuddyBPM:
+                case .beatBuddyPracticeType, .beatBuddyWords, .beatBuddyBPM:
                     BeatBuddyBPMView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
                 case .beatBuddyPractice:
@@ -251,7 +245,7 @@ public struct ContentView: View {
                 }
             }
             
-            ScrollView(.horizontal, showsIndicators: false) {
+            ScrollView(.horizontal) {
                 HStack(spacing: 8) {
                     jumpButton(title: "Launch", screen: .launch)
                     jumpButton(title: "Login", screen: .login)
@@ -270,6 +264,7 @@ public struct ContentView: View {
                     jumpButton(title: "Analysis", screen: .prolongedAnalysis)
                 }
             }
+            .scrollIndicators(.hidden)
         }
         .padding(12)
         .background(.ultraThinMaterial)

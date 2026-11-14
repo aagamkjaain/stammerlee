@@ -689,7 +689,7 @@ public struct ExerciseAnalysisSkeletonView: View {
                 StamerleeTheme.backgroundDark
                     .ignoresSafeArea()
 
-                ScrollView(.vertical, showsIndicators: true) {
+                ScrollView(.vertical) {
                     VStack(alignment: .leading, spacing: 16) {
                         HStack {
                             Text("\(selectedWords.count) of \(wordsList.count) selected")
