@@ -79,11 +79,7 @@ public struct HomeDashboardView: View {
                                 isLocked: false,
                                 iconName: "IconProlongedSpeech"
                             ) {
-                                state.navigate(
-                                    to: state.hasSeenProlongedSpeechIntro
-                                        ? .prolongedSpeechDifficulty
-                                        : .prolongedSpeechIntro
-                                )
+                                state.navigate(to: .prolongedSpeechIntro)
                             }
                             
                             // 2. Picture Description

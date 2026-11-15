@@ -112,52 +112,91 @@ public struct FluencyLapView: View {
     }
 
     private var stopwatchHeroView: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 12) {
             ZStack {
                 // Soft radial background glow
                 Circle()
                     .fill(
                         RadialGradient(
                             colors: [
-                                Color(red: 56 / 255, green: 170 / 255, blue: 255 / 255).opacity(0.32),
-                                Color(red: 139 / 255, green: 92 / 255, blue: 246 / 255).opacity(0.16),
+                                Color(red: 56 / 255, green: 180 / 255, blue: 255 / 255).opacity(0.38),
+                                Color(red: 130 / 255, green: 85 / 255, blue: 248 / 255).opacity(0.20),
                                 Color.clear
                             ],
                             center: .center,
-                            startRadius: 4,
-                            endRadius: 48
+                            startRadius: 6,
+                            endRadius: 52
                         )
                     )
-                    .frame(width: 96, height: 96)
-                    .blur(radius: 8)
+                    .frame(width: 104, height: 104)
+                    .blur(radius: 10)
 
-                // SF Symbol Stopwatch with Cyan-to-Purple Gradient
-                Image(systemName: "stopwatch")
-                    .font(.system(size: 60, weight: .medium))
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [
-                                Color(red: 88 / 255, green: 218 / 255, blue: 255 / 255),
-                                Color(red: 58 / 255, green: 148 / 255, blue: 255 / 255),
-                                Color(red: 105 / 255, green: 95 / 255, blue: 248 / 255),
-                                Color(red: 140 / 255, green: 72 / 255, blue: 246 / 255)
-                            ],
-                            startPoint: .top,
-                            endPoint: .bottom
+                // Custom Glowing Stopwatch matching the visual design
+                ZStack {
+                    // Top Stem & Plunger
+                    VStack(spacing: 0) {
+                        Capsule()
+                            .fill(Color(red: 90 / 255, green: 218 / 255, blue: 255 / 255))
+                            .frame(width: 24, height: 6)
+
+                        Rectangle()
+                            .fill(Color(red: 65 / 255, green: 185 / 255, blue: 255 / 255))
+                            .frame(width: 6.5, height: 5.5)
+
+                        Spacer()
+                    }
+                    .frame(height: 78)
+
+                    // Top-Right Angled Lap Button
+                    Capsule()
+                        .fill(Color(red: 140 / 255, green: 115 / 255, blue: 250 / 255))
+                        .frame(width: 10, height: 5.5)
+                        .rotationEffect(.degrees(-45))
+                        .offset(x: 24, y: -24)
+
+                    // Main Glowing Dial Ring
+                    Circle()
+                        .stroke(
+                            LinearGradient(
+                                colors: [
+                                    Color(red: 88 / 255, green: 218 / 255, blue: 255 / 255),
+                                    Color(red: 52 / 255, green: 145 / 255, blue: 255 / 255),
+                                    Color(red: 105 / 255, green: 90 / 255, blue: 250 / 255),
+                                    Color(red: 145 / 255, green: 75 / 255, blue: 248 / 255)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 8.5
                         )
-                    )
-                    .shadow(color: Color(red: 56 / 255, green: 170 / 255, blue: 255 / 255).opacity(0.4), radius: 12, x: 0, y: 3)
+                        .frame(width: 60, height: 60)
+                        .shadow(color: Color(red: 56 / 255, green: 170 / 255, blue: 255 / 255).opacity(0.55), radius: 10, x: 0, y: 2)
+
+                    // Clock Hand pointing to ~1:30 (45 degrees)
+                    RoundedRectangle(cornerRadius: 2.5)
+                        .fill(Color.white)
+                        .frame(width: 4, height: 16)
+                        .offset(y: -6)
+                        .rotationEffect(.degrees(45))
+
+                    // Center Pivot Dot
+                    Circle()
+                        .fill(Color.white)
+                        .frame(width: 10, height: 10)
+                        .shadow(color: Color.black.opacity(0.25), radius: 2)
+                }
+                .frame(width: 84, height: 84)
             }
 
-            // Clean 60 seconds label
+            // Clean 60 seconds label matching visual hierarchy
             VStack(spacing: 2) {
                 Text("60")
-                    .font(.system(size: 40, weight: .bold, design: .rounded))
+                    .font(.system(size: 44, weight: .bold, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
                             colors: [
                                 Color.white,
-                                Color(red: 232 / 255, green: 240 / 255, blue: 255 / 255)
+                                Color(red: 232 / 255, green: 242 / 255, blue: 255 / 255)
                             ],
                             startPoint: .top,
                             endPoint: .bottom
@@ -165,8 +204,8 @@ public struct FluencyLapView: View {
                     )
 
                 Text("seconds")
-                    .font(.system(size: 15, weight: .semibold, design: .rounded))
-                    .foregroundStyle(Color(red: 170 / 255, green: 186 / 255, blue: 235 / 255))
+                    .font(.system(size: 16, weight: .medium, design: .rounded))
+                    .foregroundStyle(Color(red: 168 / 255, green: 184 / 255, blue: 232 / 255))
             }
         }
         .frame(maxWidth: .infinity)
