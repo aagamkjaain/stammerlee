@@ -223,7 +223,7 @@ public struct HomeDashboardView: View {
                             .frame(width: 68, height: 68)
                             .rotationEffect(.degrees(-5))
 
-                        Image(systemName: "calendar.badge.checkmark")
+                        Image(systemName: "clock.arrow.trianglehead.counterclockwise.rotate.90")
                             .font(.system(size: 24, weight: .semibold))
                             .foregroundStyle(StamerleeTheme.primaryPurple)
                             .frame(width: 48, height: 48)
