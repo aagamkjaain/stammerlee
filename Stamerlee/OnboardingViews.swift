@@ -199,64 +199,112 @@ public struct LoginView: View {
 public struct OnboardingStepOneView: View {
     @Bindable public var state: AppState
 
+    @State private var footerOffset: CGFloat = 160
+    @State private var footerOpacity: Double = 0.0
+
     public init(state: AppState) {
         self.state = state
     }
 
     public var body: some View {
-        ZStack {
-            StamerleeTheme.backgroundDark.ignoresSafeArea()
+        GeometryReader { geo in
+            ZStack(alignment: .bottom) {
+                // Deep Purple-to-Midnight Gradient Background (Full bleed)
+                LinearGradient(
+                    colors: [
+                        Color(red: 45 / 255, green: 38 / 255, blue: 135 / 255), // Indigo purple top
+                        Color(red: 24 / 255, green: 20 / 255, blue: 70 / 255),  // Mid violet
+                        Color(red: 8 / 255, green: 10 / 255, blue: 24 / 255)   // Midnight base
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                HStack {
-                    BackNavButton {
-                        state.navigate(to: .login, forward: false)
+                // Bottom Illustration (Lowered resting position, smoothly sliding up from below without swing)
+                onboardingFooterView(width: geo.size.width)
+                    .offset(y: footerOffset + 40)
+                    .opacity(footerOpacity)
+                    .ignoresSafeArea(edges: .bottom)
+
+                // Foreground Content strictly constrained to screen width
+                VStack(spacing: 0) {
+                    // Top Navigation Bar
+                    HStack {
+                        BackNavButton {
+                            state.navigate(to: .login, forward: false)
+                        }
+                        Spacer()
                     }
-                    Spacer()
-                }
-                .padding(.horizontal, 24)
-                .padding(.top, 16)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 8)
 
-                VStack(alignment: .leading, spacing: 10) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Small steps,")
-                            .font(.system(size: 32, weight: .bold, design: .rounded))
-                            .foregroundStyle(StamerleeTheme.textPrimaryDark)
+                    // Headings & Explanatory Copy
+                    VStack(alignment: .leading, spacing: 10) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Small steps,")
+                                .font(.system(size: 32, weight: .bold, design: .rounded))
+                                .foregroundStyle(.white)
 
-                        Text("stronger speech")
-                            .font(.system(size: 32, weight: .bold, design: .rounded))
-                            .foregroundStyle(
-                                LinearGradient(
-                                    colors: [StamerleeTheme.accentPurpleLight, StamerleeTheme.accentPurple],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
+                            Text("stronger speech")
+                                .font(.system(size: 32, weight: .bold, design: .rounded))
+                                .foregroundStyle(Color(red: 195 / 255, green: 175 / 255, blue: 255 / 255))
+                        }
+
+                        Text("Stuttering can be tough, but you’re not alone. Practice at your own pace, build confidence, and celebrate every step forward with your personal speech coach.")
+                            .font(.system(size: 14.5, weight: .regular, design: .rounded))
+                            .foregroundStyle(Color(red: 218 / 255, green: 222 / 255, blue: 245 / 255).opacity(0.88))
+                            .lineSpacing(3)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 14)
 
-                    Text("Practice at your own pace, build confidence, and celebrate every step forward.")
-                        .font(.system(size: 15, weight: .regular, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
-                        .lineSpacing(4)
+                    Spacer(minLength: 8)
+
+                    // Centered Hero Illustration (Girl with headphones - nicely sized)
+                    OnboardingStepOneIllustration()
+                        .padding(.vertical, 6)
+
+                    Spacer(minLength: 8)
+
+                    // Signature Purple Action Button (Pinned over the rolling hills)
+                    PrimaryActionButton(title: "Next", compact: false) {
+                        state.navigate(to: .onboarding2, forward: true)
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 24)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 28)
-                .padding(.top, 16)
-
-                Spacer()
-
-                OnboardingStepOneIllustration()
-                    .padding(.vertical, 10)
-
-                Spacer()
-
-                PrimaryActionButton(title: "Next", compact: true) {
-                    state.navigate(to: .onboarding2, forward: true)
-                }
-                .padding(.horizontal, 28)
-                .padding(.bottom, 24)
+                .frame(width: geo.size.width)
+            }
+            .frame(width: geo.size.width, height: geo.size.height)
+        }
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.65).delay(0.05)) {
+                footerOffset = 0
+                footerOpacity = 1.0
             }
         }
+    }
+
+    @ViewBuilder
+    private func onboardingFooterView(width: CGFloat) -> some View {
+        Group {
+            if let uiImage = UIImage(named: "launchfooter")
+                ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "launchfooter", ofType: "png") ?? "") {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: width, alignment: .bottom)
+            } else {
+                Image("launchfooter")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: width, alignment: .bottom)
+            }
+        }
+        .allowsHitTesting(false)
     }
 }
 
@@ -269,48 +317,97 @@ public struct OnboardingStepTwoView: View {
     }
 
     public var body: some View {
-        ZStack {
-            StamerleeTheme.backgroundDark.ignoresSafeArea()
+        GeometryReader { geo in
+            ZStack(alignment: .bottom) {
+                // Deep Purple-to-Midnight Gradient Background (Full bleed)
+                LinearGradient(
+                    colors: [
+                        Color(red: 45 / 255, green: 38 / 255, blue: 135 / 255),
+                        Color(red: 24 / 255, green: 20 / 255, blue: 70 / 255),
+                        Color(red: 8 / 255, green: 10 / 255, blue: 24 / 255)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                HStack {
-                    BackNavButton {
-                        state.navigate(to: .onboarding1, forward: false)
+                // Bottom Illustration (Rolling hills, clouds & starry motes from launchfooter.png)
+                onboardingFooterView(width: geo.size.width)
+                    .offset(y: 40)
+                    .ignoresSafeArea(edges: .bottom)
+
+                // Foreground Content strictly constrained to screen width
+                VStack(spacing: 0) {
+                    // Top Navigation Bar
+                    HStack {
+                        BackNavButton {
+                            state.navigate(to: .onboarding1, forward: false)
+                        }
+                        Spacer()
                     }
-                    Spacer()
+                    .padding(.horizontal, 24)
+                    .padding(.top, 8)
+
+                    // Headings & Explanatory Copy
+                    VStack(alignment: .leading, spacing: 10) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Support on your")
+                                .font(.system(size: 32, weight: .bold, design: .rounded))
+                                .foregroundStyle(.white)
+
+                            Text("schedule")
+                                .font(.system(size: 32, weight: .bold, design: .rounded))
+                                .foregroundStyle(Color(red: 195 / 255, green: 175 / 255, blue: 255 / 255))
+                        }
+
+                        Text("Simple activities to practice fluency and become more comfortable speaking whenever and wherever it fits your day.")
+                            .font(.system(size: 14.5, weight: .regular, design: .rounded))
+                            .foregroundStyle(Color(red: 218 / 255, green: 222 / 255, blue: 245 / 255).opacity(0.88))
+                            .lineSpacing(3)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 14)
+
+                    Spacer(minLength: 8)
+
+                    // Centered Hero Illustration (Coach video call card)
+                    OnboardingStepTwoIllustration()
+                        .padding(.vertical, 6)
+
+                    Spacer(minLength: 8)
+
+                    // Signature Purple Action Button
+                    PrimaryActionButton(title: "Next", compact: false) {
+                        state.navigate(to: .exploreActivities, forward: true)
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 24)
                 }
-                .padding(.horizontal, 24)
-                .padding(.top, 16)
+                .frame(width: geo.size.width)
+            }
+            .frame(width: geo.size.width, height: geo.size.height)
+        }
+    }
 
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("Support on your\nschedule")
-                        .font(.system(size: 32, weight: .bold, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textPrimaryDark)
-                        .lineSpacing(2)
-
-                    Text("Simple activities to practice fluency and become more comfortable speaking.")
-                        .font(.system(size: 15, weight: .regular, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
-                        .lineSpacing(4)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 28)
-                .padding(.top, 16)
-
-                Spacer()
-
-                OnboardingStepTwoIllustration()
-                    .padding(.vertical, 8)
-
-                Spacer()
-
-                PrimaryActionButton(title: "Next", compact: true) {
-                    state.navigate(to: .dailyGoal, forward: true)
-                }
-                .padding(.horizontal, 28)
-                .padding(.bottom, 24)
+    @ViewBuilder
+    private func onboardingFooterView(width: CGFloat) -> some View {
+        Group {
+            if let uiImage = UIImage(named: "launchfooter")
+                ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "launchfooter", ofType: "png") ?? "") {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: width, alignment: .bottom)
+            } else {
+                Image("launchfooter")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: width, alignment: .bottom)
             }
         }
+        .allowsHitTesting(false)
     }
 }
 
@@ -462,55 +559,94 @@ public struct ExploreActivitiesView: View {
     ]
 
     public var body: some View {
-        ZStack {
-            StamerleeTheme.backgroundDark.ignoresSafeArea()
+        GeometryReader { geo in
+            ZStack(alignment: .bottom) {
+                // Deep Purple-to-Midnight Gradient Background (Full bleed)
+                LinearGradient(
+                    colors: [
+                        Color(red: 45 / 255, green: 38 / 255, blue: 135 / 255),
+                        Color(red: 24 / 255, green: 20 / 255, blue: 70 / 255),
+                        Color(red: 8 / 255, green: 10 / 255, blue: 24 / 255)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
 
-            VStack(alignment: .leading, spacing: 0) {
-                HStack {
-                    BackNavButton {
-                        state.navigate(to: .dailyGoal, forward: false)
-                    }
-                    Spacer()
-                }
-                .padding(.horizontal, 24)
-                .padding(.top, 16)
+                // Bottom Illustration (Rolling hills, clouds & starry motes from launchfooter.png)
+                onboardingFooterView(width: geo.size.width)
+                    .offset(y: 40)
+                    .ignoresSafeArea(edges: .bottom)
 
-                Text("Explore activities\ndesigned for your\nstutter")
-                    .font(.system(size: 28, weight: .bold, design: .rounded))
-                    .foregroundStyle(StamerleeTheme.textPrimaryDark)
-                    .lineSpacing(3)
-                    .padding(.horizontal, 24)
-                    .padding(.top, 16)
-                    .padding(.bottom, 22)
-
-                ScrollView {
-                    VStack(spacing: 12) {
-                        ForEach(Array(activities.enumerated()), id: \.element.id) { index, item in
-                            activityCard(item)
-                                .opacity(cardsVisible ? 1 : 0)
-                                .offset(y: cardsVisible ? 0 : 20)
-                                .animation(
-                                    .spring(response: 0.5, dampingFraction: 0.85)
-                                        .delay(0.08 + Double(index) * 0.06),
-                                    value: cardsVisible
-                                )
+                // Foreground Content strictly constrained to screen width
+                VStack(alignment: .leading, spacing: 0) {
+                    HStack {
+                        BackNavButton {
+                            state.navigate(to: .onboarding2, forward: false)
                         }
+                        Spacer()
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 16)
-                }
-                .scrollIndicators(.hidden)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 8)
 
-                Spacer()
+                    Text("Explore activities\ndesigned for your\nstutter")
+                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .lineSpacing(3)
+                        .padding(.horizontal, 24)
+                        .padding(.top, 14)
+                        .padding(.bottom, 16)
 
-                PrimaryActionButton(title: "Begin", compact: true) {
-                    state.navigate(to: .homeDashboard, forward: true)
+                    ScrollView {
+                        VStack(spacing: 12) {
+                            ForEach(Array(activities.enumerated()), id: \.element.id) { index, item in
+                                activityCard(item)
+                                    .opacity(cardsVisible ? 1 : 0)
+                                    .offset(y: cardsVisible ? 0 : 20)
+                                    .animation(
+                                        .spring(response: 0.5, dampingFraction: 0.85)
+                                            .delay(0.08 + Double(index) * 0.06),
+                                        value: cardsVisible
+                                    )
+                            }
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 16)
+                    }
+                    .scrollIndicators(.hidden)
+
+                    Spacer(minLength: 4)
+
+                    PrimaryActionButton(title: "Begin", compact: false) {
+                        state.navigate(to: .homeDashboard, forward: true)
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 24)
                 }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 24)
+                .frame(width: geo.size.width)
             }
+            .frame(width: geo.size.width, height: geo.size.height)
         }
         .onAppear { cardsVisible = true }
+    }
+
+    @ViewBuilder
+    private func onboardingFooterView(width: CGFloat) -> some View {
+        Group {
+            if let uiImage = UIImage(named: "launchfooter")
+                ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "launchfooter", ofType: "png") ?? "") {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: width, alignment: .bottom)
+            } else {
+                Image("launchfooter")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: width, alignment: .bottom)
+            }
+        }
+        .allowsHitTesting(false)
     }
 
     private func activityCard(_ item: ActivityCardItem) -> some View {
