@@ -462,6 +462,7 @@ public struct ArcBPMDialView: View {
 // MARK: - 3. Select BPM Screen
 public struct BeatBuddyBPMView: View {
     @Bindable public var state: AppState
+    @Environment(\.headerNamespace) private var headerNamespace
     public var onBack: (() -> Void)? = nil
     public var onStartPractice: (() -> Void)? = nil
     @State private var soundEnabled: Bool = true
@@ -475,26 +476,42 @@ public struct BeatBuddyBPMView: View {
     }
 
     public var body: some View {
-        BeatBuddyShell(state: state, onBack: {
-            if let onBack {
-                onBack()
-            } else {
-                state.navigate(to: .homeDashboard, forward: false)
-            }
-        }) {
-            VStack(alignment: .leading, spacing: 0) {
-                // Headings
-                Text("Select BPM")
-                    .font(.system(size: 30, weight: .bold, design: .rounded))
-                    .foregroundStyle(StamerleeTheme.textPrimaryDark)
-                    .padding(.horizontal, 24)
-                    .padding(.top, 16)
+        ZStack(alignment: .top) {
+            // Dark Background
+            StamerleeTheme.backgroundDark
+                .ignoresSafeArea()
 
+            VStack(alignment: .leading, spacing: 0) {
+                // Top Header Banner
+                headerImageView
+
+                // Header Bar with Back Button & Beat Buddy name on top of the image
+                HStack(spacing: 12) {
+                    BackNavButton {
+                        if let onBack {
+                            onBack()
+                        } else {
+                            state.navigate(to: .homeDashboard, forward: false)
+                        }
+                    }
+
+                    Text("Beat Buddy")
+                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .shadow(color: Color.black.opacity(0.45), radius: 6, x: 0, y: 2)
+
+                    Spacer()
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, -48)
+                .padding(.bottom, 6)
+
+                // Subtitle
                 Text("Speak with the steady beat")
                     .font(.system(size: 14, weight: .regular, design: .rounded))
                     .foregroundStyle(StamerleeTheme.textSecondaryDark)
                     .padding(.horizontal, 24)
-                    .padding(.top, 4)
+                    .padding(.top, 2)
 
                 // Sound Category Picker
                 VStack(alignment: .leading, spacing: 6) {
@@ -536,16 +553,16 @@ public struct BeatBuddyBPMView: View {
                 .padding(.horizontal, 24)
                 .padding(.top, 14)
 
-                Spacer(minLength: 16)
+                Spacer(minLength: 12)
 
                 // Arc Dial Centered
                 HStack {
                     Spacer()
-                    ArcBPMDialView(bpm: $state.beatBuddyBPM, size: 240)
+                    ArcBPMDialView(bpm: $state.beatBuddyBPM, size: 220)
                     Spacer()
                 }
 
-                Spacer(minLength: 14)
+                Spacer(minLength: 10)
 
                 // Stepper Buttons (- and +)
                 HStack {
@@ -574,7 +591,7 @@ public struct BeatBuddyBPMView: View {
                     }
                 }
                 .padding(.horizontal, 48)
-                .padding(.bottom, 16)
+                .padding(.bottom, 14)
 
                 // Sound & Vibration Toggles
                 HStack(spacing: 12) {
@@ -586,7 +603,7 @@ public struct BeatBuddyBPMView: View {
                     }
                 }
                 .padding(.horizontal, 24)
-                .padding(.bottom, 20)
+                .padding(.bottom, 16)
 
                 Spacer()
 
@@ -609,6 +626,26 @@ public struct BeatBuddyBPMView: View {
         }
         .sensoryFeedback(.selection, trigger: state.beatBuddyBPM)
         .sensoryFeedback(.selection, trigger: selectedCategory)
+    }
+
+    @ViewBuilder
+    private var headerImageView: some View {
+        Group {
+            if let uiImage = UIImage(named: "header") ?? UIImage(named: "Header") {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity)
+                    .ignoresSafeArea(edges: .top)
+            } else {
+                Image("Header")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity)
+                    .ignoresSafeArea(edges: .top)
+            }
+        }
+        .matchedGeometryEffectIfPresent(id: "headerBanner", in: headerNamespace)
     }
 
     private func startSession() {

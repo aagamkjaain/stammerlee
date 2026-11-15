@@ -5,6 +5,7 @@ import UIKit
 /// Main application hub with daily goals, exercise modules, and bottom tab bar.
 public struct HomeDashboardView: View {
     @Bindable public var state: AppState
+    @Environment(\.headerNamespace) private var headerNamespace
     
     @State private var showLockedAlert: Bool = false
     @State private var lockedAlertMessage: String = ""
@@ -191,19 +192,22 @@ public struct HomeDashboardView: View {
     // MARK: - Top Header Image
     @ViewBuilder
     private var headerImageView: some View {
-        if let uiImage = UIImage(named: "header") ?? UIImage(named: "Header") {
-            Image(uiImage: uiImage)
-                .resizable()
-                .scaledToFit()
-                .frame(maxWidth: .infinity)
-                .ignoresSafeArea(edges: .top)
-        } else {
-            Image("Header")
-                .resizable()
-                .scaledToFit()
-                .frame(maxWidth: .infinity)
-                .ignoresSafeArea(edges: .top)
+        Group {
+            if let uiImage = UIImage(named: "header") ?? UIImage(named: "Header") {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity)
+                    .ignoresSafeArea(edges: .top)
+            } else {
+                Image("Header")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity)
+                    .ignoresSafeArea(edges: .top)
+            }
         }
+        .matchedGeometryEffectIfPresent(id: "headerBanner", in: headerNamespace)
     }
 
     // MARK: - Fluency Lap Card

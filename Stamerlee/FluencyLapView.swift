@@ -2,6 +2,7 @@ import SwiftUI
 
 public struct FluencyLapView: View {
     @Bindable public var state: AppState
+    @Environment(\.headerNamespace) private var headerNamespace
     @State private var selectedDuration: LapDuration = .classic
 
     public init(state: AppState) {
@@ -9,63 +10,94 @@ public struct FluencyLapView: View {
     }
 
     public var body: some View {
-        NavigationStack {
-            ZStack {
-                StamerleeTheme.backgroundDark
-                    .ignoresSafeArea()
+        ZStack(alignment: .top) {
+            StamerleeTheme.backgroundDark
+                .ignoresSafeArea()
 
-                VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 0) {
+                // Top Header Banner
+                headerImageView
+
+                // Header Bar with Back Button & Fluency Lap title on top of the image
+                HStack(spacing: 12) {
                     BackNavButton {
                         state.navigate(to: .homeDashboard, forward: false)
                     }
-                    .padding(.top, 8)
 
                     Text("Fluency Lap")
-                        .font(.system(size: 30, weight: .bold, design: .rounded))
+                        .font(.system(size: 28, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
-                        .padding(.top, 18)
+                        .shadow(color: Color.black.opacity(0.45), radius: 6, x: 0, y: 2)
 
-                    Text("Practice words from the sounds you tend to stutter on. Build speed, smoothness, and confidence under time pressure.")
-                        .font(.system(size: 15, weight: .regular, design: .rounded))
-                        .foregroundStyle(Color(red: 221 / 255, green: 218 / 255, blue: 239 / 255))
-                        .lineSpacing(4)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.top, 10)
-
-                    goalCard
-                        .padding(.top, 22)
-
-                    Text("CHOOSE ROUND DURATION")
-                        .font(.system(size: 13, weight: .bold, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
-                        .tracking(0.6)
-                        .padding(.top, 26)
-
-                    HStack(spacing: 10) {
-                        ForEach(LapDuration.allCases) { duration in
-                            durationButton(duration)
-                        }
-                    }
-                    .padding(.top, 14)
-
-                    PrimaryActionButton(
-                        title: "Start Today's Challenge",
-                        icon: "play.fill",
-                        compact: true
-                    ) {
-                        state.fluencyLapWordCount = selectedDuration.wordCount
-                        state.navigate(to: .fluencyLapPractice)
-                    }
-                    .padding(.top, 28)
-
-                    Spacer(minLength: 0)
+                    Spacer()
                 }
                 .padding(.horizontal, 24)
-                .padding(.bottom, 12)
+                .padding(.top, -48)
+                .padding(.bottom, 6)
+
+                // Scrollable Content
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text("Practice words from the sounds you tend to stutter on. Build speed, smoothness, and confidence under time pressure.")
+                            .font(.system(size: 14, weight: .regular, design: .rounded))
+                            .foregroundStyle(Color(red: 221 / 255, green: 218 / 255, blue: 239 / 255))
+                            .lineSpacing(3)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .padding(.top, 4)
+
+                        goalCard
+                            .padding(.top, 18)
+
+                        Text("CHOOSE ROUND DURATION")
+                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                            .foregroundStyle(StamerleeTheme.textSecondaryDark)
+                            .tracking(0.6)
+                            .padding(.top, 22)
+
+                        HStack(spacing: 10) {
+                            ForEach(LapDuration.allCases) { duration in
+                                durationButton(duration)
+                            }
+                        }
+                        .padding(.top, 12)
+
+                        PrimaryActionButton(
+                            title: "Start Today's Challenge",
+                            icon: "play.fill",
+                            compact: true
+                        ) {
+                            state.fluencyLapWordCount = selectedDuration.wordCount
+                            state.navigate(to: .fluencyLapPractice)
+                        }
+                        .padding(.top, 24)
+                        .padding(.bottom, 24)
+                    }
+                    .padding(.horizontal, 24)
+                }
+                .scrollIndicators(.hidden)
             }
-            .toolbar(.hidden, for: .navigationBar)
         }
         .preferredColorScheme(.dark)
+    }
+
+    @ViewBuilder
+    private var headerImageView: some View {
+        Group {
+            if let uiImage = UIImage(named: "header") ?? UIImage(named: "Header") {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity)
+                    .ignoresSafeArea(edges: .top)
+            } else {
+                Image("Header")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity)
+                    .ignoresSafeArea(edges: .top)
+            }
+        }
+        .matchedGeometryEffectIfPresent(id: "headerBanner", in: headerNamespace)
     }
 
     private var goalCard: some View {
