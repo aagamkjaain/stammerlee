@@ -20,10 +20,12 @@ public struct DialSceneIntroView: View {
     }
 
     public var body: some View {
-        ZStack {
+        ZStack(alignment: .top) {
             // Dark Background
             StamerleeTheme.backgroundDark
                 .ignoresSafeArea()
+
+            BackgroundImagesDecorationView()
 
             VStack(alignment: .leading, spacing: 0) {
                 // Top Navigation Bar
@@ -49,7 +51,7 @@ public struct DialSceneIntroView: View {
 
                     Text("Dial Scene helps you practice real-life phone conversations, manage speaking challenges and build confidence in communicating smoothly during everyday calls.")
                         .font(.system(size: 16, weight: .regular, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
+                        .foregroundStyle(.white)
                         .lineSpacing(4)
                 }
                 .padding(.horizontal, 24)
@@ -126,8 +128,11 @@ public struct DialSceneView: View {
     }
 
     public var body: some View {
-        ZStack {
+        ZStack(alignment: .top) {
             StamerleeTheme.backgroundDark.ignoresSafeArea()
+
+            BackgroundImagesDecorationView()
+
             switch stage {
             case .intro:
                 DialSceneIntroView(

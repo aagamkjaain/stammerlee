@@ -27,8 +27,10 @@ public struct PictureDescriptionEasyView: View {
     }
 
     public var body: some View {
-        ZStack {
+        ZStack(alignment: .top) {
             StamerleeTheme.backgroundDark.ignoresSafeArea()
+
+            BackgroundImagesDecorationView()
 
             if isAnalysisVisible {
                 analysisView
@@ -64,7 +66,7 @@ public struct PictureDescriptionEasyView: View {
 
             Text(description)
                 .font(.system(size: 14, design: .rounded))
-                .foregroundStyle(StamerleeTheme.textSecondaryDark)
+                .foregroundStyle(.white)
                 .padding(.horizontal, 24)
                 .padding(.top, 10)
 
@@ -76,7 +78,7 @@ public struct PictureDescriptionEasyView: View {
 
             Spacer(minLength: 16)
 
-            SpeechMicrophoneButton(isListening: $isListening) {
+            PulsingMicrophoneButton(isListening: $isListening) {
                 isListening = true
                 completeCurrentDifficulty()
                 withAnimation(.easeInOut(duration: 0.25)) {

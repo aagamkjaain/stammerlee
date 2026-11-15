@@ -102,12 +102,12 @@ public struct SpeakPracticeScreen: View {
     }
 
     public var body: some View {
-        ZStack {
+        ZStack(alignment: .top) {
             StamerleeTheme.backgroundDark
                 .ignoresSafeArea()
 
             if showBackgroundImages {
-                backgroundImagesLayer
+                BackgroundImagesDecorationView()
             }
 
             VStack(spacing: 0) {
@@ -115,7 +115,7 @@ public struct SpeakPracticeScreen: View {
 
                 Text(instruction)
                     .font(.system(size: 15, weight: .regular, design: .rounded))
-                    .foregroundStyle(Color(red: 190 / 255, green: 188 / 255, blue: 214 / 255))
+                    .foregroundStyle(.white)
                     .lineSpacing(5)
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)

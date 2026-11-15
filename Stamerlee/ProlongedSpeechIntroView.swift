@@ -10,9 +10,11 @@ public struct ProlongedSpeechIntroView: View {
     }
 
     public var body: some View {
-        ZStack {
+        ZStack(alignment: .top) {
             StamerleeTheme.backgroundDark
                 .ignoresSafeArea()
+
+            BackgroundImagesDecorationView()
 
             VStack(alignment: .leading, spacing: 0) {
                 // Top Navigation Bar
@@ -34,7 +36,7 @@ public struct ProlongedSpeechIntroView: View {
 
                     Text("Learn to gently stretch sounds and connect words smoothly. This technique can help reduce speech tension and improve fluency with practice")
                         .font(.system(size: 16, weight: .regular, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
+                        .foregroundStyle(.white)
                         .lineSpacing(4)
                 }
                 .padding(.horizontal, 24)

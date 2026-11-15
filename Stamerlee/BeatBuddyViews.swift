@@ -52,7 +52,7 @@ private struct BeatBuddyShell<Content: View>: View {
     }
 
     var body: some View {
-        ZStack {
+        ZStack(alignment: .top) {
             StamerleeTheme.backgroundDark.ignoresSafeArea()
             VStack(alignment: .leading, spacing: 0) {
                 BackNavButton {
@@ -741,9 +741,11 @@ public struct BeatBuddyPracticeView: View {
     }
 
     public var body: some View {
-        ZStack {
+        ZStack(alignment: .top) {
             StamerleeTheme.backgroundDark
                 .ignoresSafeArea()
+
+            BackgroundImagesDecorationView()
 
             VStack(spacing: 0) {
                 topBar
