@@ -123,7 +123,7 @@ public struct ContentView: View {
                 case .narrationDifficulty, .narrationPractice:
                     NarrationPracticeView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
-                case .beatBuddyPracticeType, .beatBuddyWords, .beatBuddyBPM:
+                case .beatBuddyBPM:
                     BeatBuddyBPMView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
                 case .beatBuddyPractice:
