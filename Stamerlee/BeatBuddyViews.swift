@@ -693,18 +693,18 @@ public struct BeatBuddyBPMView: View {
 }
 
 // MARK: - 4. Practice Session Screen
-// Matches the Prolonged Speech Practice UI design with Metronome Beat & pop.mp3 audio
+// Matches the Prolonged Speech Practice UI design with Syllable-by-Syllable Metronome Beat & pop.mp3 audio
 public struct BeatBuddyPracticeView: View {
     @Bindable public var state: AppState
     public var onBack: (() -> Void)? = nil
     public var onFinish: (() -> Void)? = nil
 
     @State private var currentWordIndex = 0
+    @State private var activeSyllableIndex = 0
     @State private var isMetronomeActive = true
     @State private var isListening = false
     @State private var pulse = false
     @State private var isBeating = false
-    @State private var beatCount = 0
 
     @State private var metronomeTask: Task<Void, Never>?
     @State private var advanceTask: Task<Void, Never>?
@@ -734,6 +734,10 @@ public struct BeatBuddyPracticeView: View {
     private var currentWord: String {
         guard !words.isEmpty else { return "" }
         return words[min(currentWordIndex, words.count - 1)]
+    }
+
+    private var currentSyllables: [String] {
+        SyllableHelper.split(currentWord)
     }
 
     public var body: some View {
@@ -791,6 +795,7 @@ public struct BeatBuddyPracticeView: View {
         }
         .preferredColorScheme(.dark)
         .onAppear {
+            activeSyllableIndex = 0
             startMetronome()
         }
         .onDisappear {
@@ -839,48 +844,77 @@ public struct BeatBuddyPracticeView: View {
     }
 
     private var promptDisplay: some View {
-        VStack(spacing: 16) {
-            // Rhythmic 4-beat visualizer dots
-            HStack(spacing: 8) {
-                ForEach(0..<4, id: \.self) { b in
-                    Circle()
-                        .fill(
-                            b == beatCount && isMetronomeActive
-                                ? StamerleeTheme.primaryBlue
-                                : Color.white.opacity(0.18)
-                        )
-                        .frame(
-                            width: (b == beatCount && isMetronomeActive && isBeating) ? 10 : 7,
-                            height: (b == beatCount && isMetronomeActive && isBeating) ? 10 : 7
-                        )
-                        .shadow(
-                            color: (b == beatCount && isMetronomeActive) ? StamerleeTheme.primaryBlue.opacity(0.8) : .clear,
-                            radius: 6
-                        )
+        let syllables = currentSyllables
+
+        return VStack(spacing: 16) {
+            // Full original word caption
+            Text(currentWord)
+                .font(.system(size: 16, weight: .semibold, design: .rounded))
+                .foregroundStyle(StamerleeTheme.textSecondaryDark)
+                .opacity(0.85)
+
+            // Syllables broken with hyphens and animated to the metronome beat
+            HStack(spacing: 6) {
+                ForEach(Array(syllables.enumerated()), id: \.offset) { index, syllable in
+                    let isActive = (index == activeSyllableIndex) && isMetronomeActive
+
+                    HStack(spacing: 6) {
+                        VStack(spacing: 8) {
+                            Text(syllable)
+                                .font(.system(size: syllableFontSize(for: syllables), weight: .bold, design: .rounded))
+                                .foregroundStyle(
+                                    isActive
+                                        ? AnyShapeStyle(
+                                            LinearGradient(
+                                                colors: [
+                                                    Color(red: 175 / 255, green: 145 / 255, blue: 255 / 255),
+                                                    Color(red: 100 / 255, green: 225 / 255, blue: 255 / 255)
+                                                ],
+                                                startPoint: .topLeading,
+                                                endPoint: .bottomTrailing
+                                            )
+                                        )
+                                        : AnyShapeStyle(Color.white.opacity(0.35))
+                                )
+                                .scaleEffect(isActive ? (isBeating ? 1.18 : 1.10) : 1.0)
+                                .shadow(
+                                    color: isActive
+                                        ? Color(red: 139 / 255, green: 92 / 255, blue: 246 / 255).opacity(isBeating ? 0.95 : 0.6)
+                                        : .clear,
+                                    radius: isBeating ? 18 : 8
+                                )
+
+                            // Glowing beat indicator capsule beneath active syllable
+                            Capsule()
+                                .fill(
+                                    isActive
+                                        ? LinearGradient(
+                                            colors: [StamerleeTheme.primaryBlue, Color.cyan],
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                        : LinearGradient(
+                                            colors: [Color.white.opacity(0.12), Color.white.opacity(0.12)],
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                )
+                                .frame(width: isActive ? 32 : 12, height: 4)
+                                .shadow(color: isActive ? Color.cyan.opacity(0.8) : .clear, radius: 6)
+                        }
+                        .animation(.spring(response: 0.22, dampingFraction: 0.6), value: isActive)
+                        .animation(.spring(response: 0.18, dampingFraction: 0.5), value: isBeating)
+
+                        if index < syllables.count - 1 {
+                            Text("-")
+                                .font(.system(size: 28, weight: .bold, design: .rounded))
+                                .foregroundStyle(Color.white.opacity(0.25))
+                                .padding(.horizontal, 2)
+                                .padding(.bottom, 12)
+                        }
+                    }
                 }
             }
-            .animation(.spring(response: 0.2, dampingFraction: 0.6), value: beatCount)
-
-            // Word prompt animated to the beat
-            let prompt = currentWord
-            (
-                Text(String(prompt.prefix(1)))
-                    .foregroundStyle(StamerleeTheme.accentPurpleLight)
-                + Text(String(prompt.dropFirst()))
-                    .foregroundStyle(.white)
-            )
-            .font(.system(size: 46, weight: .bold, design: .rounded))
-            .multilineTextAlignment(.center)
-            .minimumScaleFactor(0.7)
-            .lineLimit(1)
-            .scaleEffect((isBeating && isMetronomeActive) ? 1.09 : 1.0)
-            .shadow(
-                color: (isBeating && isMetronomeActive) ? StamerleeTheme.primaryBlue.opacity(0.9) : StamerleeTheme.primaryBlue.opacity(0.15),
-                radius: (isBeating && isMetronomeActive) ? 22 : 6,
-                x: 0,
-                y: 0
-            )
-            .animation(.spring(response: 0.18, dampingFraction: 0.55), value: isBeating)
             .id(currentWordIndex)
             .transition(.opacity.combined(with: .scale(scale: 0.96)))
         }
@@ -888,6 +922,19 @@ public struct BeatBuddyPracticeView: View {
         .contentShape(Rectangle())
         .onTapGesture {
             advanceWord()
+        }
+    }
+
+    private func syllableFontSize(for syllables: [String]) -> CGFloat {
+        let totalChars = syllables.reduce(0) { $0 + $1.count } + (syllables.count - 1) * 2
+        if totalChars > 16 {
+            return 30
+        } else if totalChars > 12 {
+            return 34
+        } else if totalChars > 8 {
+            return 38
+        } else {
+            return 44
         }
     }
 
@@ -980,6 +1027,7 @@ public struct BeatBuddyPracticeView: View {
         withAnimation(.easeInOut(duration: 0.22)) {
             if currentWordIndex + 1 < wordCount {
                 currentWordIndex += 1
+                activeSyllableIndex = 0
             } else {
                 finishPractice()
             }
@@ -997,22 +1045,31 @@ public struct BeatBuddyPracticeView: View {
 
         metronomeTask = Task { @MainActor in
             while !Task.isCancelled && isMetronomeActive {
+                // Play sound effect on each syllable beat
                 popPlayer.playPop()
 
-                withAnimation(.spring(response: 0.18, dampingFraction: 0.55)) {
+                let syllables = currentSyllables
+                let count = max(syllables.count, 1)
+
+                withAnimation(.spring(response: 0.20, dampingFraction: 0.58)) {
                     isBeating = true
-                    beatCount = (beatCount + 1) % 4
                 }
 
                 try? await Task.sleep(nanoseconds: pulseDurationNanos)
                 guard !Task.isCancelled else { break }
 
-                withAnimation(.easeOut(duration: 0.2)) {
+                withAnimation(.easeOut(duration: 0.18)) {
                     isBeating = false
                 }
 
                 let remainingNanos = intervalNanos > pulseDurationNanos ? (intervalNanos - pulseDurationNanos) : (intervalNanos / 2)
                 try? await Task.sleep(nanoseconds: remainingNanos)
+                guard !Task.isCancelled else { break }
+
+                // Advance to next syllable for the next beat
+                withAnimation(.easeInOut(duration: 0.16)) {
+                    activeSyllableIndex = (activeSyllableIndex + 1) % count
+                }
             }
         }
     }
@@ -1039,6 +1096,128 @@ public struct BeatBuddyPracticeView: View {
         } else {
             state.navigate(to: .homeDashboard, forward: false)
         }
+    }
+}
+
+// MARK: - Syllable Splitter Helper
+public enum SyllableHelper {
+    public static let dictionary: [String: [String]] = [
+        "university": ["uni", "ver", "sity"],
+        "water": ["wa", "ter"],
+        "breaking": ["break", "ing"],
+        "computer": ["com", "pu", "ter"],
+        "scale": ["scale"],
+        "laptop": ["lap", "top"],
+        "vinyl": ["vi", "nyl"],
+        "desk": ["desk"],
+        "swift": ["swift"],
+        "center": ["cen", "ter"],
+        "protocol": ["pro", "to", "col"],
+        "optional": ["op", "tion", "al"],
+        "morning": ["morn", "ing"],
+        "coffee": ["cof", "fee"],
+        "please": ["please"],
+        "breathe": ["breathe"],
+        "gentle": ["gen", "tle"],
+        "together": ["to", "geth", "er"],
+        "pacing": ["pa", "cing"],
+        "speech": ["speech"],
+        "natural": ["nat", "u", "ral"],
+        "freedom": ["free", "dom"],
+        "balance": ["bal", "ance"],
+        "progress": ["prog", "ress"],
+        "connection": ["con", "nec", "tion"],
+        "confidence": ["con", "fi", "dence"],
+        "smooth": ["smooth"],
+        "presence": ["pres", "ence"],
+        "story": ["sto", "ry"],
+        "clarity": ["clar", "i", "ty"],
+        "courage": ["cour", "age"],
+        "keep": ["keep"],
+        "care": ["care"],
+        "kitchen": ["kitch", "en"],
+        "key": ["key"],
+        "kite": ["kite"],
+        "candle": ["can", "dle"],
+        "memory": ["mem", "o", "ry"],
+        "mind": ["mind"],
+        "music": ["mu", "sic"],
+        "motion": ["mo", "tion"],
+        "master": ["mas", "ter"],
+        "moment": ["mo", "ment"],
+        "manage": ["man", "age"],
+        "market": ["mar", "ket"],
+        "message": ["mes", "sage"],
+        "silence": ["si", "lence"],
+        "steady": ["stead", "y"],
+        "start": ["start"],
+        "simple": ["sim", "ple"],
+        "sunlight": ["sun", "light"],
+        "peace": ["peace"],
+        "power": ["pow", "er"],
+        "practice": ["prac", "tice"],
+        "paper": ["pa", "per"],
+        "picture": ["pic", "ture"],
+        "today": ["to", "day"],
+        "time": ["time"],
+        "topic": ["top", "ic"],
+        "travel": ["trav", "el"],
+        "target": ["tar", "get"],
+        "trust": ["trust"],
+        "training": ["train", "ing"],
+        "tomorrow": ["to", "mor", "row"],
+        "table": ["ta", "ble"],
+        "bright": ["bright"],
+        "begin": ["be", "gin"],
+        "build": ["build"],
+        "belief": ["be", "lief"],
+        "better": ["bet", "ter"],
+        "bridge": ["bridge"],
+        "button": ["but", "ton"]
+    ]
+
+    public static func split(_ word: String) -> [String] {
+        let clean = word.trimmingCharacters(in: .whitespacesAndNewlines)
+        let key = clean.lowercased()
+        if let entry = dictionary[key] {
+            if let firstChar = clean.first, firstChar.isUppercase {
+                var capitalized = entry
+                capitalized[0] = capitalized[0].prefix(1).uppercased() + capitalized[0].dropFirst()
+                return capitalized
+            }
+            return entry
+        }
+        if clean.contains("-") {
+            return clean.split(separator: "-").map { String($0) }
+        }
+        return ruleBasedSplit(clean)
+    }
+
+    private static func ruleBasedSplit(_ word: String) -> [String] {
+        guard word.count > 4 else { return [word] }
+        let vowels: Set<Character> = ["a", "e", "i", "o", "u", "y", "A", "E", "I", "O", "U", "Y"]
+        var chunks: [String] = []
+        var current = ""
+        var hasVowel = false
+
+        for char in word {
+            current.append(char)
+            if vowels.contains(char) {
+                hasVowel = true
+            } else if hasVowel && current.count >= 2 {
+                chunks.append(current)
+                current = ""
+                hasVowel = false
+            }
+        }
+        if !current.isEmpty {
+            if chunks.isEmpty {
+                chunks.append(current)
+            } else {
+                chunks[chunks.count - 1].append(current)
+            }
+        }
+        return chunks.isEmpty ? [word] : chunks
     }
 }
 
