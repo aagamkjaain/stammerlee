@@ -104,6 +104,8 @@ public final class AppState {
     public var selectedNarrationDifficulty: String = "Easy"
     public var completedNarrationDifficulties: Set<String> = []
     public var beatBuddySelectedWords: Set<String> = ["Water", "University"]
+    public var beatBuddyPracticeWords: [String] = []
+    public var beatBuddySoundCategory: String = "Randomized"
     public var beatBuddyWordCount: Int = 10
     public var beatBuddyUsesCustomWordCount: Bool = false
     public var beatBuddyBPM: Int = 120

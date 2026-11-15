@@ -70,40 +70,15 @@ public struct ProlongedPracticeView: View {
 // MARK: - 2. Analysis / Results Screen ("pro res" / "prolonged speech blocks...")
 public struct ProlongedAnalysisView: View {
     @Bindable public var state: AppState
-    
-    @State private var selectedWords: Set<String> = []
-    
+
     private var level: String {
         state.selectedDifficulty
     }
 
-    private var wordsList: [String] {
-        switch level {
-        case "Sentences", "Medium":
-            return [
-                "Love", "Spiderman", "Please", "Water", "Morning", "Friend",
-                "Together", "Sentence", "Adventure", "Courage", "Family", "Journey",
-                "Comfort", "Practice", "Freedom", "Balance", "Connect", "Progress"
-            ]
-        case "Paragraphs", "Hard":
-            return [
-                "Really", "Weather", "Coffee", "Repeat", "Slowly", "Feeling",
-                "Would", "Natural", "Connection", "Confidence", "Today", "Pacing",
-                "Conversation", "Expressive", "Overcome", "Clarity", "Smoothness", "Resilience"
-            ]
-        default: // Words / Easy
-            return [
-                "Water", "Sun", "Morning", "Please", "Garden", "Window",
-                "Slowly", "Relaxed", "Together", "Gentle", "Quiet", "Breathe",
-                "Listen", "River", "Sunny", "Simple", "Golden", "Peaceful"
-            ]
-        }
-    }
-    
     public init(state: AppState) {
         self.state = state
     }
-    
+
     private var scoreText: String {
         switch level {
         case "Paragraphs", "Hard":
@@ -119,8 +94,7 @@ public struct ProlongedAnalysisView: View {
         ExerciseAnalysisSkeletonView(
             scoreText: scoreText,
             maxScoreText: "/ 10",
-            wordsList: wordsList,
-            selectedWords: $selectedWords,
+            subtitle: "Great job completing your prolonged speech session!",
             onDone: {
                 let score = Double(scoreText) ?? 8.8
                 state.recordProlongedScore(difficulty: level, score: score)
@@ -128,7 +102,6 @@ public struct ProlongedAnalysisView: View {
             }
         )
         .onAppear {
-            selectedWords = Set(wordsList.prefix(2))
             let score = Double(scoreText) ?? 8.8
             state.recordProlongedScore(difficulty: level, score: score)
         }

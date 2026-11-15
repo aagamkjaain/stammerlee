@@ -2,54 +2,10 @@ import SwiftUI
 
 // =============================================================================
 // MARK: - ONBOARDING VIEWS (Consolidated)
-// Contains: LaunchView, LoginView, OnboardingStepOneView,
+// Contains: LoginView, OnboardingStepOneView,
 //           OnboardingStepTwoView, DailyGoalView, ExploreActivitiesView
+// (LaunchView lives in LaunchView.swift)
 // =============================================================================
-
-// MARK: - 1. Launch Screen
-public struct LaunchView: View {
-    @Bindable public var state: AppState
-
-    @State private var logoOpacity: Double = 0.0
-    @State private var logoScale: CGFloat = 0.94
-
-    public init(state: AppState) {
-        self.state = state
-    }
-
-    public var body: some View {
-        ZStack {
-            StamerleeTheme.backgroundDark.ignoresSafeArea()
-
-            VStack {
-                Spacer()
-                Text("Stamerlee")
-                    .font(.system(size: 44, weight: .bold, design: .rounded))
-                    .foregroundStyle(StamerleeTheme.textPrimaryDark)
-                    .opacity(logoOpacity)
-                    .scaleEffect(logoScale)
-                    .shadow(color: Color.white.opacity(0.15), radius: 16, x: 0, y: 0)
-                Spacer()
-            }
-        }
-        .contentShape(Rectangle())
-        .onTapGesture {
-            state.navigate(to: .login)
-        }
-        .onAppear {
-            withAnimation(.easeOut(duration: 2.5)) {
-                logoOpacity = 1.0
-                logoScale = 1.0
-            }
-            Task { @MainActor in
-                try? await Task.sleep(for: .seconds(1.8))
-                if state.currentScreen == .launch {
-                    state.navigate(to: .login)
-                }
-            }
-        }
-    }
-}
 
 // MARK: - 2. Login Screen
 public struct LoginView: View {
@@ -390,12 +346,7 @@ public struct DailyGoalView: View {
                     .padding(.bottom, 28)
 
                 VStack(alignment: .leading, spacing: 0) {
-                    Text("Choose your daily goal")
-                        .font(.system(size: 16, weight: .bold, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textPrimaryLight)
-                        .padding(.horizontal, 20)
-                        .padding(.top, 22)
-                        .padding(.bottom, 14)
+                    
 
                     VStack(spacing: 0) {
                         ForEach(goalOptions, id: \.self) { minutes in
@@ -532,7 +483,7 @@ public struct ExploreActivitiesView: View {
                     .padding(.top, 16)
                     .padding(.bottom, 22)
 
-                ScrollView(showsIndicators: false) {
+                ScrollView {
                     VStack(spacing: 12) {
                         ForEach(Array(activities.enumerated()), id: \.element.id) { index, item in
                             activityCard(item)
@@ -548,6 +499,7 @@ public struct ExploreActivitiesView: View {
                     .padding(.horizontal, 20)
                     .padding(.bottom, 16)
                 }
+                .scrollIndicators(.hidden)
 
                 Spacer()
 
