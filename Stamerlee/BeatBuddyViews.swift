@@ -1,4 +1,5 @@
 import SwiftUI
+import AVFoundation
 
 private let defaultBeatBuddyWords = [
     "Water", "University", "Breaking", "Computer", "Scale", "Laptop",
@@ -692,11 +693,23 @@ public struct BeatBuddyBPMView: View {
 }
 
 // MARK: - 4. Practice Session Screen
+// Matches the Prolonged Speech Practice UI design with Metronome Beat & pop.mp3 audio
 public struct BeatBuddyPracticeView: View {
     @Bindable public var state: AppState
     public var onBack: (() -> Void)? = nil
     public var onFinish: (() -> Void)? = nil
-    @State private var index = 0
+
+    @State private var currentWordIndex = 0
+    @State private var isMetronomeActive = true
+    @State private var isListening = false
+    @State private var pulse = false
+    @State private var isBeating = false
+    @State private var beatCount = 0
+
+    @State private var metronomeTask: Task<Void, Never>?
+    @State private var advanceTask: Task<Void, Never>?
+
+    private let popPlayer = BeatMetronomePlayer.shared
 
     public init(state: AppState, onBack: (() -> Void)? = nil, onFinish: (() -> Void)? = nil) {
         self.state = state
@@ -714,121 +727,400 @@ public struct BeatBuddyPracticeView: View {
         return BeatBuddySoundCategory.randomized.words
     }
 
+    private var wordCount: Int {
+        max(words.count, 1)
+    }
+
+    private var currentWord: String {
+        guard !words.isEmpty else { return "" }
+        return words[min(currentWordIndex, words.count - 1)]
+    }
+
     public var body: some View {
-        BeatBuddyShell(state: state, onBack: {
-            if let onBack {
-                onBack()
-            } else {
-                state.navigate(to: .beatBuddyBPM, forward: false)
-            }
-        }) {
+        ZStack {
+            StamerleeTheme.backgroundDark
+                .ignoresSafeArea()
+
             VStack(spacing: 0) {
-                // Top Info Bar (Sound Category Badge and BPM Badge)
-                HStack(spacing: 8) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "waveform")
-                            .font(.system(size: 11, weight: .semibold))
-                            .foregroundStyle(.cyan)
-                        Text(state.beatBuddySoundCategory)
-                            .font(.system(size: 12, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(Color.white.opacity(0.08), in: Capsule())
+                topBar
 
-                    Spacer()
+                Text("Speak each syllable with the metronome beat. Stay relaxed and let the rhythm guide your pace.")
+                    .font(.system(size: 15, weight: .regular, design: .rounded))
+                    .foregroundStyle(Color(red: 190 / 255, green: 188 / 255, blue: 214 / 255))
+                    .lineSpacing(5)
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, 28)
 
-                    // BPM Badge
-                    HStack(spacing: 6) {
-                        Image(systemName: "metronome.fill")
-                            .font(.system(size: 12))
-                            .foregroundStyle(.cyan)
-                        Text("\(state.beatBuddyBPM) BPM")
-                            .font(.system(size: 12, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
+                Spacer(minLength: 12)
+
+                promptDisplay
+
+                progress
+                    .padding(.top, 22)
+
+                Spacer(minLength: 16)
+
+                microphoneControl
+
+                Text("Tap and speak with the beat")
+                    .font(.system(size: 14, weight: .regular, design: .rounded))
+                    .foregroundStyle(Color(red: 194 / 255, green: 192 / 255, blue: 218 / 255))
+                    .padding(.top, 8)
+
+                Button {
+                    finishPractice()
+                } label: {
+                    HStack(spacing: 10) {
+                        Text("Finish Practice")
+                            .font(.system(size: 17, weight: .semibold, design: .rounded))
+                        Image(systemName: "arrow.right")
+                            .font(.system(size: 18, weight: .bold))
                     }
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 8)
-                    .background(Color.white.opacity(0.08), in: Capsule())
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 52)
                 }
-                .padding(.horizontal, 24)
-                .padding(.top, 12)
-
-                Spacer()
-
-                // Center Word Practice Card (Large, prominent, clean)
-                VStack(spacing: 18) {
-                    Text(words[min(index, words.count - 1)])
-                        .font(.system(size: 20, weight: .medium, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
-
-                    Text(splitWord(words[min(index, words.count - 1)]))
-                        .font(.system(size: 42, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
-
-                    // Page Indicator Dots
-                    HStack(spacing: 8) {
-                        ForEach(0..<words.count, id: \.self) { i in
-                            Circle()
-                                .fill(i == index ? Color.cyan : Color.white.opacity(0.2))
-                                .frame(width: i == index ? 8 : 6, height: i == index ? 8 : 6)
-                        }
-                    }
-                    .padding(.top, 6)
-                }
-                .frame(maxWidth: .infinity)
-                .frame(height: 220)
-                .background(
-                    RoundedRectangle(cornerRadius: 26, style: .continuous)
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    Color(red: 25 / 255, green: 40 / 255, blue: 95 / 255),
-                                    Color(red: 18 / 255, green: 22 / 255, blue: 50 / 255)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 26, style: .continuous)
-                        .stroke(Color.white.opacity(0.14), lineWidth: 1)
-                )
-                .shadow(color: Color.black.opacity(0.35), radius: 18, x: 0, y: 10)
-                .padding(.horizontal, 24)
-
-                Spacer()
-
-                // Bottom Action Button
-                VStack {
-                    PrimaryActionButton(title: index + 1 < words.count ? "Next Word" : "Finish Practice") {
-                        if index + 1 < words.count {
-                            withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
-                                index += 1
-                            }
-                        } else {
-                            if let onFinish {
-                                onFinish()
-                            } else {
-                                state.navigate(to: .homeDashboard, forward: false)
-                            }
-                        }
-                    }
-                }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 24)
+                .buttonStyle(BeatBuddyFinishButtonStyle())
+                .padding(.top, 22)
+                .padding(.bottom, 12)
+            }
+            .padding(.horizontal, 24)
+            .padding(.top, 8)
+        }
+        .preferredColorScheme(.dark)
+        .onAppear {
+            startMetronome()
+        }
+        .onDisappear {
+            stopAll()
+        }
+        .onChange(of: isMetronomeActive) { _, active in
+            if active {
+                startMetronome()
+            } else {
+                stopMetronome()
             }
         }
     }
 
-    private func splitWord(_ word: String) -> AttributedString {
-        var result = AttributedString(word)
-        let split = result.index(result.startIndex, offsetByCharacters: max(1, word.count / 2))
-        if split < result.endIndex {
-            result[split...].foregroundColor = Color.cyan
+    private var topBar: some View {
+        HStack {
+            BackNavButton {
+                stopAll()
+                if let onBack {
+                    onBack()
+                } else {
+                    state.navigate(to: .beatBuddyBPM, forward: false)
+                }
+            }
+
+            Spacer()
+
+            Button {
+                isMetronomeActive.toggle()
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: isMetronomeActive ? "metronome.fill" : "metronome")
+                        .font(.system(size: 14, weight: .semibold))
+                    Text("\(state.beatBuddyBPM) BPM")
+                        .font(.system(size: 15, weight: .semibold, design: .rounded))
+                }
+                .foregroundStyle(.white)
+                .padding(.horizontal, 17)
+                .frame(height: 40)
+                .contentShape(Capsule())
+            }
+            .buttonStyle(BeatBuddyBPMButtonStyle(isEnabled: isMetronomeActive))
+            .accessibilityLabel(isMetronomeActive ? "Disable Metronome" : "Enable Metronome")
         }
-        return result
+        .sensoryFeedback(.impact(weight: .light), trigger: isMetronomeActive)
+    }
+
+    private var promptDisplay: some View {
+        VStack(spacing: 16) {
+            // Rhythmic 4-beat visualizer dots
+            HStack(spacing: 8) {
+                ForEach(0..<4, id: \.self) { b in
+                    Circle()
+                        .fill(
+                            b == beatCount && isMetronomeActive
+                                ? StamerleeTheme.primaryBlue
+                                : Color.white.opacity(0.18)
+                        )
+                        .frame(
+                            width: (b == beatCount && isMetronomeActive && isBeating) ? 10 : 7,
+                            height: (b == beatCount && isMetronomeActive && isBeating) ? 10 : 7
+                        )
+                        .shadow(
+                            color: (b == beatCount && isMetronomeActive) ? StamerleeTheme.primaryBlue.opacity(0.8) : .clear,
+                            radius: 6
+                        )
+                }
+            }
+            .animation(.spring(response: 0.2, dampingFraction: 0.6), value: beatCount)
+
+            // Word prompt animated to the beat
+            let prompt = currentWord
+            (
+                Text(String(prompt.prefix(1)))
+                    .foregroundStyle(StamerleeTheme.accentPurpleLight)
+                + Text(String(prompt.dropFirst()))
+                    .foregroundStyle(.white)
+            )
+            .font(.system(size: 46, weight: .bold, design: .rounded))
+            .multilineTextAlignment(.center)
+            .minimumScaleFactor(0.7)
+            .lineLimit(1)
+            .scaleEffect((isBeating && isMetronomeActive) ? 1.09 : 1.0)
+            .shadow(
+                color: (isBeating && isMetronomeActive) ? StamerleeTheme.primaryBlue.opacity(0.9) : StamerleeTheme.primaryBlue.opacity(0.15),
+                radius: (isBeating && isMetronomeActive) ? 22 : 6,
+                x: 0,
+                y: 0
+            )
+            .animation(.spring(response: 0.18, dampingFraction: 0.55), value: isBeating)
+            .id(currentWordIndex)
+            .transition(.opacity.combined(with: .scale(scale: 0.96)))
+        }
+        .frame(maxWidth: .infinity)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            advanceWord()
+        }
+    }
+
+    private var progress: some View {
+        VStack(spacing: 10) {
+            Text("\(currentWordIndex + 1) of \(wordCount)")
+                .font(.system(size: 13, weight: .regular, design: .rounded))
+                .foregroundStyle(Color(red: 147 / 255, green: 145 / 255, blue: 175 / 255))
+
+            HStack(spacing: 7) {
+                ForEach(0..<min(wordCount, 8), id: \.self) { idx in
+                    Circle()
+                        .fill(idx == currentWordIndex % min(wordCount, 8) ? .white : Color(red: 80 / 255, green: 79 / 255, blue: 111 / 255))
+                        .frame(width: 7, height: 7)
+                }
+            }
+        }
+    }
+
+    private var microphoneControl: some View {
+        Button {
+            startListening()
+        } label: {
+            ZStack {
+                Circle()
+                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
+                    .frame(width: 148, height: 148)
+                    .scaleEffect(isListening && pulse ? 1.12 : ((isBeating && isMetronomeActive) ? 1.04 : 1))
+                    .opacity(isListening ? (pulse ? 0.35 : 0.9) : 1)
+
+                Circle()
+                    .stroke(StamerleeTheme.primaryPurple.opacity(isListening ? 0.45 : ((isBeating && isMetronomeActive) ? 0.35 : 0.25)), lineWidth: 12)
+                    .frame(width: 126, height: 126)
+                    .scaleEffect(isListening && pulse ? 1.08 : ((isBeating && isMetronomeActive) ? 1.03 : 1))
+                    .opacity(isListening ? (pulse ? 0.55 : 1) : 1)
+
+                Circle()
+                    .fill(
+                        RadialGradient(
+                            colors: [StamerleeTheme.accentPurpleLight, StamerleeTheme.primaryPurpleDark],
+                            center: .topLeading,
+                            startRadius: 2,
+                            endRadius: 75
+                        )
+                    )
+                    .frame(width: 96, height: 96)
+                    .shadow(color: StamerleeTheme.primaryPurple.opacity(isListening ? 0.95 : 0.7), radius: isListening ? 22 : 16)
+                    .scaleEffect(isListening && pulse ? 1.05 : 1)
+
+                Image(systemName: "mic.fill")
+                    .font(.system(size: 34, weight: .medium))
+                    .foregroundStyle(.white)
+                    .scaleEffect(isListening && pulse ? 1.08 : 1)
+            }
+            .frame(width: 168, height: 168)
+            .contentShape(Circle())
+            .animation(
+                isListening
+                    ? .easeInOut(duration: 0.75).repeatForever(autoreverses: true)
+                    : .easeOut(duration: 0.2),
+                value: pulse
+            )
+        }
+        .buttonStyle(.haptic(weight: .medium, pressedScale: 0.96))
+        .disabled(isListening)
+        .accessibilityLabel(isListening ? "Listening" : "Speak with the beat")
+        .sensoryFeedback(.impact(weight: .medium), trigger: isListening)
+    }
+
+    private func startListening() {
+        guard !isListening else { return }
+
+        advanceTask?.cancel()
+        isListening = true
+        pulse = true
+
+        advanceTask = Task { @MainActor in
+            try? await Task.sleep(for: .seconds(2))
+            guard !Task.isCancelled else { return }
+
+            withAnimation(.easeInOut(duration: 0.22)) {
+                pulse = false
+                isListening = false
+                advanceWord()
+            }
+        }
+    }
+
+    private func advanceWord() {
+        withAnimation(.easeInOut(duration: 0.22)) {
+            if currentWordIndex + 1 < wordCount {
+                currentWordIndex += 1
+            } else {
+                finishPractice()
+            }
+        }
+    }
+
+    private func startMetronome() {
+        metronomeTask?.cancel()
+        guard isMetronomeActive else { return }
+
+        let bpm = max(40, min(state.beatBuddyBPM, 200))
+        let intervalSeconds = 60.0 / Double(bpm)
+        let intervalNanos = UInt64(intervalSeconds * 1_000_000_000)
+        let pulseDurationNanos = min(intervalNanos / 3, 160_000_000)
+
+        metronomeTask = Task { @MainActor in
+            while !Task.isCancelled && isMetronomeActive {
+                popPlayer.playPop()
+
+                withAnimation(.spring(response: 0.18, dampingFraction: 0.55)) {
+                    isBeating = true
+                    beatCount = (beatCount + 1) % 4
+                }
+
+                try? await Task.sleep(nanoseconds: pulseDurationNanos)
+                guard !Task.isCancelled else { break }
+
+                withAnimation(.easeOut(duration: 0.2)) {
+                    isBeating = false
+                }
+
+                let remainingNanos = intervalNanos > pulseDurationNanos ? (intervalNanos - pulseDurationNanos) : (intervalNanos / 2)
+                try? await Task.sleep(nanoseconds: remainingNanos)
+            }
+        }
+    }
+
+    private func stopMetronome() {
+        metronomeTask?.cancel()
+        metronomeTask = nil
+        isBeating = false
+        popPlayer.stop()
+    }
+
+    private func stopAll() {
+        stopMetronome()
+        advanceTask?.cancel()
+        advanceTask = nil
+        isListening = false
+        pulse = false
+    }
+
+    private func finishPractice() {
+        stopAll()
+        if let onFinish {
+            onFinish()
+        } else {
+            state.navigate(to: .homeDashboard, forward: false)
+        }
+    }
+}
+
+// MARK: - Metronome Audio Player for pop.mp3
+@MainActor
+final class BeatMetronomePlayer {
+    static let shared = BeatMetronomePlayer()
+
+    private var players: [AVAudioPlayer] = []
+    private var playerIndex = 0
+
+    private init() {
+        setup()
+    }
+
+    private func setup() {
+        let url = Bundle.main.url(forResource: "pop", withExtension: "mp3")
+            ?? Bundle.main.url(forResource: "pop.mp3", withExtension: nil)
+            ?? Bundle.main.url(forResource: "pop", withExtension: "mp3", subdirectory: "Stamerlee")
+
+        guard let soundURL = url else {
+            return
+        }
+
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: .mixWithOthers)
+            try AVAudioSession.sharedInstance().setActive(true)
+
+            for _ in 0..<3 {
+                if let p = try? AVAudioPlayer(contentsOf: soundURL) {
+                    p.prepareToPlay()
+                    players.append(p)
+                }
+            }
+        } catch {
+            print("BeatMetronomePlayer audio session error: \(error)")
+        }
+    }
+
+    func playPop() {
+        if players.isEmpty {
+            setup()
+        }
+        guard !players.isEmpty else { return }
+
+        let player = players[playerIndex]
+        player.currentTime = 0
+        player.play()
+        playerIndex = (playerIndex + 1) % players.count
+    }
+
+    func stop() {
+        for player in players {
+            player.stop()
+        }
+    }
+}
+
+private struct BeatBuddyFinishButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .background(StamerleeTheme.primaryPurple, in: Capsule())
+            .scaleEffect(configuration.isPressed ? 0.97 : 1)
+            .animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
+    }
+}
+
+private struct BeatBuddyBPMButtonStyle: ButtonStyle {
+    let isEnabled: Bool
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .background(
+                Capsule()
+                    .fill(isEnabled ? StamerleeTheme.primaryBlue : Color.white.opacity(0.08))
+            )
+            .overlay(
+                Capsule()
+                    .stroke(isEnabled ? Color.white.opacity(0.3) : Color.white.opacity(0.12), lineWidth: 1)
+            )
+            .contentShape(Capsule())
+            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
+            .animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
     }
 }

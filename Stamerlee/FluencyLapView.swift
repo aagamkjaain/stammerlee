@@ -3,7 +3,6 @@ import SwiftUI
 public struct FluencyLapView: View {
     @Bindable public var state: AppState
     @Environment(\.headerNamespace) private var headerNamespace
-    @State private var selectedDuration: LapDuration = .classic
 
     public init(state: AppState) {
         self.state = state
@@ -35,46 +34,39 @@ public struct FluencyLapView: View {
                 .padding(.top, -48)
                 .padding(.bottom, 6)
 
-                // Scrollable Content
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 0) {
-                        Text("Practice words from the sounds you tend to stutter on. Build speed, smoothness, and confidence under time pressure.")
-                            .font(.system(size: 14, weight: .regular, design: .rounded))
-                            .foregroundStyle(Color(red: 221 / 255, green: 218 / 255, blue: 239 / 255))
-                            .lineSpacing(3)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .padding(.top, 4)
-
-                        goalCard
-                            .padding(.top, 18)
-
-                        Text("CHOOSE ROUND DURATION")
-                            .font(.system(size: 13, weight: .bold, design: .rounded))
-                            .foregroundStyle(StamerleeTheme.textSecondaryDark)
-                            .tracking(0.6)
-                            .padding(.top, 22)
-
-                        HStack(spacing: 10) {
-                            ForEach(LapDuration.allCases) { duration in
-                                durationButton(duration)
-                            }
-                        }
-                        .padding(.top, 12)
-
-                        PrimaryActionButton(
-                            title: "Start Today's Challenge",
-                            icon: "play.fill",
-                            compact: true
-                        ) {
-                            state.fluencyLapWordCount = selectedDuration.wordCount
-                            state.navigate(to: .fluencyLapPractice)
-                        }
-                        .padding(.top, 24)
-                        .padding(.bottom, 24)
-                    }
+                // Subtitle
+                Text("Practice words from the sounds you tend to stutter on. Build speed, smoothness, and confidence under time pressure.")
+                    .font(.system(size: 14, weight: .regular, design: .rounded))
+                    .foregroundStyle(Color(red: 221 / 255, green: 218 / 255, blue: 239 / 255))
+                    .lineSpacing(3)
+                    .fixedSize(horizontal: false, vertical: true)
                     .padding(.horizontal, 24)
+                    .padding(.top, 4)
+
+                // Goal Card
+                goalCard
+                    .padding(.horizontal, 24)
+                    .padding(.top, 16)
+
+                Spacer(minLength: 8)
+
+                // Stopwatch Display
+                stopwatchHeroView
+
+                Spacer(minLength: 16)
+
+                // Primary Action Button pinned to bottom
+                VStack {
+                    PrimaryActionButton(
+                        title: "Start 60s Challenge",
+                        icon: "play.fill"
+                    ) {
+                        state.fluencyLapWordCount = 20
+                        state.navigate(to: .fluencyLapPractice)
+                    }
                 }
-                .scrollIndicators(.hidden)
+                .padding(.horizontal, 24)
+                .padding(.bottom, 24)
             }
         }
         .preferredColorScheme(.dark)
@@ -103,105 +95,80 @@ public struct FluencyLapView: View {
     private var goalCard: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Today's Challenge Goal")
-                .font(.system(size: 18, weight: .bold, design: .rounded))
+                .font(.system(size: 19, weight: .bold, design: .rounded))
                 .foregroundStyle(StamerleeTheme.textPrimaryLight)
 
-            Text("Speak words from your stuttered sounds with smooth, continuous airflow before time ends.")
+            Text("Speak as many words as you comfortably can in 60 seconds, focusing on smooth, continuous airflow and steady speech. Keep going at your own pace, stay relaxed, and aim to complete as many words as possible before the timer ends.")
                 .font(.system(size: 14, weight: .regular, design: .rounded))
                 .foregroundStyle(Color(red: 79 / 255, green: 76 / 255, blue: 101 / 255))
-                .lineSpacing(3)
+                .lineSpacing(3.5)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 18)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(red: 235 / 255, green: 232 / 255, blue: 255 / 255), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .background(Color(red: 235 / 255, green: 232 / 255, blue: 255 / 255), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 3)
     }
 
-    private func durationButton(_ duration: LapDuration) -> some View {
-        Button {
-            withAnimation(.easeInOut(duration: 0.2)) {
-                selectedDuration = duration
-            }
-        } label: {
-            VStack(spacing: 5) {
+    private var stopwatchHeroView: some View {
+        VStack(spacing: 10) {
+            ZStack {
+                // Soft radial background glow
+                Circle()
+                    .fill(
+                        RadialGradient(
+                            colors: [
+                                Color(red: 56 / 255, green: 170 / 255, blue: 255 / 255).opacity(0.32),
+                                Color(red: 139 / 255, green: 92 / 255, blue: 246 / 255).opacity(0.16),
+                                Color.clear
+                            ],
+                            center: .center,
+                            startRadius: 4,
+                            endRadius: 48
+                        )
+                    )
+                    .frame(width: 96, height: 96)
+                    .blur(radius: 8)
+
+                // SF Symbol Stopwatch with Cyan-to-Purple Gradient
                 Image(systemName: "stopwatch")
-                    .font(.system(size: 18, weight: .medium))
-                Text(duration.title)
-                    .font(.system(size: 13, weight: .bold, design: .rounded))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.85)
-                Text(duration.words)
-                    .font(.system(size: 12, weight: .regular, design: .rounded))
-                    .foregroundStyle(.white.opacity(0.58))
+                    .font(.system(size: 60, weight: .medium))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [
+                                Color(red: 88 / 255, green: 218 / 255, blue: 255 / 255),
+                                Color(red: 58 / 255, green: 148 / 255, blue: 255 / 255),
+                                Color(red: 105 / 255, green: 95 / 255, blue: 248 / 255),
+                                Color(red: 140 / 255, green: 72 / 255, blue: 246 / 255)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .shadow(color: Color(red: 56 / 255, green: 170 / 255, blue: 255 / 255).opacity(0.4), radius: 12, x: 0, y: 3)
             }
-            .foregroundStyle(.white)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
-            .overlay(alignment: .topTrailing) {
-                if selectedDuration == duration {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 16))
-                        .foregroundStyle(.white)
-                        .padding(6)
-                }
+
+            // Clean 60 seconds label
+            VStack(spacing: 2) {
+                Text("60")
+                    .font(.system(size: 40, weight: .bold, design: .rounded))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [
+                                Color.white,
+                                Color(red: 232 / 255, green: 240 / 255, blue: 255 / 255)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+
+                Text("seconds")
+                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    .foregroundStyle(Color(red: 170 / 255, green: 186 / 255, blue: 235 / 255))
             }
         }
-        .buttonStyle(FluencyLapDurationButtonStyle(isSelected: selectedDuration == duration))
-        .accessibilityAddTraits(selectedDuration == duration ? .isSelected : [])
-    }
-}
-
-private enum LapDuration: String, CaseIterable, Identifiable {
-    case blitz
-    case classic
-    case master
-
-    var id: String { rawValue }
-
-    var title: String {
-        switch self {
-        case .blitz: return "30s Blitz"
-        case .classic: return "45s Classic"
-        case .master: return "60s Master"
-        }
-    }
-
-    var words: String {
-        switch self {
-        case .blitz: return "7 words"
-        case .classic: return "15 words"
-        case .master: return "20 words"
-        }
-    }
-
-    var wordCount: Int {
-        switch self {
-        case .blitz: return 7
-        case .classic: return 15
-        case .master: return 20
-        }
-    }
-}
-
-private struct FluencyLapDurationButtonStyle: ButtonStyle {
-    let isSelected: Bool
-
-    func makeBody(configuration: Configuration) -> some View {
-        if #available(iOS 26.0, *) {
-            configuration.label
-                .buttonStyle(.glass(.regular.tint(isSelected ? StamerleeTheme.primaryPurple : StamerleeTheme.cardDark).interactive()))
-                .buttonBorderShape(.roundedRectangle(radius: 16))
-                .scaleEffect(configuration.isPressed ? 0.97 : 1)
-        } else {
-            configuration.label
-                .background(isSelected ? StamerleeTheme.primaryPurple : StamerleeTheme.cardDark, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .stroke(isSelected ? Color.white.opacity(0.7) : Color.white.opacity(0.1), lineWidth: isSelected ? 2 : 1)
-                }
-                .scaleEffect(configuration.isPressed ? 0.97 : 1)
-                .animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
-        }
+        .frame(maxWidth: .infinity)
     }
 }

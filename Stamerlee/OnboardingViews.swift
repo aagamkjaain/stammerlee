@@ -346,12 +346,7 @@ public struct DailyGoalView: View {
                     .padding(.bottom, 28)
 
                 VStack(alignment: .leading, spacing: 0) {
-                    Text("Choose your daily goal")
-                        .font(.system(size: 16, weight: .bold, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textPrimaryLight)
-                        .padding(.horizontal, 20)
-                        .padding(.top, 22)
-                        .padding(.bottom, 14)
+                    
 
                     VStack(spacing: 0) {
                         ForEach(goalOptions, id: \.self) { minutes in
