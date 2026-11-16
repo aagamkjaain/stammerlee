@@ -333,3 +333,120 @@ class ConfettiConfig: ObservableObject {
         return CGFloat(closingAngle.degrees) * 180 / .pi
     }
 }
+
+// MARK: - Confetti Shapes
+
+public struct Triangle: Shape {
+    public init() {}
+    public func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.midX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        path.addLine(to: CGPoint(x: rect.midX, y: rect.minY))
+        return path
+    }
+}
+
+public struct RoundedCross: Shape {
+    public init() {}
+    public func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.minX, y: rect.maxY / 3))
+        path.addQuadCurve(to: CGPoint(x: rect.maxX / 3, y: rect.minY), control: CGPoint(x: rect.maxX / 3, y: rect.maxY / 3))
+        path.addLine(to: CGPoint(x: 2 * rect.maxX / 3, y: rect.minY))
+        path.addQuadCurve(to: CGPoint(x: rect.maxX, y: rect.maxY / 3), control: CGPoint(x: 2 * rect.maxX / 3, y: rect.maxY / 3))
+        path.addLine(to: CGPoint(x: rect.maxX, y: 2 * rect.maxY / 3))
+        path.addQuadCurve(to: CGPoint(x: 2 * rect.maxX / 3, y: rect.maxY), control: CGPoint(x: 2 * rect.maxX / 3, y: 2 * rect.maxY / 3))
+        path.addLine(to: CGPoint(x: rect.maxX / 3, y: rect.maxY))
+        path.addQuadCurve(to: CGPoint(x: 2 * rect.minX / 3, y: 2 * rect.maxY / 3), control: CGPoint(x: rect.maxX / 3, y: 2 * rect.maxY / 3))
+        return path
+    }
+}
+
+public struct SlimRectangle: Shape {
+    public init() {}
+    public func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.minX, y: 4 * rect.maxY / 5))
+        path.addLine(to: CGPoint(x: rect.maxX, y: 4 * rect.maxY / 5))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+        return path
+    }
+}
+
+// MARK: - View Extension
+
+public extension View {
+    @ViewBuilder func confettiCannon<T>(
+        trigger: Binding<T>,
+        num: Int = 20,
+        confettis: [ConfettiType] = ConfettiType.allCases,
+        colors: [Color] = [.blue, .red, .green, .yellow, .pink, .purple, .orange],
+        confettiSize: CGFloat = 10.0,
+        rainHeight: CGFloat = 600.0,
+        fadesOut: Bool = true,
+        opacity: Double = 1.0,
+        openingAngle: Angle = .degrees(60),
+        closingAngle: Angle = .degrees(120),
+        radius: CGFloat = 300,
+        repetitions: Int = 1,
+        repetitionInterval: Double = 1.0,
+        hapticFeedback: Bool = true
+    ) -> some View where T: Equatable {
+        ZStack {
+            self.layoutPriority(1)
+            ConfettiCannon(
+                trigger: trigger,
+                num: num,
+                confettis: confettis,
+                colors: colors,
+                confettiSize: confettiSize,
+                rainHeight: rainHeight,
+                fadesOut: fadesOut,
+                opacity: opacity,
+                openingAngle: openingAngle,
+                closingAngle: closingAngle,
+                radius: radius,
+                repetitions: repetitions,
+                repetitionInterval: repetitionInterval,
+                hapticFeedback: hapticFeedback
+            )
+        }
+    }
+
+    @ViewBuilder func confettiCannon(
+        counter: Binding<Int>,
+        num: Int = 20,
+        confettis: [ConfettiType] = ConfettiType.allCases,
+        colors: [Color] = [.blue, .red, .green, .yellow, .pink, .purple, .orange],
+        confettiSize: CGFloat = 10.0,
+        rainHeight: CGFloat = 600.0,
+        fadesOut: Bool = true,
+        opacity: Double = 1.0,
+        openingAngle: Angle = .degrees(60),
+        closingAngle: Angle = .degrees(120),
+        radius: CGFloat = 300,
+        repetitions: Int = 1,
+        repetitionInterval: Double = 1.0,
+        hapticFeedback: Bool = true
+    ) -> some View {
+        confettiCannon(
+            trigger: counter,
+            num: num,
+            confettis: confettis,
+            colors: colors,
+            confettiSize: confettiSize,
+            rainHeight: rainHeight,
+            fadesOut: fadesOut,
+            opacity: opacity,
+            openingAngle: openingAngle,
+            closingAngle: closingAngle,
+            radius: radius,
+            repetitions: repetitions,
+            repetitionInterval: repetitionInterval,
+            hapticFeedback: hapticFeedback
+        )
+    }
+}

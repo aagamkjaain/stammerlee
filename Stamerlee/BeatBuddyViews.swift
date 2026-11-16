@@ -55,10 +55,16 @@ private struct BeatBuddyShell<Content: View>: View {
         ZStack(alignment: .top) {
             StamerleeTheme.backgroundDark.ignoresSafeArea()
             VStack(alignment: .leading, spacing: 0) {
-                BackNavButton {
-                    if let onBack {
-                        onBack()
-                    } else {
+                HStack {
+                    BackNavButton {
+                        if let onBack {
+                            onBack()
+                        } else {
+                            state.navigate(to: .homeDashboard, forward: false)
+                        }
+                    }
+                    Spacer()
+                    GlassCloseButton {
                         state.navigate(to: .homeDashboard, forward: false)
                     }
                 }
@@ -502,6 +508,10 @@ public struct BeatBuddyBPMView: View {
                         .shadow(color: Color.black.opacity(0.45), radius: 6, x: 0, y: 2)
 
                     Spacer()
+
+                    GlassCloseButton {
+                        state.navigate(to: .homeDashboard, forward: false)
+                    }
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, -48)
@@ -514,43 +524,37 @@ public struct BeatBuddyBPMView: View {
                     .padding(.horizontal, 24)
                     .padding(.top, 2)
 
-                // Sound Category Picker
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Sound Focus")
-                        .font(.system(size: 12, weight: .semibold, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
-
-                    Menu {
-                        Picker("Sound Focus", selection: $selectedCategory) {
-                            ForEach(BeatBuddySoundCategory.allCases) { category in
-                                Text(category.rawValue).tag(category)
-                            }
-                        }
-                    } label: {
-                        HStack(spacing: 10) {
-                            Image(systemName: "waveform")
-                                .font(.system(size: 14, weight: .semibold))
-                                .foregroundStyle(Color.cyan)
-
-                            Text(selectedCategory.rawValue)
-                                .font(.system(size: 15, weight: .semibold, design: .rounded))
-                                .foregroundStyle(.white)
-
-                            Spacer()
-
-                            Image(systemName: "chevron.up.chevron.down")
-                                .font(.system(size: 12, weight: .semibold))
-                                .foregroundStyle(StamerleeTheme.textSecondaryDark)
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 12)
-                        .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                .stroke(Color.white.opacity(0.12), lineWidth: 1)
-                        )
+                // Randomized Practice Words Card (indicates random words in practice)
+                HStack(spacing: 12) {
+                    ZStack {
+                        Circle()
+                            .fill(Color(red: 228 / 255, green: 220 / 255, blue: 255 / 255))
+                            .frame(width: 40, height: 40)
+                        Image(systemName: "shuffle")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(StamerleeTheme.primaryBlue)
                     }
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Randomized Practice Words")
+                            .font(.system(size: 14.5, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
+
+                        Text("Practice will automatically cycle through random words with the beat")
+                            .font(.system(size: 12, weight: .regular, design: .rounded))
+                            .foregroundStyle(StamerleeTheme.textSecondaryDark)
+                            .lineLimit(2)
+                    }
+
+                    Spacer()
                 }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                )
                 .padding(.horizontal, 24)
                 .padding(.top, 14)
 
@@ -563,44 +567,15 @@ public struct BeatBuddyBPMView: View {
                     Spacer()
                 }
 
-                Spacer(minLength: 10)
-
-                // Stepper Buttons (- and +)
-                HStack {
-                    Button {
-                        adjustBPM(by: -5)
-                    } label: {
-                        Image(systemName: "minus")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundStyle(.white)
-                            .frame(width: 44, height: 44)
-                            .background(Color.white.opacity(0.08))
-                            .clipShape(Circle())
-                    }
-
-                    Spacer()
-
-                    Button {
-                        adjustBPM(by: 5)
-                    } label: {
-                        Image(systemName: "plus")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundStyle(.white)
-                            .frame(width: 44, height: 44)
-                            .background(Color.white.opacity(0.08))
-                            .clipShape(Circle())
-                    }
-                }
-                .padding(.horizontal, 48)
-                .padding(.bottom, 14)
+                Spacer(minLength: 14)
 
                 // Sound & Vibration Toggles
                 HStack(spacing: 12) {
-                    toggleButton(title: "Sound", icon: "speaker.wave.2.fill", isOn: soundEnabled) {
-                        soundEnabled.toggle()
+                    toggleButton(title: "Sound", icon: "speaker.wave.2.fill", isOn: state.beatBuddySoundEnabled) {
+                        state.beatBuddySoundEnabled.toggle()
                     }
-                    toggleButton(title: "Vibration", icon: "iphone.radiowaves.left.and.right", isOn: vibrationEnabled) {
-                        vibrationEnabled.toggle()
+                    toggleButton(title: "Vibration", icon: "iphone.radiowaves.left.and.right", isOn: state.beatBuddyVibrationEnabled) {
+                        state.beatBuddyVibrationEnabled.toggle()
                     }
                 }
                 .padding(.horizontal, 24)
@@ -650,8 +625,8 @@ public struct BeatBuddyBPMView: View {
     }
 
     private func startSession() {
-        state.beatBuddySoundCategory = selectedCategory.rawValue
-        let wordsList = selectedCategory.words
+        state.beatBuddySoundCategory = BeatBuddySoundCategory.randomized.rawValue
+        let wordsList = BeatBuddySoundCategory.randomized.words
         state.beatBuddyPracticeWords = wordsList
         state.beatBuddySelectedWords = Set(wordsList)
         if let onStartPractice {
@@ -751,46 +726,46 @@ public struct BeatBuddyPracticeView: View {
                 topBar
 
                 Text("Speak each syllable with the metronome beat. Stay relaxed and let the rhythm guide your pace.")
-                    .font(.system(size: 15, weight: .regular, design: .rounded))
-                    .foregroundStyle(Color(red: 190 / 255, green: 188 / 255, blue: 214 / 255))
-                    .lineSpacing(5)
+                    .font(.system(size: 14, weight: .regular, design: .rounded))
+                    .foregroundStyle(.white)
+                    .foregroundStyle(Color(red: 220 / 255, green: 215 / 255, blue: 245 / 255))
+                    .lineSpacing(3.5)
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, 28)
+                    .padding(.top, 14)
 
-                Spacer(minLength: 12)
+                Spacer(minLength: 14)
 
                 promptDisplay
 
                 progress
-                    .padding(.top, 22)
+                    .padding(.top, 16)
 
                 Spacer(minLength: 16)
 
                 microphoneControl
 
                 Text("Tap and speak with the beat")
-                    .font(.system(size: 14, weight: .regular, design: .rounded))
+                    .font(.system(size: 13, weight: .medium, design: .rounded))
                     .foregroundStyle(Color(red: 194 / 255, green: 192 / 255, blue: 218 / 255))
                     .padding(.top, 8)
+
+                Spacer(minLength: 12)
 
                 Button {
                     finishPractice()
                 } label: {
                     HStack(spacing: 10) {
-                        Text("Finish Practice")
+                        Text("Finish")
                             .font(.system(size: 17, weight: .semibold, design: .rounded))
-                        Image(systemName: "arrow.right")
-                            .font(.system(size: 18, weight: .bold))
                     }
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 52)
+                    .frame(height: 50)
                 }
                 .buttonStyle(BeatBuddyFinishButtonStyle())
-                .padding(.top, 22)
-                .padding(.bottom, 12)
+                .padding(.bottom, 16)
             }
             .padding(.horizontal, 24)
             .padding(.top, 8)
@@ -824,34 +799,16 @@ public struct BeatBuddyPracticeView: View {
             }
 
             Spacer()
-
-            Button {
-                isMetronomeActive.toggle()
-            } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: isMetronomeActive ? "metronome.fill" : "metronome")
-                        .font(.system(size: 14, weight: .semibold))
-                    Text("\(state.beatBuddyBPM) BPM")
-                        .font(.system(size: 15, weight: .semibold, design: .rounded))
-                }
-                .foregroundStyle(.white)
-                .padding(.horizontal, 17)
-                .frame(height: 40)
-                .contentShape(Capsule())
-            }
-            .buttonStyle(BeatBuddyBPMButtonStyle(isEnabled: isMetronomeActive))
-            .accessibilityLabel(isMetronomeActive ? "Disable Metronome" : "Enable Metronome")
         }
-        .sensoryFeedback(.impact(weight: .light), trigger: isMetronomeActive)
     }
 
     private var promptDisplay: some View {
         let syllables = currentSyllables
 
-        return VStack(spacing: 16) {
+        return VStack(spacing: 12) {
             // Full original word caption
             Text(currentWord)
-                .font(.system(size: 16, weight: .semibold, design: .rounded))
+                .font(.system(size: 15, weight: .medium, design: .rounded))
                 .foregroundStyle(StamerleeTheme.textSecondaryDark)
                 .opacity(0.85)
 
@@ -861,7 +818,7 @@ public struct BeatBuddyPracticeView: View {
                     let isActive = (index == activeSyllableIndex) && isMetronomeActive
 
                     HStack(spacing: 6) {
-                        VStack(spacing: 8) {
+                        VStack(spacing: 6) {
                             Text(syllable)
                                 .font(.system(size: syllableFontSize(for: syllables), weight: .bold, design: .rounded))
                                 .foregroundStyle(
@@ -878,12 +835,12 @@ public struct BeatBuddyPracticeView: View {
                                         )
                                         : AnyShapeStyle(Color.white.opacity(0.35))
                                 )
-                                .scaleEffect(isActive ? (isBeating ? 1.18 : 1.10) : 1.0)
+                                .scaleEffect(isActive ? (isBeating ? 1.08 : 1.04) : 1.0)
                                 .shadow(
                                     color: isActive
-                                        ? Color(red: 139 / 255, green: 92 / 255, blue: 246 / 255).opacity(isBeating ? 0.95 : 0.6)
+                                        ? Color(red: 139 / 255, green: 92 / 255, blue: 246 / 255).opacity(isBeating ? 0.8 : 0.4)
                                         : .clear,
-                                    radius: isBeating ? 18 : 8
+                                    radius: isBeating ? 12 : 6
                                 )
 
                             // Glowing beat indicator capsule beneath active syllable
@@ -901,18 +858,18 @@ public struct BeatBuddyPracticeView: View {
                                             endPoint: .trailing
                                         )
                                 )
-                                .frame(width: isActive ? 32 : 12, height: 4)
-                                .shadow(color: isActive ? Color.cyan.opacity(0.8) : .clear, radius: 6)
+                                .frame(width: isActive ? 24 : 10, height: 3.5)
+                                .shadow(color: isActive ? Color.cyan.opacity(0.7) : .clear, radius: 4)
                         }
                         .animation(.spring(response: 0.22, dampingFraction: 0.6), value: isActive)
                         .animation(.spring(response: 0.18, dampingFraction: 0.5), value: isBeating)
 
                         if index < syllables.count - 1 {
                             Text("-")
-                                .font(.system(size: 28, weight: .bold, design: .rounded))
+                                .font(.system(size: 22, weight: .bold, design: .rounded))
                                 .foregroundStyle(Color.white.opacity(0.25))
                                 .padding(.horizontal, 2)
-                                .padding(.bottom, 12)
+                                .padding(.bottom, 8)
                         }
                     }
                 }
@@ -930,18 +887,18 @@ public struct BeatBuddyPracticeView: View {
     private func syllableFontSize(for syllables: [String]) -> CGFloat {
         let totalChars = syllables.reduce(0) { $0 + $1.count } + (syllables.count - 1) * 2
         if totalChars > 16 {
-            return 30
+            return 22
         } else if totalChars > 12 {
-            return 34
+            return 26
         } else if totalChars > 8 {
-            return 38
+            return 30
         } else {
-            return 44
+            return 34
         }
     }
 
     private var progress: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 8) {
             Text("\(currentWordIndex + 1) of \(wordCount)")
                 .font(.system(size: 13, weight: .regular, design: .rounded))
                 .foregroundStyle(Color(red: 147 / 255, green: 145 / 255, blue: 175 / 255))
@@ -963,14 +920,14 @@ public struct BeatBuddyPracticeView: View {
             ZStack {
                 Circle()
                     .stroke(Color.white.opacity(0.08), lineWidth: 1)
-                    .frame(width: 148, height: 148)
-                    .scaleEffect(isListening && pulse ? 1.12 : ((isBeating && isMetronomeActive) ? 1.04 : 1))
+                    .frame(width: 118, height: 118)
+                    .scaleEffect(isListening && pulse ? 1.10 : ((isBeating && isMetronomeActive) ? 1.04 : 1))
                     .opacity(isListening ? (pulse ? 0.35 : 0.9) : 1)
 
                 Circle()
-                    .stroke(StamerleeTheme.primaryPurple.opacity(isListening ? 0.45 : ((isBeating && isMetronomeActive) ? 0.35 : 0.25)), lineWidth: 12)
-                    .frame(width: 126, height: 126)
-                    .scaleEffect(isListening && pulse ? 1.08 : ((isBeating && isMetronomeActive) ? 1.03 : 1))
+                    .stroke(StamerleeTheme.primaryPurple.opacity(isListening ? 0.45 : ((isBeating && isMetronomeActive) ? 0.35 : 0.25)), lineWidth: 9)
+                    .frame(width: 100, height: 100)
+                    .scaleEffect(isListening && pulse ? 1.06 : ((isBeating && isMetronomeActive) ? 1.03 : 1))
                     .opacity(isListening ? (pulse ? 0.55 : 1) : 1)
 
                 Circle()
@@ -979,19 +936,19 @@ public struct BeatBuddyPracticeView: View {
                             colors: [StamerleeTheme.accentPurpleLight, StamerleeTheme.primaryPurpleDark],
                             center: .topLeading,
                             startRadius: 2,
-                            endRadius: 75
+                            endRadius: 55
                         )
                     )
-                    .frame(width: 96, height: 96)
-                    .shadow(color: StamerleeTheme.primaryPurple.opacity(isListening ? 0.95 : 0.7), radius: isListening ? 22 : 16)
-                    .scaleEffect(isListening && pulse ? 1.05 : 1)
+                    .frame(width: 76, height: 76)
+                    .shadow(color: StamerleeTheme.primaryPurple.opacity(isListening ? 0.9 : 0.6), radius: isListening ? 18 : 12)
+                    .scaleEffect(isListening && pulse ? 1.04 : 1)
 
                 Image(systemName: "mic.fill")
-                    .font(.system(size: 34, weight: .medium))
+                    .font(.system(size: 28, weight: .medium))
                     .foregroundStyle(.white)
-                    .scaleEffect(isListening && pulse ? 1.08 : 1)
+                    .scaleEffect(isListening && pulse ? 1.06 : 1)
             }
-            .frame(width: 168, height: 168)
+            .frame(width: 134, height: 134)
             .contentShape(Circle())
             .animation(
                 isListening
@@ -1030,6 +987,7 @@ public struct BeatBuddyPracticeView: View {
             if currentWordIndex + 1 < wordCount {
                 currentWordIndex += 1
                 activeSyllableIndex = 0
+                startMetronome()
             } else {
                 finishPractice()
             }
@@ -1046,9 +1004,19 @@ public struct BeatBuddyPracticeView: View {
         let pulseDurationNanos = min(intervalNanos / 3, 160_000_000)
 
         metronomeTask = Task { @MainActor in
+            let impactGenerator = UIImpactFeedbackGenerator(style: .medium)
+            impactGenerator.prepare()
+
             while !Task.isCancelled && isMetronomeActive {
-                // Play sound effect on each syllable beat
-                popPlayer.playPop()
+                // Play sound effect on each syllable beat if enabled
+                if state.beatBuddySoundEnabled {
+                    popPlayer.playPop()
+                }
+                // Trigger physical haptic vibration if enabled
+                if state.beatBuddyVibrationEnabled {
+                    impactGenerator.impactOccurred()
+                    impactGenerator.prepare()
+                }
 
                 let syllables = currentSyllables
                 let count = max(syllables.count, 1)

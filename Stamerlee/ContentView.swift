@@ -96,15 +96,10 @@ public struct ContentView: View {
                         .transition(slideTransition(for: appState.navigationDirection))
                 case .prolongedPractice:
                     ProlongedPracticeView(state: appState)
-                        .transition(slideTransition(for: appState.navigationDirection))
+                        .transition(.opacity)
                 case .prolongedAnalysis:
                     ProlongedAnalysisView(state: appState)
-                        .transition(
-                            .asymmetric(
-                                insertion: .opacity.combined(with: .scale(scale: 0.98)),
-                                removal: .opacity
-                            )
-                        )
+                        .transition(.opacity)
                 case .pictureDescriptionIntro:
                     PictureDescriptionIntroView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))

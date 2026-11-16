@@ -16,7 +16,7 @@ DashboardTabView
 | `AppTabNavigation.swift` | Exposes a two-way `selectedTabBinding` for `TabView`. |
 | `FluencyLapView` | Lets the user choose Blitz, Classic, or Master duration. |
 | `FluencyLapPracticeView` | Supplies words to reusable practice UI and handles completion. |
-| `SpeakPracticeScreen` | Handles prompt display, progress, DAF state, microphone animation, and cancellable advancement. |
+| `SpeakPracticeScreen` | Handles prompt display, progress, microphone animation, and cancellable advancement. |
 
 ## Modern-code check
 

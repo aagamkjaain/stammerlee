@@ -332,12 +332,12 @@ public struct DifficultyCard: View {
                 HStack {
                     badge
                     Spacer()
-                    if isCompleted {
-                        Image(systemName: "checkmark.circle.fill")
-                            .font(.system(size: 18, weight: .semibold))
-                            .foregroundStyle(StamerleeTheme.primaryBlue)
+                    if isLocked {
+                        Image(systemName: "lock.fill")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(Color.gray.opacity(0.7))
                             .frame(width: 30, alignment: .trailing)
-                    } else if !isLocked {
+                    } else {
                         Image(systemName: "chevron.right")
                             .font(.system(size: 14, weight: .semibold))
                             .foregroundStyle(.gray.opacity(0.5))
@@ -356,17 +356,8 @@ public struct DifficultyCard: View {
 
     @ViewBuilder
     private var badge: some View {
-        if isLocked {
-            Image(systemName: "lock.fill")
-                .font(.system(size: 15, weight: .bold))
-                .foregroundStyle(.white)
-                .frame(width: 38, height: 38)
-                .background(Color(red: 90 / 255, green: 105 / 255, blue: 180 / 255))
-                .clipShape(Circle())
-        } else {
-            Color.clear
-                .frame(width: 38, height: 38)
-        }
+        Color.clear
+            .frame(width: 30, height: 30)
     }
 }
 
@@ -550,6 +541,40 @@ public struct SpeechMicrophoneButton: View {
     }
 }
 
+// MARK: - Glass Effect Close (X) Button
+public struct GlassCloseButton: View {
+    public let action: () -> Void
+
+    public init(action: @escaping () -> Void) {
+        self.action = action
+    }
+
+    public var body: some View {
+        Button(action: action) {
+            ZStack {
+                Circle()
+                    .fill(Color.white.opacity(0.14))
+                Circle()
+                    .stroke(
+                        LinearGradient(
+                            colors: [Color.white.opacity(0.45), Color.white.opacity(0.12)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
+                Image(systemName: "xmark")
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(.white)
+            }
+            .frame(width: 36, height: 36)
+            .shadow(color: Color.black.opacity(0.2), radius: 6, x: 0, y: 2)
+        }
+        .buttonStyle(.haptic(weight: .light, pressedScale: 0.92))
+        .accessibilityLabel("Close")
+    }
+}
+
 // MARK: - Exercise Analysis Skeleton View
 /// Standardized result/analysis screen matching the Prolonged Speech design for all exercises.
 public struct ExerciseAnalysisSkeletonView: View {
@@ -562,6 +587,7 @@ public struct ExerciseAnalysisSkeletonView: View {
     public let onDone: () -> Void
 
     @State private var showAllWordsSheet: Bool = false
+    @State private var starAppeared: Bool = false
 
     public init(
         scoreText: String,
@@ -630,109 +656,67 @@ public struct ExerciseAnalysisSkeletonView: View {
 
     public var body: some View {
         ZStack {
-            VStack(alignment: .leading, spacing: 0) {
-                // Top Title Bar
-                Text("Analysis")
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
-                    .foregroundStyle(StamerleeTheme.textPrimaryDark)
-                    .padding(.horizontal, 24)
-                    .padding(.top, 24)
-                    .padding(.bottom, 16)
+            VStack(spacing: 0) {
+                Spacer()
 
-                // Big Affirmation & Prominent Score Display (Made bigger to occupy the upper area)
-                VStack(spacing: 12) {
+                // Centered Analysis Block: Stars, Blots, Affirmation, Score & Details
+                VStack(spacing: 0) {
+                    // One Main Yellow Star, Two Small Yellow Stars & Blots (No Glow)
+                    starsAndBlotsView
+                        .padding(.bottom, 22)
+
+                    // Affirmation Title ("You did great today!!")
                     Text(computedAffirmation)
-                        .font(.system(size: 30, weight: .bold, design: .rounded))
+                        .font(.system(size: 26, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 24)
 
+                    // "YOU SCORED" label
                     Text("YOU SCORED")
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
-                        .tracking(1.4)
-                        .padding(.top, 4)
+                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color(red: 175 / 255, green: 170 / 255, blue: 215 / 255))
+                        .tracking(1.5)
+                        .padding(.top, 14)
 
-                    HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    // Score Display ("8.8 /10")
+                    HStack(alignment: .firstTextBaseline, spacing: 4) {
                         Text(scoreText)
-                            .font(.system(size: 72, weight: .bold, design: .rounded))
+                            .font(.system(size: 64, weight: .bold, design: .rounded))
                             .foregroundStyle(.white)
+
                         if !maxScoreText.isEmpty {
-                            Text(maxScoreText)
-                                .font(.system(size: 28, weight: .bold, design: .rounded))
-                                .foregroundStyle(StamerleeTheme.textSecondaryDark)
+                            Text(maxScoreText.trimmingCharacters(in: .whitespaces))
+                                .font(.system(size: 26, weight: .bold, design: .rounded))
+                                .foregroundStyle(Color(red: 200 / 255, green: 195 / 255, blue: 230 / 255))
                         }
+                    }
+                    .padding(.top, 6)
+
+                    // Instructions / Subtitle ("Great job completing your prolonged speech session!")
+                    if !subtitle.isEmpty {
+                        Text(subtitle)
+                            .font(.system(size: 14, weight: .regular, design: .rounded))
+                            .foregroundStyle(Color(red: 165 / 255, green: 160 / 255, blue: 195 / 255))
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 32)
+                            .padding(.top, 16)
+                    }
+
+                    // Words list details (shifted into the middle with the details)
+                    if !wordsList.isEmpty {
+                        wordsSectionView
+                            .padding(.top, 24)
                     }
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.top, 36)
-                .padding(.bottom, 48)
 
-                // Instructions Subtitle
-                if !subtitle.isEmpty {
-                    Text(subtitle)
-                        .font(.system(size: 13, weight: .regular, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
-                        .frame(maxWidth: .infinity, alignment: .center)
-                        .padding(.bottom, 18)
-                }
-
-                if !wordsList.isEmpty {
-                    // Action Row: Counter + Single "Select all / Deselect all" Toggle Button
-                    HStack {
-                        Text("\(selectedWords.count) selected")
-                            .font(.system(size: 13, weight: .semibold, design: .rounded))
-                            .foregroundStyle(StamerleeTheme.textSecondaryDark)
-
-                        Spacer()
-
-                        Button(isAllSelected ? "Deselect all" : "Select all") {
-                            toggleSelectAll()
-                        }
-                        .font(.system(size: 13, weight: .bold, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.primaryBlue)
-                    }
-                    .padding(.horizontal, 24)
-                    .padding(.bottom, 14)
-
-                    // 2-Column Word Grid (Older sleek capsule design)
-                    LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
-                        ForEach(Array(wordsList.prefix(6)), id: \.self) { word in
-                            let isSelected = selectedWords.contains(word)
-                            wordButton(word: word, isSelected: isSelected) {
-                                toggleWordSelection(word)
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 24)
-
-                    // Hyperlink-style "View more" button
-                    if wordsList.count > 6 {
-                        Button {
-                            showAllWordsSheet = true
-                        } label: {
-                            HStack(spacing: 4) {
-                                Text("View more")
-                                    .underline()
-                                Image(systemName: "chevron.right")
-                                    .font(.system(size: 11, weight: .semibold))
-                        }
-                        .font(.system(size: 13.5, weight: .semibold, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.primaryBlue)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.top, 14)
-                }
-            }
-
-                Spacer(minLength: 20)
+                Spacer()
 
                 // Bottom CTA Button ("Done")
-                VStack {
-                    PrimaryActionButton(title: "Done", action: onDone)
-                }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 24)
+                PrimaryActionButton(title: "Done", action: onDone)
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 24)
             }
         }
         .sensoryFeedback(.selection, trigger: selectedWords)
@@ -743,6 +727,144 @@ public struct ExerciseAnalysisSkeletonView: View {
                 .presentationBackground(StamerleeTheme.backgroundDark)
                 .ignoresSafeArea()
         }
+        .onAppear {
+            withAnimation(.spring(response: 0.55, dampingFraction: 0.8)) {
+                starAppeared = true
+            }
+        }
+    }
+
+    // MARK: - One Main Yellow Star, Two Small Yellow Stars & Blots
+    private var starsAndBlotsView: some View {
+        let starYellow = Color(red: 255 / 255, green: 218 / 255, blue: 60 / 255)
+        let blotYellow = Color(red: 255 / 255, green: 220 / 255, blue: 90 / 255)
+
+        return ZStack {
+            // Radiating Ray Blots from center star
+            HStack(spacing: 24) {
+                Capsule()
+                    .fill(blotYellow)
+                    .frame(width: 3.5, height: 14)
+                    .rotationEffect(.degrees(-26))
+                    .offset(y: -14)
+
+                Capsule()
+                    .fill(blotYellow)
+                    .frame(width: 3.5, height: 14)
+                    .rotationEffect(.degrees(26))
+                    .offset(y: -14)
+            }
+            .scaleEffect(starAppeared ? 1.0 : 0.4)
+            .opacity(starAppeared ? 1.0 : 0.0)
+
+            // 1. One Main Yellow Center Star (without glowing effect, fully yellow)
+            starAssetOrShape("Sparkle-2", size: 42, color: starYellow)
+                .scaleEffect(starAppeared ? 1.0 : 0.75)
+                .opacity(starAppeared ? 1.0 : 0.0)
+
+            // 2. Left Small Yellow Star (without glowing effect)
+            starAssetOrShape("Sparkle", size: 20, color: starYellow)
+                .offset(x: -56, y: 12)
+                .scaleEffect(starAppeared ? 1.0 : 0.5)
+                .opacity(starAppeared ? 1.0 : 0.0)
+
+            // 3. Right Small Yellow Star (without glowing effect)
+            starAssetOrShape("Sparkle", size: 19, color: starYellow)
+                .offset(x: 52, y: 14)
+                .scaleEffect(starAppeared ? 1.0 : 0.5)
+                .opacity(starAppeared ? 1.0 : 0.0)
+
+            // Accent Decorative Blots / Motes
+            Circle()
+                .fill(blotYellow.opacity(0.85))
+                .frame(width: 3.5, height: 3.5)
+                .offset(x: -28, y: -6)
+                .scaleEffect(starAppeared ? 1.0 : 0.2)
+                .opacity(starAppeared ? 0.9 : 0.0)
+
+            Circle()
+                .fill(blotYellow.opacity(0.85))
+                .frame(width: 3.5, height: 3.5)
+                .offset(x: 28, y: -4)
+                .scaleEffect(starAppeared ? 1.0 : 0.2)
+                .opacity(starAppeared ? 0.9 : 0.0)
+
+            Circle()
+                .fill(blotYellow.opacity(0.75))
+                .frame(width: 2.5, height: 2.5)
+                .offset(x: 72, y: 5)
+                .scaleEffect(starAppeared ? 1.0 : 0.2)
+                .opacity(starAppeared ? 0.8 : 0.0)
+        }
+        .frame(height: 52)
+    }
+
+    // MARK: - Word Selection Section in Middle
+    @ViewBuilder
+    private var wordsSectionView: some View {
+        VStack(spacing: 12) {
+            // Action Row: Counter + Single "Select all / Deselect all" Toggle Button
+            HStack {
+                Text("\(selectedWords.count) selected")
+                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    .foregroundStyle(StamerleeTheme.textSecondaryDark)
+
+                Spacer()
+
+                Button(isAllSelected ? "Deselect all" : "Select all") {
+                    toggleSelectAll()
+                }
+                .font(.system(size: 13, weight: .bold, design: .rounded))
+                .foregroundStyle(StamerleeTheme.primaryBlue)
+            }
+            .padding(.horizontal, 24)
+
+            // 2-Column Word Grid
+            LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
+                ForEach(Array(wordsList.prefix(6)), id: \.self) { word in
+                    let isSelected = selectedWords.contains(word)
+                    wordButton(word: word, isSelected: isSelected) {
+                        toggleWordSelection(word)
+                    }
+                }
+            }
+            .padding(.horizontal, 24)
+
+            // Hyperlink-style "View more" button
+            if wordsList.count > 6 {
+                Button {
+                    showAllWordsSheet = true
+                } label: {
+                    HStack(spacing: 4) {
+                        Text("View more")
+                            .underline()
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 11, weight: .semibold))
+                    }
+                    .font(.system(size: 13.5, weight: .semibold, design: .rounded))
+                    .foregroundStyle(StamerleeTheme.primaryBlue)
+                }
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.top, 4)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func starAssetOrShape(_ name: String, size: CGFloat, color: Color = Color(red: 255 / 255, green: 218 / 255, blue: 60 / 255)) -> some View {
+        Group {
+            if let uiImage = UIImage(named: name) ?? UIImage(named: "pictures/\(name).png") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: name, ofType: "png") ?? "") {
+                Image(uiImage: uiImage)
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundStyle(color)
+            } else {
+                FourPointSparkleStar()
+                    .fill(color)
+            }
+        }
+        .frame(width: size, height: size)
     }
 
     private var wordsSheetView: some View {
@@ -839,6 +961,29 @@ public struct ExerciseAnalysisSkeletonView: View {
                 .clipShape(Capsule())
         }
         .buttonStyle(.haptic)
+    }
+}
+
+// MARK: - 4-Point Sparkle Star Shape
+public struct FourPointSparkleStar: Shape {
+    public init() {}
+
+    public func path(in rect: CGRect) -> Path {
+        var path = Path()
+        let cx = rect.midX
+        let cy = rect.midY
+        let rx = rect.width / 2
+        let ry = rect.height / 2
+        let innerRx = rx * 0.18
+        let innerRy = ry * 0.18
+
+        path.move(to: CGPoint(x: cx, y: cy - ry))
+        path.addQuadCurve(to: CGPoint(x: cx + rx, y: cy), control: CGPoint(x: cx + innerRx, y: cy - innerRy))
+        path.addQuadCurve(to: CGPoint(x: cx, y: cy + ry), control: CGPoint(x: cx + innerRx, y: cy + innerRy))
+        path.addQuadCurve(to: CGPoint(x: cx - rx, y: cy), control: CGPoint(x: cx - innerRx, y: cy + innerRy))
+        path.addQuadCurve(to: CGPoint(x: cx, y: cy - ry), control: CGPoint(x: cx - innerRx, y: cy - innerRy))
+        path.closeSubpath()
+        return path
     }
 }
 
@@ -946,9 +1091,9 @@ extension View {
 
 // MARK: - Top & Bottom Background Images Decoration
 public struct BackgroundImagesDecorationView: View {
-    public var opacity: Double = 0.85
+    public var opacity: Double = 1.0
 
-    public init(opacity: Double = 0.85) {
+    public init(opacity: Double = 1.0) {
         self.opacity = opacity
     }
 
@@ -958,9 +1103,8 @@ public struct BackgroundImagesDecorationView: View {
             VStack(spacing: 0) {
                 topImageItem
                     .scaledToFit()
-                    .frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity, alignment: .top)
                     .opacity(opacity)
-                    .ignoresSafeArea(edges: .top)
 
                 Spacer()
             }
@@ -971,17 +1115,17 @@ public struct BackgroundImagesDecorationView: View {
 
                 bottomImageItem
                     .scaledToFit()
-                    .frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity, alignment: .bottom)
                     .opacity(opacity)
-                    .ignoresSafeArea(edges: .bottom)
             }
         }
+        .ignoresSafeArea()
         .allowsHitTesting(false)
     }
 
     @ViewBuilder
     private var topImageItem: some View {
-        if let uiImage = UIImage(named: "topimage") ?? UIImage(named: "topimage.png") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "topimage", ofType: "png") ?? "") {
+        if let uiImage = UIImage(named: "topimage") ?? UIImage(named: "pictures/topimage.png") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "topimage", ofType: "png") ?? "") {
             Image(uiImage: uiImage)
                 .resizable()
         } else {
@@ -992,7 +1136,7 @@ public struct BackgroundImagesDecorationView: View {
 
     @ViewBuilder
     private var bottomImageItem: some View {
-        if let uiImage = UIImage(named: "bottomimage") ?? UIImage(named: "bottomimage.png") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "bottomimage", ofType: "png") ?? "") {
+        if let uiImage = UIImage(named: "bottomimage") ?? UIImage(named: "pictures/bottomimage.png") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "bottomimage", ofType: "png") ?? "") {
             Image(uiImage: uiImage)
                 .resizable()
         } else {

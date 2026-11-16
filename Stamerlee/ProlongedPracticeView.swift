@@ -8,13 +8,29 @@ import SwiftUI
 // MARK: - 1. Prolonged Practice Screen (Supports Easy, Medium & Hard)
 public struct ProlongedPracticeView: View {
     @Bindable public var state: AppState
+    @State private var showAnalysis: Bool = false
 
     private var isSentences: Bool {
-        state.selectedDifficulty == "Sentences" || state.selectedDifficulty == "Medium"
+        state.selectedDifficulty == "Sentences"
     }
 
     private var isParagraphs: Bool {
-        state.selectedDifficulty == "Paragraphs" || state.selectedDifficulty == "Hard"
+        state.selectedDifficulty == "Paragraphs"
+    }
+
+    private var level: String {
+        state.selectedDifficulty
+    }
+
+    private var scoreText: String {
+        switch level {
+        case "Paragraphs", "Hard":
+            return "7.9"
+        case "Sentences", "Medium":
+            return "8.5"
+        default:
+            return "8.8"
+        }
     }
 
     private var practicePhrases: [String] {
@@ -22,8 +38,8 @@ public struct ProlongedPracticeView: View {
             return [
                 "I wwouldd rreally likke a cup of coffee",
                 "The wweather is bbeautiful this morning",
-                "Could you please repeat that slowly",
-                "I am feeling calm and confident today"
+                "Coulld youu pleeasse reppeat thaat slowwlyy",
+                "I am feeelingg caalm and conffident tooday"
             ]
         } else if isSentences {
             return [
@@ -59,7 +75,7 @@ public struct ProlongedPracticeView: View {
                 state.navigate(to: .prolongedSpeechDifficulty, forward: false)
             },
             onFinish: {
-                if state.selectedDifficulty == "Easy" || state.selectedDifficulty == "Words" {
+                if state.selectedDifficulty == "Words" {
                     state.hasAttemptedProlongedEasy = true
                 }
                 state.navigate(to: .prolongedAnalysis)
@@ -82,9 +98,9 @@ public struct ProlongedAnalysisView: View {
 
     private var scoreText: String {
         switch level {
-        case "Paragraphs", "Hard":
+        case "Paragraphs":
             return "7.9"
-        case "Sentences", "Medium":
+        case "Sentences":
             return "8.5"
         default:
             return "8.8"

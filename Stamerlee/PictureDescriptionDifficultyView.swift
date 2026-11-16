@@ -128,6 +128,9 @@ public struct PictureDescriptionIntroView: View {
                 }
             }
             Spacer()
+            GlassCloseButton {
+                state.navigate(to: .homeDashboard, forward: false)
+            }
         }
     }
 
@@ -151,47 +154,15 @@ public struct PictureDescriptionIntroView: View {
 
             Spacer()
 
-            // Lowered Card & Glass Button inside the lower cloud
+            // CTA Button
             VStack(spacing: 16) {
-                // Glass-effect Instruction Pill Card
-                HStack(spacing: 14) {
-                    ZStack {
-                        Circle()
-                            .fill(Color(red: 236 / 255, green: 230 / 255, blue: 255 / 255))
-                            .frame(width: 42, height: 42)
-
-                        Image(systemName: "photo.on.rectangle.angled")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundStyle(StamerleeTheme.primaryBlue)
-                    }
-
-                    Text("A picture will be shown and you will describe what you see")
-                        .font(.system(size: 13.5, weight: .regular, design: .rounded))
-                        .foregroundStyle(Color(red: 88 / 255, green: 78 / 255, blue: 124 / 255))
-                        .lineSpacing(2.5)
-                        .fixedSize(horizontal: false, vertical: true)
-
-                    Spacer(minLength: 0)
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 14)
-                .background(
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 22, style: .continuous)
-                            .fill(Color.white.opacity(0.92))
-                        RoundedRectangle(cornerRadius: 22, style: .continuous)
-                            .stroke(Color.white.opacity(0.8), lineWidth: 1)
-                    }
-                )
-                .shadow(color: Color(red: 120 / 255, green: 90 / 255, blue: 180 / 255).opacity(0.12), radius: 10, x: 0, y: 4)
-
                 // Purple Glass Effect CTA Button
                 PicGlassActionButton(title: "Begin") {
                     goToStep(.encouragement)
                 }
             }
             .padding(.horizontal, 24)
-            .padding(.bottom, 32)
+            .padding(.bottom, 36)
         }
     }
 
@@ -200,13 +171,11 @@ public struct PictureDescriptionIntroView: View {
         VStack(spacing: 16) {
             Spacer()
 
-            HStack(spacing: 10) {
-                PicTwinklingStarView(assetName: "Sparkle-2", size: 28, delay: 0.1, duration: 1.0)
+            PicTwinklingStarView(assetName: "Sparkle-2", size: 28, delay: 0.1, duration: 1.0)
 
-                Text("Quick Demo")
-                    .font(.system(size: 28, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
-            }
+            Text("Quick Demo")
+                .font(.system(size: 28, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
 
             Text("Let's see how Picture\nDescription works")
                 .font(.system(size: 21, weight: .medium, design: .rounded))
@@ -227,12 +196,6 @@ public struct PictureDescriptionIntroView: View {
         .contentShape(Rectangle())
         .onTapGesture {
             goToStep(.practice)
-        }
-        .task {
-            try? await Task.sleep(nanoseconds: 2_400_000_000)
-            if step == .encouragement {
-                goToStep(.practice)
-            }
         }
     }
 
@@ -454,12 +417,7 @@ public struct PictureDescriptionIntroView: View {
             withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
                 wellDoneBurst = true
             }
-            Task { @MainActor in
-                try? await Task.sleep(nanoseconds: 3_500_000_000)
-                if step == .wellDone {
-                    redirectToPractice()
-                }
-            }
+
         }
     }
 
@@ -495,7 +453,7 @@ public struct PictureDescriptionIntroView: View {
                 .scaledToFit()
                 .frame(width: 115)
                 .position(midRightCloudPosition(w: w, h: h))
-                .opacity((step == .encouragement || step == .practice) ? 1.0 : 0.0)
+                .opacity((step == .intro || step == .encouragement || step == .practice) ? 1.0 : 0.0)
                 .offset(y: floatAnim ? -5 : 5)
                 .animation(.spring(response: 0.75, dampingFraction: 0.8), value: step)
 
@@ -504,33 +462,33 @@ public struct PictureDescriptionIntroView: View {
                 .scaledToFit()
                 .frame(width: 142)
                 .position(x: w * 0.10, y: step == .wellDone ? h * 0.88 : (step == .encouragement ? h * 0.90 : h * 1.25))
-                .opacity(step == .intro ? 0.0 : 1.0)
+                .opacity((step == .intro || step == .practice) ? 0.0 : 1.0)
                 .offset(y: floatAnim ? 4 : -4)
                 .animation(.spring(response: 0.75, dampingFraction: 0.8), value: step)
 
-            // 5. Cloud Landscape Bank (Screen 1: Lowered so position sits low, giving open sky above)
+            // 5. Cloud Landscape Bank
             assetImage("Cloud landscape")
                 .scaledToFill()
                 .frame(width: w * 1.08)
-                .position(x: w * 0.5, y: step == .intro ? (h * 0.93) : (h + 350))
-                .opacity(step == .intro ? 1.0 : 0.0)
+                .position(x: w * 0.5, y: h + 350)
+                .opacity(0.0)
                 .animation(.spring(response: 0.82, dampingFraction: 0.82), value: step)
 
-            // 6. Bottom Billowing Cloud Bank 1 (Screen 3 & Screen 4: Hugs bottom-right edge)
+            // 6. Bottom Billowing Cloud Bank 1 (Screen 1, Screen 3 & Screen 4: Hugs bottom-right edge)
             assetImage("Cloud bank")
                 .scaledToFit()
                 .frame(width: w * 0.70)
                 .position(bottomBankRightPosition(w: w, h: h))
-                .opacity((step == .practice || step == .wellDone) ? 1.0 : 0.0)
+                .opacity((step == .intro || step == .practice || step == .wellDone) ? 1.0 : 0.0)
                 .offset(y: floatAnim ? -3 : 3)
                 .animation(.spring(response: 0.8, dampingFraction: 0.8), value: step)
 
-            // 7. Bottom Billowing Cloud Bank 2 (Screen 3 & Screen 4: Hugs bottom-left edge)
+            // 7. Bottom Billowing Cloud Bank 2 (Screen 1, Screen 3 & Screen 4: Hugs bottom-left edge)
             assetImage("Cloud bank-2")
                 .scaledToFit()
                 .frame(width: w * 0.66)
                 .position(bottomBankLeftPosition(w: w, h: h))
-                .opacity((step == .practice || step == .wellDone) ? 1.0 : 0.0)
+                .opacity((step == .intro || step == .practice || step == .wellDone) ? 1.0 : 0.0)
                 .offset(y: floatAnim ? 3 : -3)
                 .animation(.spring(response: 0.8, dampingFraction: 0.8), value: step)
         }
@@ -539,45 +497,40 @@ public struct PictureDescriptionIntroView: View {
 
     private func topLeftCloudPosition(w: CGFloat, h: CGFloat) -> CGPoint {
         switch step {
-        case .intro: return CGPoint(x: w * 0.06, y: h * 0.055)
+        case .intro, .practice: return CGPoint(x: w * 0.06, y: h * 0.08)
         case .encouragement: return CGPoint(x: w * 0.06, y: h * 0.08)
-        case .practice: return CGPoint(x: w * 0.06, y: h * 0.08)
         case .wellDone: return CGPoint(x: w * -0.06, y: h * 0.08)
         }
     }
 
     private func topRightCloudPosition(w: CGFloat, h: CGFloat) -> CGPoint {
         switch step {
-        case .intro: return CGPoint(x: w * 0.94, y: h * 0.065)
+        case .intro, .practice: return CGPoint(x: w * 0.94, y: h * 0.18)
         case .encouragement: return CGPoint(x: w * 1.15, y: h * 0.065)
-        case .practice: return CGPoint(x: w * 0.94, y: h * 0.18)
         case .wellDone: return CGPoint(x: w * 1.06, y: h * 0.10)
         }
     }
 
     private func midRightCloudPosition(w: CGFloat, h: CGFloat) -> CGPoint {
         switch step {
-        case .intro: return CGPoint(x: w * 1.25, y: h * 0.32)
+        case .intro, .practice: return CGPoint(x: w * 1.08, y: h * 0.26)
         case .encouragement: return CGPoint(x: w * 0.96, y: h * 0.28)
-        case .practice: return CGPoint(x: w * 0.94, y: h * 0.26)
         case .wellDone: return CGPoint(x: w * 1.25, y: h * 0.30)
         }
     }
 
     private func bottomBankLeftPosition(w: CGFloat, h: CGFloat) -> CGPoint {
         switch step {
-        case .intro: return CGPoint(x: w * 0.2, y: h * 1.25)
+        case .intro, .practice: return CGPoint(x: w * 0.20, y: h * 0.88)
         case .encouragement: return CGPoint(x: w * 0.1, y: h * 1.25)
-        case .practice: return CGPoint(x: w * 0.20, y: h * 0.88)
         case .wellDone: return CGPoint(x: w * 0.05, y: h * 0.88)
         }
     }
 
     private func bottomBankRightPosition(w: CGFloat, h: CGFloat) -> CGPoint {
         switch step {
-        case .intro: return CGPoint(x: w * 0.8, y: h * 1.25)
+        case .intro, .practice: return CGPoint(x: w * 0.82, y: h * 0.86)
         case .encouragement: return CGPoint(x: w * 0.9, y: h * 1.25)
-        case .practice: return CGPoint(x: w * 0.82, y: h * 0.86)
         case .wellDone: return CGPoint(x: w * 0.95, y: h * 0.86)
         }
     }

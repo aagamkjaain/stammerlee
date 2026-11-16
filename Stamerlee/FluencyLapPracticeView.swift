@@ -1,20 +1,4 @@
 import SwiftUI
-import TipKit
-
-// MARK: - TipKit: DAF Feature Tip
-public struct DAFFeatureTip: Tip {
-    public var title: Text {
-        Text("Delayed Auditory Feedback")
-    }
-
-    public var message: Text? {
-        Text("DAF plays your voice back with a slight delay through headphones, naturally slowing your pacing and helping you maintain smooth, prolonged speech.")
-    }
-
-    public var image: Image? {
-        Image(systemName: "headphones")
-    }
-}
 
 public struct FluencyLapPracticeView: View {
     @Bindable public var state: AppState
@@ -63,23 +47,20 @@ public struct FluencyLapPracticeView: View {
 
 public struct SpeakPracticeScreen: View {
     let prompts: [String]
-    let instruction: String
+    let instruction: String?
     let onBack: () -> Void
     let onFinish: () -> Void
     let allowsMultilinePrompt: Bool
     let showBackgroundImages: Bool
 
     @State private var currentWordIndex = 0
-    @State private var isDAFEnabled = true
     @State private var isListening = false
     @State private var pulse = false
     @State private var advanceTask: Task<Void, Never>?
 
-    private let dafTip = DAFFeatureTip()
-
     public init(
         prompts: [String],
-        instruction: String = "Stretch the sounds gently as you speak, keeping each word slow, smooth, and relaxed.",
+        instruction: String? = nil,
         allowsMultilinePrompt: Bool = false,
         showBackgroundImages: Bool = false,
         onBack: @escaping () -> Void,
@@ -114,14 +95,16 @@ public struct SpeakPracticeScreen: View {
             VStack(spacing: 0) {
                 topBar
 
-                Text(instruction)
-                    .font(.system(size: 15, weight: .regular, design: .rounded))
-                    .foregroundStyle(.white)
-                    .lineSpacing(5)
-                    .multilineTextAlignment(.leading)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, 28)
+                if let instruction, !instruction.isEmpty {
+                    Text(instruction)
+                        .font(.system(size: 15, weight: .regular, design: .rounded))
+                        .foregroundStyle(.white)
+                        .lineSpacing(5)
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.top, 28)
+                }
 
                 Spacer(minLength: 12)
 
@@ -143,10 +126,9 @@ public struct SpeakPracticeScreen: View {
                     finishPractice()
                 } label: {
                     HStack(spacing: 10) {
-                        Text("Finish Practice")
+                        Text("Finish")
                             .font(.system(size: 17, weight: .semibold, design: .rounded))
-                        Image(systemName: "arrow.right")
-                            .font(.system(size: 18, weight: .bold))
+
                     }
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
@@ -160,9 +142,6 @@ public struct SpeakPracticeScreen: View {
             .padding(.top, 8)
         }
         .preferredColorScheme(.dark)
-        .task {
-            try? Tips.configure([.displayFrequency(.immediate)])
-        }
         .onDisappear {
             advanceTask?.cancel()
         }
@@ -176,23 +155,7 @@ public struct SpeakPracticeScreen: View {
             }
 
             Spacer()
-
-            Button {
-                dafTip.invalidate(reason: .actionPerformed)
-                isDAFEnabled.toggle()
-            } label: {
-                Label("DAF", systemImage: "headphones")
-                    .font(.system(size: 15, weight: .semibold, design: .rounded))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 17)
-                    .frame(height: 40)
-                    .contentShape(Capsule())
-            }
-            .buttonStyle(DAFButtonStyle(isEnabled: isDAFEnabled))
-            .popoverTip(dafTip, arrowEdge: .top)
-            .accessibilityLabel(isDAFEnabled ? "Disable DAF" : "Enable DAF")
         }
-        .sensoryFeedback(.impact(weight: .light), trigger: isDAFEnabled)
     }
 
     private var promptDisplay: some View {
@@ -314,55 +277,6 @@ public struct SpeakPracticeScreen: View {
         pulse = false
         onFinish()
     }
-
-    private var backgroundImagesLayer: some View {
-        ZStack {
-            // Top Background Image
-            VStack(spacing: 0) {
-                topImageItem
-                    .scaledToFit()
-                    .frame(maxWidth: .infinity)
-                    .opacity(0.85)
-                    .ignoresSafeArea(edges: .top)
-
-                Spacer()
-            }
-
-            // Bottom Background Image
-            VStack(spacing: 0) {
-                Spacer()
-
-                bottomImageItem
-                    .scaledToFit()
-                    .frame(maxWidth: .infinity)
-                    .opacity(0.85)
-                    .ignoresSafeArea(edges: .bottom)
-            }
-        }
-        .allowsHitTesting(false)
-    }
-
-    @ViewBuilder
-    private var topImageItem: some View {
-        if let uiImage = UIImage(named: "topimage") ?? UIImage(named: "topimage.png") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "topimage", ofType: "png") ?? "") {
-            Image(uiImage: uiImage)
-                .resizable()
-        } else {
-            Image("topimage")
-                .resizable()
-        }
-    }
-
-    @ViewBuilder
-    private var bottomImageItem: some View {
-        if let uiImage = UIImage(named: "bottomimage") ?? UIImage(named: "bottomimage.png") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "bottomimage", ofType: "png") ?? "") {
-            Image(uiImage: uiImage)
-                .resizable()
-        } else {
-            Image("bottomimage")
-                .resizable()
-        }
-    }
 }
 
 private struct FluencyFinishButtonStyle: ButtonStyle {
@@ -370,28 +284,6 @@ private struct FluencyFinishButtonStyle: ButtonStyle {
         configuration.label
             .background(StamerleeTheme.primaryPurple, in: Capsule())
             .scaleEffect(configuration.isPressed ? 0.97 : 1)
-            .animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
-    }
-}
-
-private struct DAFButtonStyle: ButtonStyle {
-    let isEnabled: Bool
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .background(
-                Group {
-                    if #available(iOS 26.0, *) {
-                        Capsule()
-                            .fill((isEnabled ? StamerleeTheme.primaryBlue : StamerleeTheme.cardDark).opacity(configuration.isPressed ? 0.75 : 1.0))
-                    } else {
-                        Capsule()
-                            .fill(isEnabled ? StamerleeTheme.primaryBlue : StamerleeTheme.cardDark)
-                    }
-                }
-            )
-            .contentShape(Capsule())
-            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
             .animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
     }
 }

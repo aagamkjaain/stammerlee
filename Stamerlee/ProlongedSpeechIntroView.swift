@@ -117,7 +117,7 @@ public struct ProlongedSpeechIntroView: View {
         }
     }
 
-    // MARK: - Top Navigation Bar (Back button replacing cross icon)
+    // MARK: - Top Navigation Bar (Back button and glass close button)
     private var topBar: some View {
         HStack {
             BackNavButton {
@@ -132,6 +132,11 @@ public struct ProlongedSpeechIntroView: View {
                 }
             }
             Spacer()
+
+            GlassCloseButton {
+                redirectToDifficulty()
+            }
+            .accessibilityLabel("Skip Demo")
         }
     }
 
@@ -171,14 +176,11 @@ public struct ProlongedSpeechIntroView: View {
     private func encouragementContent(w: CGFloat, h: CGFloat) -> some View {
         VStack(spacing: 16) {
             Spacer()
+            TwinklingStarView(assetName: "Sparkle-2", size: 28, delay: 0.1, duration: 1.0)
 
-            HStack(spacing: 10) {
-                TwinklingStarView(assetName: "Sparkle-2", size: 28, delay: 0.1, duration: 1.0)
-
-                Text("Quick Demo")
-                    .font(.system(size: 28, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
-            }
+            Text("Quick Demo")
+                .font(.system(size: 28, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
 
             Text("Let's see how stretching\nsounds works")
                 .font(.system(size: 21, weight: .medium, design: .rounded))
@@ -186,7 +188,7 @@ public struct ProlongedSpeechIntroView: View {
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
 
-            Text("We'll demonstrate with the word \"sweet\"")
+            Text("We'll try with the word sweet")
                 .font(.system(size: 15, weight: .regular, design: .rounded))
                 .foregroundStyle(Color(red: 195 / 255, green: 185 / 255, blue: 230 / 255))
                 .padding(.top, 4)
@@ -198,12 +200,6 @@ public struct ProlongedSpeechIntroView: View {
         .onTapGesture {
             goToStep(.practice)
         }
-//        .task {
-//            try? await Task.sleep(nanoseconds: 2_200_000_000)
-//            if step == .encouragement {
-//                goToStep(.practice)
-//            }
-//        }
     }
 
     // MARK: - Step 3: Practice Word & Purple Microphone Screen (Demonstration of "sweet" only once)
@@ -386,13 +382,6 @@ public struct ProlongedSpeechIntroView: View {
             withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
                 wellDoneBurst = true
             }
-            // Auto-redirect to Words / Sentences / Paragraphs screen after confetti celebration
-            Task { @MainActor in
-                try? await Task.sleep(nanoseconds: 2_600_000_000)
-                if step == .wellDone {
-                    redirectToDifficulty()
-                }
-            }
         }
     }
 
@@ -400,7 +389,6 @@ public struct ProlongedSpeechIntroView: View {
     private func redirectToDifficulty() {
         state.hasSeenProlongedSpeechIntro = true
         state.hasAttemptedProlongedEasy = true
-        state.completedProlongedDifficulties.insert("Words")
         state.navigate(to: .prolongedSpeechDifficulty)
     }
 

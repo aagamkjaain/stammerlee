@@ -228,7 +228,7 @@ public struct HomeDashboardView: View {
                                 .scaledToFit()
                         }
                     }
-                    .frame(width: 68, height: 68)
+                    .frame(width: 76, height: 76)
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Fluency Lap")
@@ -320,33 +320,33 @@ private struct ExerciseRowCard: View {
     }
 
     private var cardContent: some View {
-        HStack(alignment: .center, spacing: 12) {
+        HStack(alignment: .center, spacing: 14) {
             // Leading Icon — fixed width so text always starts at the same X
             if isLocked {
                 ZStack {
                     Circle()
                         .fill(Color(red: 90 / 255, green: 105 / 255, blue: 180 / 255))
-                        .frame(width: 38, height: 38)
+                        .frame(width: 44, height: 44)
                     Image(systemName: "lock.fill")
-                        .font(.system(size: 15, weight: .bold))
+                        .font(.system(size: 17, weight: .bold))
                         .foregroundStyle(.white)
                 }
-                .frame(width: 56, height: 56)
+                .frame(width: 68, height: 68)
             } else if let iconName {
                 Image(iconName)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 56, height: 56)
+                    .frame(width: 68, height: 68)
             }
 
             // Title + Subtitle — explicitly left-aligned and expanding
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 3) {
                 Text(title)
-                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .font(.system(size: 16, weight: .bold, design: .rounded))
                     .foregroundStyle(StamerleeTheme.textPrimaryLight)
                     .multilineTextAlignment(.leading)
                 Text(subtitle)
-                    .font(.system(size: 11, weight: .regular, design: .rounded))
+                    .font(.system(size: 12.5, weight: .regular, design: .rounded))
                     .foregroundStyle(StamerleeTheme.textSecondaryLight)
                     .multilineTextAlignment(.leading)
                     .lineLimit(2)
@@ -357,13 +357,13 @@ private struct ExerciseRowCard: View {
             // Chevron
             if !isLocked {
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(Color.gray.opacity(0.5))
             }
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .frame(maxWidth: .infinity, minHeight: 72, alignment: .leading)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+        .frame(maxWidth: .infinity, minHeight: 84, alignment: .leading)
         // On iOS < 26 draw the card background manually; on iOS 26 the glass style owns rendering
         .background {
             if #available(iOS 26.0, *) {

@@ -47,13 +47,6 @@ public struct PictureDescriptionEasyView: View {
                     state.navigate(to: .homeDashboard, forward: false)
                 }
                 Spacer()
-                Text("DAF")
-                    .font(.system(size: 13, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(StamerleeTheme.primaryBlueDark)
-                    .clipShape(Capsule())
             }
             .padding(.horizontal, 24)
             .padding(.top, 16)
@@ -137,6 +130,7 @@ public struct PictureDescriptionEasyView: View {
         ExerciseAnalysisSkeletonView(
             scoreText: scoreText,
             maxScoreText: "/ 10",
+            subtitle: "Great job completing your picture description session!",
             onDone: {
                 state.navigate(to: .homeDashboard)
             }
