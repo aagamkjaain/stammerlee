@@ -54,10 +54,6 @@
 		AA000001037 /* ChromaKeyVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002037 /* ChromaKeyVideoView.swift */; };
 		AA000001038 /* LaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002038 /* LaunchView.swift */; };
 		B10000001 /* ConfettiSwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000001 /* ConfettiSwiftUI.swift */; };
-		B10000002 /* View+ConfettiCannon.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000002 /* View+ConfettiCannon.swift */; };
-		B10000003 /* Triangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000003 /* Triangle.swift */; };
-		B10000004 /* RoundedCross.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000004 /* RoundedCross.swift */; };
-		B10000005 /* SlimRectangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000005 /* SlimRectangle.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -108,10 +104,6 @@
 		AA000002037 /* ChromaKeyVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChromaKeyVideoView.swift; sourceTree = "<group>"; };
 		AA000002038 /* LaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchView.swift; sourceTree = "<group>"; };
 		B00000001 /* ConfettiSwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiSwiftUI.swift; sourceTree = "<group>"; };
-		B00000002 /* View+ConfettiCannon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+ConfettiCannon.swift"; sourceTree = "<group>"; };
-		B00000003 /* Triangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Triangle.swift; sourceTree = "<group>"; };
-		B00000004 /* RoundedCross.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedCross.swift; sourceTree = "<group>"; };
-		B00000005 /* SlimRectangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlimRectangle.swift; sourceTree = "<group>"; };
 		AA000003001 /* Stamerlee.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stamerlee.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -184,10 +176,6 @@
 				2352B33230AB061300195DEF /* pictures/header.png */,
 				2352B30E30AA3CFE00195DEF /* pictures/topimage.png */,
 				B00000001 /* ConfettiSwiftUI.swift */,
-				B00000002 /* View+ConfettiCannon.swift */,
-				B00000003 /* Triangle.swift */,
-				B00000004 /* RoundedCross.swift */,
-				B00000005 /* SlimRectangle.swift */,
 			);
 			path = Stamerlee;
 			sourceTree = "<group>";
@@ -314,10 +302,6 @@
 				AA000001037 /* ChromaKeyVideoView.swift in Sources */,
 				AA000001038 /* LaunchView.swift in Sources */,
 				B10000001 /* ConfettiSwiftUI.swift in Sources */,
-				B10000002 /* View+ConfettiCannon.swift in Sources */,
-				B10000003 /* Triangle.swift in Sources */,
-				B10000004 /* RoundedCross.swift in Sources */,
-				B10000005 /* SlimRectangle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
