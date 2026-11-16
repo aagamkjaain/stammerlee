@@ -69,7 +69,7 @@ public struct ProfileView: View {
             StamerleeTheme.backgroundDark
                 .ignoresSafeArea()
 
-            ScrollView(showsIndicators: false) {
+            ScrollView {
                 VStack(spacing: 0) {
                     profileHeader
 
@@ -93,6 +93,7 @@ public struct ProfileView: View {
                     .padding(.bottom, 36)
                 }
             }
+            .scrollIndicators(.hidden)
         }
         .preferredColorScheme(.dark)
         .onAppear {
@@ -583,7 +584,7 @@ private struct LegalDocumentSheet: View {
             ZStack {
                 StamerleeTheme.backgroundDark.ignoresSafeArea()
 
-                ScrollView(showsIndicators: false) {
+                ScrollView {
                     VStack(alignment: .leading, spacing: 14) {
                         Text(content)
                             .font(.system(size: 14, weight: .regular, design: .rounded))
@@ -594,6 +595,7 @@ private struct LegalDocumentSheet: View {
                             .padding(.bottom, 36)
                     }
                 }
+                .scrollIndicators(.hidden)
             }
             .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)

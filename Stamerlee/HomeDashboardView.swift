@@ -5,6 +5,7 @@ import UIKit
 /// Main application hub with daily goals, exercise modules, and bottom tab bar.
 public struct HomeDashboardView: View {
     @Bindable public var state: AppState
+    @Environment(\.headerNamespace) private var headerNamespace
     
     @State private var showLockedAlert: Bool = false
     @State private var lockedAlertMessage: String = ""
@@ -16,18 +17,21 @@ public struct HomeDashboardView: View {
     
     public var body: some View {
        
-        ZStack(alignment: .bottom) {
+        ZStack(alignment: .top) {
             // Dark Background
             StamerleeTheme.backgroundDark
                 .ignoresSafeArea()
             
             VStack(alignment: .leading, spacing: 0) {
+                // Top Header Banner
+                headerImageView
+
                 // Header Bar
                 HStack {
                     Text("Welcome")
                         .font(.system(size: 32, weight: .bold, design: .rounded))
                         .foregroundStyle(StamerleeTheme.textPrimaryDark)
-                    
+
                     Spacer()
 
                     Button {
@@ -43,15 +47,15 @@ public struct HomeDashboardView: View {
                     }
                     .buttonStyle(AvatarInteractiveButtonStyle())
                     .accessibilityLabel("Open profile")
-                    
+
                 }
                 .padding(.horizontal, 24)
-                .padding(.top, 16)
-                .padding(.bottom, 14)
-                
+                .padding(.top, -48)
+                .padding(.bottom, 10)
+
                 // Scrollable Body Content
-                ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 20) {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 12) {
                         // Fluency Lap Card
                         fluencyLapCard
                             .offset(y: cardsAppeared ? 0 : 36)
@@ -145,7 +149,7 @@ public struct HomeDashboardView: View {
                                 isLocked: false,
                                 iconName: "BeatBuddyLogo"
                             ) {
-                                state.navigate(to: .beatBuddyPracticeType)
+                                state.navigate(to: .beatBuddyBPM)
                             }
                         }
                         .offset(y: cardsAppeared ? 0 : 44)
@@ -161,6 +165,7 @@ public struct HomeDashboardView: View {
                     }
                     .padding(.horizontal, 20)
                 }
+                .scrollIndicators(.hidden)
             }
         }
         .onAppear {
@@ -184,6 +189,27 @@ public struct HomeDashboardView: View {
         }
     }
     
+    // MARK: - Top Header Image
+    @ViewBuilder
+    private var headerImageView: some View {
+        Group {
+            if let uiImage = UIImage(named: "header") ?? UIImage(named: "Header") {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity)
+                    .ignoresSafeArea(edges: .top)
+            } else {
+                Image("Header")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity)
+                    .ignoresSafeArea(edges: .top)
+            }
+        }
+        .matchedGeometryEffectIfPresent(id: "headerBanner", in: headerNamespace)
+    }
+
     // MARK: - Fluency Lap Card
     private var fluencyLapCard: some View {
         Button(action: {
@@ -197,7 +223,7 @@ public struct HomeDashboardView: View {
                             .frame(width: 68, height: 68)
                             .rotationEffect(.degrees(-5))
 
-                        Image(systemName: "calendar.badge.checkmark")
+                        Image(systemName: "clock.arrow.trianglehead.counterclockwise.rotate.90")
                             .font(.system(size: 24, weight: .semibold))
                             .foregroundStyle(StamerleeTheme.primaryPurple)
                             .frame(width: 48, height: 48)

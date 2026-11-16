@@ -52,8 +52,6 @@ public enum AppScreen: Hashable, CaseIterable {
     case narrationIntro
     case narrationDifficulty
     case narrationPractice
-    case beatBuddyPracticeType
-    case beatBuddyWords
     case beatBuddyBPM
     case beatBuddyPractice
 }
@@ -80,6 +78,9 @@ public final class AppState {
     // Dashboard & Tab State
     public var selectedTab: AppTab = .home
     public var fluencyLapWordCount: Int = 15
+    public var hasCompletedFluencyLap: Bool = false
+    public var fluencyLapPreviousWordCount: Int = 42
+    public var fluencyLapPersonalBest: Int = 56
     public var dailyPracticeMinutes: Int = 10
     public var currentStreakDays: Int = 3
     public var profileName: String = "John doe"
@@ -104,6 +105,8 @@ public final class AppState {
     public var selectedNarrationDifficulty: String = "Easy"
     public var completedNarrationDifficulties: Set<String> = []
     public var beatBuddySelectedWords: Set<String> = ["Water", "University"]
+    public var beatBuddyPracticeWords: [String] = []
+    public var beatBuddySoundCategory: String = "Randomized"
     public var beatBuddyWordCount: Int = 10
     public var beatBuddyUsesCustomWordCount: Bool = false
     public var beatBuddyBPM: Int = 120
@@ -112,18 +115,6 @@ public final class AppState {
     public var practiceAudioSeconds: Int = 0
     public var showPracticeModal: Bool = false
 
-    public var dailyGoalProgress: Double {
-        let goalSeconds = max(dailyPracticeMinutes, 1) * 60
-        let recordedProgress = Double(practiceAudioSeconds) / Double(goalSeconds)
-        return min(max(recordedProgress, 0.2), 1)
-    }
-    
-    // UI Feedback States
-    public var showEmailSheet: Bool = false
-    public var showTermsSheet: Bool = false
-    public var termsSheetTitle: String = ""
-    public var termsSheetContent: String = ""
-    
     // Reminder Notification State
     public var reminderEnabled: Bool = true
     public var reminderTime: Date = Calendar.current.date(from: DateComponents(hour: 20, minute: 0)) ?? Date()
@@ -158,6 +149,9 @@ public final class AppState {
         hasReceivedProlongedEasyScore = false
         prolongedEasyScore = nil
         prolongedSpeechScores.removeAll()
+        hasCompletedFluencyLap = false
+        fluencyLapPreviousWordCount = 42
+        fluencyLapPersonalBest = 56
         reminderEnabled = false
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         navigate(to: .login, forward: false)
@@ -189,10 +183,6 @@ public final class AppState {
         }
     }
     
-    public func isProlongedDifficultyUnlocked(_ difficulty: String) -> Bool {
-        true
-    }
-
     public func completeProlongedDifficulty(_ difficulty: String) {
         completedProlongedDifficulties.insert(difficulty)
     }
@@ -207,52 +197,12 @@ public final class AppState {
         }
     }
 
-    public var isPictureDescriptionUnlocked: Bool {
-        true
-    }
-
     public func completePictureDescription() {
         hasCompletedPictureDescription = true
         completedPictureDescriptionDifficulties.insert("Completed")
     }
 
-    public var isDialSceneUnlocked: Bool {
-        true
-    }
-
-    public var isBeatBuddyUnlocked: Bool {
-        true
-    }
-
-    public var isNarrationUnlocked: Bool {
-        true
-    }
-
     public func completeNarration() {
         completedNarrationDifficulties.insert("Completed")
-    }
-    
-    public func restartFlow() {
-        withAnimation(.easeInOut(duration: 0.35)) {
-            self.currentScreen = .launch
-            self.dailyPracticeMinutes = 10
-            self.isAuthenticated = false
-            self.userEmail = ""
-            self.selectedTab = .home
-            self.profileName = "John doe"
-            self.profileAvatarStyle = 0
-            self.profileAvatarData = nil
-            self.completedProlongedDifficulties = []
-            self.hasAttemptedProlongedEasy = false
-            self.hasReceivedProlongedEasyScore = false
-            self.prolongedEasyScore = nil
-            self.prolongedSpeechScores = [:]
-            self.hasSeenProlongedSpeechIntro = false
-            self.selectedPictureDescriptionDifficulty = "Easy"
-            self.completedPictureDescriptionDifficulties = []
-            self.hasCompletedDialScene = false
-            self.selectedNarrationDifficulty = "Easy"
-            self.completedNarrationDifficulties = []
-        }
     }
 }

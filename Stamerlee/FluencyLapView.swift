@@ -2,174 +2,235 @@ import SwiftUI
 
 public struct FluencyLapView: View {
     @Bindable public var state: AppState
-    @State private var selectedDuration: LapDuration = .classic
+    @Environment(\.headerNamespace) private var headerNamespace
 
     public init(state: AppState) {
         self.state = state
     }
 
     public var body: some View {
-        NavigationStack {
-            ZStack {
-                StamerleeTheme.backgroundDark
-                    .ignoresSafeArea()
+        ZStack(alignment: .top) {
+            StamerleeTheme.backgroundDark
+                .ignoresSafeArea()
 
-                VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 0) {
+                // Top Header Banner
+                headerImageView
+
+                // Header Bar with Back Button & Fluency Lap title on top of the image
+                HStack(spacing: 12) {
                     BackNavButton {
                         state.navigate(to: .homeDashboard, forward: false)
                     }
-                    .padding(.top, 8)
 
                     Text("Fluency Lap")
-                        .font(.system(size: 30, weight: .bold, design: .rounded))
+                        .font(.system(size: 28, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
-                        .padding(.top, 18)
+                        .shadow(color: Color.black.opacity(0.45), radius: 6, x: 0, y: 2)
 
-                    Text("Practice words from the sounds you tend to stutter on. Build speed, smoothness, and confidence under time pressure.")
-                        .font(.system(size: 15, weight: .regular, design: .rounded))
-                        .foregroundStyle(Color(red: 221 / 255, green: 218 / 255, blue: 239 / 255))
-                        .lineSpacing(4)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.top, 10)
-
-                    goalCard
-                        .padding(.top, 22)
-
-                    Text("CHOOSE ROUND DURATION")
-                        .font(.system(size: 13, weight: .bold, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
-                        .tracking(0.6)
-                        .padding(.top, 26)
-
-                    HStack(spacing: 10) {
-                        ForEach(LapDuration.allCases) { duration in
-                            durationButton(duration)
-                        }
-                    }
-                    .padding(.top, 14)
-
-                    PrimaryActionButton(
-                        title: "Start Today's Challenge",
-                        icon: "play.fill",
-                        compact: true
-                    ) {
-                        state.fluencyLapWordCount = selectedDuration.wordCount
-                        state.navigate(to: .fluencyLapPractice)
-                    }
-                    .padding(.top, 28)
-
-                    Spacer(minLength: 0)
+                    Spacer()
                 }
                 .padding(.horizontal, 24)
-                .padding(.bottom, 12)
+                .padding(.top, -48)
+                .padding(.bottom, 6)
+
+                // Subtitle
+                Text("Practice words from the sounds you tend to stutter on. Build speed, smoothness, and confidence under time pressure.")
+                    .font(.system(size: 14, weight: .regular, design: .rounded))
+                    .foregroundStyle(Color(red: 221 / 255, green: 218 / 255, blue: 239 / 255))
+                    .lineSpacing(3)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 4)
+
+                // Goal Card or Progress Card
+                if state.hasCompletedFluencyLap {
+                    practiceProgressCard
+                        .padding(.horizontal, 24)
+                        .padding(.top, 16)
+                } else {
+                    goalCard
+                        .padding(.horizontal, 24)
+                        .padding(.top, 16)
+                }
+
+                Spacer(minLength: 8)
+
+                // Stopwatch Display
+                stopwatchHeroView
+
+                Spacer(minLength: 16)
+
+                // Primary Action Button pinned to bottom
+                VStack {
+                    PrimaryActionButton(
+                        title: "Start 60s Challenge",
+                        icon: "play.fill"
+                    ) {
+                        state.fluencyLapWordCount = 20
+                        state.navigate(to: .fluencyLapPractice)
+                    }
+                }
+                .padding(.horizontal, 24)
+                .padding(.bottom, 24)
             }
-            .toolbar(.hidden, for: .navigationBar)
         }
         .preferredColorScheme(.dark)
+    }
+
+    @ViewBuilder
+    private var headerImageView: some View {
+        Group {
+            if let uiImage = UIImage(named: "header") ?? UIImage(named: "Header") {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity)
+                    .ignoresSafeArea(edges: .top)
+            } else {
+                Image("Header")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity)
+                    .ignoresSafeArea(edges: .top)
+            }
+        }
+        .matchedGeometryEffectIfPresent(id: "headerBanner", in: headerNamespace)
     }
 
     private var goalCard: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Today's Challenge Goal")
-                .font(.system(size: 18, weight: .bold, design: .rounded))
+                .font(.system(size: 19, weight: .bold, design: .rounded))
                 .foregroundStyle(StamerleeTheme.textPrimaryLight)
 
-            Text("Speak words from your stuttered sounds with smooth, continuous airflow before time ends.")
+            Text("Speak as many words as you comfortably can in 60 seconds, focusing on smooth, continuous airflow and steady speech. Keep going at your own pace, stay relaxed, and aim to complete as many words as possible before the timer ends.")
                 .font(.system(size: 14, weight: .regular, design: .rounded))
                 .foregroundStyle(Color(red: 79 / 255, green: 76 / 255, blue: 101 / 255))
-                .lineSpacing(3)
+                .lineSpacing(3.5)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 18)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(red: 235 / 255, green: 232 / 255, blue: 255 / 255), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .background(Color(red: 235 / 255, green: 232 / 255, blue: 255 / 255), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 3)
     }
 
-    private func durationButton(_ duration: LapDuration) -> some View {
-        Button {
-            withAnimation(.easeInOut(duration: 0.2)) {
-                selectedDuration = duration
+    private var practiceProgressCard: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("Your practice progress")
+                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .foregroundStyle(Color(red: 16 / 255, green: 14 / 255, blue: 26 / 255))
+
+            HStack(alignment: .center, spacing: 0) {
+                // Left: Previous session
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Previous session")
+                        .font(.system(size: 15.5, weight: .semibold, design: .rounded))
+                        .foregroundStyle(Color(red: 22 / 255, green: 20 / 255, blue: 34 / 255))
+
+                    HStack(alignment: .lastTextBaseline, spacing: 6) {
+                        Text("\(state.fluencyLapPreviousWordCount)")
+                            .font(.system(size: 42, weight: .bold, design: .rounded))
+                            .foregroundStyle(.black)
+
+                        Text("words")
+                            .font(.system(size: 16, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.black)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                // Vertical Divider
+                Rectangle()
+                    .fill(Color.black.opacity(0.18))
+                    .frame(width: 1, height: 48)
+                    .padding(.horizontal, 16)
+
+                // Right: Personal best
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Personal best")
+                        .font(.system(size: 15.5, weight: .semibold, design: .rounded))
+                        .foregroundStyle(Color(red: 22 / 255, green: 20 / 255, blue: 34 / 255))
+
+                    HStack(alignment: .lastTextBaseline, spacing: 6) {
+                        Text("\(state.fluencyLapPersonalBest)")
+                            .font(.system(size: 42, weight: .bold, design: .rounded))
+                            .foregroundStyle(.black)
+
+                        Text("words")
+                            .font(.system(size: 16, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.black)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-        } label: {
-            VStack(spacing: 5) {
-                Image(systemName: "stopwatch")
-                    .font(.system(size: 18, weight: .medium))
-                Text(duration.title)
+            .padding(.top, 2)
+
+            // Horizontal Divider
+            Rectangle()
+                .fill(Color.black.opacity(0.15))
+                .frame(height: 1)
+                .padding(.top, 4)
+
+            // Footer
+            HStack {
+                Text("60-second sessions")
+                    .font(.system(size: 14.5, weight: .regular, design: .rounded))
+                    .foregroundStyle(Color(red: 30 / 255, green: 28 / 255, blue: 42 / 255))
+
+                Spacer()
+
+                Text("SAMPLE DATA")
                     .font(.system(size: 13, weight: .bold, design: .rounded))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.85)
-                Text(duration.words)
-                    .font(.system(size: 12, weight: .regular, design: .rounded))
-                    .foregroundStyle(.white.opacity(0.58))
+                    .tracking(0.5)
+                    .foregroundStyle(Color(red: 30 / 255, green: 28 / 255, blue: 42 / 255))
             }
-            .foregroundStyle(.white)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
-            .overlay(alignment: .topTrailing) {
-                if selectedDuration == duration {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 16))
+            .padding(.top, 2)
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(red: 235 / 255, green: 232 / 255, blue: 255 / 255), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 3)
+    }
+
+    private var stopwatchHeroView: some View {
+        VStack(spacing: 14) {
+            // Large circular timer ring matching design
+            ZStack {
+                // Outer clean lilac ring
+                Circle()
+                    .stroke(
+                        Color(red: 195 / 255, green: 175 / 255, blue: 255 / 255),
+                        lineWidth: 4.5
+                    )
+                    .frame(width: 190, height: 190)
+                    .shadow(color: Color(red: 195 / 255, green: 175 / 255, blue: 255 / 255).opacity(0.2), radius: 10)
+
+                // Inside content: Stopwatch icon, 60, seconds
+                VStack(spacing: 4) {
+                    Image(systemName: "stopwatch")
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundStyle(Color(red: 195 / 255, green: 175 / 255, blue: 255 / 255))
+                        .padding(.bottom, 2)
+
+                    Text("60")
+                        .font(.system(size: 64, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
-                        .padding(6)
+
+                    Text("seconds")
+                        .font(.system(size: 16, weight: .medium, design: .rounded))
+                        .foregroundStyle(Color(red: 185 / 255, green: 180 / 255, blue: 215 / 255))
                 }
             }
+
+            // Subtitle below the timer ring
+            Text("Ready when you are")
+                .font(.system(size: 15.5, weight: .medium, design: .rounded))
+                .foregroundStyle(Color(red: 170 / 255, green: 168 / 255, blue: 195 / 255))
         }
-        .buttonStyle(FluencyLapDurationButtonStyle(isSelected: selectedDuration == duration))
-        .accessibilityAddTraits(selectedDuration == duration ? .isSelected : [])
-    }
-}
-
-private enum LapDuration: String, CaseIterable, Identifiable {
-    case blitz
-    case classic
-    case master
-
-    var id: String { rawValue }
-
-    var title: String {
-        switch self {
-        case .blitz: return "30s Blitz"
-        case .classic: return "45s Classic"
-        case .master: return "60s Master"
-        }
-    }
-
-    var words: String {
-        switch self {
-        case .blitz: return "7 words"
-        case .classic: return "15 words"
-        case .master: return "20 words"
-        }
-    }
-
-    var wordCount: Int {
-        switch self {
-        case .blitz: return 7
-        case .classic: return 15
-        case .master: return 20
-        }
-    }
-}
-
-private struct FluencyLapDurationButtonStyle: ButtonStyle {
-    let isSelected: Bool
-
-    func makeBody(configuration: Configuration) -> some View {
-        if #available(iOS 26.0, *) {
-            configuration.label
-                .buttonStyle(.glass(.regular.tint(isSelected ? StamerleeTheme.primaryPurple : StamerleeTheme.cardDark).interactive()))
-                .buttonBorderShape(.roundedRectangle(radius: 16))
-                .scaleEffect(configuration.isPressed ? 0.97 : 1)
-        } else {
-            configuration.label
-                .background(isSelected ? StamerleeTheme.primaryPurple : StamerleeTheme.cardDark, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .stroke(isSelected ? Color.white.opacity(0.7) : Color.white.opacity(0.1), lineWidth: isSelected ? 2 : 1)
-                }
-                .scaleEffect(configuration.isPressed ? 0.97 : 1)
-                .animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
-        }
+        .frame(maxWidth: .infinity)
     }
 }

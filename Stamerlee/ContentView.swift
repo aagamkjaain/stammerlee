@@ -9,16 +9,26 @@ private struct ProfileAvatarFrameReporterKey: EnvironmentKey {
     static let defaultValue: ((ProfileAvatarSlot, CGRect) -> Void)? = nil
 }
 
+private struct HeaderNamespaceKey: EnvironmentKey {
+    static let defaultValue: Namespace.ID? = nil
+}
+
 extension EnvironmentValues {
     var profileAvatarFrameReporter: ((ProfileAvatarSlot, CGRect) -> Void)? {
         get { self[ProfileAvatarFrameReporterKey.self] }
         set { self[ProfileAvatarFrameReporterKey.self] = newValue }
     }
-}
 
+    public var headerNamespace: Namespace.ID? {
+        get { self[HeaderNamespaceKey.self] }
+        set { self[HeaderNamespaceKey.self] = newValue }
+    }
+}
+ 
 // MARK: - Root Content View
 /// Master container managing transitions across all onboarding, exploration, and practice screens.
 public struct ContentView: View {
+    @Namespace private var headerNamespace
     @State private var appState = AppState()
     @State private var showScreenPicker: Bool = false
     @State private var homeAvatarFrame: CGRect = .zero
@@ -61,7 +71,14 @@ public struct ContentView: View {
                 case .exploreActivities:
                     ExploreActivitiesView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
-                case .homeDashboard, .profile:
+                case .homeDashboard:
+                    DashboardTabView(state: appState)
+                        .transition(
+                            appState.isProfileTransition
+                                ? .identity
+                                : slideTransition(for: appState.navigationDirection)
+                        )
+                case .profile:
                     DashboardTabView(state: appState)
                         .zIndex(1)
                         .transition(.identity)
@@ -105,12 +122,6 @@ public struct ContentView: View {
                         .transition(slideTransition(for: appState.navigationDirection))
                 case .narrationDifficulty, .narrationPractice:
                     NarrationPracticeView(state: appState)
-                        .transition(slideTransition(for: appState.navigationDirection))
-                case .beatBuddyPracticeType:
-                    BeatBuddyWordsView(state: appState)
-                        .transition(slideTransition(for: appState.navigationDirection))
-                case .beatBuddyWords:
-                    BeatBuddyWordsView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
                 case .beatBuddyBPM:
                     BeatBuddyBPMView(state: appState)
@@ -165,6 +176,7 @@ public struct ContentView: View {
                 profileAvatarFrame = frame
             }
         }
+        .environment(\.headerNamespace, headerNamespace)
         .preferredColorScheme(.dark)
         // Two finger tap anywhere to toggle the quick screen jump bar
         .onTapGesture(count: 2) {
@@ -220,16 +232,14 @@ public struct ContentView: View {
         }
     }
     
-    // MARK: - Directional Slide with Depth Transition
+    // MARK: - Directional Slide Transition
     private func slideTransition(for edge: Edge) -> AnyTransition {
         let oppositeEdge: Edge = (edge == .trailing ? .leading : .trailing)
         return .asymmetric(
             insertion: .move(edge: edge)
-                .combined(with: .opacity)
-                .combined(with: .scale(scale: 0.96)),
+                .combined(with: .opacity),
             removal: .move(edge: oppositeEdge)
                 .combined(with: .opacity)
-                .combined(with: .scale(scale: 0.96))
         )
     }
     
@@ -251,7 +261,7 @@ public struct ContentView: View {
                 }
             }
             
-            ScrollView(.horizontal, showsIndicators: false) {
+            ScrollView(.horizontal) {
                 HStack(spacing: 8) {
                     jumpButton(title: "Launch", screen: .launch)
                     jumpButton(title: "Login", screen: .login)
@@ -270,6 +280,7 @@ public struct ContentView: View {
                     jumpButton(title: "Analysis", screen: .prolongedAnalysis)
                 }
             }
+            .scrollIndicators(.hidden)
         }
         .padding(12)
         .background(.ultraThinMaterial)

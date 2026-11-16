@@ -403,6 +403,8 @@ public struct ExerciseIntroSkeletonView: View {
             StamerleeTheme.backgroundDark
                 .ignoresSafeArea()
 
+            BackgroundImagesDecorationView()
+
             VStack(alignment: .leading, spacing: 0) {
                 // Top Navigation Bar
                 HStack {
@@ -421,7 +423,7 @@ public struct ExerciseIntroSkeletonView: View {
 
                     Text(subtitle)
                         .font(.system(size: 16, weight: .regular, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
+                        .foregroundStyle(.white)
                         .lineSpacing(4)
                 }
                 .padding(.horizontal, 24)
@@ -451,6 +453,69 @@ public struct ExerciseIntroSkeletonView: View {
         }
         .onAppear {
             breatheEffect = true
+        }
+    }
+}
+
+// MARK: - Pulsing Microphone Button
+public struct PulsingMicrophoneButton: View {
+    @Binding public var isListening: Bool
+    public let action: () -> Void
+
+    @State private var pulse = false
+
+    public init(isListening: Binding<Bool>, action: @escaping () -> Void) {
+        self._isListening = isListening
+        self.action = action
+    }
+
+    public var body: some View {
+        Button(action: action) {
+            ZStack {
+                Circle()
+                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
+                    .frame(width: 148, height: 148)
+                    .scaleEffect(isListening && pulse ? 1.12 : 1)
+                    .opacity(isListening ? (pulse ? 0.35 : 0.9) : 1)
+
+                Circle()
+                    .stroke(StamerleeTheme.primaryPurple.opacity(isListening ? 0.45 : 0.25), lineWidth: 12)
+                    .frame(width: 126, height: 126)
+                    .scaleEffect(isListening && pulse ? 1.08 : 1)
+                    .opacity(isListening ? (pulse ? 0.55 : 1) : 1)
+
+                Circle()
+                    .fill(
+                        RadialGradient(
+                            colors: [StamerleeTheme.accentPurpleLight, StamerleeTheme.primaryPurpleDark],
+                            center: .topLeading,
+                            startRadius: 2,
+                            endRadius: 75
+                        )
+                    )
+                    .frame(width: 96, height: 96)
+                    .shadow(color: StamerleeTheme.primaryPurple.opacity(isListening ? 0.95 : 0.7), radius: isListening ? 22 : 16)
+                    .scaleEffect(isListening && pulse ? 1.05 : 1)
+
+                Image(systemName: "mic.fill")
+                    .font(.system(size: 34, weight: .medium))
+                    .foregroundStyle(.white)
+                    .scaleEffect(isListening && pulse ? 1.08 : 1)
+            }
+            .frame(width: 168, height: 168)
+            .contentShape(Circle())
+            .animation(
+                isListening
+                    ? .easeInOut(duration: 0.75).repeatForever(autoreverses: true)
+                    : .easeOut(duration: 0.2),
+                value: pulse
+            )
+        }
+        .buttonStyle(.haptic(weight: .medium, pressedScale: 0.96))
+        .disabled(isListening)
+        .accessibilityLabel(isListening ? "Listening" : "Speak word")
+        .onChange(of: isListening) { _, listening in
+            pulse = listening
         }
     }
 }
@@ -565,9 +630,6 @@ public struct ExerciseAnalysisSkeletonView: View {
 
     public var body: some View {
         ZStack {
-            StamerleeTheme.backgroundDark
-                .ignoresSafeArea()
-
             VStack(alignment: .leading, spacing: 0) {
                 // Top Title Bar
                 Text("Analysis")
@@ -607,50 +669,53 @@ public struct ExerciseAnalysisSkeletonView: View {
                 .padding(.bottom, 48)
 
                 // Instructions Subtitle
-                Text(subtitle)
-                    .font(.system(size: 13, weight: .regular, design: .rounded))
-                    .foregroundStyle(StamerleeTheme.textSecondaryDark)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.bottom, 18)
-
-                // Action Row: Counter + Single "Select all / Deselect all" Toggle Button
-                HStack {
-                    Text("\(selectedWords.count) selected")
-                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                if !subtitle.isEmpty {
+                    Text(subtitle)
+                        .font(.system(size: 13, weight: .regular, design: .rounded))
                         .foregroundStyle(StamerleeTheme.textSecondaryDark)
-
-                    Spacer()
-
-                    Button(isAllSelected ? "Deselect all" : "Select all") {
-                        toggleSelectAll()
-                    }
-                    .font(.system(size: 13, weight: .bold, design: .rounded))
-                    .foregroundStyle(StamerleeTheme.primaryBlue)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.bottom, 18)
                 }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 14)
 
-                // 2-Column Word Grid (Older sleek capsule design)
-                LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
-                    ForEach(Array(wordsList.prefix(6)), id: \.self) { word in
-                        let isSelected = selectedWords.contains(word)
-                        wordButton(word: word, isSelected: isSelected) {
-                            toggleWordSelection(word)
+                if !wordsList.isEmpty {
+                    // Action Row: Counter + Single "Select all / Deselect all" Toggle Button
+                    HStack {
+                        Text("\(selectedWords.count) selected")
+                            .font(.system(size: 13, weight: .semibold, design: .rounded))
+                            .foregroundStyle(StamerleeTheme.textSecondaryDark)
+
+                        Spacer()
+
+                        Button(isAllSelected ? "Deselect all" : "Select all") {
+                            toggleSelectAll()
+                        }
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                        .foregroundStyle(StamerleeTheme.primaryBlue)
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 14)
+
+                    // 2-Column Word Grid (Older sleek capsule design)
+                    LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
+                        ForEach(Array(wordsList.prefix(6)), id: \.self) { word in
+                            let isSelected = selectedWords.contains(word)
+                            wordButton(word: word, isSelected: isSelected) {
+                                toggleWordSelection(word)
+                            }
                         }
                     }
-                }
-                .padding(.horizontal, 24)
+                    .padding(.horizontal, 24)
 
-                // Hyperlink-style "View more" button
-                if wordsList.count > 6 {
-                    Button {
-                        showAllWordsSheet = true
-                    } label: {
-                        HStack(spacing: 4) {
-                            Text("View more")
-                                .underline()
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 11, weight: .semibold))
+                    // Hyperlink-style "View more" button
+                    if wordsList.count > 6 {
+                        Button {
+                            showAllWordsSheet = true
+                        } label: {
+                            HStack(spacing: 4) {
+                                Text("View more")
+                                    .underline()
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 11, weight: .semibold))
                         }
                         .font(.system(size: 13.5, weight: .semibold, design: .rounded))
                         .foregroundStyle(StamerleeTheme.primaryBlue)
@@ -658,6 +723,7 @@ public struct ExerciseAnalysisSkeletonView: View {
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.top, 14)
                 }
+            }
 
                 Spacer(minLength: 20)
 
@@ -685,7 +751,7 @@ public struct ExerciseAnalysisSkeletonView: View {
                 StamerleeTheme.backgroundDark
                     .ignoresSafeArea()
 
-                ScrollView(.vertical, showsIndicators: true) {
+                ScrollView(.vertical) {
                     VStack(alignment: .leading, spacing: 16) {
                         HStack {
                             Text("\(selectedWords.count) of \(wordsList.count) selected")
@@ -874,6 +940,64 @@ extension View {
             self.matchedGeometryEffect(id: id, in: namespace, properties: properties, anchor: anchor, isSource: isSource)
         } else {
             self
+        }
+    }
+}
+
+// MARK: - Top & Bottom Background Images Decoration
+public struct BackgroundImagesDecorationView: View {
+    public var opacity: Double = 0.85
+
+    public init(opacity: Double = 0.85) {
+        self.opacity = opacity
+    }
+
+    public var body: some View {
+        ZStack {
+            // Top Background Image
+            VStack(spacing: 0) {
+                topImageItem
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity)
+                    .opacity(opacity)
+                    .ignoresSafeArea(edges: .top)
+
+                Spacer()
+            }
+
+            // Bottom Background Image
+            VStack(spacing: 0) {
+                Spacer()
+
+                bottomImageItem
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity)
+                    .opacity(opacity)
+                    .ignoresSafeArea(edges: .bottom)
+            }
+        }
+        .allowsHitTesting(false)
+    }
+
+    @ViewBuilder
+    private var topImageItem: some View {
+        if let uiImage = UIImage(named: "topimage") ?? UIImage(named: "topimage.png") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "topimage", ofType: "png") ?? "") {
+            Image(uiImage: uiImage)
+                .resizable()
+        } else {
+            Image("topimage")
+                .resizable()
+        }
+    }
+
+    @ViewBuilder
+    private var bottomImageItem: some View {
+        if let uiImage = UIImage(named: "bottomimage") ?? UIImage(named: "bottomimage.png") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "bottomimage", ofType: "png") ?? "") {
+            Image(uiImage: uiImage)
+                .resizable()
+        } else {
+            Image("bottomimage")
+                .resizable()
         }
     }
 }
