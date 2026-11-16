@@ -937,7 +937,7 @@ public struct DialSceneView: View {
                 .padding(.top, 22)
             Text("Practice real life conversations through\ninteractive scenarios.")
                 .font(.system(size: 14, design: .rounded))
-                .foregroundStyle(StamerleeTheme.textSecondaryDark)
+                .foregroundStyle(.white)
                 .padding(.horizontal, 24)
                 .padding(.top, 10)
                 .padding(.bottom, 24)

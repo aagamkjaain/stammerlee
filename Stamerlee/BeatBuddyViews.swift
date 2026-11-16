@@ -752,7 +752,7 @@ public struct BeatBuddyPracticeView: View {
 
                 Text("Speak each syllable with the metronome beat. Stay relaxed and let the rhythm guide your pace.")
                     .font(.system(size: 15, weight: .regular, design: .rounded))
-                    .foregroundStyle(Color(red: 190 / 255, green: 188 / 255, blue: 214 / 255))
+                    .foregroundStyle(.white)
                     .lineSpacing(5)
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -824,25 +824,7 @@ public struct BeatBuddyPracticeView: View {
             }
 
             Spacer()
-
-            Button {
-                isMetronomeActive.toggle()
-            } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: isMetronomeActive ? "metronome.fill" : "metronome")
-                        .font(.system(size: 14, weight: .semibold))
-                    Text("\(state.beatBuddyBPM) BPM")
-                        .font(.system(size: 15, weight: .semibold, design: .rounded))
-                }
-                .foregroundStyle(.white)
-                .padding(.horizontal, 17)
-                .frame(height: 40)
-                .contentShape(Capsule())
-            }
-            .buttonStyle(BeatBuddyBPMButtonStyle(isEnabled: isMetronomeActive))
-            .accessibilityLabel(isMetronomeActive ? "Disable Metronome" : "Enable Metronome")
         }
-        .sensoryFeedback(.impact(weight: .light), trigger: isMetronomeActive)
     }
 
     private var promptDisplay: some View {
@@ -1030,6 +1012,7 @@ public struct BeatBuddyPracticeView: View {
             if currentWordIndex + 1 < wordCount {
                 currentWordIndex += 1
                 activeSyllableIndex = 0
+                startMetronome()
             } else {
                 finishPractice()
             }
