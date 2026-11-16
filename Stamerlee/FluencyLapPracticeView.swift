@@ -54,6 +54,7 @@ public struct FluencyLapPracticeView: View {
                 state.navigate(to: .fluencyLap, forward: false)
             },
             onFinish: {
+                state.hasCompletedFluencyLap = true
                 state.navigate(to: .homeDashboard, forward: false)
             }
         )

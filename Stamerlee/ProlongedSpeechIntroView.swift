@@ -21,16 +21,12 @@ public struct ProlongedSpeechIntroView: View {
     @State private var isListening: Bool = false
     @State private var pulseMic: Bool = false
     @State private var floatAnim: Bool = false
-    @State private var practiceWordIndex: Int = 0
     @State private var showConfetti: Bool = false
     @State private var wellDoneBurst: Bool = false
 
-    private let practiceWords: [(prefix: String, stretched: String)] = [
-        ("swe", "et"),
-        ("wa", "ter"),
-        ("brea", "the"),
-        ("smoo", "th")
-    ]
+    // Demonstration word: "sweet" practiced only once as an exercise demonstration
+    private let demoPrefix = "swe"
+    private let demoStretched = "et"
 
     public init(state: AppState) {
         self.state = state
@@ -186,16 +182,21 @@ public struct ProlongedSpeechIntroView: View {
             HStack(spacing: 10) {
                 TwinklingStarView(assetName: "Sparkle-2", size: 28, delay: 0.1, duration: 1.0)
 
-                Text("Great!")
+                Text("Quick Demo")
                     .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
             }
 
-            Text("Now let's try saying\na few words")
+            Text("Let's see how stretching\nsounds works")
                 .font(.system(size: 21, weight: .medium, design: .rounded))
                 .foregroundStyle(.white)
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
+
+            Text("We'll demonstrate with the word \"sweet\"")
+                .font(.system(size: 15, weight: .regular, design: .rounded))
+                .foregroundStyle(Color(red: 195 / 255, green: 185 / 255, blue: 230 / 255))
+                .padding(.top, 4)
 
             Spacer()
         }
@@ -205,30 +206,56 @@ public struct ProlongedSpeechIntroView: View {
             goToStep(.practice)
         }
         .task {
-            try? await Task.sleep(nanoseconds: 2_400_000_000)
+            try? await Task.sleep(nanoseconds: 2_200_000_000)
             if step == .encouragement {
                 goToStep(.practice)
             }
         }
     }
 
-    // MARK: - Step 3: Practice Word & Purple Microphone Screen
+    // MARK: - Step 3: Practice Word & Purple Microphone Screen (Demonstration of "sweet" only once)
     private func practiceContent(w: CGFloat, h: CGFloat) -> some View {
-        let current = practiceWords[practiceWordIndex % practiceWords.count]
-
-        return VStack(spacing: 0) {
+        VStack(spacing: 0) {
             Spacer()
 
-            // Word display with Purple sound stretching
+            // Demonstration Tag
+            HStack(spacing: 6) {
+                Image(systemName: "sparkles")
+                    .font(.system(size: 11, weight: .bold))
+                Text("EXERCISE DEMO")
+                    .font(.system(size: 11.5, weight: .bold, design: .rounded))
+                    .tracking(1.2)
+            }
+            .foregroundStyle(Color(red: 195 / 255, green: 175 / 255, blue: 255 / 255))
+            .padding(.horizontal, 14)
+            .padding(.vertical, 6)
+            .background(
+                Capsule()
+                    .fill(Color(red: 195 / 255, green: 175 / 255, blue: 255 / 255).opacity(0.18))
+            )
+            .padding(.bottom, 12)
+
+            Text("Stretch the sound gently without rushing")
+                .font(.system(size: 14.5, weight: .medium, design: .rounded))
+                .foregroundStyle(Color(red: 210 / 255, green: 205 / 255, blue: 240 / 255))
+                .padding(.bottom, 28)
+
+            // Word display with sound stretching
             (
-                Text(current.prefix)
+                Text(demoPrefix)
                     .foregroundStyle(.white)
-                + Text(current.stretched)
-                    .foregroundStyle(Color(red: 190 / 255, green: 168 / 255, blue: 255 / 255))
+                + Text(demoStretched)
+                    .foregroundStyle(Color(red: 195 / 255, green: 175 / 255, blue: 255 / 255))
             )
             .font(.system(size: 56, weight: .bold, design: .rounded))
             .shadow(color: StamerleeTheme.primaryBlue.opacity(0.45), radius: 14)
-            .padding(.bottom, 48)
+
+            // Visual soundwave hint
+            Text("swe · · · et")
+                .font(.system(size: 14, weight: .medium, design: .monospaced))
+                .foregroundStyle(Color(red: 175 / 255, green: 165 / 255, blue: 215 / 255))
+                .padding(.top, 8)
+                .padding(.bottom, 36)
 
             // Purple Glass Microphone Control
             Button {
@@ -237,7 +264,7 @@ public struct ProlongedSpeechIntroView: View {
                 ZStack {
                     // Outer audio wave ripple
                     Circle()
-                        .stroke(StamerleeTheme.primaryBlue.opacity(isListening ? 0.45 : 0.22), lineWidth: 1.5)
+                        .stroke(StamerleeTheme.primaryBlue.opacity(isListening ? 0.5 : 0.22), lineWidth: 1.5)
                         .frame(width: 120, height: 120)
                         .scaleEffect(isListening && pulseMic ? 1.18 : 1.0)
 
@@ -276,7 +303,7 @@ public struct ProlongedSpeechIntroView: View {
                             radius: isListening ? 16 : 10
                         )
 
-                    Image(systemName: "mic.fill")
+                    Image(systemName: isListening ? "waveform" : "mic.fill")
                         .font(.system(size: 26, weight: .semibold))
                         .foregroundStyle(.white)
                 }
@@ -284,7 +311,12 @@ public struct ProlongedSpeechIntroView: View {
             }
             .buttonStyle(.plain)
             .disabled(isListening)
-            .padding(.bottom, 60)
+
+            Text(isListening ? "Listening... stretching smoothly" : "Tap microphone to try 'sweet'")
+                .font(.system(size: 14, weight: .regular, design: .rounded))
+                .foregroundStyle(Color(red: 195 / 255, green: 190 / 255, blue: 220 / 255))
+                .padding(.top, 16)
+                .padding(.bottom, 48)
 
             Spacer()
         }

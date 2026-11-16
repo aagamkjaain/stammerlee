@@ -43,10 +43,16 @@ public struct FluencyLapView: View {
                     .padding(.horizontal, 24)
                     .padding(.top, 4)
 
-                // Goal Card
-                goalCard
-                    .padding(.horizontal, 24)
-                    .padding(.top, 16)
+                // Goal Card or Progress Card
+                if state.hasCompletedFluencyLap {
+                    practiceProgressCard
+                        .padding(.horizontal, 24)
+                        .padding(.top, 16)
+                } else {
+                    goalCard
+                        .padding(.horizontal, 24)
+                        .padding(.top, 16)
+                }
 
                 Spacer(minLength: 8)
 
@@ -103,6 +109,85 @@ public struct FluencyLapView: View {
                 .foregroundStyle(Color(red: 79 / 255, green: 76 / 255, blue: 101 / 255))
                 .lineSpacing(3.5)
                 .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(red: 235 / 255, green: 232 / 255, blue: 255 / 255), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 3)
+    }
+
+    private var practiceProgressCard: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("Your practice progress")
+                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .foregroundStyle(Color(red: 16 / 255, green: 14 / 255, blue: 26 / 255))
+
+            HStack(alignment: .center, spacing: 0) {
+                // Left: Previous session
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Previous session")
+                        .font(.system(size: 15.5, weight: .semibold, design: .rounded))
+                        .foregroundStyle(Color(red: 22 / 255, green: 20 / 255, blue: 34 / 255))
+
+                    HStack(alignment: .lastTextBaseline, spacing: 6) {
+                        Text("\(state.fluencyLapPreviousWordCount)")
+                            .font(.system(size: 42, weight: .bold, design: .rounded))
+                            .foregroundStyle(.black)
+
+                        Text("words")
+                            .font(.system(size: 16, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.black)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                // Vertical Divider
+                Rectangle()
+                    .fill(Color.black.opacity(0.18))
+                    .frame(width: 1, height: 48)
+                    .padding(.horizontal, 16)
+
+                // Right: Personal best
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Personal best")
+                        .font(.system(size: 15.5, weight: .semibold, design: .rounded))
+                        .foregroundStyle(Color(red: 22 / 255, green: 20 / 255, blue: 34 / 255))
+
+                    HStack(alignment: .lastTextBaseline, spacing: 6) {
+                        Text("\(state.fluencyLapPersonalBest)")
+                            .font(.system(size: 42, weight: .bold, design: .rounded))
+                            .foregroundStyle(.black)
+
+                        Text("words")
+                            .font(.system(size: 16, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.black)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding(.top, 2)
+
+            // Horizontal Divider
+            Rectangle()
+                .fill(Color.black.opacity(0.15))
+                .frame(height: 1)
+                .padding(.top, 4)
+
+            // Footer
+            HStack {
+                Text("60-second sessions")
+                    .font(.system(size: 14.5, weight: .regular, design: .rounded))
+                    .foregroundStyle(Color(red: 30 / 255, green: 28 / 255, blue: 42 / 255))
+
+                Spacer()
+
+                Text("SAMPLE DATA")
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .tracking(0.5)
+                    .foregroundStyle(Color(red: 30 / 255, green: 28 / 255, blue: 42 / 255))
+            }
+            .padding(.top, 2)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 18)
