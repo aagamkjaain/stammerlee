@@ -43,8 +43,8 @@ public struct FluencyLapView: View {
                     .padding(.horizontal, 24)
                     .padding(.top, 4)
 
-                // Goal Card or Progress Card
-                if state.hasCompletedFluencyLap {
+                // Goal Card or Progress Card (Show Last Score & High Score)
+                if state.hasCompletedFluencyLap || state.hasCompletedFluencyLapIntro {
                     practiceProgressCard
                         .padding(.horizontal, 24)
                         .padding(.top, 16)
@@ -124,9 +124,9 @@ public struct FluencyLapView: View {
                 .foregroundStyle(Color(red: 16 / 255, green: 14 / 255, blue: 26 / 255))
 
             HStack(alignment: .center, spacing: 0) {
-                // Left: Previous session
+                // Left: Last score
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("Previous session")
+                    Text("Last score")
                         .font(.system(size: 15.5, weight: .semibold, design: .rounded))
                         .foregroundStyle(Color(red: 22 / 255, green: 20 / 255, blue: 34 / 255))
 
@@ -148,9 +148,9 @@ public struct FluencyLapView: View {
                     .frame(width: 1, height: 48)
                     .padding(.horizontal, 16)
 
-                // Right: Personal best
+                // Right: High score
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("Personal best")
+                    Text("High score")
                         .font(.system(size: 15.5, weight: .semibold, design: .rounded))
                         .foregroundStyle(Color(red: 22 / 255, green: 20 / 255, blue: 34 / 255))
 
@@ -182,7 +182,7 @@ public struct FluencyLapView: View {
 
                 Spacer()
 
-                Text("SAMPLE DATA")
+                Text("PERSONAL RECORDS")
                     .font(.system(size: 13, weight: .bold, design: .rounded))
                     .tracking(0.5)
                     .foregroundStyle(Color(red: 30 / 255, green: 28 / 255, blue: 42 / 255))

@@ -163,7 +163,7 @@ public struct FluencyLapIntroView: View {
                     .font(.system(size: 34, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
 
-                Text("A 30-second speaking sprint to warm up your voice, rhythm, and confidence under light time pressure.")
+                Text("A 60-second lap designed to build speed, smoothness, and speech confidence under time pressure.")
                     .font(.system(size: 15, weight: .regular, design: .rounded))
                     .foregroundStyle(Color(red: 200 / 255, green: 195 / 255, blue: 230 / 255))
                     .multilineTextAlignment(.center)
@@ -193,11 +193,11 @@ public struct FluencyLapIntroView: View {
 
             TwinklingStarView(assetName: "Sparkle-2", size: 30, delay: 0.1, duration: 1.0)
 
-            Text("30-Second Sprint")
+            Text("60-Second Lap")
                 .font(.system(size: 28, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
 
-            Text("Speak each word clearly as it appears\nwithin 30 seconds.")
+            Text("Speak as many words as you comfortably can\nwithin 60 seconds.")
                 .font(.system(size: 19, weight: .medium, design: .rounded))
                 .foregroundStyle(.white)
                 .multilineTextAlignment(.center)
@@ -208,8 +208,8 @@ public struct FluencyLapIntroView: View {
                 Image(systemName: "sparkles")
                     .font(.system(size: 13, weight: .bold))
                     .foregroundStyle(Color(red: 255 / 255, green: 215 / 255, blue: 0 / 255))
-                Text("Tip: Maintain continuous airflow and a steady pace")
-                    .font(.system(size: 13.5, weight: .medium, design: .rounded))
+                Text("Tip: Maintain continuous airflow and a steady pace during the 60s lap")
+                    .font(.system(size: 13, weight: .medium, design: .rounded))
                     .foregroundStyle(Color(red: 220 / 255, green: 215 / 255, blue: 245 / 255))
             }
             .padding(.horizontal, 16)
@@ -409,7 +409,7 @@ public struct FluencyLapIntroView: View {
                         .foregroundStyle(.white)
                         .padding(.top, 4)
 
-                    Text("You completed your warm-up sprint!\nYou're ready to take on the Fluency Lap.")
+                    Text("You completed your warm-up sprint!\nYou're ready to start the 60-second Fluency Lap.")
                         .font(.system(size: 16, weight: .regular, design: .rounded))
                         .foregroundStyle(Color(red: 200 / 255, green: 195 / 255, blue: 230 / 255))
                         .multilineTextAlignment(.center)
@@ -422,7 +422,7 @@ public struct FluencyLapIntroView: View {
             Spacer()
 
             VStack(spacing: 16) {
-                GlassActionButton(title: "Continue to Fluency Lap") {
+                GlassActionButton(title: "Start 60s Practice") {
                     redirectToFluencyLap()
                 }
             }
@@ -581,7 +581,8 @@ public struct FluencyLapIntroView: View {
     private func redirectToFluencyLap() {
         timerTask?.cancel()
         state.hasCompletedFluencyLapIntro = true
-        state.navigate(to: .fluencyLap, forward: true)
+        state.fluencyLapWordCount = 20
+        state.navigate(to: .fluencyLapPractice, forward: true)
     }
 }
 
