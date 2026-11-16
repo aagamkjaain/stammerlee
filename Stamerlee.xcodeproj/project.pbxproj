@@ -51,6 +51,7 @@
 		AA000001034 /* AppTabNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002034 /* AppTabNavigation.swift */; };
 		AA000001035 /* FluencyLapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002035 /* FluencyLapView.swift */; };
 		AA000001036 /* FluencyLapPracticeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002036 /* FluencyLapPracticeView.swift */; };
+		AA000001037 /* FluencyLapIntroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002037 /* FluencyLapIntroView.swift */; };
 		AA000001038 /* LaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002038 /* LaunchView.swift */; };
 		B10000001 /* ConfettiSwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000001 /* ConfettiSwiftUI.swift */; };
 /* End PBXBuildFile section */
@@ -100,6 +101,7 @@
 		AA000002034 /* AppTabNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTabNavigation.swift; sourceTree = "<group>"; };
 		AA000002035 /* FluencyLapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FluencyLapView.swift; sourceTree = "<group>"; };
 		AA000002036 /* FluencyLapPracticeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FluencyLapPracticeView.swift; sourceTree = "<group>"; };
+		AA000002037 /* FluencyLapIntroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FluencyLapIntroView.swift; sourceTree = "<group>"; };
 		AA000002038 /* LaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchView.swift; sourceTree = "<group>"; };
 		AA000003001 /* Stamerlee.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stamerlee.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B00000001 /* ConfettiSwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiSwiftUI.swift; sourceTree = "<group>"; };
@@ -154,6 +156,7 @@
 				2352B33430AB106900195DEF /* pictures/hey1.png */,
 				AA000002035 /* FluencyLapView.swift */,
 				AA000002036 /* FluencyLapPracticeView.swift */,
+				AA000002037 /* FluencyLapIntroView.swift */,
 				2352B32A30AA70C000195DEF /* pictures/Ilustrations.png */,
 				2352B31430AA5AEA00195DEF /* pictures/Cloud.png */,
 				2352B31C30AA5B3D00195DEF /* pictures/Cloud bank.png */,
@@ -296,6 +299,7 @@
 				AA000001034 /* AppTabNavigation.swift in Sources */,
 				AA000001035 /* FluencyLapView.swift in Sources */,
 				AA000001036 /* FluencyLapPracticeView.swift in Sources */,
+				AA000001037 /* FluencyLapIntroView.swift in Sources */,
 				AA000001038 /* LaunchView.swift in Sources */,
 				B10000001 /* ConfettiSwiftUI.swift in Sources */,
 			);

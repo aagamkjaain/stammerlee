@@ -38,6 +38,7 @@ public enum AppScreen: Hashable, CaseIterable {
     case exploreActivities
     case homeDashboard
     case profile
+    case fluencyLapIntro
     case fluencyLap
     case fluencyLapPractice
     case prolongedSpeechIntro
@@ -79,6 +80,7 @@ public final class AppState {
     public var selectedTab: AppTab = .home
     public var fluencyLapWordCount: Int = 15
     public var hasCompletedFluencyLap: Bool = false
+    public var hasCompletedFluencyLapIntro: Bool = false
     public var fluencyLapPreviousWordCount: Int = 42
     public var fluencyLapPersonalBest: Int = 56
     public var dailyPracticeMinutes: Int = 10

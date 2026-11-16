@@ -213,7 +213,11 @@ public struct HomeDashboardView: View {
     // MARK: - Fluency Lap Card
     private var fluencyLapCard: some View {
         Button(action: {
-            state.navigate(to: .fluencyLap)
+            if state.hasCompletedFluencyLapIntro {
+                state.navigate(to: .fluencyLap)
+            } else {
+                state.navigate(to: .fluencyLapIntro)
+            }
         }) {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center, spacing: 16) {
