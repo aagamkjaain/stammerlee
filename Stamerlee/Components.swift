@@ -711,17 +711,20 @@ public struct ExerciseAnalysisSkeletonView: View {
 
     // MARK: - One Main Yellow Star, Two Small Yellow Stars & Blots
     private var starsAndBlotsView: some View {
-        ZStack {
+        let starYellow = Color(red: 255 / 255, green: 218 / 255, blue: 60 / 255)
+        let blotYellow = Color(red: 255 / 255, green: 220 / 255, blue: 90 / 255)
+
+        return ZStack {
             // Radiating Ray Blots from center star
             HStack(spacing: 24) {
                 Capsule()
-                    .fill(Color(red: 255 / 255, green: 220 / 255, blue: 100 / 255))
+                    .fill(blotYellow)
                     .frame(width: 3.5, height: 14)
                     .rotationEffect(.degrees(-26))
                     .offset(y: -14)
 
                 Capsule()
-                    .fill(Color(red: 255 / 255, green: 220 / 255, blue: 100 / 255))
+                    .fill(blotYellow)
                     .frame(width: 3.5, height: 14)
                     .rotationEffect(.degrees(26))
                     .offset(y: -14)
@@ -729,40 +732,40 @@ public struct ExerciseAnalysisSkeletonView: View {
             .scaleEffect(starAppeared ? 1.0 : 0.4)
             .opacity(starAppeared ? 1.0 : 0.0)
 
-            // 1. One Main Yellow Center Star (without glowing effect)
-            starAssetOrShape("Sparkle-2", size: 40)
+            // 1. One Main Yellow Center Star (without glowing effect, fully yellow)
+            starAssetOrShape("Sparkle-2", size: 42, color: starYellow)
                 .scaleEffect(starAppeared ? 1.0 : 0.75)
                 .opacity(starAppeared ? 1.0 : 0.0)
 
             // 2. Left Small Yellow Star (without glowing effect)
-            starAssetOrShape("Sparkle", size: 19)
+            starAssetOrShape("Sparkle", size: 20, color: starYellow)
                 .offset(x: -56, y: 12)
                 .scaleEffect(starAppeared ? 1.0 : 0.5)
                 .opacity(starAppeared ? 1.0 : 0.0)
 
             // 3. Right Small Yellow Star (without glowing effect)
-            starAssetOrShape("Sparkle", size: 18)
+            starAssetOrShape("Sparkle", size: 19, color: starYellow)
                 .offset(x: 52, y: 14)
                 .scaleEffect(starAppeared ? 1.0 : 0.5)
                 .opacity(starAppeared ? 1.0 : 0.0)
 
             // Accent Decorative Blots / Motes
             Circle()
-                .fill(Color(red: 255 / 255, green: 225 / 255, blue: 120 / 255).opacity(0.85))
+                .fill(blotYellow.opacity(0.85))
                 .frame(width: 3.5, height: 3.5)
                 .offset(x: -28, y: -6)
                 .scaleEffect(starAppeared ? 1.0 : 0.2)
                 .opacity(starAppeared ? 0.9 : 0.0)
 
             Circle()
-                .fill(Color(red: 255 / 255, green: 225 / 255, blue: 120 / 255).opacity(0.85))
+                .fill(blotYellow.opacity(0.85))
                 .frame(width: 3.5, height: 3.5)
                 .offset(x: 28, y: -4)
                 .scaleEffect(starAppeared ? 1.0 : 0.2)
                 .opacity(starAppeared ? 0.9 : 0.0)
 
             Circle()
-                .fill(Color(red: 255 / 255, green: 235 / 255, blue: 150 / 255).opacity(0.7))
+                .fill(blotYellow.opacity(0.75))
                 .frame(width: 2.5, height: 2.5)
                 .offset(x: 72, y: 5)
                 .scaleEffect(starAppeared ? 1.0 : 0.2)
@@ -823,26 +826,20 @@ public struct ExerciseAnalysisSkeletonView: View {
     }
 
     @ViewBuilder
-    private func starAssetOrShape(_ name: String, size: CGFloat) -> some View {
-        if let uiImage = UIImage(named: name) ?? UIImage(named: "pictures/\(name).png") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: name, ofType: "png") ?? "") {
-            Image(uiImage: uiImage)
-                .resizable()
-                .scaledToFit()
-                .frame(width: size, height: size)
-        } else {
-            FourPointSparkleStar()
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            Color(red: 255 / 255, green: 235 / 255, blue: 130 / 255),
-                            Color(red: 255 / 255, green: 210 / 255, blue: 60 / 255)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .frame(width: size, height: size)
+    private func starAssetOrShape(_ name: String, size: CGFloat, color: Color = Color(red: 255 / 255, green: 218 / 255, blue: 60 / 255)) -> some View {
+        Group {
+            if let uiImage = UIImage(named: name) ?? UIImage(named: "pictures/\(name).png") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: name, ofType: "png") ?? "") {
+                Image(uiImage: uiImage)
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundStyle(color)
+            } else {
+                FourPointSparkleStar()
+                    .fill(color)
+            }
         }
+        .frame(width: size, height: size)
     }
 
     private var wordsSheetView: some View {
@@ -1069,9 +1066,9 @@ extension View {
 
 // MARK: - Top & Bottom Background Images Decoration
 public struct BackgroundImagesDecorationView: View {
-    public var opacity: Double = 0.85
+    public var opacity: Double = 1.0
 
-    public init(opacity: Double = 0.85) {
+    public init(opacity: Double = 1.0) {
         self.opacity = opacity
     }
 
@@ -1080,10 +1077,10 @@ public struct BackgroundImagesDecorationView: View {
             // Top Background Image
             VStack(spacing: 0) {
                 topImageItem
-                    .scaledToFit()
+                    .scaledToFill()
                     .frame(maxWidth: .infinity)
+                    .clipped()
                     .opacity(opacity)
-                    .ignoresSafeArea(edges: .top)
 
                 Spacer()
             }
@@ -1093,18 +1090,19 @@ public struct BackgroundImagesDecorationView: View {
                 Spacer()
 
                 bottomImageItem
-                    .scaledToFit()
+                    .scaledToFill()
                     .frame(maxWidth: .infinity)
+                    .clipped()
                     .opacity(opacity)
-                    .ignoresSafeArea(edges: .bottom)
             }
         }
+        .ignoresSafeArea()
         .allowsHitTesting(false)
     }
 
     @ViewBuilder
     private var topImageItem: some View {
-        if let uiImage = UIImage(named: "topimage") ?? UIImage(named: "topimage.png") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "topimage", ofType: "png") ?? "") {
+        if let uiImage = UIImage(named: "topimage") ?? UIImage(named: "pictures/topimage.png") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "topimage", ofType: "png") ?? "") {
             Image(uiImage: uiImage)
                 .resizable()
         } else {
@@ -1115,7 +1113,7 @@ public struct BackgroundImagesDecorationView: View {
 
     @ViewBuilder
     private var bottomImageItem: some View {
-        if let uiImage = UIImage(named: "bottomimage") ?? UIImage(named: "bottomimage.png") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "bottomimage", ofType: "png") ?? "") {
+        if let uiImage = UIImage(named: "bottomimage") ?? UIImage(named: "pictures/bottomimage.png") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "bottomimage", ofType: "png") ?? "") {
             Image(uiImage: uiImage)
                 .resizable()
         } else {

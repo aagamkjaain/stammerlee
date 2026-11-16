@@ -314,55 +314,6 @@ public struct SpeakPracticeScreen: View {
         pulse = false
         onFinish()
     }
-
-    private var backgroundImagesLayer: some View {
-        ZStack {
-            // Top Background Image
-            VStack(spacing: 0) {
-                topImageItem
-                    .scaledToFit()
-                    .frame(maxWidth: .infinity)
-                    .opacity(0.85)
-                    .ignoresSafeArea(edges: .top)
-
-                Spacer()
-            }
-
-            // Bottom Background Image
-            VStack(spacing: 0) {
-                Spacer()
-
-                bottomImageItem
-                    .scaledToFit()
-                    .frame(maxWidth: .infinity)
-                    .opacity(0.85)
-                    .ignoresSafeArea(edges: .bottom)
-            }
-        }
-        .allowsHitTesting(false)
-    }
-
-    @ViewBuilder
-    private var topImageItem: some View {
-        if let uiImage = UIImage(named: "topimage") ?? UIImage(named: "topimage.png") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "topimage", ofType: "png") ?? "") {
-            Image(uiImage: uiImage)
-                .resizable()
-        } else {
-            Image("topimage")
-                .resizable()
-        }
-    }
-
-    @ViewBuilder
-    private var bottomImageItem: some View {
-        if let uiImage = UIImage(named: "bottomimage") ?? UIImage(named: "bottomimage.png") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "bottomimage", ofType: "png") ?? "") {
-            Image(uiImage: uiImage)
-                .resizable()
-        } else {
-            Image("bottomimage")
-                .resizable()
-        }
-    }
 }
 
 private struct FluencyFinishButtonStyle: ButtonStyle {
