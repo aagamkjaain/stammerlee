@@ -55,10 +55,16 @@ private struct BeatBuddyShell<Content: View>: View {
         ZStack(alignment: .top) {
             StamerleeTheme.backgroundDark.ignoresSafeArea()
             VStack(alignment: .leading, spacing: 0) {
-                BackNavButton {
-                    if let onBack {
-                        onBack()
-                    } else {
+                HStack {
+                    BackNavButton {
+                        if let onBack {
+                            onBack()
+                        } else {
+                            state.navigate(to: .homeDashboard, forward: false)
+                        }
+                    }
+                    Spacer()
+                    GlassCloseButton {
                         state.navigate(to: .homeDashboard, forward: false)
                     }
                 }
@@ -502,6 +508,10 @@ public struct BeatBuddyBPMView: View {
                         .shadow(color: Color.black.opacity(0.45), radius: 6, x: 0, y: 2)
 
                     Spacer()
+
+                    GlassCloseButton {
+                        state.navigate(to: .homeDashboard, forward: false)
+                    }
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, -48)
@@ -514,43 +524,37 @@ public struct BeatBuddyBPMView: View {
                     .padding(.horizontal, 24)
                     .padding(.top, 2)
 
-                // Sound Category Picker
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Sound Focus")
-                        .font(.system(size: 12, weight: .semibold, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
-
-                    Menu {
-                        Picker("Sound Focus", selection: $selectedCategory) {
-                            ForEach(BeatBuddySoundCategory.allCases) { category in
-                                Text(category.rawValue).tag(category)
-                            }
-                        }
-                    } label: {
-                        HStack(spacing: 10) {
-                            Image(systemName: "waveform")
-                                .font(.system(size: 14, weight: .semibold))
-                                .foregroundStyle(Color.cyan)
-
-                            Text(selectedCategory.rawValue)
-                                .font(.system(size: 15, weight: .semibold, design: .rounded))
-                                .foregroundStyle(.white)
-
-                            Spacer()
-
-                            Image(systemName: "chevron.up.chevron.down")
-                                .font(.system(size: 12, weight: .semibold))
-                                .foregroundStyle(StamerleeTheme.textSecondaryDark)
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 12)
-                        .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                .stroke(Color.white.opacity(0.12), lineWidth: 1)
-                        )
+                // Randomized Practice Words Card (indicates random words in practice)
+                HStack(spacing: 12) {
+                    ZStack {
+                        Circle()
+                            .fill(Color(red: 228 / 255, green: 220 / 255, blue: 255 / 255))
+                            .frame(width: 40, height: 40)
+                        Image(systemName: "shuffle")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(StamerleeTheme.primaryBlue)
                     }
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Randomized Practice Words")
+                            .font(.system(size: 14.5, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
+
+                        Text("Practice will automatically cycle through random words with the beat")
+                            .font(.system(size: 12, weight: .regular, design: .rounded))
+                            .foregroundStyle(StamerleeTheme.textSecondaryDark)
+                            .lineLimit(2)
+                    }
+
+                    Spacer()
                 }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                )
                 .padding(.horizontal, 24)
                 .padding(.top, 14)
 
@@ -563,44 +567,15 @@ public struct BeatBuddyBPMView: View {
                     Spacer()
                 }
 
-                Spacer(minLength: 10)
-
-                // Stepper Buttons (- and +)
-                HStack {
-                    Button {
-                        adjustBPM(by: -5)
-                    } label: {
-                        Image(systemName: "minus")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundStyle(.white)
-                            .frame(width: 44, height: 44)
-                            .background(Color.white.opacity(0.08))
-                            .clipShape(Circle())
-                    }
-
-                    Spacer()
-
-                    Button {
-                        adjustBPM(by: 5)
-                    } label: {
-                        Image(systemName: "plus")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundStyle(.white)
-                            .frame(width: 44, height: 44)
-                            .background(Color.white.opacity(0.08))
-                            .clipShape(Circle())
-                    }
-                }
-                .padding(.horizontal, 48)
-                .padding(.bottom, 14)
+                Spacer(minLength: 14)
 
                 // Sound & Vibration Toggles
                 HStack(spacing: 12) {
-                    toggleButton(title: "Sound", icon: "speaker.wave.2.fill", isOn: soundEnabled) {
-                        soundEnabled.toggle()
+                    toggleButton(title: "Sound", icon: "speaker.wave.2.fill", isOn: state.beatBuddySoundEnabled) {
+                        state.beatBuddySoundEnabled.toggle()
                     }
-                    toggleButton(title: "Vibration", icon: "iphone.radiowaves.left.and.right", isOn: vibrationEnabled) {
-                        vibrationEnabled.toggle()
+                    toggleButton(title: "Vibration", icon: "iphone.radiowaves.left.and.right", isOn: state.beatBuddyVibrationEnabled) {
+                        state.beatBuddyVibrationEnabled.toggle()
                     }
                 }
                 .padding(.horizontal, 24)
@@ -650,8 +625,8 @@ public struct BeatBuddyBPMView: View {
     }
 
     private func startSession() {
-        state.beatBuddySoundCategory = selectedCategory.rawValue
-        let wordsList = selectedCategory.words
+        state.beatBuddySoundCategory = BeatBuddySoundCategory.randomized.rawValue
+        let wordsList = BeatBuddySoundCategory.randomized.words
         state.beatBuddyPracticeWords = wordsList
         state.beatBuddySelectedWords = Set(wordsList)
         if let onStartPractice {
@@ -1031,9 +1006,19 @@ public struct BeatBuddyPracticeView: View {
         let pulseDurationNanos = min(intervalNanos / 3, 160_000_000)
 
         metronomeTask = Task { @MainActor in
+            let impactGenerator = UIImpactFeedbackGenerator(style: .medium)
+            impactGenerator.prepare()
+
             while !Task.isCancelled && isMetronomeActive {
-                // Play sound effect on each syllable beat
-                popPlayer.playPop()
+                // Play sound effect on each syllable beat if enabled
+                if state.beatBuddySoundEnabled {
+                    popPlayer.playPop()
+                }
+                // Trigger physical haptic vibration if enabled
+                if state.beatBuddyVibrationEnabled {
+                    impactGenerator.impactOccurred()
+                    impactGenerator.prepare()
+                }
 
                 let syllables = currentSyllables
                 let count = max(syllables.count, 1)

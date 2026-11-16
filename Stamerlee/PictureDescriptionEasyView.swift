@@ -130,6 +130,7 @@ public struct PictureDescriptionEasyView: View {
         ExerciseAnalysisSkeletonView(
             scoreText: scoreText,
             maxScoreText: "/ 10",
+            subtitle: "Great job completing your picture description session!",
             onDone: {
                 state.navigate(to: .homeDashboard)
             }

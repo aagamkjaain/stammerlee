@@ -117,7 +117,7 @@ public struct ProlongedSpeechIntroView: View {
         }
     }
 
-    // MARK: - Top Navigation Bar (Back button replacing cross icon)
+    // MARK: - Top Navigation Bar (Back button and glass close button)
     private var topBar: some View {
         HStack {
             BackNavButton {
@@ -132,6 +132,9 @@ public struct ProlongedSpeechIntroView: View {
                 }
             }
             Spacer()
+            GlassCloseButton {
+                state.navigate(to: .homeDashboard, forward: false)
+            }
         }
     }
 

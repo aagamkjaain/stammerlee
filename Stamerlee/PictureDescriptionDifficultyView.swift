@@ -128,6 +128,9 @@ public struct PictureDescriptionIntroView: View {
                 }
             }
             Spacer()
+            GlassCloseButton {
+                state.navigate(to: .homeDashboard, forward: false)
+            }
         }
     }
 

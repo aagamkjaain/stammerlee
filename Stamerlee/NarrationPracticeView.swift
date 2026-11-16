@@ -121,6 +121,7 @@ public struct NarrationPracticeView: View {
         ExerciseAnalysisSkeletonView(
             scoreText: scoreText,
             maxScoreText: "/ 10",
+            subtitle: "Great job completing your narration session!",
             onDone: {
                 state.navigate(to: .homeDashboard)
             }

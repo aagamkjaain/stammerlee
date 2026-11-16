@@ -129,6 +129,9 @@ public struct NarrationIntroView: View {
                 }
             }
             Spacer()
+            GlassCloseButton {
+                state.navigate(to: .homeDashboard, forward: false)
+            }
         }
     }
 

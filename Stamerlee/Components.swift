@@ -550,6 +550,40 @@ public struct SpeechMicrophoneButton: View {
     }
 }
 
+// MARK: - Glass Effect Close (X) Button
+public struct GlassCloseButton: View {
+    public let action: () -> Void
+
+    public init(action: @escaping () -> Void) {
+        self.action = action
+    }
+
+    public var body: some View {
+        Button(action: action) {
+            ZStack {
+                Circle()
+                    .fill(Color.white.opacity(0.14))
+                Circle()
+                    .stroke(
+                        LinearGradient(
+                            colors: [Color.white.opacity(0.45), Color.white.opacity(0.12)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
+                Image(systemName: "xmark")
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(.white)
+            }
+            .frame(width: 36, height: 36)
+            .shadow(color: Color.black.opacity(0.2), radius: 6, x: 0, y: 2)
+        }
+        .buttonStyle(.haptic(weight: .light, pressedScale: 0.92))
+        .accessibilityLabel("Close")
+    }
+}
+
 // MARK: - Exercise Analysis Skeleton View
 /// Standardized result/analysis screen matching the Prolonged Speech design for all exercises.
 public struct ExerciseAnalysisSkeletonView: View {

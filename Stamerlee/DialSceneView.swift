@@ -146,6 +146,9 @@ public struct DialSceneIntroView: View {
                 }
             }
             Spacer()
+            GlassCloseButton {
+                state.navigate(to: .homeDashboard, forward: false)
+            }
         }
     }
 
@@ -1061,7 +1064,7 @@ public struct DialSceneView: View {
         ExerciseAnalysisSkeletonView(
             scoreText: "8.4",
             maxScoreText: "/ 10",
-            subtitle: "Here's a summary of your conversation.",
+            subtitle: "Great job completing your conversation session!",
             affirmation: "Great progress today!",
             onDone: {
                 state.navigate(to: .homeDashboard)

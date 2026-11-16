@@ -548,20 +548,21 @@ public struct ExploreActivitiesView: View {
             Image(item.iconName)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 44, height: 44)
+                .frame(width: 64, height: 64)
 
             Text(item.text)
-                .font(.system(size: 13.5, weight: .semibold, design: .rounded))
+                .font(.system(size: 15, weight: .semibold, design: .rounded))
                 .foregroundStyle(StamerleeTheme.textPrimaryLight)
-                .lineSpacing(2.5)
+                .lineSpacing(3)
                 .multilineTextAlignment(.leading)
 
             Spacer(minLength: 4)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 14)
+        .padding(.horizontal, 18)
+        .padding(.vertical, 16)
+        .frame(minHeight: 92)
         .background(Color(red: 238 / 255, green: 240 / 255, blue: 250 / 255))
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
         .shadow(color: Color.black.opacity(0.06), radius: 6, x: 0, y: 3)
     }
 }
