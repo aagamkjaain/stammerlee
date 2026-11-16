@@ -113,20 +113,9 @@ public struct PictureDescriptionIntroView: View {
         }
     }
 
-    // MARK: - Top Navigation Bar
+    // MARK: - Top Navigation Bar (Glass close button only, no back button)
     private var topBar: some View {
         HStack {
-            BackNavButton {
-                if step == .intro {
-                    state.navigate(to: .homeDashboard, forward: false)
-                } else if step == .encouragement {
-                    goToStep(.intro)
-                } else if step == .practice {
-                    goToStep(.encouragement)
-                } else {
-                    state.navigate(to: .homeDashboard, forward: false)
-                }
-            }
             Spacer()
             GlassCloseButton {
                 state.navigate(to: .homeDashboard, forward: false)

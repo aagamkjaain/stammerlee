@@ -82,6 +82,9 @@ public struct ContentView: View {
                     DashboardTabView(state: appState)
                         .zIndex(1)
                         .transition(.identity)
+                case .fluencyLapIntro:
+                    FluencyLapIntroView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
                 case .fluencyLap:
                     FluencyLapView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
@@ -265,6 +268,7 @@ public struct ContentView: View {
                     jumpButton(title: "Daily Goal", screen: .dailyGoal)
                     jumpButton(title: "Explore", screen: .exploreActivities)
                     jumpButton(title: "Home", screen: .homeDashboard)
+                    jumpButton(title: "Lap Intro", screen: .fluencyLapIntro)
                     jumpButton(title: "Pro Speech", screen: .prolongedSpeechIntro)
                     jumpButton(title: "Pic Intro", screen: .pictureDescriptionIntro)
                     jumpButton(title: "Dial Intro", screen: .dialSceneIntro)

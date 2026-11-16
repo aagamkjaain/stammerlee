@@ -117,20 +117,9 @@ public struct ProlongedSpeechIntroView: View {
         }
     }
 
-    // MARK: - Top Navigation Bar (Back button and glass close button)
+    // MARK: - Top Navigation Bar (Glass close button only, no back button)
     private var topBar: some View {
         HStack {
-            BackNavButton {
-                if step == .intro {
-                    state.navigate(to: .homeDashboard, forward: false)
-                } else if step == .encouragement {
-                    goToStep(.intro)
-                } else if step == .practice {
-                    goToStep(.encouragement)
-                } else {
-                    state.navigate(to: .homeDashboard, forward: false)
-                }
-            }
             Spacer()
 
             GlassCloseButton {
@@ -570,18 +559,18 @@ public struct ProlongedSpeechIntroView: View {
 
 // MARK: - Glass Action Button
 // Frosted translucent acrylic background with crisp gloss highlight & rich purple glow
-private struct GlassActionButton: View {
-    let title: String
-    let icon: String?
-    let action: () -> Void
+public struct GlassActionButton: View {
+    public let title: String
+    public let icon: String?
+    public let action: () -> Void
 
-    init(title: String, icon: String? = nil, action: @escaping () -> Void) {
+    public init(title: String, icon: String? = nil, action: @escaping () -> Void) {
         self.title = title
         self.icon = icon
         self.action = action
     }
 
-    var body: some View {
+    public var body: some View {
         Button(action: action) {
             HStack(spacing: 8) {
                 if let icon {
@@ -636,15 +625,22 @@ private struct GlassActionButton: View {
 }
 
 // MARK: - Natural Star Twinkle Component
-private struct TwinklingStarView: View {
-    let assetName: String
-    let size: CGFloat
-    let delay: Double
-    let duration: Double
+public struct TwinklingStarView: View {
+    public let assetName: String
+    public let size: CGFloat
+    public let delay: Double
+    public let duration: Double
 
     @State private var isTwinkling = false
 
-    var body: some View {
+    public init(assetName: String, size: CGFloat, delay: Double = 0.0, duration: Double = 1.0) {
+        self.assetName = assetName
+        self.size = size
+        self.delay = delay
+        self.duration = duration
+    }
+
+    public var body: some View {
         Group {
             if let uiImage = UIImage(named: assetName) ?? UIImage(contentsOfFile: Bundle.main.path(forResource: assetName, ofType: "png") ?? "") {
                 Image(uiImage: uiImage)

@@ -39,7 +39,12 @@ public struct FluencyLapPracticeView: View {
             },
             onFinish: {
                 state.hasCompletedFluencyLap = true
-                state.navigate(to: .homeDashboard, forward: false)
+                let completedCount = max(state.fluencyLapWordCount, 18)
+                state.fluencyLapPreviousWordCount = completedCount
+                if completedCount > state.fluencyLapPersonalBest {
+                    state.fluencyLapPersonalBest = completedCount
+                }
+                state.navigate(to: .fluencyLap, forward: false)
             }
         )
     }
