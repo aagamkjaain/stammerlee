@@ -562,6 +562,18 @@ public struct ExerciseAnalysisSkeletonView: View {
     public let onDone: () -> Void
 
     @State private var showAllWordsSheet: Bool = false
+    @State private var starBurst: Bool = false
+    @State private var floatAnim: Bool = false
+    @State private var confettiCounter: Int = 0
+
+    // Pure yellow palette for ConfettiSwiftUI celebration particles
+    private let yellowConfettiColors: [Color] = [
+        Color.yellow,
+        Color(red: 255 / 255, green: 215 / 255, blue: 0 / 255),    // Bright Gold
+        Color(red: 255 / 255, green: 238 / 255, blue: 88 / 255),   // Radiant Sunshine Yellow
+        Color(red: 255 / 255, green: 249 / 255, blue: 196 / 255),  // Soft Pastel Yellow
+        Color(red: 255 / 255, green: 179 / 255, blue: 0 / 255)     // Warm Amber Gold
+    ]
 
     public init(
         scoreText: String,
@@ -630,109 +642,90 @@ public struct ExerciseAnalysisSkeletonView: View {
 
     public var body: some View {
         ZStack {
-            VStack(alignment: .leading, spacing: 0) {
-                // Top Title Bar
-                Text("Analysis")
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
-                    .foregroundStyle(StamerleeTheme.textPrimaryDark)
-                    .padding(.horizontal, 24)
-                    .padding(.top, 24)
-                    .padding(.bottom, 16)
+            // Yellow Confetti Effect using ConfettiSwiftUI on transition
+            Color.clear
+                .frame(width: 1, height: 1)
+                .confettiCannon(
+                    counter: $confettiCounter,
+                    num: 50,
+                    confettis: [
+                        .shape(.circle),
+                        .shape(.triangle),
+                        .shape(.square),
+                        .shape(.slimRectangle),
+                        .shape(.roundedCross)
+                    ],
+                    colors: yellowConfettiColors,
+                    confettiSize: 11.0,
+                    rainHeight: 700.0,
+                    openingAngle: .degrees(0),
+                    closingAngle: .degrees(360),
+                    radius: 280.0
+                )
+                .allowsHitTesting(false)
+                .zIndex(10)
 
-                // Big Affirmation & Prominent Score Display (Made bigger to occupy the upper area)
-                VStack(spacing: 12) {
+            VStack(spacing: 0) {
+                Spacer()
+
+                // Centered Analysis Block: Starburst, Affirmation, Score & Details
+                VStack(spacing: 0) {
+                    // Golden Starburst & Sparkles with spring transition
+                    starburstView
+                        .padding(.bottom, 22)
+
+                    // Affirmation Title ("You did great today!!")
                     Text(computedAffirmation)
-                        .font(.system(size: 30, weight: .bold, design: .rounded))
+                        .font(.system(size: 26, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 24)
 
+                    // "YOU SCORED" label
                     Text("YOU SCORED")
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
-                        .tracking(1.4)
-                        .padding(.top, 4)
+                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color(red: 175 / 255, green: 170 / 255, blue: 215 / 255))
+                        .tracking(1.5)
+                        .padding(.top, 14)
 
-                    HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    // Score Display ("8.8 /10")
+                    HStack(alignment: .firstTextBaseline, spacing: 4) {
                         Text(scoreText)
-                            .font(.system(size: 72, weight: .bold, design: .rounded))
+                            .font(.system(size: 64, weight: .bold, design: .rounded))
                             .foregroundStyle(.white)
+
                         if !maxScoreText.isEmpty {
-                            Text(maxScoreText)
-                                .font(.system(size: 28, weight: .bold, design: .rounded))
-                                .foregroundStyle(StamerleeTheme.textSecondaryDark)
+                            Text(maxScoreText.trimmingCharacters(in: .whitespaces))
+                                .font(.system(size: 26, weight: .bold, design: .rounded))
+                                .foregroundStyle(Color(red: 200 / 255, green: 195 / 255, blue: 230 / 255))
                         }
+                    }
+                    .padding(.top, 6)
+
+                    // Instructions / Subtitle ("Great job completing your prolonged speech session!")
+                    if !subtitle.isEmpty {
+                        Text(subtitle)
+                            .font(.system(size: 14, weight: .regular, design: .rounded))
+                            .foregroundStyle(Color(red: 165 / 255, green: 160 / 255, blue: 195 / 255))
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 32)
+                            .padding(.top, 16)
+                    }
+
+                    // Words list details (shifted into the middle with the details)
+                    if !wordsList.isEmpty {
+                        wordsSectionView
+                            .padding(.top, 24)
                     }
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.top, 36)
-                .padding(.bottom, 48)
 
-                // Instructions Subtitle
-                if !subtitle.isEmpty {
-                    Text(subtitle)
-                        .font(.system(size: 13, weight: .regular, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
-                        .frame(maxWidth: .infinity, alignment: .center)
-                        .padding(.bottom, 18)
-                }
-
-                if !wordsList.isEmpty {
-                    // Action Row: Counter + Single "Select all / Deselect all" Toggle Button
-                    HStack {
-                        Text("\(selectedWords.count) selected")
-                            .font(.system(size: 13, weight: .semibold, design: .rounded))
-                            .foregroundStyle(StamerleeTheme.textSecondaryDark)
-
-                        Spacer()
-
-                        Button(isAllSelected ? "Deselect all" : "Select all") {
-                            toggleSelectAll()
-                        }
-                        .font(.system(size: 13, weight: .bold, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.primaryBlue)
-                    }
-                    .padding(.horizontal, 24)
-                    .padding(.bottom, 14)
-
-                    // 2-Column Word Grid (Older sleek capsule design)
-                    LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
-                        ForEach(Array(wordsList.prefix(6)), id: \.self) { word in
-                            let isSelected = selectedWords.contains(word)
-                            wordButton(word: word, isSelected: isSelected) {
-                                toggleWordSelection(word)
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 24)
-
-                    // Hyperlink-style "View more" button
-                    if wordsList.count > 6 {
-                        Button {
-                            showAllWordsSheet = true
-                        } label: {
-                            HStack(spacing: 4) {
-                                Text("View more")
-                                    .underline()
-                                Image(systemName: "chevron.right")
-                                    .font(.system(size: 11, weight: .semibold))
-                        }
-                        .font(.system(size: 13.5, weight: .semibold, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.primaryBlue)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.top, 14)
-                }
-            }
-
-                Spacer(minLength: 20)
+                Spacer()
 
                 // Bottom CTA Button ("Done")
-                VStack {
-                    PrimaryActionButton(title: "Done", action: onDone)
-                }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 24)
+                PrimaryActionButton(title: "Done", action: onDone)
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 24)
             }
         }
         .sensoryFeedback(.selection, trigger: selectedWords)
@@ -742,6 +735,131 @@ public struct ExerciseAnalysisSkeletonView: View {
                 .presentationDragIndicator(.visible)
                 .presentationBackground(StamerleeTheme.backgroundDark)
                 .ignoresSafeArea()
+        }
+        .onAppear {
+            confettiCounter += 1
+            withAnimation(.spring(response: 0.65, dampingFraction: 0.72)) {
+                starBurst = true
+            }
+            withAnimation(.easeInOut(duration: 2.2).repeatForever(autoreverses: true)) {
+                floatAnim = true
+            }
+        }
+    }
+
+    // MARK: - Golden Starburst & Sparkles with Spring Transition
+    private var starburstView: some View {
+        ZStack {
+            // Left & Right Burst Rays radiating upward from center star
+            HStack(spacing: 24) {
+                Capsule()
+                    .fill(Color(red: 255 / 255, green: 220 / 255, blue: 100 / 255))
+                    .frame(width: 3.5, height: 14)
+                    .rotationEffect(.degrees(-26))
+                    .offset(y: -14)
+
+                Capsule()
+                    .fill(Color(red: 255 / 255, green: 220 / 255, blue: 100 / 255))
+                    .frame(width: 3.5, height: 14)
+                    .rotationEffect(.degrees(26))
+                    .offset(y: -14)
+            }
+            .scaleEffect(starBurst ? 1.0 : 0.3)
+            .opacity(starBurst ? 1.0 : 0.0)
+
+            // Center 4-Point Golden Star
+            starAssetOrShape("Sparkle-2", size: 40)
+                .shadow(color: Color(red: 255 / 255, green: 215 / 255, blue: 100 / 255).opacity(0.9), radius: 12)
+                .scaleEffect(starBurst ? 1.0 : 0.4)
+
+            // Left Smaller Golden Star
+            starAssetOrShape("Sparkle", size: 20)
+                .shadow(color: Color(red: 255 / 255, green: 215 / 255, blue: 100 / 255).opacity(0.8), radius: 8)
+                .offset(x: -54, y: floatAnim ? 8 : 12)
+                .scaleEffect(starBurst ? 1.0 : 0.2)
+                .opacity(starBurst ? 1.0 : 0.0)
+
+            // Right Smaller Golden Star
+            starAssetOrShape("Sparkle", size: 18)
+                .shadow(color: Color(red: 255 / 255, green: 215 / 255, blue: 100 / 255).opacity(0.8), radius: 8)
+                .offset(x: 50, y: floatAnim ? 14 : 10)
+                .scaleEffect(starBurst ? 1.0 : 0.2)
+                .opacity(starBurst ? 1.0 : 0.0)
+        }
+        .frame(height: 52)
+    }
+
+    // MARK: - Word Selection Section in Middle
+    @ViewBuilder
+    private var wordsSectionView: some View {
+        VStack(spacing: 12) {
+            // Action Row: Counter + Single "Select all / Deselect all" Toggle Button
+            HStack {
+                Text("\(selectedWords.count) selected")
+                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    .foregroundStyle(StamerleeTheme.textSecondaryDark)
+
+                Spacer()
+
+                Button(isAllSelected ? "Deselect all" : "Select all") {
+                    toggleSelectAll()
+                }
+                .font(.system(size: 13, weight: .bold, design: .rounded))
+                .foregroundStyle(StamerleeTheme.primaryBlue)
+            }
+            .padding(.horizontal, 24)
+
+            // 2-Column Word Grid
+            LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
+                ForEach(Array(wordsList.prefix(6)), id: \.self) { word in
+                    let isSelected = selectedWords.contains(word)
+                    wordButton(word: word, isSelected: isSelected) {
+                        toggleWordSelection(word)
+                    }
+                }
+            }
+            .padding(.horizontal, 24)
+
+            // Hyperlink-style "View more" button
+            if wordsList.count > 6 {
+                Button {
+                    showAllWordsSheet = true
+                } label: {
+                    HStack(spacing: 4) {
+                        Text("View more")
+                            .underline()
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 11, weight: .semibold))
+                    }
+                    .font(.system(size: 13.5, weight: .semibold, design: .rounded))
+                    .foregroundStyle(StamerleeTheme.primaryBlue)
+                }
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.top, 4)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func starAssetOrShape(_ name: String, size: CGFloat) -> some View {
+        if let uiImage = UIImage(named: name) ?? UIImage(named: "pictures/\(name).png") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: name, ofType: "png") ?? "") {
+            Image(uiImage: uiImage)
+                .resizable()
+                .scaledToFit()
+                .frame(width: size, height: size)
+        } else {
+            FourPointSparkleStar()
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color(red: 255 / 255, green: 235 / 255, blue: 130 / 255),
+                            Color(red: 255 / 255, green: 210 / 255, blue: 60 / 255)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .frame(width: size, height: size)
         }
     }
 
@@ -839,6 +957,29 @@ public struct ExerciseAnalysisSkeletonView: View {
                 .clipShape(Capsule())
         }
         .buttonStyle(.haptic)
+    }
+}
+
+// MARK: - 4-Point Sparkle Star Shape
+public struct FourPointSparkleStar: Shape {
+    public init() {}
+
+    public func path(in rect: CGRect) -> Path {
+        var path = Path()
+        let cx = rect.midX
+        let cy = rect.midY
+        let rx = rect.width / 2
+        let ry = rect.height / 2
+        let innerRx = rx * 0.18
+        let innerRy = ry * 0.18
+
+        path.move(to: CGPoint(x: cx, y: cy - ry))
+        path.addQuadCurve(to: CGPoint(x: cx + rx, y: cy), control: CGPoint(x: cx + innerRx, y: cy - innerRy))
+        path.addQuadCurve(to: CGPoint(x: cx, y: cy + ry), control: CGPoint(x: cx + innerRx, y: cy + innerRy))
+        path.addQuadCurve(to: CGPoint(x: cx - rx, y: cy), control: CGPoint(x: cx - innerRx, y: cy + innerRy))
+        path.addQuadCurve(to: CGPoint(x: cx, y: cy - ry), control: CGPoint(x: cx - innerRx, y: cy - innerRy))
+        path.closeSubpath()
+        return path
     }
 }
 
