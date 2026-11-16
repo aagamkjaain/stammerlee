@@ -231,118 +231,65 @@ public struct DialSceneIntroView: View {
     // MARK: - Step 3: Interactive Call Conversation Demo
     private func conversationContent(w: CGFloat, h: CGFloat) -> some View {
         VStack(spacing: 0) {
-            Spacer(minLength: 4)
+            Spacer()
 
-            // Instruction Title
-            Text("Simulated Phone Conversation")
-                .font(.system(size: 17, weight: .semibold, design: .rounded))
-                .foregroundStyle(Color(red: 220 / 255, green: 215 / 255, blue: 245 / 255))
-                .multilineTextAlignment(.center)
-                .padding(.bottom, 12)
+            // Chat Messages Floating Directly on Scene
+            ScrollViewReader { proxy in
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 12) {
+                        // Turn 1: Bot greets
+                        chatBubble(text: "Hi! How are you?", isUser: false)
+                            .id(1)
 
-            // Phone Conversation Container Card
-            VStack(spacing: 10) {
-                // Call Header
-                HStack(spacing: 10) {
-                    ZStack {
-                        Circle()
-                            .fill(Color(red: 60 / 255, green: 45 / 255, blue: 110 / 255))
-                            .frame(width: 32, height: 32)
-                        Image(systemName: "phone.fill")
-                            .font(.system(size: 13, weight: .bold))
-                            .foregroundStyle(Color(red: 140 / 255, green: 220 / 255, blue: 180 / 255))
-                    }
+                        // Turn 2: User reply 1
+                        if convoTurn >= 1 {
+                            chatBubble(text: "I'm doing well, thank you!", isUser: true)
+                                .transition(.scale.combined(with: .opacity))
+                                .id(2)
+                        }
 
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Practice Caller")
-                            .font(.system(size: 13, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
-                        HStack(spacing: 4) {
-                            Circle()
-                                .fill(Color.green)
-                                .frame(width: 6, height: 6)
-                            Text("Call Connected")
-                                .font(.system(size: 11, weight: .medium, design: .rounded))
-                                .foregroundStyle(Color.green.opacity(0.85))
+                        // Turn 3: Bot reply
+                        if convoTurn >= 2 {
+                            chatBubble(text: "Awesome! Ready for our practice call?", isUser: false)
+                                .transition(.scale.combined(with: .opacity))
+                                .id(3)
+                        }
+
+                        // Turn 4: User reply 2
+                        if convoTurn >= 3 {
+                            chatBubble(text: "Yes, ready to practice!", isUser: true)
+                                .transition(.scale.combined(with: .opacity))
+                                .id(4)
+                        }
+
+                        // Turn 5: Bot farewell
+                        if convoTurn >= 4 {
+                            chatBubble(text: "Wonderful! Have a great day, bye bye! 👋", isUser: false)
+                                .transition(.scale.combined(with: .opacity))
+                                .id(5)
                         }
                     }
-
-                    Spacer()
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 8)
                 }
-                .padding(.horizontal, 14)
-                .padding(.top, 12)
-                .padding(.bottom, 4)
-
-                Divider()
-                    .background(Color.white.opacity(0.12))
-
-                // Chat Messages Scroll/Stack
-                ScrollViewReader { proxy in
-                    ScrollView {
-                        VStack(spacing: 10) {
-                            // Turn 1: Bot greets
-                            chatBubble(text: "Hi! How are you?", isUser: false)
-                                .id(1)
-
-                            // Turn 2: User reply 1
-                            if convoTurn >= 1 {
-                                chatBubble(text: "I'm doing well, thank you!", isUser: true)
-                                    .transition(.scale.combined(with: .opacity))
-                                    .id(2)
-                            }
-
-                            // Turn 3: Bot reply
-                            if convoTurn >= 2 {
-                                chatBubble(text: "Awesome! Ready for our practice call?", isUser: false)
-                                    .transition(.scale.combined(with: .opacity))
-                                    .id(3)
-                            }
-
-                            // Turn 4: User reply 2
-                            if convoTurn >= 3 {
-                                chatBubble(text: "Yes, ready to practice!", isUser: true)
-                                    .transition(.scale.combined(with: .opacity))
-                                    .id(4)
-                            }
-
-                            // Turn 5: Bot farewell
-                            if convoTurn >= 4 {
-                                chatBubble(text: "Wonderful! Have a great day, bye bye! 👋", isUser: false)
-                                    .transition(.scale.combined(with: .opacity))
-                                    .id(5)
-                            }
-                        }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
-                    }
-                    .frame(maxHeight: 210)
-                    .onChange(of: convoTurn) { _, newTurn in
-                        withAnimation {
-                            proxy.scrollTo(newTurn + 1, anchor: .bottom)
-                        }
+                .frame(maxHeight: 260)
+                .onChange(of: convoTurn) { _, newTurn in
+                    withAnimation {
+                        proxy.scrollTo(newTurn + 1, anchor: .bottom)
                     }
                 }
             }
-            .background(
-                ZStack {
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .fill(Color(red: 22 / 255, green: 20 / 255, blue: 45 / 255).opacity(0.88))
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .stroke(Color.white.opacity(0.20), lineWidth: 1)
-                }
-            )
-            .shadow(color: StamerleeTheme.primaryBlue.opacity(0.3), radius: 14, x: 0, y: 6)
-            .padding(.horizontal, 24)
-            .padding(.bottom, 16)
+            .padding(.bottom, 20)
 
             // Dynamic Microphone Prompt & Button
-            VStack(spacing: 10) {
+            VStack(spacing: 12) {
                 // Instructions cue
                 Text(micPromptText)
-                    .font(.system(size: 13, weight: .medium, design: .rounded))
+                    .font(.system(size: 14, weight: .medium, design: .rounded))
                     .foregroundStyle(Color(red: 215 / 255, green: 210 / 255, blue: 245 / 255))
                     .multilineTextAlignment(.center)
-                    .frame(height: 20)
+                    .padding(.horizontal, 24)
+                    .frame(height: 22)
 
                 // Purple Glass Microphone Control
                 Button {
@@ -397,9 +344,9 @@ public struct DialSceneIntroView: View {
                 .disabled(isListening || convoTurn == 1 || convoTurn == 3 || convoTurn >= 4)
                 .opacity((convoTurn >= 4) ? 0.5 : 1.0)
             }
-            .padding(.bottom, 16)
+            .padding(.bottom, 24)
 
-            Spacer(minLength: 0)
+            Spacer()
         }
     }
 
@@ -422,12 +369,12 @@ public struct DialSceneIntroView: View {
             if isUser { Spacer(minLength: 40) }
 
             Text(text)
-                .font(.system(size: 13.5, weight: .medium, design: .rounded))
+                .font(.system(size: 15, weight: .medium, design: .rounded))
                 .foregroundStyle(.white)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 9)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 11)
                 .background(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
                         .fill(
                             isUser
                                 ? LinearGradient(
@@ -440,15 +387,19 @@ public struct DialSceneIntroView: View {
                                 )
                                 : LinearGradient(
                                     colors: [
-                                        Color(red: 50 / 255, green: 45 / 255, blue: 85 / 255),
-                                        Color(red: 40 / 255, green: 35 / 255, blue: 70 / 255)
+                                        Color(red: 45 / 255, green: 40 / 255, blue: 80 / 255).opacity(0.95),
+                                        Color(red: 35 / 255, green: 30 / 255, blue: 65 / 255).opacity(0.95)
                                     ],
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
                                 )
                         )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                .stroke(Color.white.opacity(isUser ? 0.35 : 0.18), lineWidth: 1)
+                        )
                 )
-                .shadow(color: Color.black.opacity(0.15), radius: 4, x: 0, y: 2)
+                .shadow(color: Color.black.opacity(0.25), radius: 6, x: 0, y: 3)
 
             if !isUser { Spacer(minLength: 40) }
         }
