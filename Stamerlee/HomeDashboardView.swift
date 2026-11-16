@@ -262,7 +262,7 @@ public struct HomeDashboardView: View {
         }
         .buttonStyle(.plain)
         .padding(18)
-        .background(Color(red: 242 / 255, green: 243 / 255, blue: 252 / 255), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .background(Color(red: 255 / 255, green: 248 / 255, blue: 207 / 255), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
         .shadow(color: Color.black.opacity(0.06), radius: 7, x: 0, y: 3)
     }
     
