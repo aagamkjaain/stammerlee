@@ -198,35 +198,18 @@ public struct ProlongedSpeechIntroView: View {
         .onTapGesture {
             goToStep(.practice)
         }
-        .task {
-            try? await Task.sleep(nanoseconds: 2_200_000_000)
-            if step == .encouragement {
-                goToStep(.practice)
-            }
-        }
+//        .task {
+//            try? await Task.sleep(nanoseconds: 2_200_000_000)
+//            if step == .encouragement {
+//                goToStep(.practice)
+//            }
+//        }
     }
 
     // MARK: - Step 3: Practice Word & Purple Microphone Screen (Demonstration of "sweet" only once)
     private func practiceContent(w: CGFloat, h: CGFloat) -> some View {
         VStack(spacing: 0) {
             Spacer()
-
-            // Demonstration Tag
-            HStack(spacing: 6) {
-                Image(systemName: "sparkles")
-                    .font(.system(size: 11, weight: .bold))
-                Text("EXERCISE DEMO")
-                    .font(.system(size: 11.5, weight: .bold, design: .rounded))
-                    .tracking(1.2)
-            }
-            .foregroundStyle(Color(red: 195 / 255, green: 175 / 255, blue: 255 / 255))
-            .padding(.horizontal, 14)
-            .padding(.vertical, 6)
-            .background(
-                Capsule()
-                    .fill(Color(red: 195 / 255, green: 175 / 255, blue: 255 / 255).opacity(0.18))
-            )
-            .padding(.bottom, 12)
 
             Text("Stretch the sound gently without rushing")
                 .font(.system(size: 14.5, weight: .medium, design: .rounded))
@@ -236,15 +219,16 @@ public struct ProlongedSpeechIntroView: View {
             // Word display with sound stretching
             (
                 Text(demoPrefix)
-                    .foregroundStyle(.white)
-                + Text(demoStretched)
                     .foregroundStyle(Color(red: 195 / 255, green: 175 / 255, blue: 255 / 255))
+                + Text(demoStretched)
+                    .foregroundStyle(.white)
+                    
             )
             .font(.system(size: 56, weight: .bold, design: .rounded))
             .shadow(color: StamerleeTheme.primaryBlue.opacity(0.45), radius: 14)
 
             // Visual soundwave hint
-            Text("swe · · · et")
+            Text("Sweeeet")
                 .font(.system(size: 14, weight: .medium, design: .monospaced))
                 .foregroundStyle(Color(red: 175 / 255, green: 165 / 255, blue: 215 / 255))
                 .padding(.top, 8)
