@@ -562,18 +562,7 @@ public struct ExerciseAnalysisSkeletonView: View {
     public let onDone: () -> Void
 
     @State private var showAllWordsSheet: Bool = false
-    @State private var starBurst: Bool = false
-    @State private var floatAnim: Bool = false
-    @State private var confettiCounter: Int = 0
-
-    // Pure yellow palette for ConfettiSwiftUI celebration particles
-    private let yellowConfettiColors: [Color] = [
-        Color.yellow,
-        Color(red: 255 / 255, green: 215 / 255, blue: 0 / 255),    // Bright Gold
-        Color(red: 255 / 255, green: 238 / 255, blue: 88 / 255),   // Radiant Sunshine Yellow
-        Color(red: 255 / 255, green: 249 / 255, blue: 196 / 255),  // Soft Pastel Yellow
-        Color(red: 255 / 255, green: 179 / 255, blue: 0 / 255)     // Warm Amber Gold
-    ]
+    @State private var starAppeared: Bool = false
 
     public init(
         scoreText: String,
@@ -642,36 +631,15 @@ public struct ExerciseAnalysisSkeletonView: View {
 
     public var body: some View {
         ZStack {
-            // Yellow Confetti Effect using ConfettiSwiftUI on transition
-            Color.clear
-                .frame(width: 1, height: 1)
-                .confettiCannon(
-                    counter: $confettiCounter,
-                    num: 50,
-                    confettis: [
-                        .shape(.circle),
-                        .shape(.triangle),
-                        .shape(.square),
-                        .shape(.slimRectangle),
-                        .shape(.roundedCross)
-                    ],
-                    colors: yellowConfettiColors,
-                    confettiSize: 11.0,
-                    rainHeight: 700.0,
-                    openingAngle: .degrees(0),
-                    closingAngle: .degrees(360),
-                    radius: 280.0
-                )
-                .allowsHitTesting(false)
-                .zIndex(10)
-
             VStack(spacing: 0) {
                 Spacer()
 
-                // Centered Analysis Block: Starburst, Affirmation, Score & Details
+                // Centered Analysis Block: Single Star, Affirmation, Score & Details
                 VStack(spacing: 0) {
-                    // Golden Starburst & Sparkles with spring transition
-                    starburstView
+                    // Single Golden Star with Subtle Transition (No Glow)
+                    starAssetOrShape("Sparkle-2", size: 40)
+                        .scaleEffect(starAppeared ? 1.0 : 0.8)
+                        .opacity(starAppeared ? 1.0 : 0.0)
                         .padding(.bottom, 22)
 
                     // Affirmation Title ("You did great today!!")
@@ -737,56 +705,10 @@ public struct ExerciseAnalysisSkeletonView: View {
                 .ignoresSafeArea()
         }
         .onAppear {
-            confettiCounter += 1
-            withAnimation(.spring(response: 0.65, dampingFraction: 0.72)) {
-                starBurst = true
-            }
-            withAnimation(.easeInOut(duration: 2.2).repeatForever(autoreverses: true)) {
-                floatAnim = true
+            withAnimation(.spring(response: 0.55, dampingFraction: 0.8)) {
+                starAppeared = true
             }
         }
-    }
-
-    // MARK: - Golden Starburst & Sparkles with Spring Transition
-    private var starburstView: some View {
-        ZStack {
-            // Left & Right Burst Rays radiating upward from center star
-            HStack(spacing: 24) {
-                Capsule()
-                    .fill(Color(red: 255 / 255, green: 220 / 255, blue: 100 / 255))
-                    .frame(width: 3.5, height: 14)
-                    .rotationEffect(.degrees(-26))
-                    .offset(y: -14)
-
-                Capsule()
-                    .fill(Color(red: 255 / 255, green: 220 / 255, blue: 100 / 255))
-                    .frame(width: 3.5, height: 14)
-                    .rotationEffect(.degrees(26))
-                    .offset(y: -14)
-            }
-            .scaleEffect(starBurst ? 1.0 : 0.3)
-            .opacity(starBurst ? 1.0 : 0.0)
-
-            // Center 4-Point Golden Star
-            starAssetOrShape("Sparkle-2", size: 40)
-                .shadow(color: Color(red: 255 / 255, green: 215 / 255, blue: 100 / 255).opacity(0.9), radius: 12)
-                .scaleEffect(starBurst ? 1.0 : 0.4)
-
-            // Left Smaller Golden Star
-            starAssetOrShape("Sparkle", size: 20)
-                .shadow(color: Color(red: 255 / 255, green: 215 / 255, blue: 100 / 255).opacity(0.8), radius: 8)
-                .offset(x: -54, y: floatAnim ? 8 : 12)
-                .scaleEffect(starBurst ? 1.0 : 0.2)
-                .opacity(starBurst ? 1.0 : 0.0)
-
-            // Right Smaller Golden Star
-            starAssetOrShape("Sparkle", size: 18)
-                .shadow(color: Color(red: 255 / 255, green: 215 / 255, blue: 100 / 255).opacity(0.8), radius: 8)
-                .offset(x: 50, y: floatAnim ? 14 : 10)
-                .scaleEffect(starBurst ? 1.0 : 0.2)
-                .opacity(starBurst ? 1.0 : 0.0)
-        }
-        .frame(height: 52)
     }
 
     // MARK: - Word Selection Section in Middle
