@@ -1077,9 +1077,8 @@ public struct BackgroundImagesDecorationView: View {
             // Top Background Image
             VStack(spacing: 0) {
                 topImageItem
-                    .scaledToFill()
-                    .frame(maxWidth: .infinity)
-                    .clipped()
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity, alignment: .top)
                     .opacity(opacity)
 
                 Spacer()
@@ -1090,9 +1089,8 @@ public struct BackgroundImagesDecorationView: View {
                 Spacer()
 
                 bottomImageItem
-                    .scaledToFill()
-                    .frame(maxWidth: .infinity)
-                    .clipped()
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity, alignment: .bottom)
                     .opacity(opacity)
             }
         }
