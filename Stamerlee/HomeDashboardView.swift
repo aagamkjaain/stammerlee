@@ -217,18 +217,16 @@ public struct HomeDashboardView: View {
         }) {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center, spacing: 16) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 20, style: .continuous)
-                            .fill(Color(red: 226 / 255, green: 224 / 255, blue: 252 / 255).opacity(0.85))
-                            .frame(width: 68, height: 68)
-                            .rotationEffect(.degrees(-5))
-
-                        Image(systemName: "clock.arrow.trianglehead.counterclockwise.rotate.90")
-                            .font(.system(size: 24, weight: .semibold))
-                            .foregroundStyle(StamerleeTheme.primaryPurple)
-                            .frame(width: 48, height: 48)
-                            .background(Color.white.opacity(0.95), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
-                            .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 3)
+                    Group {
+                        if let uiImage = UIImage(named: "hey1") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "hey1", ofType: "png") ?? "") {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .scaledToFit()
+                        } else {
+                            Image("hey1")
+                                .resizable()
+                                .scaledToFit()
+                        }
                     }
                     .frame(width: 68, height: 68)
 
