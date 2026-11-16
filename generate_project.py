@@ -282,7 +282,7 @@ pbxproj_content = """// !$*UTF8*$!
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.stamerlee.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stamerlee.speech.app;
 				PRODUCT_NAME = Stamerlee;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -308,7 +308,7 @@ pbxproj_content = """// !$*UTF8*$!
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.stamerlee.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stamerlee.speech.app;
 				PRODUCT_NAME = Stamerlee;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

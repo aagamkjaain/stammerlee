@@ -54,6 +54,7 @@ public struct ProlongedPracticeView: View {
         SpeakPracticeScreen(
             prompts: practicePhrases,
             allowsMultilinePrompt: isSentences || isParagraphs,
+            showBackgroundImages: true,
             onBack: {
                 state.navigate(to: .prolongedSpeechDifficulty, forward: false)
             },
@@ -91,19 +92,25 @@ public struct ProlongedAnalysisView: View {
     }
 
     public var body: some View {
-        ExerciseAnalysisSkeletonView(
-            scoreText: scoreText,
-            maxScoreText: "/ 10",
-            subtitle: "Great job completing your prolonged speech session!",
-            onDone: {
+        ZStack(alignment: .top) {
+            StamerleeTheme.backgroundDark.ignoresSafeArea()
+
+            BackgroundImagesDecorationView()
+
+            ExerciseAnalysisSkeletonView(
+                scoreText: scoreText,
+                maxScoreText: "/ 10",
+                subtitle: "Great job completing your prolonged speech session!",
+                onDone: {
+                    let score = Double(scoreText) ?? 8.8
+                    state.recordProlongedScore(difficulty: level, score: score)
+                    state.navigate(to: .homeDashboard)
+                }
+            )
+            .onAppear {
                 let score = Double(scoreText) ?? 8.8
                 state.recordProlongedScore(difficulty: level, score: score)
-                state.navigate(to: .homeDashboard)
             }
-        )
-        .onAppear {
-            let score = Double(scoreText) ?? 8.8
-            state.recordProlongedScore(difficulty: level, score: score)
         }
     }
 }

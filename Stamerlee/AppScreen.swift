@@ -78,6 +78,9 @@ public final class AppState {
     // Dashboard & Tab State
     public var selectedTab: AppTab = .home
     public var fluencyLapWordCount: Int = 15
+    public var hasCompletedFluencyLap: Bool = false
+    public var fluencyLapPreviousWordCount: Int = 42
+    public var fluencyLapPersonalBest: Int = 56
     public var dailyPracticeMinutes: Int = 10
     public var currentStreakDays: Int = 3
     public var profileName: String = "John doe"
@@ -146,6 +149,9 @@ public final class AppState {
         hasReceivedProlongedEasyScore = false
         prolongedEasyScore = nil
         prolongedSpeechScores.removeAll()
+        hasCompletedFluencyLap = false
+        fluencyLapPreviousWordCount = 42
+        fluencyLapPersonalBest = 56
         reminderEnabled = false
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         navigate(to: .login, forward: false)

@@ -49,10 +49,12 @@ public struct FluencyLapPracticeView: View {
     public var body: some View {
         SpeakPracticeScreen(
             prompts: Array(words.prefix(max(state.fluencyLapWordCount, 1))),
+            showBackgroundImages: true,
             onBack: {
                 state.navigate(to: .fluencyLap, forward: false)
             },
             onFinish: {
+                state.hasCompletedFluencyLap = true
                 state.navigate(to: .homeDashboard, forward: false)
             }
         )
@@ -65,6 +67,7 @@ public struct SpeakPracticeScreen: View {
     let onBack: () -> Void
     let onFinish: () -> Void
     let allowsMultilinePrompt: Bool
+    let showBackgroundImages: Bool
 
     @State private var currentWordIndex = 0
     @State private var isDAFEnabled = true
@@ -78,12 +81,14 @@ public struct SpeakPracticeScreen: View {
         prompts: [String],
         instruction: String = "Stretch the sounds gently as you speak, keeping each word slow, smooth, and relaxed.",
         allowsMultilinePrompt: Bool = false,
+        showBackgroundImages: Bool = false,
         onBack: @escaping () -> Void,
         onFinish: @escaping () -> Void
     ) {
         self.prompts = prompts
         self.instruction = instruction
         self.allowsMultilinePrompt = allowsMultilinePrompt
+        self.showBackgroundImages = showBackgroundImages
         self.onBack = onBack
         self.onFinish = onFinish
     }
@@ -98,16 +103,20 @@ public struct SpeakPracticeScreen: View {
     }
 
     public var body: some View {
-        ZStack {
+        ZStack(alignment: .top) {
             StamerleeTheme.backgroundDark
                 .ignoresSafeArea()
+
+            if showBackgroundImages {
+                BackgroundImagesDecorationView()
+            }
 
             VStack(spacing: 0) {
                 topBar
 
                 Text(instruction)
                     .font(.system(size: 15, weight: .regular, design: .rounded))
-                    .foregroundStyle(Color(red: 190 / 255, green: 188 / 255, blue: 214 / 255))
+                    .foregroundStyle(.white)
                     .lineSpacing(5)
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -304,6 +313,55 @@ public struct SpeakPracticeScreen: View {
         isListening = false
         pulse = false
         onFinish()
+    }
+
+    private var backgroundImagesLayer: some View {
+        ZStack {
+            // Top Background Image
+            VStack(spacing: 0) {
+                topImageItem
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity)
+                    .opacity(0.85)
+                    .ignoresSafeArea(edges: .top)
+
+                Spacer()
+            }
+
+            // Bottom Background Image
+            VStack(spacing: 0) {
+                Spacer()
+
+                bottomImageItem
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity)
+                    .opacity(0.85)
+                    .ignoresSafeArea(edges: .bottom)
+            }
+        }
+        .allowsHitTesting(false)
+    }
+
+    @ViewBuilder
+    private var topImageItem: some View {
+        if let uiImage = UIImage(named: "topimage") ?? UIImage(named: "topimage.png") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "topimage", ofType: "png") ?? "") {
+            Image(uiImage: uiImage)
+                .resizable()
+        } else {
+            Image("topimage")
+                .resizable()
+        }
+    }
+
+    @ViewBuilder
+    private var bottomImageItem: some View {
+        if let uiImage = UIImage(named: "bottomimage") ?? UIImage(named: "bottomimage.png") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "bottomimage", ofType: "png") ?? "") {
+            Image(uiImage: uiImage)
+                .resizable()
+        } else {
+            Image("bottomimage")
+                .resizable()
+        }
     }
 }
 

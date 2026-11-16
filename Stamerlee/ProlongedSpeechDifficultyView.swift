@@ -13,10 +13,12 @@ public struct ProlongedSpeechDifficultyView: View {
     }
     
     public var body: some View {
-        ZStack {
+        ZStack(alignment: .top) {
             // Dark Background
             StamerleeTheme.backgroundDark
                 .ignoresSafeArea()
+
+            BackgroundImagesDecorationView()
             
             VStack(alignment: .leading, spacing: 0) {
                 // Top Navigation Bar
@@ -37,7 +39,7 @@ public struct ProlongedSpeechDifficultyView: View {
                     
                     Text("Practice stretching sounds for smoother,more fluent speech.")
                         .font(.system(size: 14.5, weight: .regular, design: .rounded))
-                        .foregroundStyle(StamerleeTheme.textSecondaryDark)
+                        .foregroundStyle(.white)
                         .lineSpacing(3)
                 }
                 .padding(.horizontal, 24)

@@ -8,8 +8,26 @@
 
 /* Begin PBXBuildFile section */
 		2352B30A30A7221700195DEF /* prolongedvideo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 2352B30930A7221700195DEF /* prolongedvideo.mp4 */; };
-		2352B30B30A727A400195DEF /* header.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B30A30A727A400195DEF /* header.png */; };
 		2352B30D30A727A400195DEF /* pop.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2352B30C30A727A400195DEF /* pop.mp3 */; };
+		2352B30D30AA3B5000195DEF /* pictures/bottomimage.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B30C30AA3B5000195DEF /* pictures/bottomimage.png */; };
+		2352B30F30AA3CFE00195DEF /* pictures/topimage.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B30E30AA3CFE00195DEF /* pictures/topimage.png */; };
+		2352B31830AA5AEA00195DEF /* pictures/Cloud.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B31430AA5AEA00195DEF /* pictures/Cloud.png */; };
+		2352B31930AA5AEA00195DEF /* pictures/Cloud-2.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B31630AA5AEA00195DEF /* pictures/Cloud-2.png */; };
+		2352B31A30AA5AEA00195DEF /* pictures/Sparkle.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B31730AA5AEA00195DEF /* pictures/Sparkle.png */; };
+		2352B31B30AA5AEA00195DEF /* pictures/Cloud landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B31530AA5AEA00195DEF /* pictures/Cloud landscape.png */; };
+		2352B31D30AA5AEA00195DEF /* pictures/prolonged1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B31C30AA5AEA00195DEF /* pictures/prolonged1.png */; };
+		2352B32330AA5B3D00195DEF /* pictures/Drifting cloud-2.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B31F30AA5B3D00195DEF /* pictures/Drifting cloud-2.png */; };
+		2352B32430AA5B3D00195DEF /* pictures/Cloud bank-2.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B31D30AA5B3D00195DEF /* pictures/Cloud bank-2.png */; };
+		2352B32530AA5B3D00195DEF /* pictures/Drifting cloud.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B31E30AA5B3D00195DEF /* pictures/Drifting cloud.png */; };
+		2352B32630AA5B3D00195DEF /* pictures/Cloud bank.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B31C30AA5B3D00195DEF /* pictures/Cloud bank.png */; };
+		2352B32730AA5B3D00195DEF /* pictures/Drifting cloud-3.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B32030AA5B3D00195DEF /* pictures/Drifting cloud-3.png */; };
+		2352B32830AA5B3D00195DEF /* pictures/Floating mote.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B32130AA5B3D00195DEF /* pictures/Floating mote.png */; };
+		2352B32930AA5B3D00195DEF /* pictures/Sparkle-2.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B32230AA5B3D00195DEF /* pictures/Sparkle-2.png */; };
+		2352B32B30AA70C000195DEF /* pictures/Ilustrations.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B32A30AA70C000195DEF /* pictures/Ilustrations.png */; };
+		2352B32D30AA73CA00195DEF /* pictures/launchfooter.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B32C30AA73CA00195DEF /* pictures/launchfooter.png */; };
+		2352B33330AB061300195DEF /* pictures/header.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B33230AB061300195DEF /* pictures/header.png */; };
+		2352B33530AB106900195DEF /* pictures/hey1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B33430AB106900195DEF /* pictures/hey1.png */; };
+		2352B33730AB169300195DEF /* picturedesintro.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B33630AB169300195DEF /* picturedesintro.png */; };
 		AA000001001 /* StamerleeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002001 /* StamerleeApp.swift */; };
 		AA000001002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002002 /* ContentView.swift */; };
 		AA000001003 /* ColorTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002003 /* ColorTheme.swift */; };
@@ -35,12 +53,35 @@
 		AA000001036 /* FluencyLapPracticeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002036 /* FluencyLapPracticeView.swift */; };
 		AA000001037 /* ChromaKeyVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002037 /* ChromaKeyVideoView.swift */; };
 		AA000001038 /* LaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002038 /* LaunchView.swift */; };
+		B10000001 /* ConfettiSwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000001 /* ConfettiSwiftUI.swift */; };
+		B10000002 /* View+ConfettiCannon.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000002 /* View+ConfettiCannon.swift */; };
+		B10000003 /* Triangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000003 /* Triangle.swift */; };
+		B10000004 /* RoundedCross.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000004 /* RoundedCross.swift */; };
+		B10000005 /* SlimRectangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000005 /* SlimRectangle.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		2352B30930A7221700195DEF /* prolongedvideo.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = prolongedvideo.mp4; sourceTree = "<group>"; };
-		2352B30A30A727A400195DEF /* header.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = header.png; sourceTree = "<group>"; };
 		2352B30C30A727A400195DEF /* pop.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = pop.mp3; sourceTree = "<group>"; };
+		2352B30C30AA3B5000195DEF /* pictures/bottomimage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pictures/bottomimage.png; sourceTree = "<group>"; };
+		2352B30E30AA3CFE00195DEF /* pictures/topimage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pictures/topimage.png; sourceTree = "<group>"; };
+		2352B31430AA5AEA00195DEF /* pictures/Cloud.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pictures/Cloud.png; sourceTree = "<group>"; };
+		2352B31530AA5AEA00195DEF /* pictures/Cloud landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pictures/Cloud landscape.png"; sourceTree = "<group>"; };
+		2352B31630AA5AEA00195DEF /* pictures/Cloud-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pictures/Cloud-2.png"; sourceTree = "<group>"; };
+		2352B31730AA5AEA00195DEF /* pictures/Sparkle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pictures/Sparkle.png; sourceTree = "<group>"; };
+		2352B31C30AA5AEA00195DEF /* pictures/prolonged1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pictures/prolonged1.png; sourceTree = "<group>"; };
+		2352B31C30AA5B3D00195DEF /* pictures/Cloud bank.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pictures/Cloud bank.png"; sourceTree = "<group>"; };
+		2352B31D30AA5B3D00195DEF /* pictures/Cloud bank-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pictures/Cloud bank-2.png"; sourceTree = "<group>"; };
+		2352B31E30AA5B3D00195DEF /* pictures/Drifting cloud.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pictures/Drifting cloud.png"; sourceTree = "<group>"; };
+		2352B31F30AA5B3D00195DEF /* pictures/Drifting cloud-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pictures/Drifting cloud-2.png"; sourceTree = "<group>"; };
+		2352B32030AA5B3D00195DEF /* pictures/Drifting cloud-3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pictures/Drifting cloud-3.png"; sourceTree = "<group>"; };
+		2352B32130AA5B3D00195DEF /* pictures/Floating mote.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pictures/Floating mote.png"; sourceTree = "<group>"; };
+		2352B32230AA5B3D00195DEF /* pictures/Sparkle-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pictures/Sparkle-2.png"; sourceTree = "<group>"; };
+		2352B32A30AA70C000195DEF /* pictures/Ilustrations.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pictures/Ilustrations.png; sourceTree = "<group>"; };
+		2352B32C30AA73CA00195DEF /* pictures/launchfooter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pictures/launchfooter.png; sourceTree = "<group>"; };
+		2352B33230AB061300195DEF /* pictures/header.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pictures/header.png; sourceTree = "<group>"; };
+		2352B33430AB106900195DEF /* pictures/hey1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pictures/hey1.png; sourceTree = "<group>"; };
+		2352B33630AB169300195DEF /* picturedesintro.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = picturedesintro.png; sourceTree = "<group>"; };
 		AA000002001 /* StamerleeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StamerleeApp.swift; sourceTree = "<group>"; };
 		AA000002002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		AA000002003 /* ColorTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorTheme.swift; sourceTree = "<group>"; };
@@ -66,6 +107,11 @@
 		AA000002036 /* FluencyLapPracticeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FluencyLapPracticeView.swift; sourceTree = "<group>"; };
 		AA000002037 /* ChromaKeyVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChromaKeyVideoView.swift; sourceTree = "<group>"; };
 		AA000002038 /* LaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchView.swift; sourceTree = "<group>"; };
+		B00000001 /* ConfettiSwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiSwiftUI.swift; sourceTree = "<group>"; };
+		B00000002 /* View+ConfettiCannon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+ConfettiCannon.swift"; sourceTree = "<group>"; };
+		B00000003 /* Triangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Triangle.swift; sourceTree = "<group>"; };
+		B00000004 /* RoundedCross.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedCross.swift; sourceTree = "<group>"; };
+		B00000005 /* SlimRectangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlimRectangle.swift; sourceTree = "<group>"; };
 		AA000003001 /* Stamerlee.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stamerlee.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -94,6 +140,7 @@
 				AA000002012 /* Assets.xcassets */,
 				AA000002001 /* StamerleeApp.swift */,
 				AA000002002 /* ContentView.swift */,
+				2352B30C30AA3B5000195DEF /* pictures/bottomimage.png */,
 				AA000002003 /* ColorTheme.swift */,
 				AA000002004 /* AppScreen.swift */,
 				AA000002005 /* OnboardingViews.swift */,
@@ -102,23 +149,45 @@
 				AA000002008 /* ProlongedSpeechDifficultyView.swift */,
 				AA000002009 /* ProlongedPracticeView.swift */,
 				AA000002010 /* Components.swift */,
-				AA000002011 /* Illustrations.swift */,
+				2352B32C30AA73CA00195DEF /* pictures/launchfooter.png */,
 				AA000002021 /* PictureDescriptionEasyView.swift */,
+				AA000002011 /* Illustrations.swift */,
 				AA000002024 /* PictureDescriptionDifficultyView.swift */,
 				AA000002027 /* DialSceneView.swift */,
 				AA000002028 /* NarrationDifficultyView.swift */,
 				AA000002029 /* NarrationPracticeView.swift */,
 				AA000002031 /* BeatBuddyViews.swift */,
+				2352B33630AB169300195DEF /* picturedesintro.png */,
 				AA000002032 /* ProfileView.swift */,
 				AA000002033 /* SummaryView.swift */,
 				AA000002034 /* AppTabNavigation.swift */,
+				2352B33430AB106900195DEF /* pictures/hey1.png */,
 				AA000002035 /* FluencyLapView.swift */,
 				AA000002036 /* FluencyLapPracticeView.swift */,
+				2352B32A30AA70C000195DEF /* pictures/Ilustrations.png */,
+				2352B31430AA5AEA00195DEF /* pictures/Cloud.png */,
+				2352B31C30AA5B3D00195DEF /* pictures/Cloud bank.png */,
+				2352B31D30AA5B3D00195DEF /* pictures/Cloud bank-2.png */,
+				2352B31E30AA5B3D00195DEF /* pictures/Drifting cloud.png */,
+				2352B31F30AA5B3D00195DEF /* pictures/Drifting cloud-2.png */,
+				2352B32030AA5B3D00195DEF /* pictures/Drifting cloud-3.png */,
+				2352B32130AA5B3D00195DEF /* pictures/Floating mote.png */,
+				2352B32230AA5B3D00195DEF /* pictures/Sparkle-2.png */,
+				2352B31530AA5AEA00195DEF /* pictures/Cloud landscape.png */,
+				2352B31C30AA5AEA00195DEF /* pictures/prolonged1.png */,
+				2352B31630AA5AEA00195DEF /* pictures/Cloud-2.png */,
+				2352B31730AA5AEA00195DEF /* pictures/Sparkle.png */,
 				AA000002037 /* ChromaKeyVideoView.swift */,
 				AA000002038 /* LaunchView.swift */,
 				2352B30930A7221700195DEF /* prolongedvideo.mp4 */,
-				2352B30A30A727A400195DEF /* header.png */,
 				2352B30C30A727A400195DEF /* pop.mp3 */,
+				2352B33230AB061300195DEF /* pictures/header.png */,
+				2352B30E30AA3CFE00195DEF /* pictures/topimage.png */,
+				B00000001 /* ConfettiSwiftUI.swift */,
+				B00000002 /* View+ConfettiCannon.swift */,
+				B00000003 /* Triangle.swift */,
+				B00000004 /* RoundedCross.swift */,
+				B00000005 /* SlimRectangle.swift */,
 			);
 			path = Stamerlee;
 			sourceTree = "<group>";
@@ -188,10 +257,28 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2352B30B30A727A400195DEF /* header.png in Resources */,
+				2352B32330AA5B3D00195DEF /* pictures/Drifting cloud-2.png in Resources */,
+				2352B32430AA5B3D00195DEF /* pictures/Cloud bank-2.png in Resources */,
+				2352B32530AA5B3D00195DEF /* pictures/Drifting cloud.png in Resources */,
+				2352B32630AA5B3D00195DEF /* pictures/Cloud bank.png in Resources */,
+				2352B32730AA5B3D00195DEF /* pictures/Drifting cloud-3.png in Resources */,
+				2352B32830AA5B3D00195DEF /* pictures/Floating mote.png in Resources */,
+				2352B32930AA5B3D00195DEF /* pictures/Sparkle-2.png in Resources */,
+				2352B31830AA5AEA00195DEF /* pictures/Cloud.png in Resources */,
+				2352B31930AA5AEA00195DEF /* pictures/Cloud-2.png in Resources */,
+				2352B32B30AA70C000195DEF /* pictures/Ilustrations.png in Resources */,
+				2352B31A30AA5AEA00195DEF /* pictures/Sparkle.png in Resources */,
+				2352B31B30AA5AEA00195DEF /* pictures/Cloud landscape.png in Resources */,
+				2352B32D30AA73CA00195DEF /* pictures/launchfooter.png in Resources */,
+				2352B31D30AA5AEA00195DEF /* pictures/prolonged1.png in Resources */,
+				2352B33530AB106900195DEF /* pictures/hey1.png in Resources */,
 				AA000001012 /* Assets.xcassets in Resources */,
+				2352B30D30AA3B5000195DEF /* pictures/bottomimage.png in Resources */,
 				2352B30A30A7221700195DEF /* prolongedvideo.mp4 in Resources */,
 				2352B30D30A727A400195DEF /* pop.mp3 in Resources */,
+				2352B33730AB169300195DEF /* picturedesintro.png in Resources */,
+				2352B33330AB061300195DEF /* pictures/header.png in Resources */,
+				2352B30F30AA3CFE00195DEF /* pictures/topimage.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -226,6 +313,11 @@
 				AA000001036 /* FluencyLapPracticeView.swift in Sources */,
 				AA000001037 /* ChromaKeyVideoView.swift in Sources */,
 				AA000001038 /* LaunchView.swift in Sources */,
+				B10000001 /* ConfettiSwiftUI.swift in Sources */,
+				B10000002 /* View+ConfettiCannon.swift in Sources */,
+				B10000003 /* Triangle.swift in Sources */,
+				B10000004 /* RoundedCross.swift in Sources */,
+				B10000005 /* SlimRectangle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -341,6 +433,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = C59HVLTUZJ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Stamerlee;
@@ -354,7 +447,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.stamerlee.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stamerlee.speech.app;
 				PRODUCT_NAME = Stamerlee;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -367,6 +460,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = C59HVLTUZJ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Stamerlee;
@@ -380,7 +474,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.stamerlee.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stamerlee.speech.app;
 				PRODUCT_NAME = Stamerlee;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

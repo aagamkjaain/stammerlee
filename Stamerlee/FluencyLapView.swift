@@ -43,10 +43,16 @@ public struct FluencyLapView: View {
                     .padding(.horizontal, 24)
                     .padding(.top, 4)
 
-                // Goal Card
-                goalCard
-                    .padding(.horizontal, 24)
-                    .padding(.top, 16)
+                // Goal Card or Progress Card
+                if state.hasCompletedFluencyLap {
+                    practiceProgressCard
+                        .padding(.horizontal, 24)
+                        .padding(.top, 16)
+                } else {
+                    goalCard
+                        .padding(.horizontal, 24)
+                        .padding(.top, 16)
+                }
 
                 Spacer(minLength: 8)
 
@@ -111,63 +117,119 @@ public struct FluencyLapView: View {
         .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 3)
     }
 
+    private var practiceProgressCard: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("Your practice progress")
+                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .foregroundStyle(Color(red: 16 / 255, green: 14 / 255, blue: 26 / 255))
+
+            HStack(alignment: .center, spacing: 0) {
+                // Left: Previous session
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Previous session")
+                        .font(.system(size: 15.5, weight: .semibold, design: .rounded))
+                        .foregroundStyle(Color(red: 22 / 255, green: 20 / 255, blue: 34 / 255))
+
+                    HStack(alignment: .lastTextBaseline, spacing: 6) {
+                        Text("\(state.fluencyLapPreviousWordCount)")
+                            .font(.system(size: 42, weight: .bold, design: .rounded))
+                            .foregroundStyle(.black)
+
+                        Text("words")
+                            .font(.system(size: 16, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.black)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                // Vertical Divider
+                Rectangle()
+                    .fill(Color.black.opacity(0.18))
+                    .frame(width: 1, height: 48)
+                    .padding(.horizontal, 16)
+
+                // Right: Personal best
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Personal best")
+                        .font(.system(size: 15.5, weight: .semibold, design: .rounded))
+                        .foregroundStyle(Color(red: 22 / 255, green: 20 / 255, blue: 34 / 255))
+
+                    HStack(alignment: .lastTextBaseline, spacing: 6) {
+                        Text("\(state.fluencyLapPersonalBest)")
+                            .font(.system(size: 42, weight: .bold, design: .rounded))
+                            .foregroundStyle(.black)
+
+                        Text("words")
+                            .font(.system(size: 16, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.black)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding(.top, 2)
+
+            // Horizontal Divider
+            Rectangle()
+                .fill(Color.black.opacity(0.15))
+                .frame(height: 1)
+                .padding(.top, 4)
+
+            // Footer
+            HStack {
+                Text("60-second sessions")
+                    .font(.system(size: 14.5, weight: .regular, design: .rounded))
+                    .foregroundStyle(Color(red: 30 / 255, green: 28 / 255, blue: 42 / 255))
+
+                Spacer()
+
+                Text("SAMPLE DATA")
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .tracking(0.5)
+                    .foregroundStyle(Color(red: 30 / 255, green: 28 / 255, blue: 42 / 255))
+            }
+            .padding(.top, 2)
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(red: 235 / 255, green: 232 / 255, blue: 255 / 255), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 3)
+    }
+
     private var stopwatchHeroView: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 14) {
+            // Large circular timer ring matching design
             ZStack {
-                // Soft radial background glow
+                // Outer clean lilac ring
                 Circle()
-                    .fill(
-                        RadialGradient(
-                            colors: [
-                                Color(red: 56 / 255, green: 170 / 255, blue: 255 / 255).opacity(0.32),
-                                Color(red: 139 / 255, green: 92 / 255, blue: 246 / 255).opacity(0.16),
-                                Color.clear
-                            ],
-                            center: .center,
-                            startRadius: 4,
-                            endRadius: 48
-                        )
+                    .stroke(
+                        Color(red: 195 / 255, green: 175 / 255, blue: 255 / 255),
+                        lineWidth: 4.5
                     )
-                    .frame(width: 96, height: 96)
-                    .blur(radius: 8)
+                    .frame(width: 190, height: 190)
+                    .shadow(color: Color(red: 195 / 255, green: 175 / 255, blue: 255 / 255).opacity(0.2), radius: 10)
 
-                // SF Symbol Stopwatch with Cyan-to-Purple Gradient
-                Image(systemName: "stopwatch")
-                    .font(.system(size: 60, weight: .medium))
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [
-                                Color(red: 88 / 255, green: 218 / 255, blue: 255 / 255),
-                                Color(red: 58 / 255, green: 148 / 255, blue: 255 / 255),
-                                Color(red: 105 / 255, green: 95 / 255, blue: 248 / 255),
-                                Color(red: 140 / 255, green: 72 / 255, blue: 246 / 255)
-                            ],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
-                    .shadow(color: Color(red: 56 / 255, green: 170 / 255, blue: 255 / 255).opacity(0.4), radius: 12, x: 0, y: 3)
+                // Inside content: Stopwatch icon, 60, seconds
+                VStack(spacing: 4) {
+                    Image(systemName: "stopwatch")
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundStyle(Color(red: 195 / 255, green: 175 / 255, blue: 255 / 255))
+                        .padding(.bottom, 2)
+
+                    Text("60")
+                        .font(.system(size: 64, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+
+                    Text("seconds")
+                        .font(.system(size: 16, weight: .medium, design: .rounded))
+                        .foregroundStyle(Color(red: 185 / 255, green: 180 / 255, blue: 215 / 255))
+                }
             }
 
-            // Clean 60 seconds label
-            VStack(spacing: 2) {
-                Text("60")
-                    .font(.system(size: 40, weight: .bold, design: .rounded))
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [
-                                Color.white,
-                                Color(red: 232 / 255, green: 240 / 255, blue: 255 / 255)
-                            ],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
-
-                Text("seconds")
-                    .font(.system(size: 15, weight: .semibold, design: .rounded))
-                    .foregroundStyle(Color(red: 170 / 255, green: 186 / 255, blue: 235 / 255))
-            }
+            // Subtitle below the timer ring
+            Text("Ready when you are")
+                .font(.system(size: 15.5, weight: .medium, design: .rounded))
+                .foregroundStyle(Color(red: 170 / 255, green: 168 / 255, blue: 195 / 255))
         }
         .frame(maxWidth: .infinity)
     }

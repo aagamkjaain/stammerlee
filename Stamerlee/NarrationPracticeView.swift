@@ -23,8 +23,9 @@ public struct NarrationPracticeView: View {
     }
 
     public var body: some View {
-        ZStack {
+        ZStack(alignment: .top) {
             StamerleeTheme.backgroundDark.ignoresSafeArea()
+            BackgroundImagesDecorationView()
             if showAnalysis { analysisView } else { practiceView }
         }
     }
@@ -53,7 +54,7 @@ public struct NarrationPracticeView: View {
 
             Text(prompt)
                 .font(.system(size: 14, design: .rounded))
-                .foregroundStyle(StamerleeTheme.textSecondaryDark)
+                .foregroundStyle(.white)
                 .padding(.horizontal, 24)
                 .padding(.top, 10)
 
@@ -76,7 +77,7 @@ public struct NarrationPracticeView: View {
 
             Spacer()
 
-            SpeechMicrophoneButton(isListening: $isListening) {
+            PulsingMicrophoneButton(isListening: $isListening) {
                 isListening = true
                 complete()
             }
@@ -141,7 +142,7 @@ public struct NarrationPracticeView: View {
     }
 }
 
-private struct SelfieCameraPreview: UIViewRepresentable {
+struct SelfieCameraPreview: UIViewRepresentable {
     func makeUIView(context: Context) -> CameraPreviewView {
         let view = CameraPreviewView()
         view.startSession()
@@ -155,7 +156,7 @@ private struct SelfieCameraPreview: UIViewRepresentable {
     }
 }
 
-private final class CameraPreviewView: UIView {
+final class CameraPreviewView: UIView {
     private let session = AVCaptureSession()
     private var isConfigured = false
 
