@@ -142,7 +142,7 @@ public struct NarrationPracticeView: View {
     }
 }
 
-private struct SelfieCameraPreview: UIViewRepresentable {
+struct SelfieCameraPreview: UIViewRepresentable {
     func makeUIView(context: Context) -> CameraPreviewView {
         let view = CameraPreviewView()
         view.startSession()
@@ -156,7 +156,7 @@ private struct SelfieCameraPreview: UIViewRepresentable {
     }
 }
 
-private final class CameraPreviewView: UIView {
+final class CameraPreviewView: UIView {
     private let session = AVCaptureSession()
     private var isConfigured = false
 
