@@ -634,12 +634,10 @@ public struct ExerciseAnalysisSkeletonView: View {
             VStack(spacing: 0) {
                 Spacer()
 
-                // Centered Analysis Block: Single Star, Affirmation, Score & Details
+                // Centered Analysis Block: Stars, Blots, Affirmation, Score & Details
                 VStack(spacing: 0) {
-                    // Single Golden Star with Subtle Transition (No Glow)
-                    starAssetOrShape("Sparkle-2", size: 40)
-                        .scaleEffect(starAppeared ? 1.0 : 0.8)
-                        .opacity(starAppeared ? 1.0 : 0.0)
+                    // One Main Yellow Star, Two Small Yellow Stars & Blots (No Glow)
+                    starsAndBlotsView
                         .padding(.bottom, 22)
 
                     // Affirmation Title ("You did great today!!")
@@ -709,6 +707,68 @@ public struct ExerciseAnalysisSkeletonView: View {
                 starAppeared = true
             }
         }
+    }
+
+    // MARK: - One Main Yellow Star, Two Small Yellow Stars & Blots
+    private var starsAndBlotsView: some View {
+        ZStack {
+            // Radiating Ray Blots from center star
+            HStack(spacing: 24) {
+                Capsule()
+                    .fill(Color(red: 255 / 255, green: 220 / 255, blue: 100 / 255))
+                    .frame(width: 3.5, height: 14)
+                    .rotationEffect(.degrees(-26))
+                    .offset(y: -14)
+
+                Capsule()
+                    .fill(Color(red: 255 / 255, green: 220 / 255, blue: 100 / 255))
+                    .frame(width: 3.5, height: 14)
+                    .rotationEffect(.degrees(26))
+                    .offset(y: -14)
+            }
+            .scaleEffect(starAppeared ? 1.0 : 0.4)
+            .opacity(starAppeared ? 1.0 : 0.0)
+
+            // 1. One Main Yellow Center Star (without glowing effect)
+            starAssetOrShape("Sparkle-2", size: 40)
+                .scaleEffect(starAppeared ? 1.0 : 0.75)
+                .opacity(starAppeared ? 1.0 : 0.0)
+
+            // 2. Left Small Yellow Star (without glowing effect)
+            starAssetOrShape("Sparkle", size: 19)
+                .offset(x: -56, y: 12)
+                .scaleEffect(starAppeared ? 1.0 : 0.5)
+                .opacity(starAppeared ? 1.0 : 0.0)
+
+            // 3. Right Small Yellow Star (without glowing effect)
+            starAssetOrShape("Sparkle", size: 18)
+                .offset(x: 52, y: 14)
+                .scaleEffect(starAppeared ? 1.0 : 0.5)
+                .opacity(starAppeared ? 1.0 : 0.0)
+
+            // Accent Decorative Blots / Motes
+            Circle()
+                .fill(Color(red: 255 / 255, green: 225 / 255, blue: 120 / 255).opacity(0.85))
+                .frame(width: 3.5, height: 3.5)
+                .offset(x: -28, y: -6)
+                .scaleEffect(starAppeared ? 1.0 : 0.2)
+                .opacity(starAppeared ? 0.9 : 0.0)
+
+            Circle()
+                .fill(Color(red: 255 / 255, green: 225 / 255, blue: 120 / 255).opacity(0.85))
+                .frame(width: 3.5, height: 3.5)
+                .offset(x: 28, y: -4)
+                .scaleEffect(starAppeared ? 1.0 : 0.2)
+                .opacity(starAppeared ? 0.9 : 0.0)
+
+            Circle()
+                .fill(Color(red: 255 / 255, green: 235 / 255, blue: 150 / 255).opacity(0.7))
+                .frame(width: 2.5, height: 2.5)
+                .offset(x: 72, y: 5)
+                .scaleEffect(starAppeared ? 1.0 : 0.2)
+                .opacity(starAppeared ? 0.8 : 0.0)
+        }
+        .frame(height: 52)
     }
 
     // MARK: - Word Selection Section in Middle
