@@ -216,23 +216,6 @@ public struct PictureDescriptionIntroView: View {
         VStack(spacing: 0) {
             Spacer()
 
-            // Demonstration Tag
-            HStack(spacing: 6) {
-                Image(systemName: "sparkles")
-                    .font(.system(size: 11, weight: .bold))
-                Text("EXERCISE DEMO")
-                    .font(.system(size: 11.5, weight: .bold, design: .rounded))
-                    .tracking(1.2)
-            }
-            .foregroundStyle(Color(red: 195 / 255, green: 175 / 255, blue: 255 / 255))
-            .padding(.horizontal, 14)
-            .padding(.vertical, 6)
-            .background(
-                Capsule()
-                    .fill(Color(red: 195 / 255, green: 175 / 255, blue: 255 / 255).opacity(0.18))
-            )
-            .padding(.bottom, 10)
-
             // Instruction Headline
             Text("A picture will be shown and you have to describe it")
                 .font(.system(size: 17, weight: .semibold, design: .rounded))
@@ -244,17 +227,21 @@ public struct PictureDescriptionIntroView: View {
             // Picture Demonstration Card
             ZStack(alignment: .bottom) {
                 Group {
-                    if let uiImage = UIImage(named: "picturehero") ?? UIImage(named: "PictureHero") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "picturehero", ofType: "png") ?? "") {
+                    if let uiImage = UIImage(named: "picturedesintro") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "picturedesintro", ofType: "png") ?? "") {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .scaledToFill()
+                    } else if let uiImage = UIImage(named: "picturehero") ?? UIImage(named: "PictureHero") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "picturehero", ofType: "png") ?? "") {
                         Image(uiImage: uiImage)
                             .resizable()
                             .scaledToFill()
                     } else {
-                        Image("PictureHero")
+                        Image("picturedesintro")
                             .resizable()
                             .scaledToFill()
                     }
                 }
-                .frame(width: min(w * 0.72, 260), height: 160)
+                .frame(width: min(w * 0.78, 280), height: 165)
                 .clipped()
 
                 // Bottom hint badge
@@ -271,7 +258,7 @@ public struct PictureDescriptionIntroView: View {
                 .frame(maxWidth: .infinity)
                 .background(Color.black.opacity(0.65))
             }
-            .frame(width: min(w * 0.72, 260), height: 160)
+            .frame(width: min(w * 0.78, 280), height: 165)
             .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
@@ -386,6 +373,17 @@ public struct PictureDescriptionIntroView: View {
                         .foregroundStyle(Color(red: 195 / 255, green: 185 / 255, blue: 230 / 255))
                         .multilineTextAlignment(.center)
                         .padding(.top, 4)
+
+                    // 3-4s gap indicator before real practice starts
+                    HStack(spacing: 8) {
+                        ProgressView()
+                            .tint(Color(red: 195 / 255, green: 175 / 255, blue: 255 / 255))
+                            .scaleEffect(0.85)
+                        Text("Starting practice in a moment...")
+                            .font(.system(size: 13, weight: .medium, design: .rounded))
+                            .foregroundStyle(Color(red: 210 / 255, green: 205 / 255, blue: 240 / 255))
+                    }
+                    .padding(.top, 10)
                 }
 
                 // Decorative Accent Motes & Stars
@@ -432,7 +430,7 @@ public struct PictureDescriptionIntroView: View {
                 wellDoneBurst = true
             }
             Task { @MainActor in
-                try? await Task.sleep(nanoseconds: 2_600_000_000)
+                try? await Task.sleep(nanoseconds: 3_500_000_000)
                 if step == .wellDone {
                     redirectToPractice()
                 }
