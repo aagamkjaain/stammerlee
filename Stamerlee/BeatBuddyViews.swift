@@ -752,6 +752,7 @@ public struct BeatBuddyPracticeView: View {
 
                 Text("Speak each syllable with the metronome beat. Stay relaxed and let the rhythm guide your pace.")
                     .font(.system(size: 14, weight: .regular, design: .rounded))
+                    .foregroundStyle(.white)
                     .foregroundStyle(Color(red: 220 / 255, green: 215 / 255, blue: 245 / 255))
                     .lineSpacing(3.5)
                     .multilineTextAlignment(.leading)

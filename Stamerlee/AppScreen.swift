@@ -83,7 +83,7 @@ public final class AppState {
     public var fluencyLapPersonalBest: Int = 56
     public var dailyPracticeMinutes: Int = 10
     public var currentStreakDays: Int = 3
-    public var profileName: String = "John doe"
+    public var profileName: String = "Tanvi Nema"
     public var profileAvatarStyle: Int = 0
     public var profileAvatarData: Data?
     
