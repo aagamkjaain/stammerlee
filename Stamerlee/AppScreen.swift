@@ -1,3 +1,4 @@
+
 import Foundation
 import SwiftUI
 import Observation
@@ -56,6 +57,22 @@ public enum AppScreen: Hashable, CaseIterable {
     case beatBuddyPractice
 }
 
+// MARK: - Custom Dial Scene Scenario
+/// A scenario the user created themselves in Dial Scene.
+public struct CustomDialScenario: Identifiable, Hashable {
+    public let id: UUID
+    public var title: String
+    public var details: String
+    public var iconName: String
+
+    public init(id: UUID = UUID(), title: String, details: String, iconName: String) {
+        self.id = id
+        self.title = title
+        self.details = details
+        self.iconName = iconName
+    }
+}
+
 // MARK: - App State (Modern @Observable)
 @Observable
 public final class AppState {
@@ -100,6 +117,7 @@ public final class AppState {
     public var selectedPictureDescriptionDifficulty: String = "Easy"
     public var completedPictureDescriptionDifficulties: Set<String> = []
     public var hasCompletedDialScene: Bool = false
+    public var customDialScenarios: [CustomDialScenario] = []
     public var hasSeenDialSceneIntro: Bool = false
     public var hasSeenNarrationIntro: Bool = false
     public var selectedNarrationDifficulty: String = "Easy"
@@ -145,6 +163,7 @@ public final class AppState {
         completedPictureDescriptionDifficulties.removeAll()
         completedNarrationDifficulties.removeAll()
         hasCompletedDialScene = false
+        customDialScenarios.removeAll()
         hasAttemptedProlongedEasy = false
         hasReceivedProlongedEasyScore = false
         prolongedEasyScore = nil
@@ -206,3 +225,4 @@ public final class AppState {
         completedNarrationDifficulties.insert("Completed")
     }
 }
+

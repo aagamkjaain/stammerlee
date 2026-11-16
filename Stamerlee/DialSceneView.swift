@@ -1,3 +1,6 @@
+
+
+
 import SwiftUI
 
 // MARK: - Dial Scene Interactive Cloud Experience
@@ -25,6 +28,7 @@ public struct DialSceneIntroView: View {
     @State private var floatAnim: Bool = false
     @State private var confettiCounter: Int = 0
     @State private var wellDoneBurst: Bool = false
+    @State private var hasRedirected: Bool = false
 
     // Pure yellow palette for ConfettiSwiftUI celebration particles
     private let yellowConfettiColors: [Color] = [
@@ -564,16 +568,20 @@ public struct DialSceneIntroView: View {
             withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
                 wellDoneBurst = true
             }
-            Task { @MainActor in
-                try? await Task.sleep(nanoseconds: 3_500_000_000)
-                if step == .wellDone {
-                    redirectToRealPractice()
-                }
-            }
+        }
+        // .task is cancelled automatically when this step disappears, so the
+        // auto-redirect can never fire after the user has already moved on.
+        .task {
+            try? await Task.sleep(nanoseconds: 3_500_000_000)
+            guard !Task.isCancelled, step == .wellDone else { return }
+            redirectToRealPractice()
         }
     }
 
     private func redirectToRealPractice() {
+        // Only ever redirect once (tap and auto-timer could both fire)
+        guard !hasRedirected else { return }
+        hasRedirected = true
         state.hasSeenDialSceneIntro = true
         if let onContinue {
             onContinue()
@@ -855,6 +863,9 @@ public struct DialSceneView: View {
     @State private var isDAFActive: Bool = false
     @State private var isListening: Bool = false
     @State private var conversationStep = 0
+    @State private var micPhase: DialMicPhase = .idle
+    @State private var hasSpoken: Bool = false
+    @State private var turnTask: Task<Void, Never>?
 
     private enum Stage {
         case intro
@@ -894,6 +905,8 @@ public struct DialSceneView: View {
                         state.navigate(to: .homeDashboard, forward: false)
                     },
                     onContinue: {
+                        // Ignore stray/late calls once we've left the intro
+                        guard stage == .intro else { return }
                         state.hasSeenDialSceneIntro = true
                         withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
                             stage = .scenarios
@@ -943,7 +956,7 @@ public struct DialSceneView: View {
                 .padding(.bottom, 24)
 
             ScrollView {
-                VStack(spacing: 10) {
+                VStack(spacing: 16) {
                     ForEach(scenarios, id: \.0) { scenario in
                         Button {
                             selectedScenario = scenario.0
@@ -951,34 +964,35 @@ public struct DialSceneView: View {
                         } label: {
                             HStack(spacing: 14) {
                                 Image(systemName: scenario.2)
-                                    .font(.system(size: 20, weight: .semibold))
+                                    .font(.system(size: 22, weight: .semibold))
                                     .foregroundStyle(.white)
-                                    .frame(width: 36)
-                                VStack(alignment: .leading, spacing: 3) {
+                                    .frame(width: 38)
+                                VStack(alignment: .leading, spacing: 4) {
                                     Text(scenario.0)
-                                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                                        .font(.system(size: 16, weight: .bold, design: .rounded))
                                     Text(scenario.1)
-                                        .font(.system(size: 11, design: .rounded))
+                                        .font(.system(size: 12, design: .rounded))
                                         .foregroundStyle(StamerleeTheme.textSecondaryDark)
                                 }
                                 .foregroundStyle(.white)
                                 Spacer()
                                 Image(systemName: "phone.fill")
+                                    .font(.system(size: 15, weight: .semibold))
                                     .foregroundStyle(.white)
-                                    .padding(8)
+                                    .frame(width: 38, height: 38)
                                     .background(Color(red: 73 / 255, green: 65 / 255, blue: 174 / 255))
                                     .clipShape(Circle())
                             }
-                            .padding(.horizontal, 16)
-                            .frame(height: 62)
+                            .padding(.horizontal, 14)
+                            .frame(height: 72)
                             .background(Color.white.opacity(0.07))
-                            .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.white.opacity(0.08)))
-                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                            .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Color.white.opacity(0.08)))
+                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                         }
                         .buttonStyle(.haptic)
                     }
                 }
-                .padding(.horizontal, 24)
+                .padding(.horizontal, 20)
             }
             .scrollIndicators(.hidden)
             Spacer()
@@ -1015,48 +1029,181 @@ public struct DialSceneView: View {
                 .padding(.horizontal, 24)
                 .padding(.top, 20)
 
-            VStack(alignment: .leading, spacing: 14) {
-                ForEach(Array(conversationMessages.prefix(conversationStep + 1).enumerated()), id: \.offset) { _, message in
-                    bubble(message.speaker, message.text, isUser: message.isUser)
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 14) {
+                        ForEach(Array(conversationMessages.prefix(conversationStep + 1).enumerated()), id: \.offset) { index, message in
+                            bubble(message.speaker, message.text, isUser: message.isUser)
+                                .id(index)
+                                .transition(.move(edge: .bottom).combined(with: .opacity))
+                        }
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.top, 24)
+                    .padding(.bottom, 8)
+                }
+                .scrollIndicators(.hidden)
+                .frame(maxHeight: .infinity)
+                .onChange(of: conversationStep) { _, newStep in
+                    withAnimation(.easeOut(duration: 0.3)) {
+                        proxy.scrollTo(newStep, anchor: .bottom)
+                    }
                 }
             }
-            .padding(.horizontal, 24)
-            .padding(.top, 24)
 
-            Spacer()
+            // Mic only. Animates while listening; Finish appears once the user has spoken.
+            VStack(spacing: 14) {
+                DialMicButton(phase: micPhase, action: micTapped)
 
-            SpeechMicrophoneButton(isListening: $isListening) {
-                guard conversationStep + 1 < conversationMessages.count else { return }
-                isListening = true
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                    conversationStep += 1
-                }
-                Task { @MainActor in
-                    try? await Task.sleep(for: .milliseconds(500))
-                    isListening = false
-                }
+                Text(micHint)
+                    .font(.system(size: 14, weight: .regular, design: .rounded))
+                    .foregroundStyle(Color(red: 195 / 255, green: 190 / 255, blue: 220 / 255))
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .padding(.horizontal, 28)
+                    .frame(height: 40, alignment: .top)
+                    .animation(.easeInOut(duration: 0.2), value: micPhase)
             }
             .frame(maxWidth: .infinity)
-            .padding(.bottom, 24)
 
-            PrimaryActionButton(title: "Finish") {
-                state.hasCompletedDialScene = true
-                stage = .analysis
+            // Fixed-height slot so the mic never jumps when Finish appears
+            ZStack {
+                if hasSpoken {
+                    PrimaryActionButton(title: "Finish") {
+                        turnTask?.cancel()
+                        state.hasCompletedDialScene = true
+                        stage = .analysis
+                    }
+                    .padding(.horizontal, 24)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
             }
-            .padding(.horizontal, 24)
-            .padding(.bottom, 24)
+            .frame(height: 56)
+            .padding(.top, 24)
+            .padding(.bottom, 28)
         }
+        .onAppear {
+            conversationStep = 0
+            micPhase = .idle
+            hasSpoken = false
+        }
+        .onDisappear { turnTask?.cancel() }
         .sensoryFeedback(.impact(weight: .light), trigger: isDAFActive)
-        .sensoryFeedback(.impact(weight: .heavy), trigger: isListening)
+        .sensoryFeedback(.impact(weight: .heavy), trigger: micPhase)
     }
 
+    // MARK: - Mic turn logic
+
+    private var userHasNextLine: Bool {
+        let next = conversationStep + 1
+        return next < conversationMessages.count && conversationMessages[next].isUser
+    }
+
+    private var nextUserLine: String? {
+        userHasNextLine ? conversationMessages[conversationStep + 1].text : nil
+    }
+
+    private var micHint: String {
+        switch micPhase {
+        case .listening: return "Listening... tap the mic when you're done"
+        case .idle:
+            if let line = nextUserLine { return "Tap the mic and say: \"\(line)\"" }
+            return "Great job! Tap Finish when you're ready"
+        }
+    }
+
+    private func micTapped() {
+        switch micPhase {
+        case .idle:
+            guard userHasNextLine else { return }
+            startTurn()
+        case .listening:
+            endTurn()
+        }
+    }
+
+    /// User taps the mic: start listening. The mic just pulses; nothing is revealed yet.
+    private func startTurn() {
+        turnTask?.cancel()
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.82)) { micPhase = .listening }
+        isListening = true
+        // TODO: hook real speech recognition in here (start recording).
+    }
+
+    /// User taps the mic again ("I'm done"): show their message, then the other
+    /// person replies. Everything is driven by the user's taps, not by a timer.
+    private func endTurn() {
+        guard micPhase == .listening else { return }
+        // TODO: stop real speech recognition here.
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.82)) { micPhase = .idle }
+        isListening = false
+
+        // Reveal the user's line right now
+        guard userHasNextLine else { return }
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
+            conversationStep += 1
+            hasSpoken = true               // Finish button appears
+        }
+
+        // Then the other person answers (short natural pause only)
+        let next = conversationStep + 1
+        guard next < conversationMessages.count, !conversationMessages[next].isUser else { return }
+        turnTask = Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(700))
+            guard !Task.isCancelled else { return }
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { conversationStep += 1 }
+        }
+    }
+
+    /// Each scenario has its own script: bot line, your line, bot, you, bot, you.
     private var conversationMessages: [(speaker: String, text: String, isUser: Bool)] {
-        [
-            ("Barista", "Hi! What can I get for you today?", false),
-            ("You", "A medium iced latte with whole milk and one pump of vanilla, please.", true),
-            ("Barista", "Of course! One medium iced vanilla latte. Anything else on the side?", false),
-            ("You", "What about today's special?", true)
-        ]
+        switch selectedScenario {
+        case "Ordering at a Restaurant":
+            return [
+                ("Waiter", "Welcome! Are you ready to order?", false),
+                ("You", "Yes, I'd like the pasta, please.", true),
+                ("Waiter", "Excellent choice. Anything to drink?", false),
+                ("You", "A glass of water, please.", true),
+                ("Waiter", "Would you like to see the dessert menu later?", false),
+                ("You", "Maybe later. Thank you!", true)
+            ]
+        case "Checking into a Hotel":
+            return [
+                ("Receptionist", "Good evening! Do you have a reservation?", false),
+                ("You", "Yes, it's under the name Alex.", true),
+                ("Receptionist", "Found it! Two nights, is that right?", false),
+                ("You", "Yes, that's correct.", true),
+                ("Receptionist", "Here's your key. Breakfast starts at 7 AM.", false),
+                ("You", "Thank you very much!", true)
+            ]
+        case "At a Hair Salon":
+            return [
+                ("Stylist", "Hi there! What are we doing today?", false),
+                ("You", "Just a trim, please.", true),
+                ("Stylist", "Sure! How much would you like off?", false),
+                ("You", "About two inches, please.", true),
+                ("Stylist", "Perfect. Would you like a wash first?", false),
+                ("You", "Yes, please. Thank you!", true)
+            ]
+        case "At a Grocery Store":
+            return [
+                ("Staff", "Hello! Can I help you find something?", false),
+                ("You", "Where can I find the milk?", true),
+                ("Staff", "Aisle three, right next to the eggs.", false),
+                ("You", "Thank you. Do you have fresh bread?", true),
+                ("Staff", "Yes, the bakery section is at the back.", false),
+                ("You", "Great, thanks for your help!", true)
+            ]
+        default: // Ordering at a Café
+            return [
+                ("Barista", "Hi! What can I get for you today?", false),
+                ("You", "A medium iced latte, please.", true),
+                ("Barista", "Sure! Any milk preference?", false),
+                ("You", "Whole milk, with one vanilla.", true),
+                ("Barista", "Got it! Anything else today?", false),
+                ("You", "No, that's all. Thank you!", true)
+            ]
+        }
     }
 
     private func bubble(_ speaker: String, _ text: String, isUser: Bool) -> some View {
@@ -1091,8 +1238,94 @@ public struct DialSceneView: View {
 }
 
 
+// MARK: - Dial Mic Button (same purple glass mic as the other screens, animated while live)
+enum DialMicPhase: Equatable {
+    case idle
+    case listening
+}
+
+private struct DialMicButton: View {
+    let phase: DialMicPhase
+    let action: () -> Void
+
+    private var isActive: Bool { phase != .idle }
+
+    var body: some View {
+        Button(action: action) {
+            // Always animating: a calm idle pulse, a faster/stronger one while live
+            TimelineView(.animation(minimumInterval: 1.0 / 60.0)) { context in
+                let t = context.date.timeIntervalSinceReferenceDate
+                let pulse = (sin(t * (isActive ? 3.0 : 1.8)) + 1) / 2
+
+                ZStack {
+                    // Expanding ripples (soft when idle, stronger when live)
+                    ForEach(0..<2, id: \.self) { k in
+                        let speed = isActive ? 0.7 : 0.35
+                        let p = (t * speed + Double(k) * 0.5).truncatingRemainder(dividingBy: 1.0)
+                        Circle()
+                            .stroke(StamerleeTheme.primaryBlue.opacity((1 - p) * (isActive ? 0.5 : 0.28)), lineWidth: 1.5)
+                            .frame(width: 140, height: 140)
+                            .scaleEffect(1.0 + p * 0.5)
+                    }
+
+                    // Faint static outer ring
+                    Circle()
+                        .stroke(Color.white.opacity(0.08), lineWidth: 1)
+                        .frame(width: 150, height: 150)
+                        .scaleEffect(1.0 + 0.06 * pulse)
+
+                    // Deep navy back ring
+                    Circle()
+                        .fill(Color(red: 32 / 255, green: 26 / 255, blue: 58 / 255))
+                        .frame(width: 112, height: 112)
+                        .scaleEffect(1.0 + (isActive ? 0.08 : 0.04) * pulse)
+
+                    // Core purple glass button
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    Color(red: 160 / 255, green: 130 / 255, blue: 255 / 255),
+                                    StamerleeTheme.primaryBlueDark
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 88, height: 88)
+                        .scaleEffect(1.0 + (isActive ? 0.03 : 0.015) * pulse)
+                        .overlay(
+                            Circle().stroke(
+                                LinearGradient(
+                                    colors: [Color.white.opacity(0.7), Color.white.opacity(0.1)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 1.2
+                            )
+                        )
+                        .shadow(color: StamerleeTheme.primaryBlue.opacity(isActive ? 0.9 : 0.5),
+                                radius: isActive ? 16 : 10)
+
+                    // Same mic icon always; the pulse alone shows it's live
+                    Image(systemName: "mic.fill")
+                        .font(.system(size: 32, weight: .semibold))
+                        .foregroundStyle(.white)
+                }
+                .frame(width: 200, height: 200)
+                .animation(.easeInOut(duration: 0.25), value: isActive)
+            }
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(isActive ? "Stop microphone" : "Start microphone")
+    }
+}
+
 #Preview("Dial Scene") {
     DialSceneView(
         state: AppState()
     )
 }
+
+
+
