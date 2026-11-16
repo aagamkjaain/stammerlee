@@ -35,13 +35,6 @@ public struct NarrationPracticeView: View {
             HStack {
                 BackNavButton { state.navigate(to: .homeDashboard, forward: false) }
                 Spacer()
-                Text("DAF")
-                    .font(.system(size: 12, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 7)
-                    .background(StamerleeTheme.primaryBlueDark)
-                    .clipShape(Capsule())
             }
             .padding(.horizontal, 24)
             .padding(.top, 16)
