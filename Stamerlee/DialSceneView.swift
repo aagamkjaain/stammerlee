@@ -1008,7 +1008,6 @@ public struct DialSceneView: View {
             .padding(.top, 24)
             .padding(.bottom, 28)
         }
-<<<<<<< HEAD
         .onAppear {
             conversationStep = 0
             micPhase = .idle
