@@ -21,8 +21,17 @@ public struct ProlongedSpeechIntroView: View {
     @State private var isListening: Bool = false
     @State private var pulseMic: Bool = false
     @State private var floatAnim: Bool = false
-    @State private var showConfetti: Bool = false
+    @State private var confettiCounter: Int = 0
     @State private var wellDoneBurst: Bool = false
+
+    // Pure yellow palette for ConfettiSwiftUI celebration particles
+    private let yellowConfettiColors: [Color] = [
+        Color.yellow,
+        Color(red: 255 / 255, green: 215 / 255, blue: 0 / 255),    // Bright Gold
+        Color(red: 255 / 255, green: 238 / 255, blue: 88 / 255),   // Radiant Sunshine Yellow
+        Color(red: 255 / 255, green: 249 / 255, blue: 196 / 255),  // Soft Pastel Yellow
+        Color(red: 255 / 255, green: 179 / 255, blue: 0 / 255)     // Warm Amber Gold
+    ]
 
     // Demonstration word: "sweet" practiced only once as an exercise demonstration
     private let demoPrefix = "swe"
@@ -48,13 +57,29 @@ public struct ProlongedSpeechIntroView: View {
                 // Animated Clouds Layer with Edge-to-Edge Bleed & Lowered Bottom Cloud
                 cloudsLayer(w: w, h: h)
 
-                // Confetti Explosion Layer (Triggers on Step 4: Well done!)
-                if showConfetti {
-                    ConfettiCelebrationView()
-                        .position(x: w * 0.5, y: h * 0.44)
-                        .allowsHitTesting(false)
-                        .zIndex(10)
-                }
+                // Yellow Confetti Effect using ConfettiSwiftUI (Step 4: Well done!)
+                Color.clear
+                    .frame(width: 1, height: 1)
+                    .confettiCannon(
+                        counter: $confettiCounter,
+                        num: 60,
+                        confettis: [
+                            .shape(.circle),
+                            .shape(.triangle),
+                            .shape(.square),
+                            .shape(.slimRectangle),
+                            .shape(.roundedCross)
+                        ],
+                        colors: yellowConfettiColors,
+                        confettiSize: 11.0,
+                        rainHeight: 700.0,
+                        openingAngle: .degrees(0),
+                        closingAngle: .degrees(360),
+                        radius: 280.0
+                    )
+                    .position(x: w * 0.5, y: h * 0.44)
+                    .allowsHitTesting(false)
+                    .zIndex(10)
 
                 // Foreground Content for Active Step
                 VStack(spacing: 0) {
@@ -373,7 +398,7 @@ public struct ProlongedSpeechIntroView: View {
             redirectToDifficulty()
         }
         .onAppear {
-            showConfetti = true
+            confettiCounter += 1
             withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
                 wellDoneBurst = true
             }
@@ -550,6 +575,9 @@ public struct ProlongedSpeechIntroView: View {
         withAnimation(.spring(response: 0.72, dampingFraction: 0.8)) {
             step = next
         }
+        if next == .wellDone {
+            confettiCounter += 1
+        }
     }
 
     private func triggerSpeak() {
@@ -670,79 +698,6 @@ private struct TwinklingStarView: View {
                 ) {
                     isTwinkling = true
                 }
-            }
-        }
-    }
-}
-
-// MARK: - Confetti Particle Celebration System
-private struct ConfettiParticle: Identifiable {
-    let id = UUID()
-    let color: Color
-    let shape: Int // 0: rectangle ribbon, 1: circle, 2: star
-    let size: CGFloat
-    let angle: Double
-    let distance: CGFloat
-    let spinSpeed: Double
-}
-
-private struct ConfettiCelebrationView: View {
-    @State private var progress: CGFloat = 0
-
-    private let particles: [ConfettiParticle] = {
-        let colors: [Color] = [
-            Color(red: 255 / 255, green: 215 / 255, blue: 0 / 255),    // Gold
-            Color(red: 255 / 255, green: 185 / 255, blue: 0 / 255),    // Amber
-            Color(red: 139 / 255, green: 112 / 255, blue: 245 / 255),  // Purple
-            Color(red: 185 / 255, green: 155 / 255, blue: 255 / 255),  // Lavender
-            Color(red: 56 / 255, green: 189 / 255, blue: 248 / 255),   // Cyan
-            Color(red: 251 / 255, green: 113 / 255, blue: 133 / 255),  // Pink
-            Color.white
-        ]
-        return (0..<48).map { i in
-            ConfettiParticle(
-                color: colors[i % colors.count],
-                shape: i % 3,
-                size: CGFloat.random(in: 6...12),
-                angle: Double.random(in: 0...(2 * .pi)),
-                distance: CGFloat.random(in: 70...210),
-                spinSpeed: Double.random(in: 360...1080)
-            )
-        }
-    }()
-
-    var body: some View {
-        ZStack {
-            ForEach(particles) { p in
-                let curDist = p.distance * progress
-                let x = cos(p.angle) * curDist
-                let y = sin(p.angle) * curDist + (progress * progress * 35)
-                let opacity = progress < 0.15 ? (progress / 0.15) : max(0, 1.0 - (progress - 0.5) / 0.5)
-
-                Group {
-                    if p.shape == 0 {
-                        RoundedRectangle(cornerRadius: 2)
-                            .fill(p.color)
-                            .frame(width: p.size * 0.55, height: p.size * 1.3)
-                    } else if p.shape == 1 {
-                        Circle()
-                            .fill(p.color)
-                            .frame(width: p.size * 0.75, height: p.size * 0.75)
-                    } else {
-                        Image(systemName: "sparkle")
-                            .font(.system(size: p.size))
-                            .foregroundStyle(p.color)
-                    }
-                }
-                .rotationEffect(.degrees(p.spinSpeed * Double(progress)))
-                .offset(x: x, y: y)
-                .opacity(opacity)
-                .scaleEffect(progress < 0.2 ? progress * 5 : max(0.4, 1.1 - progress * 0.5))
-            }
-        }
-        .onAppear {
-            withAnimation(.easeOut(duration: 2.0)) {
-                progress = 1.0
             }
         }
     }
