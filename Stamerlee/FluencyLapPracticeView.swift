@@ -1,20 +1,4 @@
 import SwiftUI
-import TipKit
-
-// MARK: - TipKit: DAF Feature Tip
-public struct DAFFeatureTip: Tip {
-    public var title: Text {
-        Text("Delayed Auditory Feedback")
-    }
-
-    public var message: Text? {
-        Text("DAF plays your voice back with a slight delay through headphones, naturally slowing your pacing and helping you maintain smooth, prolonged speech.")
-    }
-
-    public var image: Image? {
-        Image(systemName: "headphones")
-    }
-}
 
 public struct FluencyLapPracticeView: View {
     @Bindable public var state: AppState
@@ -70,12 +54,9 @@ public struct SpeakPracticeScreen: View {
     let showBackgroundImages: Bool
 
     @State private var currentWordIndex = 0
-    @State private var isDAFEnabled = true
     @State private var isListening = false
     @State private var pulse = false
     @State private var advanceTask: Task<Void, Never>?
-
-    private let dafTip = DAFFeatureTip()
 
     public init(
         prompts: [String],
@@ -160,9 +141,6 @@ public struct SpeakPracticeScreen: View {
             .padding(.top, 8)
         }
         .preferredColorScheme(.dark)
-        .task {
-            try? Tips.configure([.displayFrequency(.immediate)])
-        }
         .onDisappear {
             advanceTask?.cancel()
         }
@@ -176,23 +154,7 @@ public struct SpeakPracticeScreen: View {
             }
 
             Spacer()
-
-            Button {
-                dafTip.invalidate(reason: .actionPerformed)
-                isDAFEnabled.toggle()
-            } label: {
-                Label("DAF", systemImage: "headphones")
-                    .font(.system(size: 15, weight: .semibold, design: .rounded))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 17)
-                    .frame(height: 40)
-                    .contentShape(Capsule())
-            }
-            .buttonStyle(DAFButtonStyle(isEnabled: isDAFEnabled))
-            .popoverTip(dafTip, arrowEdge: .top)
-            .accessibilityLabel(isDAFEnabled ? "Disable DAF" : "Enable DAF")
         }
-        .sensoryFeedback(.impact(weight: .light), trigger: isDAFEnabled)
     }
 
     private var promptDisplay: some View {
@@ -325,24 +287,4 @@ private struct FluencyFinishButtonStyle: ButtonStyle {
     }
 }
 
-private struct DAFButtonStyle: ButtonStyle {
-    let isEnabled: Bool
 
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .background(
-                Group {
-                    if #available(iOS 26.0, *) {
-                        Capsule()
-                            .fill((isEnabled ? StamerleeTheme.primaryBlue : StamerleeTheme.cardDark).opacity(configuration.isPressed ? 0.75 : 1.0))
-                    } else {
-                        Capsule()
-                            .fill(isEnabled ? StamerleeTheme.primaryBlue : StamerleeTheme.cardDark)
-                    }
-                }
-            )
-            .contentShape(Capsule())
-            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
-            .animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
-    }
-}

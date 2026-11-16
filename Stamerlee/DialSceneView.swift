@@ -852,7 +852,6 @@ public struct DialSceneView: View {
 
     @State private var selectedScenario = "Ordering at a Café"
     @State private var stage: Stage
-    @State private var isDAFActive: Bool = false
     @State private var isListening: Bool = false
     @State private var conversationStep = 0
 
@@ -990,24 +989,6 @@ public struct DialSceneView: View {
             HStack {
                 header
                 Spacer()
-                Button {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        isDAFActive.toggle()
-                    }
-                } label: {
-                    HStack(spacing: 5) {
-                        Image(systemName: "headphones")
-                            .font(.system(size: 12, weight: .bold))
-                        Text("DAF")
-                            .font(.system(size: 12, weight: .bold, design: .rounded))
-                    }
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 7)
-                    .background(isDAFActive ? StamerleeTheme.primaryBlue : StamerleeTheme.primaryBlueDark)
-                    .clipShape(Capsule())
-                }
-                .padding(.trailing, 24)
             }
             Text(selectedScenario)
                 .font(.system(size: 22, weight: .bold, design: .rounded))
@@ -1046,7 +1027,6 @@ public struct DialSceneView: View {
             .padding(.horizontal, 24)
             .padding(.bottom, 24)
         }
-        .sensoryFeedback(.impact(weight: .light), trigger: isDAFActive)
         .sensoryFeedback(.impact(weight: .heavy), trigger: isListening)
     }
 
