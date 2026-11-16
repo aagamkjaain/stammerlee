@@ -52,13 +52,18 @@ public struct ProlongedSpeechDifficultyView: View {
                 // Difficulty Level Cards
                 VStack(spacing: 16) {
                     ForEach(["Words", "Sentences", "Paragraphs"], id: \.self) { difficulty in
+                        let locked = isLevelLocked(difficulty)
                         difficultyCard(
                             title: difficulty,
-                            isLocked: false,
+                            isLocked: locked,
                             isCompleted: state.completedProlongedDifficulties.contains(difficulty)
                         ) {
-                            state.selectedDifficulty = difficulty
-                            state.navigate(to: .prolongedPractice)
+                            if locked {
+                                triggerLockedAlert(difficulty: difficulty)
+                            } else {
+                                state.selectedDifficulty = difficulty
+                                state.navigate(to: .prolongedPractice)
+                            }
                         }
                     }
                 }
@@ -74,6 +79,32 @@ public struct ProlongedSpeechDifficultyView: View {
         }
     }
     
+    // MARK: - Level Locking Logic
+    private func isLevelLocked(_ difficulty: String) -> Bool {
+        switch difficulty {
+        case "Words":
+            return false
+        case "Sentences":
+            return !state.completedProlongedDifficulties.contains("Words")
+        case "Paragraphs":
+            return !state.completedProlongedDifficulties.contains("Sentences")
+        default:
+            return false
+        }
+    }
+
+    private func triggerLockedAlert(difficulty: String) {
+        switch difficulty {
+        case "Sentences":
+            lockedAlertText = "Complete the Words level to unlock Sentences!"
+        case "Paragraphs":
+            lockedAlertText = "Complete the Sentences level to unlock Paragraphs!"
+        default:
+            lockedAlertText = "Complete the previous level to unlock this practice!"
+        }
+        showLockedAlert = true
+    }
+
     // MARK: - Difficulty Card
     private func difficultyCard(
         title: String,

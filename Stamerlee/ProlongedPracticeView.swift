@@ -11,11 +11,11 @@ public struct ProlongedPracticeView: View {
     @State private var showAnalysis: Bool = false
 
     private var isSentences: Bool {
-        state.selectedDifficulty == "Sentences" || state.selectedDifficulty == "Medium"
+        state.selectedDifficulty == "Sentences"
     }
 
     private var isParagraphs: Bool {
-        state.selectedDifficulty == "Paragraphs" || state.selectedDifficulty == "Hard"
+        state.selectedDifficulty == "Paragraphs"
     }
 
     private var level: String {
@@ -38,8 +38,8 @@ public struct ProlongedPracticeView: View {
             return [
                 "I wwouldd rreally likke a cup of coffee",
                 "The wweather is bbeautiful this morning",
-                "Could you please repeat that slowly",
-                "I am feeling calm and confident today"
+                "Coulld youu pleeasse reppeat thaat slowwlyy",
+                "I am feeelingg caalm and conffident tooday"
             ]
         } else if isSentences {
             return [
@@ -67,51 +67,20 @@ public struct ProlongedPracticeView: View {
     }
 
     public var body: some View {
-        ZStack(alignment: .top) {
-            StamerleeTheme.backgroundDark.ignoresSafeArea()
-
-            BackgroundImagesDecorationView()
-
-            if showAnalysis {
-                analysisView
-                    .transition(.opacity)
-            } else {
-                SpeakPracticeScreen(
-                    prompts: practicePhrases,
-                    allowsMultilinePrompt: isSentences || isParagraphs,
-                    showBackgroundImages: false,
-                    onBack: {
-                        state.navigate(to: .prolongedSpeechDifficulty, forward: false)
-                    },
-                    onFinish: {
-                        if state.selectedDifficulty == "Easy" || state.selectedDifficulty == "Words" {
-                            state.hasAttemptedProlongedEasy = true
-                        }
-                        withAnimation(.easeInOut(duration: 0.28)) {
-                            showAnalysis = true
-                        }
-                    }
-                )
-                .transition(.opacity)
-            }
-        }
-    }
-
-    private var analysisView: some View {
-        ExerciseAnalysisSkeletonView(
-            scoreText: scoreText,
-            maxScoreText: "/ 10",
-            subtitle: "Great job completing your prolonged speech session!",
-            onDone: {
-                let score = Double(scoreText) ?? 8.8
-                state.recordProlongedScore(difficulty: level, score: score)
-                state.navigate(to: .homeDashboard)
+        SpeakPracticeScreen(
+            prompts: practicePhrases,
+            allowsMultilinePrompt: isSentences || isParagraphs,
+            showBackgroundImages: true,
+            onBack: {
+                state.navigate(to: .prolongedSpeechDifficulty, forward: false)
+            },
+            onFinish: {
+                if state.selectedDifficulty == "Words" {
+                    state.hasAttemptedProlongedEasy = true
+                }
+                state.navigate(to: .prolongedAnalysis)
             }
         )
-        .onAppear {
-            let score = Double(scoreText) ?? 8.8
-            state.recordProlongedScore(difficulty: level, score: score)
-        }
     }
 }
 
@@ -129,9 +98,9 @@ public struct ProlongedAnalysisView: View {
 
     private var scoreText: String {
         switch level {
-        case "Paragraphs", "Hard":
+        case "Paragraphs":
             return "7.9"
-        case "Sentences", "Medium":
+        case "Sentences":
             return "8.5"
         default:
             return "8.8"

@@ -757,10 +757,8 @@ public struct BeatBuddyPracticeView: View {
                     finishPractice()
                 } label: {
                     HStack(spacing: 10) {
-                        Text("Finish Practice")
-                            .font(.system(size: 16, weight: .semibold, design: .rounded))
-                        Image(systemName: "arrow.right")
-                            .font(.system(size: 17, weight: .bold))
+                        Text("Finish")
+                            .font(.system(size: 17, weight: .semibold, design: .rounded))
                     }
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)

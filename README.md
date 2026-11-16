@@ -75,7 +75,6 @@ A modern, high-fidelity iOS frontend implementation of **Stamerlee** built with 
 
 10. **Prolonged Easy Practice** (`ProlongedPracticeView.swift`) *(New "prolonged easy level")*
     - Circular back button `<` returns to Difficulty Selection.
-    - **DAF Toggle Button**: Top right pill with headphones icon and active feedback state.
     - Title: *"Easy"*
     - Subtitle: *"Stretch the sounds gently as you speak, keeping each word slow, and relaxed"*
     - **Word Card**: Soft pill container with bold blue text: **“Wattttter...”** and 3-dot indicator.

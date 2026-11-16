@@ -332,12 +332,12 @@ public struct DifficultyCard: View {
                 HStack {
                     badge
                     Spacer()
-                    if isCompleted {
-                        Image(systemName: "checkmark.circle.fill")
-                            .font(.system(size: 18, weight: .semibold))
-                            .foregroundStyle(StamerleeTheme.primaryBlue)
+                    if isLocked {
+                        Image(systemName: "lock.fill")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(Color.gray.opacity(0.7))
                             .frame(width: 30, alignment: .trailing)
-                    } else if !isLocked {
+                    } else {
                         Image(systemName: "chevron.right")
                             .font(.system(size: 14, weight: .semibold))
                             .foregroundStyle(.gray.opacity(0.5))
@@ -356,17 +356,8 @@ public struct DifficultyCard: View {
 
     @ViewBuilder
     private var badge: some View {
-        if isLocked {
-            Image(systemName: "lock.fill")
-                .font(.system(size: 15, weight: .bold))
-                .foregroundStyle(.white)
-                .frame(width: 38, height: 38)
-                .background(Color(red: 90 / 255, green: 105 / 255, blue: 180 / 255))
-                .clipShape(Circle())
-        } else {
-            Color.clear
-                .frame(width: 38, height: 38)
-        }
+        Color.clear
+            .frame(width: 30, height: 30)
     }
 }
 

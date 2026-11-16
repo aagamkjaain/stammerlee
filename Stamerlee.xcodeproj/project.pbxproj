@@ -51,7 +51,6 @@
 		AA000001034 /* AppTabNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002034 /* AppTabNavigation.swift */; };
 		AA000001035 /* FluencyLapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002035 /* FluencyLapView.swift */; };
 		AA000001036 /* FluencyLapPracticeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002036 /* FluencyLapPracticeView.swift */; };
-		AA000001037 /* ChromaKeyVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002037 /* ChromaKeyVideoView.swift */; };
 		AA000001038 /* LaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002038 /* LaunchView.swift */; };
 		B10000001 /* ConfettiSwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000001 /* ConfettiSwiftUI.swift */; };
 /* End PBXBuildFile section */
@@ -101,10 +100,9 @@
 		AA000002034 /* AppTabNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTabNavigation.swift; sourceTree = "<group>"; };
 		AA000002035 /* FluencyLapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FluencyLapView.swift; sourceTree = "<group>"; };
 		AA000002036 /* FluencyLapPracticeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FluencyLapPracticeView.swift; sourceTree = "<group>"; };
-		AA000002037 /* ChromaKeyVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChromaKeyVideoView.swift; sourceTree = "<group>"; };
 		AA000002038 /* LaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchView.swift; sourceTree = "<group>"; };
-		B00000001 /* ConfettiSwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiSwiftUI.swift; sourceTree = "<group>"; };
 		AA000003001 /* Stamerlee.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stamerlee.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B00000001 /* ConfettiSwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiSwiftUI.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -169,7 +167,6 @@
 				2352B31C30AA5AEA00195DEF /* pictures/prolonged1.png */,
 				2352B31630AA5AEA00195DEF /* pictures/Cloud-2.png */,
 				2352B31730AA5AEA00195DEF /* pictures/Sparkle.png */,
-				AA000002037 /* ChromaKeyVideoView.swift */,
 				AA000002038 /* LaunchView.swift */,
 				2352B30930A7221700195DEF /* prolongedvideo.mp4 */,
 				2352B30C30A727A400195DEF /* pop.mp3 */,
@@ -299,7 +296,6 @@
 				AA000001034 /* AppTabNavigation.swift in Sources */,
 				AA000001035 /* FluencyLapView.swift in Sources */,
 				AA000001036 /* FluencyLapPracticeView.swift in Sources */,
-				AA000001037 /* ChromaKeyVideoView.swift in Sources */,
 				AA000001038 /* LaunchView.swift in Sources */,
 				B10000001 /* ConfettiSwiftUI.swift in Sources */,
 			);

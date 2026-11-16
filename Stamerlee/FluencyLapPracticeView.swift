@@ -47,7 +47,7 @@ public struct FluencyLapPracticeView: View {
 
 public struct SpeakPracticeScreen: View {
     let prompts: [String]
-    let instruction: String
+    let instruction: String?
     let onBack: () -> Void
     let onFinish: () -> Void
     let allowsMultilinePrompt: Bool
@@ -60,7 +60,7 @@ public struct SpeakPracticeScreen: View {
 
     public init(
         prompts: [String],
-        instruction: String = "Stretch the sounds gently as you speak, keeping each word slow, smooth, and relaxed.",
+        instruction: String? = nil,
         allowsMultilinePrompt: Bool = false,
         showBackgroundImages: Bool = false,
         onBack: @escaping () -> Void,
@@ -95,14 +95,16 @@ public struct SpeakPracticeScreen: View {
             VStack(spacing: 0) {
                 topBar
 
-                Text(instruction)
-                    .font(.system(size: 15, weight: .regular, design: .rounded))
-                    .foregroundStyle(.white)
-                    .lineSpacing(5)
-                    .multilineTextAlignment(.leading)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, 28)
+                if let instruction, !instruction.isEmpty {
+                    Text(instruction)
+                        .font(.system(size: 15, weight: .regular, design: .rounded))
+                        .foregroundStyle(.white)
+                        .lineSpacing(5)
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.top, 28)
+                }
 
                 Spacer(minLength: 12)
 
@@ -124,10 +126,9 @@ public struct SpeakPracticeScreen: View {
                     finishPractice()
                 } label: {
                     HStack(spacing: 10) {
-                        Text("Finish Practice")
+                        Text("Finish")
                             .font(.system(size: 17, weight: .semibold, design: .rounded))
-                        Image(systemName: "arrow.right")
-                            .font(.system(size: 18, weight: .bold))
+
                     }
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
@@ -286,5 +287,3 @@ private struct FluencyFinishButtonStyle: ButtonStyle {
             .animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
     }
 }
-
-
