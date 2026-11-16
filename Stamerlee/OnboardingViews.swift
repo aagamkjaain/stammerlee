@@ -199,9 +199,6 @@ public struct LoginView: View {
 public struct OnboardingStepOneView: View {
     @Bindable public var state: AppState
 
-    @State private var footerOffset: CGFloat = 160
-    @State private var footerOpacity: Double = 0.0
-
     public init(state: AppState) {
         self.state = state
     }
@@ -209,23 +206,9 @@ public struct OnboardingStepOneView: View {
     public var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .bottom) {
-                // Deep Purple-to-Midnight Gradient Background (Full bleed)
-                LinearGradient(
-                    colors: [
-                        Color(red: 45 / 255, green: 38 / 255, blue: 135 / 255), // Indigo purple top
-                        Color(red: 24 / 255, green: 20 / 255, blue: 70 / 255),  // Mid violet
-                        Color(red: 8 / 255, green: 10 / 255, blue: 24 / 255)   // Midnight base
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
-
-                // Bottom Illustration (Lowered resting position, smoothly sliding up from below without swing)
-                onboardingFooterView(width: geo.size.width)
-                    .offset(y: footerOffset + 40)
-                    .opacity(footerOpacity)
-                    .ignoresSafeArea(edges: .bottom)
+                // Dark Background (Full bleed)
+                StamerleeTheme.backgroundDark
+                    .ignoresSafeArea()
 
                 // Foreground Content strictly constrained to screen width
                 VStack(spacing: 0) {
@@ -280,31 +263,6 @@ public struct OnboardingStepOneView: View {
             }
             .frame(width: geo.size.width, height: geo.size.height)
         }
-        .onAppear {
-            withAnimation(.easeOut(duration: 0.65).delay(0.05)) {
-                footerOffset = 0
-                footerOpacity = 1.0
-            }
-        }
-    }
-
-    @ViewBuilder
-    private func onboardingFooterView(width: CGFloat) -> some View {
-        Group {
-            if let uiImage = UIImage(named: "launchfooter")
-                ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "launchfooter", ofType: "png") ?? "") {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: width, alignment: .bottom)
-            } else {
-                Image("launchfooter")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: width, alignment: .bottom)
-            }
-        }
-        .allowsHitTesting(false)
     }
 }
 
@@ -319,22 +277,9 @@ public struct OnboardingStepTwoView: View {
     public var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .bottom) {
-                // Deep Purple-to-Midnight Gradient Background (Full bleed)
-                LinearGradient(
-                    colors: [
-                        Color(red: 45 / 255, green: 38 / 255, blue: 135 / 255),
-                        Color(red: 24 / 255, green: 20 / 255, blue: 70 / 255),
-                        Color(red: 8 / 255, green: 10 / 255, blue: 24 / 255)
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
-
-                // Bottom Illustration (Rolling hills, clouds & starry motes from launchfooter.png)
-                onboardingFooterView(width: geo.size.width)
-                    .offset(y: 40)
-                    .ignoresSafeArea(edges: .bottom)
+                // Dark Background (Full bleed)
+                StamerleeTheme.backgroundDark
+                    .ignoresSafeArea()
 
                 // Foreground Content strictly constrained to screen width
                 VStack(spacing: 0) {
@@ -389,25 +334,6 @@ public struct OnboardingStepTwoView: View {
             }
             .frame(width: geo.size.width, height: geo.size.height)
         }
-    }
-
-    @ViewBuilder
-    private func onboardingFooterView(width: CGFloat) -> some View {
-        Group {
-            if let uiImage = UIImage(named: "launchfooter")
-                ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "launchfooter", ofType: "png") ?? "") {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: width, alignment: .bottom)
-            } else {
-                Image("launchfooter")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: width, alignment: .bottom)
-            }
-        }
-        .allowsHitTesting(false)
     }
 }
 
@@ -561,22 +487,9 @@ public struct ExploreActivitiesView: View {
     public var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .bottom) {
-                // Deep Purple-to-Midnight Gradient Background (Full bleed)
-                LinearGradient(
-                    colors: [
-                        Color(red: 45 / 255, green: 38 / 255, blue: 135 / 255),
-                        Color(red: 24 / 255, green: 20 / 255, blue: 70 / 255),
-                        Color(red: 8 / 255, green: 10 / 255, blue: 24 / 255)
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
-
-                // Bottom Illustration (Rolling hills, clouds & starry motes from launchfooter.png)
-                onboardingFooterView(width: geo.size.width)
-                    .offset(y: 40)
-                    .ignoresSafeArea(edges: .bottom)
+                // Dark Background (Full bleed)
+                StamerleeTheme.backgroundDark
+                    .ignoresSafeArea()
 
                 // Foreground Content strictly constrained to screen width
                 VStack(alignment: .leading, spacing: 0) {
@@ -628,25 +541,6 @@ public struct ExploreActivitiesView: View {
             .frame(width: geo.size.width, height: geo.size.height)
         }
         .onAppear { cardsVisible = true }
-    }
-
-    @ViewBuilder
-    private func onboardingFooterView(width: CGFloat) -> some View {
-        Group {
-            if let uiImage = UIImage(named: "launchfooter")
-                ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "launchfooter", ofType: "png") ?? "") {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: width, alignment: .bottom)
-            } else {
-                Image("launchfooter")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: width, alignment: .bottom)
-            }
-        }
-        .allowsHitTesting(false)
     }
 
     private func activityCard(_ item: ActivityCardItem) -> some View {
