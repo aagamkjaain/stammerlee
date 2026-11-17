@@ -50,9 +50,11 @@ public struct NarrationIntroView: View {
 
                 // Twinkling Starfield & Motes Layer
                 twinklingStarsLayer(w: w, h: h)
+                    .allowsHitTesting(false)
 
                 // Animated Clouds Layer with Edge-to-Edge Bleed
                 cloudsLayer(w: w, h: h)
+                    .allowsHitTesting(false)
 
                 // Yellow Confetti Effect using ConfettiSwiftUI (Step 4: Well done!)
                 Color.clear
@@ -104,6 +106,7 @@ public struct NarrationIntroView: View {
 
                     Spacer(minLength: 0)
                 }
+                .zIndex(20)
             }
         }
         .preferredColorScheme(.dark)
@@ -114,12 +117,17 @@ public struct NarrationIntroView: View {
         }
     }
 
-    // MARK: - Top Navigation Bar (Glass close button only, no back button)
+    // MARK: - Top Navigation Bar
     private var topBar: some View {
         HStack {
+            if step != .wellDone {
+                BackNavButton {
+                    state.navigate(to: .homeDashboard, forward: false)
+                }
+            }
             Spacer()
             GlassCloseButton {
-                state.navigate(to: .homeDashboard, forward: false)
+                redirectToRealPractice()
             }
         }
     }
@@ -284,7 +292,7 @@ public struct NarrationIntroView: View {
             .buttonStyle(.plain)
             .disabled(isListening)
 
-            Text(isListening ? "Listening... speaking freely" : "Tap microphone to speak about today")
+            Text(isListening ? "Listening" : "Tap and hold to speak")
                 .font(.system(size: 13.5, weight: .regular, design: .rounded))
                 .foregroundStyle(Color(red: 195 / 255, green: 190 / 255, blue: 220 / 255))
                 .padding(.top, 14)
@@ -330,22 +338,11 @@ public struct NarrationIntroView: View {
                         .font(.system(size: 34, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
 
-                    Text("You're ready to narrate your thoughts with ease")
+                    Text("Let's start practicing")
                         .font(.system(size: 15, weight: .medium, design: .rounded))
                         .foregroundStyle(Color(red: 195 / 255, green: 185 / 255, blue: 230 / 255))
                         .multilineTextAlignment(.center)
                         .padding(.top, 4)
-
-                    // 3.5s gap indicator before real practice starts
-                    HStack(spacing: 8) {
-                        ProgressView()
-                            .tint(Color(red: 195 / 255, green: 175 / 255, blue: 255 / 255))
-                            .scaleEffect(0.85)
-                        Text("Starting real practice in a moment...")
-                            .font(.system(size: 13, weight: .medium, design: .rounded))
-                            .foregroundStyle(Color(red: 210 / 255, green: 205 / 255, blue: 240 / 255))
-                    }
-                    .padding(.top, 10)
                 }
 
                 // Decorative Accent Motes & Stars

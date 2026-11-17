@@ -49,9 +49,11 @@ public struct PictureDescriptionIntroView: View {
 
                 // Twinkling Starfield & Motes Layer
                 twinklingStarsLayer(w: w, h: h)
+                    .allowsHitTesting(false)
 
                 // Animated Clouds Layer with Edge-to-Edge Bleed & Lowered Bottom Cloud
                 cloudsLayer(w: w, h: h)
+                    .allowsHitTesting(false)
 
                 // Yellow Confetti Effect using ConfettiSwiftUI (Step 4: Well done!)
                 Color.clear
@@ -103,6 +105,7 @@ public struct PictureDescriptionIntroView: View {
 
                     Spacer(minLength: 0)
                 }
+                .zIndex(20)
             }
         }
         .preferredColorScheme(.dark)
@@ -113,12 +116,17 @@ public struct PictureDescriptionIntroView: View {
         }
     }
 
-    // MARK: - Top Navigation Bar (Glass close button only, no back button)
+    // MARK: - Top Navigation Bar
     private var topBar: some View {
         HStack {
+            if step != .wellDone {
+                BackNavButton {
+                    state.navigate(to: .homeDashboard, forward: false)
+                }
+            }
             Spacer()
             GlassCloseButton {
-                state.navigate(to: .homeDashboard, forward: false)
+                redirectToPractice()
             }
         }
     }
@@ -162,11 +170,7 @@ public struct PictureDescriptionIntroView: View {
 
             PicTwinklingStarView(assetName: "Sparkle-2", size: 28, delay: 0.1, duration: 1.0)
 
-            Text("Quick Demo")
-                .font(.system(size: 28, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
-
-            Text("Let's see how Picture\nDescription works")
+            Text("Let's understand how Picture\nDescription works:")
                 .font(.system(size: 21, weight: .medium, design: .rounded))
                 .foregroundStyle(.white)
                 .multilineTextAlignment(.center)
@@ -176,12 +180,13 @@ public struct PictureDescriptionIntroView: View {
                 .font(.system(size: 15, weight: .regular, design: .rounded))
                 .foregroundStyle(Color(red: 195 / 255, green: 185 / 255, blue: 230 / 255))
                 .multilineTextAlignment(.center)
-                .lineSpacing(3)
+                .lineSpacing(4)
                 .padding(.top, 4)
+                .padding(.horizontal, 20)
 
             Spacer()
         }
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .contentShape(Rectangle())
         .onTapGesture {
             goToStep(.practice)
@@ -194,7 +199,7 @@ public struct PictureDescriptionIntroView: View {
             Spacer()
 
             // Instruction Headline
-            Text("A picture will be shown and you have to describe it")
+            Text("Try to describe this picture")
                 .font(.system(size: 17, weight: .semibold, design: .rounded))
                 .foregroundStyle(Color(red: 220 / 255, green: 215 / 255, blue: 245 / 255))
                 .multilineTextAlignment(.center)
@@ -299,7 +304,7 @@ public struct PictureDescriptionIntroView: View {
             .buttonStyle(.plain)
             .disabled(isListening)
 
-            Text(isListening ? "Listening... describe the picture" : "Tap microphone to try describing")
+            Text(isListening ? "Listening" : "Tap and hold to speak")
                 .font(.system(size: 13.5, weight: .regular, design: .rounded))
                 .foregroundStyle(Color(red: 195 / 255, green: 190 / 255, blue: 220 / 255))
                 .padding(.top, 14)
@@ -345,22 +350,11 @@ public struct PictureDescriptionIntroView: View {
                         .font(.system(size: 34, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
 
-                    Text("You're ready to describe pictures with confidence")
+                    Text("Let's start practicing")
                         .font(.system(size: 15, weight: .medium, design: .rounded))
                         .foregroundStyle(Color(red: 195 / 255, green: 185 / 255, blue: 230 / 255))
                         .multilineTextAlignment(.center)
                         .padding(.top, 4)
-
-                    // 3-4s gap indicator before real practice starts
-                    HStack(spacing: 8) {
-                        ProgressView()
-                            .tint(Color(red: 195 / 255, green: 175 / 255, blue: 255 / 255))
-                            .scaleEffect(0.85)
-                        Text("Starting practice in a moment...")
-                            .font(.system(size: 13, weight: .medium, design: .rounded))
-                            .foregroundStyle(Color(red: 210 / 255, green: 205 / 255, blue: 240 / 255))
-                    }
-                    .padding(.top, 10)
                 }
 
                 // Decorative Accent Motes & Stars

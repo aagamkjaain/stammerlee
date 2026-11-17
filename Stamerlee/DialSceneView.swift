@@ -69,9 +69,11 @@ public struct DialSceneIntroView: View {
 
                 // Twinkling Starfield & Motes Layer
                 twinklingStarsLayer(w: w, h: h)
+                    .allowsHitTesting(false)
 
                 // Animated Clouds Layer
                 cloudsLayer(w: w, h: h)
+                    .allowsHitTesting(false)
 
                 // Yellow Confetti Effect using ConfettiSwiftUI (Step 4: Well done!)
                 Color.clear
@@ -123,6 +125,7 @@ public struct DialSceneIntroView: View {
 
                     Spacer(minLength: 0)
                 }
+                .zIndex(20)
             }
         }
         .preferredColorScheme(.dark)
@@ -133,12 +136,17 @@ public struct DialSceneIntroView: View {
         }
     }
 
-    // MARK: - Top Navigation Bar (Glass close button only, no back button)
+    // MARK: - Top Navigation Bar
     private var topBar: some View {
         HStack {
+            if step != .wellDone {
+                BackNavButton {
+                    state.navigate(to: .homeDashboard, forward: false)
+                }
+            }
             Spacer()
             GlassCloseButton {
-                state.navigate(to: .homeDashboard, forward: false)
+                redirectToRealPractice()
             }
         }
     }
@@ -371,15 +379,15 @@ public struct DialSceneIntroView: View {
 
     private var micPromptText: String {
         if isListening {
-            return "Listening... speaking your reply"
+            return "Listening"
         } else if convoTurn == 0 {
-            return "Tap microphone to say: \"I'm doing well, thank you!\""
+            return "Tap and hold to say: \"I'm doing well, thank you!\""
         } else if convoTurn == 2 {
-            return "Tap microphone to say: \"Yes, ready to practice!\""
+            return "Tap and hold to say: \"Yes, ready to practice!\""
         } else if convoTurn >= 4 {
             return "Call completed! Good job."
         } else {
-            return "Caller is speaking..."
+            return "Caller is speaking"
         }
     }
 
@@ -497,7 +505,7 @@ public struct DialSceneIntroView: View {
                         .font(.system(size: 34, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
 
-                    Text("You completed your demo call with ease")
+                    Text("Let's start practicing")
                         .font(.system(size: 15, weight: .medium, design: .rounded))
                         .foregroundStyle(Color(red: 195 / 255, green: 185 / 255, blue: 230 / 255))
                         .multilineTextAlignment(.center)
@@ -921,13 +929,7 @@ public struct DialSceneView: View {
     private var header: some View {
         HStack {
             BackNavButton {
-                if stage == .scenarios {
-                    withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
-                        stage = .intro
-                    }
-                } else {
-                    stage = .scenarios
-                }
+                state.navigate(to: .homeDashboard, forward: false)
             }
             Spacer()
         }

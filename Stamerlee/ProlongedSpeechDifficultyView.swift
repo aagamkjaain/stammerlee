@@ -27,9 +27,6 @@ public struct ProlongedSpeechDifficultyView: View {
                         state.navigate(to: .homeDashboard, forward: false)
                     }
                     Spacer()
-                    GlassCloseButton {
-                        state.navigate(to: .homeDashboard, forward: false)
-                    }
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 16)

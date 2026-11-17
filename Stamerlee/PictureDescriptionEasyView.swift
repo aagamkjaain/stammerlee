@@ -72,11 +72,7 @@ public struct PictureDescriptionEasyView: View {
             Spacer(minLength: 16)
 
             PulsingMicrophoneButton(isListening: $isListening) {
-                isListening = true
-                completeCurrentDifficulty()
-                withAnimation(.easeInOut(duration: 0.25)) {
-                    isAnalysisVisible = true
-                }
+                isListening.toggle()
             }
             .frame(maxWidth: .infinity)
             .padding(.bottom, 28)

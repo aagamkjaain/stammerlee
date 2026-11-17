@@ -503,8 +503,7 @@ public struct PulsingMicrophoneButton: View {
             )
         }
         .buttonStyle(.haptic(weight: .medium, pressedScale: 0.96))
-        .disabled(isListening)
-        .accessibilityLabel(isListening ? "Listening" : "Speak word")
+        .accessibilityLabel(isListening ? "Stop listening" : "Tap to speak")
         .onChange(of: isListening) { _, listening in
             pulse = listening
         }
@@ -527,7 +526,7 @@ public struct SpeechMicrophoneButton: View {
                 Image(systemName: isListening ? "waveform" : "mic.fill")
                     .font(.system(size: 18, weight: .bold))
 
-                Text(isListening ? "Listening..." : "Tap to speak")
+                Text(isListening ? "Listening" : "Tap to speak")
                     .font(.system(size: 16, weight: .semibold, design: .rounded))
             }
             .foregroundStyle(.white)
@@ -568,6 +567,7 @@ public struct GlassCloseButton: View {
                     .foregroundStyle(.white)
             }
             .frame(width: 36, height: 36)
+            .contentShape(Circle())
             .shadow(color: Color.black.opacity(0.2), radius: 6, x: 0, y: 2)
         }
         .buttonStyle(.haptic(weight: .light, pressedScale: 0.92))

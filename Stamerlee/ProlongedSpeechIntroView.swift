@@ -53,9 +53,11 @@ public struct ProlongedSpeechIntroView: View {
 
                 // Twinkling Starfield & Motes Layer
                 twinklingStarsLayer(w: w, h: h)
+                    .allowsHitTesting(false)
 
                 // Animated Clouds Layer with Edge-to-Edge Bleed & Lowered Bottom Cloud
                 cloudsLayer(w: w, h: h)
+                    .allowsHitTesting(false)
 
                 // Yellow Confetti Effect using ConfettiSwiftUI (Step 4: Well done!)
                 Color.clear
@@ -107,6 +109,7 @@ public struct ProlongedSpeechIntroView: View {
 
                     Spacer(minLength: 0)
                 }
+                .zIndex(20)
             }
         }
         .preferredColorScheme(.dark)
@@ -117,9 +120,14 @@ public struct ProlongedSpeechIntroView: View {
         }
     }
 
-    // MARK: - Top Navigation Bar (Glass close button only, no back button)
+    // MARK: - Top Navigation Bar (Back button and glass close button)
     private var topBar: some View {
         HStack {
+            if step != .wellDone {
+                BackNavButton {
+                    state.navigate(to: .homeDashboard, forward: false)
+                }
+            }
             Spacer()
 
             GlassCloseButton {
@@ -274,7 +282,7 @@ public struct ProlongedSpeechIntroView: View {
             .buttonStyle(.plain)
             .disabled(isListening)
 
-            Text(isListening ? "Listening... stretching smoothly" : "Tap microphone to try 'sweet'")
+            Text(isListening ? "Listening... stretching smoothly" : "Tap and hold to speak")
                 .font(.system(size: 14, weight: .regular, design: .rounded))
                 .foregroundStyle(Color(red: 195 / 255, green: 190 / 255, blue: 220 / 255))
                 .padding(.top, 16)
@@ -321,6 +329,12 @@ public struct ProlongedSpeechIntroView: View {
                     Text("Well done!")
                         .font(.system(size: 34, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
+
+                    Text("Let's start practicing")
+                        .font(.system(size: 15, weight: .medium, design: .rounded))
+                        .foregroundStyle(Color(red: 195 / 255, green: 185 / 255, blue: 230 / 255))
+                        .multilineTextAlignment(.center)
+                        .padding(.top, 4)
                 }
 
                 // Decorative Accent Motes & Stars from Screenshot

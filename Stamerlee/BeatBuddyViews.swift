@@ -64,9 +64,6 @@ private struct BeatBuddyShell<Content: View>: View {
                         }
                     }
                     Spacer()
-                    GlassCloseButton {
-                        state.navigate(to: .homeDashboard, forward: false)
-                    }
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 16)
@@ -508,10 +505,6 @@ public struct BeatBuddyBPMView: View {
                         .shadow(color: Color.black.opacity(0.45), radius: 6, x: 0, y: 2)
 
                     Spacer()
-
-                    GlassCloseButton {
-                        state.navigate(to: .homeDashboard, forward: false)
-                    }
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, -48)

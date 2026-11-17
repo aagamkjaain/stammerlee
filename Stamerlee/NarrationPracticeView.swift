@@ -71,8 +71,7 @@ public struct NarrationPracticeView: View {
             Spacer()
 
             PulsingMicrophoneButton(isListening: $isListening) {
-                isListening = true
-                complete()
+                isListening.toggle()
             }
             .frame(maxWidth: .infinity)
             .padding(.bottom, 26)
