@@ -42,7 +42,9 @@ extension View {
 public struct ProfileView: View {
     @Bindable public var state: AppState
     @Environment(\.profileAvatarFrameReporter) private var reportAvatarFrame
-    @State private var isEditingProfile = false
+    @State private var isEditingName = false
+    @State private var tempName = ""
+    @FocusState private var isNameFieldFocused: Bool
     @State private var selectedPhoto: PhotosPickerItem?
     @State private var didAppearContent = false
 
@@ -134,43 +136,147 @@ public struct ProfileView: View {
                 .frame(height: 184)
 
             BackNavButton {
+                if isEditingName {
+                    commitName()
+                }
                 state.navigate(to: .homeDashboard, forward: false)
             }
             .padding(.top, 18)
             .padding(.leading, 20)
             .frame(maxWidth: .infinity, alignment: .topLeading)
+            .zIndex(2)
 
-            VStack(spacing: 9) {
-                ProfileAvatar(
-                    style: state.profileAvatarStyle,
-                    imageData: state.profileAvatarData,
-                    size: 84
-                )
-                .opacity(state.isHeroAvatarTransitionActive ? 0 : 1)
-                .reportProfileAvatarFrame(.profile)
+            VStack(spacing: 12) {
+                // Profile Avatar with PhotosPicker & Pen Badge
+                PhotosPicker(selection: $selectedPhoto, matching: .images) {
+                    ZStack(alignment: .bottomTrailing) {
+                        ProfileAvatar(
+                            style: state.profileAvatarStyle,
+                            imageData: state.profileAvatarData,
+                            size: 84
+                        )
+                        .opacity(state.isHeroAvatarTransitionActive ? 0 : 1)
+                        .reportProfileAvatarFrame(.profile)
 
-                if isEditingProfile {
-                    avatarStylePicker
+                        // Pen icon badge on avatar
+                        ZStack {
+                            Circle()
+                                .fill(
+                                    LinearGradient(
+                                        colors: [
+                                            Color(red: 155 / 255, green: 125 / 255, blue: 255 / 255),
+                                            StamerleeTheme.primaryBlueDark
+                                        ],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .frame(width: 26, height: 26)
+                                .overlay(
+                                    Circle()
+                                        .stroke(Color(red: 10 / 255, green: 13 / 255, blue: 31 / 255), lineWidth: 2)
+                                )
+                                .shadow(color: .black.opacity(0.35), radius: 3, x: 0, y: 1.5)
+
+                            Image(systemName: "pencil")
+                                .font(.system(size: 11, weight: .bold))
+                                .foregroundStyle(.white)
+                        }
+                        .offset(x: 2, y: 2)
+                    }
+                }
+                .buttonStyle(AvatarInteractiveButtonStyle())
+                .accessibilityLabel("Change profile photo")
+                .contextMenu {
+                    if state.profileAvatarData != nil {
+                        Button(role: .destructive) {
+                            withAnimation {
+                                state.profileAvatarData = nil
+                            }
+                        } label: {
+                            Label("Remove Photo", systemImage: "trash")
+                        }
+                    }
                 }
 
+                // Name section with pen icon & inline editing
                 Group {
-                    if isEditingProfile {
-                        TextField("Username", text: $state.profileName)
-                            .font(.system(size: 22, weight: .bold, design: .rounded))
-                            .foregroundStyle(StamerleeTheme.textPrimaryLight)
-                            .multilineTextAlignment(.center)
-                            .textInputAutocapitalization(.words)
-                            .autocorrectionDisabled()
-                            .padding(.horizontal, 14)
-                            .frame(height: 38)
-                            .background(StamerleeTheme.profileCard)
-                            .clipShape(Capsule())
-                            .padding(.horizontal, 48)
+                    if isEditingName {
+                        HStack(spacing: 8) {
+                            TextField("Enter name", text: $tempName)
+                                .font(.system(size: 20, weight: .bold, design: .rounded))
+                                .foregroundStyle(.white)
+                                .multilineTextAlignment(.center)
+                                .textInputAutocapitalization(.words)
+                                .autocorrectionDisabled()
+                                .focused($isNameFieldFocused)
+                                .submitLabel(.done)
+                                .onSubmit {
+                                    commitName()
+                                }
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 8)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                        .fill(Color.white.opacity(0.12))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                                .stroke(StamerleeTheme.primaryBlue.opacity(0.7), lineWidth: 1.5)
+                                        )
+                                )
+                                .frame(maxWidth: 220)
+
+                            Button {
+                                commitName()
+                            } label: {
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 13, weight: .bold))
+                                    .foregroundStyle(.white)
+                                    .frame(width: 32, height: 32)
+                                    .background(
+                                        LinearGradient(
+                                            colors: [
+                                                Color(red: 155 / 255, green: 125 / 255, blue: 255 / 255),
+                                                StamerleeTheme.primaryBlueDark
+                                            ],
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )
+                                    )
+                                    .clipShape(Circle())
+                                    .shadow(color: StamerleeTheme.primaryBlue.opacity(0.4), radius: 4, x: 0, y: 2)
+                            }
+                            .accessibilityLabel("Save name")
+                        }
+                        .transition(.opacity.combined(with: .scale(scale: 0.95)))
                     } else {
-                        Text(state.profileName)
-                            .font(.system(size: 28, weight: .bold, design: .rounded))
-                            .foregroundStyle(StamerleeTheme.textPrimaryDark)
-                            .minimumScaleFactor(0.8)
+                        Button {
+                            tempName = state.profileName
+                            withAnimation(.spring(response: 0.32, dampingFraction: 0.8)) {
+                                isEditingName = true
+                            }
+                            isNameFieldFocused = true
+                        } label: {
+                            HStack(spacing: 8) {
+                                Text(state.profileName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "Your Name" : state.profileName)
+                                    .font(.system(size: 26, weight: .bold, design: .rounded))
+                                    .foregroundStyle(StamerleeTheme.textPrimaryDark)
+                                    .minimumScaleFactor(0.8)
+                                    .lineLimit(1)
+
+                                Image(systemName: "pencil")
+                                    .font(.system(size: 11, weight: .bold))
+                                    .foregroundStyle(Color(red: 200 / 255, green: 195 / 255, blue: 235 / 255))
+                                    .frame(width: 24, height: 24)
+                                    .background(Color.white.opacity(0.12))
+                                    .clipShape(Circle())
+                                    .overlay(
+                                        Circle().stroke(Color.white.opacity(0.18), lineWidth: 1)
+                                    )
+                            }
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("Edit name")
                     }
 
                     Text("Joined in October 2026")
@@ -185,59 +291,31 @@ public struct ProfileView: View {
                 )
             }
             .frame(maxWidth: .infinity)
-            .padding(.top, 44)
+            .padding(.top, 40)
         }
         .task(id: selectedPhoto) {
             guard let selectedPhoto else { return }
             guard let data = try? await selectedPhoto.loadTransferable(type: Data.self) else { return }
-            state.profileAvatarData = data
+            if let uiImage = UIImage(data: data), let compressed = uiImage.jpegData(compressionQuality: 0.85) {
+                state.profileAvatarData = compressed
+            } else {
+                state.profileAvatarData = data
+            }
             state.profileAvatarStyle = 0
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         }
     }
 
-    private var avatarStylePicker: some View {
-        HStack(spacing: 12) {
-            ForEach(0..<3, id: \.self) { style in
-                Button {
-                    state.profileAvatarData = nil
-                    state.profileAvatarStyle = style
-                } label: {
-                    ProfileAvatar(style: style, imageData: nil)
-                        .scaleEffect(0.42)
-                        .frame(width: 42, height: 42)
-                        .background(
-                            Circle()
-                                .stroke(
-                                    state.profileAvatarStyle == style
-                                        ? StamerleeTheme.primaryBlue
-                                        : Color.clear,
-                                    lineWidth: 3
-                                )
-                        )
-                }
-                .accessibilityLabel("Avatar style \(style + 1)")
-            }
-
-            PhotosPicker(selection: $selectedPhoto, matching: .images) {
-                Image(systemName: "photo")
-                    .font(.system(size: 17, weight: .semibold))
-                    .foregroundStyle(StamerleeTheme.textPrimaryLight)
-                    .frame(width: 42, height: 42)
-                    .background(StamerleeTheme.profileCard)
-                    .clipShape(Circle())
-                    .overlay(
-                        Circle()
-                            .stroke(
-                                state.profileAvatarData != nil
-                                    ? StamerleeTheme.primaryBlue
-                                    : Color.clear,
-                                lineWidth: 3
-                            )
-                    )
-            }
-            .accessibilityLabel("Choose avatar photo")
+    private func commitName() {
+        let trimmed = tempName.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !trimmed.isEmpty {
+            state.profileName = trimmed
         }
-        .frame(height: 42)
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        withAnimation(.spring(response: 0.32, dampingFraction: 0.8)) {
+            isEditingName = false
+            isNameFieldFocused = false
+        }
     }
 
 //    // MARK: - Stats Section
