@@ -327,8 +327,7 @@ private struct ExerciseRowCard: View {
                     Image(iconName)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: 88, height: 88)
-                        .offset(x: -6)
+                        .frame(width: 60, height: 60)
                         .frame(width: 68, height: 68)
                 } else {
                     Image(iconName)
