@@ -883,6 +883,35 @@ public struct BeatBuddyPracticeView: View {
         }
     }
 
+    private var microphoneControl: some View {
+        UniversalMicrophoneButton(
+            isListening: isListening,
+            isBeating: isBeating && isMetronomeActive,
+            disabled: isListening
+        ) {
+            startListening()
+        }
+    }
+
+    private func startListening() {
+        guard !isListening else { return }
+
+        advanceTask?.cancel()
+        isListening = true
+        pulse = true
+
+        advanceTask = Task { @MainActor in
+            try? await Task.sleep(for: .seconds(2))
+            guard !Task.isCancelled else { return }
+
+            withAnimation(.easeInOut(duration: 0.22)) {
+                pulse = false
+                isListening = false
+                advanceWord()
+            }
+        }
+    }
+
     private func advanceWord() {
         withAnimation(.easeInOut(duration: 0.22)) {
             if currentWordIndex + 1 < wordCount {

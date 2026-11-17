@@ -568,9 +568,16 @@ public struct UniversalMicrophoneButton: View {
                         radius: isListening ? 16 : 10
                     )
 
-                Image(systemName: isListening ? "waveform" : "mic.fill")
-                    .font(.system(size: 26, weight: .semibold))
-                    .foregroundStyle(.white)
+                if #available(iOS 17.0, *) {
+                    Image(systemName: isListening ? "square.fill" : "mic.fill")
+                        .font(.system(size: isListening ? 22 : 26, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .contentTransition(.symbolEffect(.replace))
+                } else {
+                    Image(systemName: isListening ? "square.fill" : "mic.fill")
+                        .font(.system(size: isListening ? 22 : 26, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.white)
+                }
             }
             .frame(width: 124, height: 124)
             .contentShape(Circle())
@@ -578,7 +585,7 @@ public struct UniversalMicrophoneButton: View {
         }
         .buttonStyle(.haptic(weight: .medium, pressedScale: 0.96))
         .disabled(disabled)
-        .accessibilityLabel(isListening ? "Listening" : "Tap to speak")
+        .accessibilityLabel(isListening ? "Stop recording" : "Record")
         .onAppear {
             if isListening {
                 pulseMic = true

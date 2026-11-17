@@ -197,7 +197,19 @@ public struct SpeakPracticeScreen: View {
     }
 
     private var microphoneControl: some View {
-        UniversalMicrophoneButton(isListening: isListening, disabled: isListening) {
+        UniversalMicrophoneButton(isListening: isListening, disabled: false) {
+            toggleListening()
+        }
+    }
+
+    private func toggleListening() {
+        if isListening {
+            advanceTask?.cancel()
+            withAnimation(.easeInOut(duration: 0.22)) {
+                pulse = false
+                isListening = false
+            }
+        } else {
             startListening()
         }
     }
