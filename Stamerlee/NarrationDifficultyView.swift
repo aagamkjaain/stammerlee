@@ -373,7 +373,7 @@ public struct NarrationIntroView: View {
             Spacer()
 
             // Glass Action Button to proceed immediately (or auto-redirects after celebration)
-            NarrGlassActionButton(title: "Start Practice Now") {
+            NarrGlassActionButton(title: "Continue") {
                 redirectToRealPractice()
             }
             .padding(.horizontal, 24)
