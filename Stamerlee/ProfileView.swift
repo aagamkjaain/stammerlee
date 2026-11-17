@@ -135,55 +135,56 @@ public struct ProfileView: View {
             StamerleeTheme.profileHeaderBase
                 .frame(height: 184)
 
-            BackNavButton {
-                if isEditingName {
-                    commitName()
+            // Top Bar: Back Chevron (left) and Single Edit Pen (right)
+            HStack {
+                BackNavButton {
+                    if isEditingName {
+                        commitName()
+                    }
+                    state.navigate(to: .homeDashboard, forward: false)
                 }
-                state.navigate(to: .homeDashboard, forward: false)
+
+                Spacer()
+
+                Button {
+                    if isEditingName {
+                        commitName()
+                    } else {
+                        tempName = state.profileName
+                        withAnimation(.spring(response: 0.32, dampingFraction: 0.8)) {
+                            isEditingName = true
+                        }
+                        isNameFieldFocused = true
+                    }
+                } label: {
+                    ZStack {
+                        Circle()
+                            .fill(Color.white.opacity(0.14))
+                            .frame(width: 38, height: 38)
+
+                        Image(systemName: isEditingName ? "checkmark" : "pencil")
+                            .font(.system(size: 15, weight: .bold))
+                            .foregroundStyle(.white)
+                    }
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(isEditingName ? "Save name" : "Edit profile")
             }
             .padding(.top, 18)
-            .padding(.leading, 20)
-            .frame(maxWidth: .infinity, alignment: .topLeading)
+            .padding(.horizontal, 20)
+            .frame(maxWidth: .infinity, alignment: .top)
             .zIndex(2)
 
             VStack(spacing: 12) {
-                // Profile Avatar with PhotosPicker & Pen Badge
+                // Profile Avatar with PhotosPicker (tap to change photo)
                 PhotosPicker(selection: $selectedPhoto, matching: .images) {
-                    ZStack(alignment: .bottomTrailing) {
-                        ProfileAvatar(
-                            style: state.profileAvatarStyle,
-                            imageData: state.profileAvatarData,
-                            size: 84
-                        )
-                        .opacity(state.isHeroAvatarTransitionActive ? 0 : 1)
-                        .reportProfileAvatarFrame(.profile)
-
-                        // Pen icon badge on avatar
-                        ZStack {
-                            Circle()
-                                .fill(
-                                    LinearGradient(
-                                        colors: [
-                                            Color(red: 155 / 255, green: 125 / 255, blue: 255 / 255),
-                                            StamerleeTheme.primaryBlueDark
-                                        ],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    )
-                                )
-                                .frame(width: 26, height: 26)
-                                .overlay(
-                                    Circle()
-                                        .stroke(Color(red: 10 / 255, green: 13 / 255, blue: 31 / 255), lineWidth: 2)
-                                )
-                                .shadow(color: .black.opacity(0.35), radius: 3, x: 0, y: 1.5)
-
-                            Image(systemName: "pencil")
-                                .font(.system(size: 11, weight: .bold))
-                                .foregroundStyle(.white)
-                        }
-                        .offset(x: 2, y: 2)
-                    }
+                    ProfileAvatar(
+                        style: state.profileAvatarStyle,
+                        imageData: state.profileAvatarData,
+                        size: 84
+                    )
+                    .opacity(state.isHeroAvatarTransitionActive ? 0 : 1)
+                    .reportProfileAvatarFrame(.profile)
                 }
                 .buttonStyle(AvatarInteractiveButtonStyle())
                 .accessibilityLabel("Change profile photo")
@@ -199,7 +200,7 @@ public struct ProfileView: View {
                     }
                 }
 
-                // Name section with pen icon & inline editing
+                // Name section with inline editing
                 Group {
                     if isEditingName {
                         HStack(spacing: 8) {
@@ -257,23 +258,11 @@ public struct ProfileView: View {
                             }
                             isNameFieldFocused = true
                         } label: {
-                            HStack(spacing: 8) {
-                                Text(state.profileName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "Your Name" : state.profileName)
-                                    .font(.system(size: 26, weight: .bold, design: .rounded))
-                                    .foregroundStyle(StamerleeTheme.textPrimaryDark)
-                                    .minimumScaleFactor(0.8)
-                                    .lineLimit(1)
-
-                                Image(systemName: "pencil")
-                                    .font(.system(size: 11, weight: .bold))
-                                    .foregroundStyle(Color(red: 200 / 255, green: 195 / 255, blue: 235 / 255))
-                                    .frame(width: 24, height: 24)
-                                    .background(Color.white.opacity(0.12))
-                                    .clipShape(Circle())
-                                    .overlay(
-                                        Circle().stroke(Color.white.opacity(0.18), lineWidth: 1)
-                                    )
-                            }
+                            Text(state.profileName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "Your Name" : state.profileName)
+                                .font(.system(size: 26, weight: .bold, design: .rounded))
+                                .foregroundStyle(StamerleeTheme.textPrimaryDark)
+                                .minimumScaleFactor(0.8)
+                                .lineLimit(1)
                         }
                         .buttonStyle(.plain)
                         .accessibilityLabel("Edit name")
