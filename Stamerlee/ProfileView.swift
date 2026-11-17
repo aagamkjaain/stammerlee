@@ -70,7 +70,7 @@ public struct ProfileView: View {
             StamerleeTheme.backgroundDark
                 .ignoresSafeArea()
 
-            headerBackgroundView
+            headerImageView
                 .ignoresSafeArea(edges: .top)
 
             ScrollView {
@@ -295,22 +295,21 @@ public struct ProfileView: View {
         }
     }
 
-    private var headerBackgroundView: some View {
+    private var headerImageView: some View {
         Group {
             if let uiImage = UIImage(named: "profile") ?? UIImage(named: "ProfileHeader") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "profile", ofType: "png") ?? "") {
                 Image(uiImage: uiImage)
                     .resizable()
-                    .scaledToFill()
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity)
             } else {
                 Image("profile")
                     .resizable()
-                    .scaledToFill()
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity)
             }
         }
         .frame(maxWidth: .infinity)
-        .frame(height: 310)
-        .offset(y: -30)
-        .clipped()
         .overlay(
             LinearGradient(
                 colors: [
@@ -319,7 +318,7 @@ public struct ProfileView: View {
                     Color(red: 10 / 255, green: 13 / 255, blue: 31 / 255).opacity(0.7),
                     Color(red: 10 / 255, green: 13 / 255, blue: 31 / 255)
                 ],
-                startPoint: .init(x: 0.5, y: 0.50),
+                startPoint: .init(x: 0.5, y: 0.55),
                 endPoint: .bottom
             )
         )
