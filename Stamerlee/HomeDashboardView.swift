@@ -332,10 +332,19 @@ private struct ExerciseRowCard: View {
                 }
                 .frame(width: 68, height: 68)
             } else if let iconName {
-                Image(iconName)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 68, height: 68)
+                if iconName == "BeatBuddyLogo" {
+                    Image(iconName)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 88, height: 88)
+                        .offset(x: -6)
+                        .frame(width: 68, height: 68)
+                } else {
+                    Image(iconName)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 68, height: 68)
+                }
             }
 
             // Title + Subtitle — explicitly left-aligned and expanding
