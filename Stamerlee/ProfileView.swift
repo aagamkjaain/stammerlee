@@ -66,9 +66,12 @@ public struct ProfileView: View {
     }
 
     public var body: some View {
-        ZStack {
+        ZStack(alignment: .top) {
             StamerleeTheme.backgroundDark
                 .ignoresSafeArea()
+
+            headerBackgroundView
+                .ignoresSafeArea(edges: .top)
 
             ScrollView {
                 VStack(spacing: 0) {
@@ -129,7 +132,8 @@ public struct ProfileView: View {
     // MARK: - Profile Header
     private var profileHeader: some View {
         ZStack(alignment: .topTrailing) {
-            headerBackgroundView
+            Color.clear
+                .frame(height: 184)
 
             // Top Bar: Back Chevron (left) and Single Edit Pen (right)
             HStack {
@@ -304,17 +308,18 @@ public struct ProfileView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .frame(height: 228)
+        .frame(height: 310)
+        .offset(y: -30)
         .clipped()
         .overlay(
             LinearGradient(
                 colors: [
                     Color.clear,
                     Color(red: 10 / 255, green: 13 / 255, blue: 31 / 255).opacity(0.15),
-                    Color(red: 10 / 255, green: 13 / 255, blue: 31 / 255).opacity(0.65),
+                    Color(red: 10 / 255, green: 13 / 255, blue: 31 / 255).opacity(0.7),
                     Color(red: 10 / 255, green: 13 / 255, blue: 31 / 255)
                 ],
-                startPoint: .init(x: 0.5, y: 0.45),
+                startPoint: .init(x: 0.5, y: 0.50),
                 endPoint: .bottom
             )
         )
@@ -437,72 +442,87 @@ public struct ProfileView: View {
         VStack(alignment: .leading, spacing: 12) {
             sectionTitle("Account")
 
-            VStack(spacing: 0) {
-                // Log Out Row
+            VStack(spacing: 10) {
+                // Log Out Button
                 Button {
                     showLogoutConfirmation = true
                 } label: {
-                    HStack(spacing: 12) {
-                        Image(systemName: "rectangle.portrait.and.arrow.right")
-                            .font(.system(size: 17, weight: .semibold))
-                            .foregroundStyle(StamerleeTheme.textPrimaryLight)
-                            .frame(width: 28)
+                    HStack(spacing: 14) {
+                        ZStack {
+                            Circle()
+                                .fill(StamerleeTheme.primaryBlue.opacity(0.12))
+                                .frame(width: 40, height: 40)
 
-                        VStack(alignment: .leading, spacing: 2) {
+                            Image(systemName: "rectangle.portrait.and.arrow.right")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundStyle(StamerleeTheme.primaryBlue)
+                        }
+
+                        VStack(alignment: .leading, spacing: 3) {
                             Text("Log Out")
-                                .font(.system(size: 15, weight: .bold, design: .rounded))
+                                .font(.system(size: 15.5, weight: .bold, design: .rounded))
                                 .foregroundStyle(StamerleeTheme.textPrimaryLight)
                             Text(state.userEmail.isEmpty ? "Sign out of your active session" : "Signed in as \(state.userEmail)")
                                 .font(.system(size: 12, weight: .regular, design: .rounded))
                                 .foregroundStyle(StamerleeTheme.textSecondaryLight)
+                                .lineLimit(1)
                         }
 
                         Spacer()
 
                         Image(systemName: "chevron.right")
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundStyle(StamerleeTheme.textSecondaryLight)
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundStyle(StamerleeTheme.textSecondaryLight.opacity(0.55))
                     }
                     .padding(.horizontal, 16)
-                    .frame(height: 60)
+                    .frame(height: 66)
+                    .background(StamerleeTheme.profileCard)
+                    .clipShape(RoundedRectangle(cornerRadius: 17, style: .continuous))
                 }
                 .buttonStyle(.haptic)
 
-                Divider()
-                    .padding(.horizontal, 16)
-
-                // Delete Account Row
+                // Delete Account Button
                 Button {
                     showDeleteConfirmation = true
                 } label: {
-                    HStack(spacing: 12) {
-                        Image(systemName: "trash.fill")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(Color.red)
-                            .frame(width: 28)
+                    HStack(spacing: 14) {
+                        ZStack {
+                            Circle()
+                                .fill(Color.red.opacity(0.12))
+                                .frame(width: 40, height: 40)
 
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Delete Account")
-                                .font(.system(size: 15, weight: .bold, design: .rounded))
+                            Image(systemName: "trash.fill")
+                                .font(.system(size: 15, weight: .semibold))
                                 .foregroundStyle(Color.red)
+                        }
+
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("Delete Account")
+                                .font(.system(size: 15.5, weight: .bold, design: .rounded))
+                                .foregroundStyle(Color(red: 220 / 255, green: 50 / 255, blue: 50 / 255))
                             Text("Permanently erase your account and all data")
                                 .font(.system(size: 12, weight: .regular, design: .rounded))
-                                .foregroundStyle(Color.red.opacity(0.75))
+                                .foregroundStyle(Color.red.opacity(0.7))
+                                .lineLimit(1)
                         }
 
                         Spacer()
 
                         Image(systemName: "chevron.right")
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundStyle(Color.red.opacity(0.6))
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundStyle(Color.red.opacity(0.45))
                     }
                     .padding(.horizontal, 16)
-                    .frame(height: 60)
+                    .frame(height: 66)
+                    .background(StamerleeTheme.profileCard)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 17, style: .continuous)
+                            .stroke(Color.red.opacity(0.18), lineWidth: 1)
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 17, style: .continuous))
                 }
                 .buttonStyle(.haptic)
             }
-            .background(StamerleeTheme.profileCard)
-            .clipShape(RoundedRectangle(cornerRadius: 17, style: .continuous))
         }
     }
 
