@@ -358,9 +358,15 @@ public struct OnboardingNameView: View {
     @State private var welcomeRevealed: Bool = false
     @State private var welcomeText: String = ""
     @State private var hasCommitted: Bool = false
+    @FocusState private var nameFieldFocused: Bool
 
     public init(state: AppState) {
         self.state = state
+    }
+
+    /// The trimmed, usable value of what's typed so far.
+    private var trimmedName: String {
+        nameInput.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     public var body: some View {
@@ -377,10 +383,6 @@ public struct OnboardingNameView: View {
                         Text("Welcome \(welcomeText)")
                             .font(.system(size: 40, weight: .bold, design: .rounded))
                             .foregroundStyle(.white)
-
-                        Image(systemName: "hand.wave.fill")
-                            .font(.system(size: 30, weight: .bold))
-                            .foregroundStyle(StamerleeTheme.accentPurple)
                     }
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
@@ -402,13 +404,6 @@ public struct OnboardingNameView: View {
                         .frame(maxWidth: .infinity, alignment: .center)
                         .padding(.top, 96)
 
-                    Text("Enter your name so we can personalize your practice.")
-                        .font(.system(size: 14.5, weight: .regular, design: .rounded))
-                        .foregroundStyle(Color(red: 218 / 255, green: 222 / 255, blue: 245 / 255).opacity(0.88))
-                        .multilineTextAlignment(.center)
-                        .lineSpacing(3)
-                        .padding(.top, 14)
-                        .padding(.horizontal, 48)
 
                     // Underline input (no white box)
                     TextField("Your name", text: $nameInput)
@@ -418,6 +413,7 @@ public struct OnboardingNameView: View {
                         .keyboardType(.default)
                         .autocapitalization(.words)
                         .submitLabel(.continue)
+                        .focused($nameFieldFocused)
                         .onSubmit { commitName() }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, 28)
@@ -425,15 +421,18 @@ public struct OnboardingNameView: View {
                         .padding(.bottom, 10)
                         .overlay(alignment: .bottom) {
                             Rectangle()
-                                .fill(nameInput.isEmpty ? Color.white.opacity(0.35) : StamerleeTheme.accentPurple)
-                                .frame(height: nameInput.isEmpty ? 1.5 : 3)
-                                .animation(.easeInOut(duration: 0.25), value: nameInput.isEmpty)
+                                .fill(trimmedName.isEmpty ? Color.white.opacity(0.35) : StamerleeTheme.accentPurple)
+                                .frame(height: trimmedName.isEmpty ? 1.5 : 3)
+                                .animation(.easeInOut(duration: 0.25), value: trimmedName.isEmpty)
                         }
                         .padding(.horizontal, 24)
 
                     Spacer()
 
-                    PrimaryActionButton(title: "Continue") {
+                    PrimaryActionButton(
+                        title: "Continue",
+                        isEnabled: !trimmedName.isEmpty
+                    ) {
                         commitName()
                     }
                     .padding(.horizontal, 24)
@@ -443,6 +442,10 @@ public struct OnboardingNameView: View {
         }
         .onAppear {
             nameInput = state.userName
+            // Open the keyboard and place the cursor in the field immediately.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                nameFieldFocused = true
+            }
         }
     }
 

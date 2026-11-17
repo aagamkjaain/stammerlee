@@ -59,6 +59,7 @@ public struct WelcomeView: View {
     @State private var cloudsOut: Bool = false
     @State private var textVisible: Bool = false
     @State private var hasAdvanced: Bool = false
+    private var cloudPhase: Int { cloudsOut ? 2 : (cloudsIn ? 1 : 0) }
 
     public init(state: AppState) {
         self.state = state
@@ -77,22 +78,21 @@ public struct WelcomeView: View {
                 // Twinkling Starfield & Motes (fade with the clouds)
                 starsLayer(w: w, h: h)
                     .opacity(cloudsOut ? 0 : (cloudsIn ? 1 : 0))
-                    .animation(.easeInOut(duration: 0.8), value: cloudsIn)
-                    .animation(.easeInOut(duration: 0.8), value: cloudsOut)
-                    .allowsHitTesting(false)
-
+                        .animation(.easeInOut(duration: 2.0), value: cloudsIn)    // was 0.8
+                        .animation(.easeInOut(duration: 1.8), value: cloudsOut)   // was 0.8
+                        .allowsHitTesting(false)
                 // Drifting Clouds (staggered fade-in, then drift away & fade)
                 cloudsLayer(w: w, h: h)
                     .allowsHitTesting(false)
 
                 // Centered Heading (fades in after the clouds, fades out as they leave)
                 VStack(spacing: 6) {
-                    Text("Let's start with")
-                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                    Text("Beyond the Pause")
+                        .font(.system(size: 33, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
 
-                    Text("Your stuttering companion")
-                        .font(.system(size: 33, weight: .bold, design: .rounded))
+                    Text("Practice anywhere, at your own pace")
+                        .font(.system(size: 24, weight: .medium, design: .rounded))
                         .foregroundStyle(.white)
                 }
                 .multilineTextAlignment(.center)
@@ -101,28 +101,25 @@ public struct WelcomeView: View {
                 .scaleEffect(cloudsOut ? 1.05 : (textVisible ? 1.0 : 0.92))
                 .offset(y: textVisible ? 0 : 14)
                 .animation(.easeInOut(duration: 0.7), value: textVisible)
-                .animation(.easeInOut(duration: 0.6), value: cloudsOut)
+                .animation(.easeInOut(duration: 1.6), value: cloudsOut)
                 .zIndex(20)
             }
         }
         .preferredColorScheme(.dark)
         .onAppear {
             Task { @MainActor in
-                // 1) Clouds drift in gradually (stagger handled per-cloud)
                 try? await Task.sleep(for: .seconds(0.3))
                 cloudsIn = true
 
-                // 2) Then the text fades in
-                try? await Task.sleep(for: .seconds(1.4))
+                // clouds need ~2.6s + stagger; show text once they're mostly in
+                try? await Task.sleep(for: .seconds(2.4))
                 textVisible = true
 
-                // 3) Hold a while longer
-                try? await Task.sleep(for: .seconds(2.8))
-
-                // 4) Clouds move away & fade out
+                try? await Task.sleep(for: .seconds(2.8))   // hold
                 cloudsOut = true
 
-                try? await Task.sleep(for: .seconds(1.0))
+                // wait for the slow fade-out to finish before navigating
+                try? await Task.sleep(for: .seconds(2.6))
                 guard !hasAdvanced, state.currentScreen == .welcome else { return }
                 hasAdvanced = true
                 state.navigate(to: .onboarding1, forward: true)
@@ -131,30 +128,38 @@ public struct WelcomeView: View {
     }
 
     // MARK: - Cloud Specs
-    private let cloudSpecs: [(name: String, xf: Double, yf: Double, width: CGFloat, fraction: Bool, stagger: Double)] = [
-        ("Cloud-2", 0.06, 0.08, 140, false, 0.0),
-        ("Cloud", 0.94, 0.18, 140, false, 0.18),
-        ("Drifting cloud-3", 1.08, 0.26, 115, false, 0.36),
-        ("Cloud bank", 0.82, 0.86, 0.70, true, 0.5),
-        ("Cloud bank-2", 0.20, 0.88, 0.66, true, 0.64)
+    /// Each cloud's entry offset (as a fraction of screen size) from outside the
+    /// screen toward its final resting position.
+    private let cloudSpecs: [(name: String, xf: Double, yf: Double, width: CGFloat, fraction: Bool, inXf: Double, inYf: Double)] = [
+        ("Cloud-2", 0.06, 0.08, 140, false, -0.55, -0.40),
+        ("Cloud", 0.94, 0.18, 140, false, 0.55, -0.40),
+        ("Drifting cloud-3", 1.08, 0.26, 115, false, 0.60, -0.25),
+        ("Cloud bank", 0.82, 0.86, 0.70, true, 0.45, 0.55),
+        ("Cloud bank-2", 0.20, 0.88, 0.66, true, -0.45, 0.55)
     ]
 
     // MARK: - Animated Clouds Layer
     @ViewBuilder
     private func cloudsLayer(w: CGFloat, h: CGFloat) -> some View {
         ZStack {
-            ForEach(Array(cloudSpecs.enumerated()), id: \.offset) { _, spec in
+            ForEach(Array(cloudSpecs.enumerated()), id: \.offset) { index, spec in
                 let cloudWidth = spec.fraction ? w * spec.width : spec.width
                 assetImage(spec.name)
                     .scaledToFit()
                     .frame(width: cloudWidth)
                     .position(x: w * spec.xf, y: h * spec.yf)
-                    .opacity(cloudsOut ? 0 : (cloudsIn ? 1 : 0))
-                    .offset(y: cloudsOut ? -50 : 0)
-                    // Staggered fade-in
-                    .animation(.easeIn(duration: 0.7).delay(spec.stagger), value: cloudsIn)
-                    // Coordinated drift-away on exit
-                    .animation(.easeOut(duration: 0.9).delay(spec.stagger * 0.4), value: cloudsOut)
+                    .opacity(cloudPhase == 1 ? 1 : 0)
+                    .offset(
+                        x: cloudPhase == 0 ? w * spec.inXf : 0,
+                        y: cloudPhase == 0 ? h * spec.inYf : (cloudPhase == 2 ? -50 : 0)
+                    )
+                    // ONE animation covers opacity + offset. Slow in, slow out.
+                    .animation(
+                        cloudPhase == 2
+                            ? .easeInOut(duration: 2.2).delay(Double(index) * 0.12)
+                            : .easeInOut(duration: 2.6).delay(Double(index) * 0.15),
+                        value: cloudPhase
+                    )
             }
         }
         .allowsHitTesting(false)
