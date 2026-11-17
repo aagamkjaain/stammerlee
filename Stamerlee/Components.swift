@@ -751,6 +751,26 @@ public struct ExerciseAnalysisSkeletonView: View {
         )
     }
 
+    public init(
+        scoreText: String,
+        maxScoreText: String = "/ 10",
+        subtitle: String = "Here's a summary of this exercise.",
+        affirmation: String? = nil,
+        onDone: @escaping () -> Void
+    ) {
+        self.init(
+            scoreText: scoreText,
+            maxScoreText: maxScoreText,
+            scoreUnitText: nil,
+            highScoreText: nil,
+            subtitle: subtitle,
+            affirmation: affirmation,
+            wordsList: [],
+            selectedWords: .constant([]),
+            onDone: onDone
+        )
+    }
+
     private var computedAffirmation: String {
         if let custom = affirmation, !custom.isEmpty {
             return custom
