@@ -185,7 +185,7 @@ public struct NarrationIntroView: View {
 
             Spacer()
         }
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .contentShape(Rectangle())
         .onTapGesture {
             goToStep(.practice)

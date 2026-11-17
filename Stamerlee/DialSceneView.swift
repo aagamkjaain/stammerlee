@@ -189,21 +189,16 @@ public struct DialSceneIntroView: View {
         VStack(spacing: 16) {
             Spacer()
 
-            HStack(spacing: 10) {
                 DialTwinklingStarView(assetName: "Sparkle-2", size: 28, delay: 0.1, duration: 1.0)
+            
 
-                Text("Quick Demo")
-                    .font(.system(size: 28, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
-            }
-
-            Text("Let's see how Dial\nScene calls work")
+            Text("Let's understand how Dial\nScene works")
                 .font(.system(size: 21, weight: .medium, design: .rounded))
                 .foregroundStyle(.white)
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
 
-            Text("The caller will speak to you,\nand you reply naturally with your voice")
+            Text("The caller will speak to you,\nand you reply just like a conversation")
                 .font(.system(size: 15, weight: .regular, design: .rounded))
                 .foregroundStyle(Color(red: 195 / 255, green: 185 / 255, blue: 230 / 255))
                 .multilineTextAlignment(.center)
@@ -212,7 +207,7 @@ public struct DialSceneIntroView: View {
 
             Spacer()
         }
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .contentShape(Rectangle())
         .onTapGesture {
             goToStep(.conversation)
