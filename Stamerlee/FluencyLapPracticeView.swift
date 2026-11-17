@@ -7,7 +7,8 @@ public struct FluencyLapPracticeView: View {
     @State private var spokenWordsCount: Int = 0
 
     private let words = [
-        "Wattttter",
+        "Water",
+        "Sweet",
         "Today",
         "People",
         "Together",
@@ -26,7 +27,16 @@ public struct FluencyLapPracticeView: View {
         "Balance",
         "Freedom",
         "Journey",
-        "Progress"
+        "Progress",
+        "Summer",
+        "Bright",
+        "Music",
+        "Simple",
+        "Smile",
+        "Yellow",
+        "Friend",
+        "Silver",
+        "Nature"
     ]
 
     public init(state: AppState) {

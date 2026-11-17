@@ -28,13 +28,13 @@ public struct FluencyLapIntroView: View {
 
     // Curated warm-up sprint words
     private let sprintWords: [String] = [
+        "Water",
+        "Sweet",
         "Sunrise",
         "Breathe",
         "Gentle",
         "River",
         "Calm",
-        "Confidence",
-        "Flow",
         "Bright"
     ]
 
