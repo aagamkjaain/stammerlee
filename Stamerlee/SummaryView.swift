@@ -145,47 +145,36 @@ public struct SummaryView: View {
     }
 
     private struct ExerciseHighScoreItem: Identifiable {
-        let id: String
-        let title: String
+        let type: ExerciseDetailType
         let displayTitle: String
-        let iconName: String
         let score: Double
-        let targetScreen: AppScreen
+
+        var id: String { type.id }
+        var title: String { type.title }
+        var iconName: String { type.iconName }
     }
 
     private var exerciseHighScoreItems: [ExerciseHighScoreItem] {
         [
             ExerciseHighScoreItem(
-                id: "picture_desc",
-                title: "Picture Description",
+                type: .pictureDescription,
                 displayTitle: "Picture\nDescription",
-                iconName: "IconPictureDesc",
-                score: 8.8,
-                targetScreen: state.hasSeenPictureDescriptionIntro ? .pictureDescriptionPractice : .pictureDescriptionIntro
+                score: 8.8
             ),
             ExerciseHighScoreItem(
-                id: "prolonged_speech",
-                title: "Prolonged Speech",
+                type: .prolongedSpeech,
                 displayTitle: "Prolonged\nSpeech",
-                iconName: "IconProlongedSpeech",
-                score: 7.9,
-                targetScreen: state.hasSeenProlongedSpeechIntro ? .prolongedSpeechDifficulty : .prolongedSpeechIntro
+                score: state.prolongedEasyScore ?? 7.9
             ),
             ExerciseHighScoreItem(
-                id: "dial_scene",
-                title: "Dial Scene",
+                type: .dialScene,
                 displayTitle: "Dial\nScene",
-                iconName: "IconDialScene",
-                score: 6.3,
-                targetScreen: state.hasSeenDialSceneIntro ? .dialScene : .dialSceneIntro
+                score: 6.3
             ),
             ExerciseHighScoreItem(
-                id: "narration",
-                title: "Narration",
+                type: .narration,
                 displayTitle: "Narration",
-                iconName: "IconMirrorNarration",
-                score: 7.2,
-                targetScreen: state.hasSeenNarrationIntro ? .narrationPractice : .narrationIntro
+                score: 7.2
             )
         ]
     }
@@ -210,7 +199,14 @@ public struct SummaryView: View {
                 spacing: 14
             ) {
                 ForEach(exerciseHighScoreItems) { item in
-                    exerciseBlockCard(item: item)
+                    Button {
+                        state.selectedExerciseDetail = item.type
+                        state.navigate(to: .exerciseProgressDetail)
+                    } label: {
+                        exerciseBlockCard(item: item)
+                    }
+                    .buttonStyle(PopSpringButtonStyle(pressedScale: 0.94))
+                    .accessibilityLabel("\(item.title) card, score \(String(format: "%.1f", item.score)) of 10")
                 }
             }
         }
@@ -223,7 +219,7 @@ public struct SummaryView: View {
                 summaryAssetImage(named: item.iconName, size: 48)
                 Text(item.displayTitle)
                     .font(.system(size: 14, weight: .bold, design: .rounded))
-                    .foregroundStyle(.black)
+                    .foregroundStyle(Color(red: 22 / 255, green: 18 / 255, blue: 40 / 255))
                     .multilineTextAlignment(.leading)
                     .lineLimit(2)
                     .minimumScaleFactor(0.8)
@@ -236,10 +232,10 @@ public struct SummaryView: View {
             HStack(alignment: .lastTextBaseline, spacing: 2) {
                 Text(String(format: "%.1f", item.score))
                     .font(.system(size: 36, weight: .heavy, design: .rounded))
-                    .foregroundStyle(.black)
+                    .foregroundStyle(Color(red: 22 / 255, green: 18 / 255, blue: 40 / 255))
                 Text("/10")
-                    .font(.system(size: 18, weight: .medium, design: .rounded))
-                    .foregroundStyle(Color(red: 130 / 255, green: 134 / 255, blue: 170 / 255))
+                    .font(.system(size: 17, weight: .bold, design: .rounded))
+                    .foregroundStyle(Color(red: 125 / 255, green: 110 / 255, blue: 180 / 255))
             }
 
             // Gradient Progress Bar
@@ -272,10 +268,24 @@ public struct SummaryView: View {
         .padding(14)
         .frame(maxWidth: .infinity, minHeight: 138, alignment: .topLeading)
         .background(
-            Color(red: 242 / 255, green: 243 / 255, blue: 252 / 255),
+            Color(red: 246 / 255, green: 247 / 255, blue: 254 / 255).opacity(0.92),
             in: RoundedRectangle(cornerRadius: 24, style: .continuous)
         )
-        .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
+        .overlay(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .stroke(
+                    LinearGradient(
+                        colors: [
+                            Color.white,
+                            Color.white.opacity(0.35)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1.2
+                )
+        )
+        .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 3)
     }
 
     private func summaryAssetImage(named name: String, size: CGFloat = 52) -> some View {

@@ -60,6 +60,105 @@ public enum AppScreen: Hashable, CaseIterable {
     case beatBuddyIntro
     case beatBuddyBPM
     case beatBuddyPractice
+    case exerciseProgressDetail
+}
+
+// MARK: - Exercise Detail Type
+public enum ExerciseDetailType: String, CaseIterable, Identifiable, Hashable {
+    case pictureDescription = "picture_desc"
+    case prolongedSpeech = "prolonged_speech"
+    case dialScene = "dial_scene"
+    case narration = "narration"
+
+    public var id: String { rawValue }
+
+    public var title: String {
+        switch self {
+        case .pictureDescription: return "Picture Description"
+        case .prolongedSpeech: return "Prolonged Speech"
+        case .dialScene: return "Dial Scene"
+        case .narration: return "Narration"
+        }
+    }
+
+    public var subtitle: String {
+        switch self {
+        case .pictureDescription:
+            return "Describe a picture in your own words and build fluency."
+        case .prolongedSpeech:
+            return "Stretch vowel sounds smoothly to overcome blocks."
+        case .dialScene:
+            return "Practice realistic phone call conversations with pacing."
+        case .narration:
+            return "Read aloud and narrate stories with steady cadence."
+        }
+    }
+
+    public var iconName: String {
+        switch self {
+        case .pictureDescription: return "IconPictureDesc"
+        case .prolongedSpeech: return "IconProlongedSpeech"
+        case .dialScene: return "IconDialScene"
+        case .narration: return "IconMirrorNarration"
+        }
+    }
+
+    public var defaultHighScore: Double {
+        switch self {
+        case .pictureDescription: return 9.6
+        case .prolongedSpeech: return 8.5
+        case .dialScene: return 7.8
+        case .narration: return 8.9
+        }
+    }
+
+    public var weeklyScores: [Double] {
+        switch self {
+        case .pictureDescription:
+            return [6.8, 8.0, 7.0, 8.2, 7.6, 7.4, 9.6]
+        case .prolongedSpeech:
+            return [6.2, 7.1, 7.5, 7.0, 8.1, 7.9, 8.5]
+        case .dialScene:
+            return [5.5, 6.0, 6.4, 6.2, 7.0, 7.3, 7.8]
+        case .narration:
+            return [6.5, 7.0, 7.2, 7.8, 8.0, 8.4, 8.9]
+        }
+    }
+
+    public var overviewTitle: String {
+        switch self {
+        case .pictureDescription: return "Great effort this month!"
+        case .prolongedSpeech: return "Smooth airflow achieved!"
+        case .dialScene: return "Phone confidence growing!"
+        case .narration: return "Exceptional cadence & tone!"
+        }
+    }
+
+    public var overviewSubtitle: String {
+        switch self {
+        case .pictureDescription:
+            return "Your progress has been solid — keep pushing and keep the rhythm going."
+        case .prolongedSpeech:
+            return "Consistent phonation and relaxed vocal cords are reducing blocks significantly."
+        case .dialScene:
+            return "Responses are flowing faster with fewer hesitations during scenario prompts."
+        case .narration:
+            return "Story pacing and rhythmic cadence are in sync across your readings."
+        }
+    }
+
+    public func targetScreen(for state: AppState) -> AppScreen {
+        switch self {
+        case .pictureDescription:
+            return state.hasSeenPictureDescriptionIntro ? .pictureDescriptionPractice : .pictureDescriptionIntro
+        case .prolongedSpeech:
+            return state.hasSeenProlongedSpeechIntro ? .prolongedSpeechDifficulty : .prolongedSpeechIntro
+        case .dialScene:
+            return state.hasSeenDialSceneIntro ? .dialScene : .dialSceneIntro
+        case .narration:
+            return state.hasSeenNarrationIntro ? .narrationPractice : .narrationIntro
+        }
+    }
 }
 
 // MARK: - Custom Dial Scene Scenario
@@ -132,6 +231,7 @@ public final class AppState {
     public var hasSeenBeatBuddyIntro: Bool = false
     public var selectedNarrationDifficulty: String = "Easy"
     public var completedNarrationDifficulties: Set<String> = []
+    public var selectedExerciseDetail: ExerciseDetailType = .pictureDescription
     public var beatBuddySelectedWords: Set<String> = ["Water", "University"]
     public var beatBuddyPracticeWords: [String] = []
     public var beatBuddySoundCategory: String = "Randomized"

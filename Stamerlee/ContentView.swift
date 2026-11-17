@@ -139,6 +139,9 @@ public struct ContentView: View {
                 case .beatBuddyPractice:
                     BeatBuddyPracticeView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
+                case .exerciseProgressDetail:
+                    ExerciseProgressDetailView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
                 }
             }
             .animation(
