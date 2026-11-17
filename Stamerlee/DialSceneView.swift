@@ -278,15 +278,7 @@ public struct DialSceneIntroView: View {
                 .padding(.horizontal, 24)
                 .padding(.bottom, 36)
             } else {
-                VStack(spacing: 12) {
-                    // Instructions cue
-                    Text(micPromptText)
-                        .font(.system(size: 14, weight: .medium, design: .rounded))
-                        .foregroundStyle(Color(red: 215 / 255, green: 210 / 255, blue: 245 / 255))
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 24)
-                        .frame(height: 22)
-
+                VStack(spacing: 0) {
                     // Universal Purple Glass Microphone Control
                     UniversalMicrophoneButton(
                         isListening: isListening,
@@ -294,8 +286,16 @@ public struct DialSceneIntroView: View {
                     ) {
                         triggerUserTurn()
                     }
+
+                    // Instructions cue
+                    Text(micPromptText)
+                        .font(.system(size: 14, weight: .regular, design: .rounded))
+                        .foregroundStyle(Color(red: 195 / 255, green: 190 / 255, blue: 220 / 255))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 24)
+                        .padding(.top, 16)
+                        .padding(.bottom, 48)
                 }
-                .padding(.bottom, 36)
             }
         }
     }
@@ -761,6 +761,38 @@ public struct DialSceneView: View {
                 state.navigate(to: .homeDashboard, forward: false)
             }
             Spacer()
+
+            if hasSpoken && stage == .conversation {
+                Button {
+                    turnTask?.cancel()
+                    state.hasCompletedDialScene = true
+                    stage = .analysis
+                } label: {
+                    HStack(spacing: 6) {
+                        Text("Finish")
+                            .font(.system(size: 14.5, weight: .bold, design: .rounded))
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 12, weight: .bold))
+                    }
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(
+                        LinearGradient(
+                            colors: [
+                                Color(red: 155 / 255, green: 125 / 255, blue: 255 / 255).opacity(0.9),
+                                StamerleeTheme.primaryBlueDark.opacity(0.95)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        in: Capsule()
+                    )
+                    .overlay(Capsule().stroke(Color.white.opacity(0.4), lineWidth: 1))
+                    .shadow(color: StamerleeTheme.primaryBlue.opacity(0.4), radius: 6, x: 0, y: 2)
+                }
+                .transition(.opacity.combined(with: .scale(scale: 0.9)))
+            }
         }
         .padding(.horizontal, 24)
         .padding(.top, 16)
@@ -827,10 +859,7 @@ public struct DialSceneView: View {
 
     private var conversationView: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack {
-                header
-                Spacer()
-            }
+            header
             Text(selectedScenario)
                 .font(.system(size: 22, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
@@ -859,8 +888,8 @@ public struct DialSceneView: View {
                 }
             }
 
-            // Mic only. Animates while listening; Finish appears once the user has spoken.
-            VStack(spacing: 14) {
+            // Mic only. Standardized position matching other views
+            VStack(spacing: 0) {
                 UniversalMicrophoneButton(isListening: micPhase != .idle, disabled: false, action: micTapped)
 
                 Text(micHint)
@@ -869,27 +898,10 @@ public struct DialSceneView: View {
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
                     .padding(.horizontal, 28)
-                    .frame(height: 40, alignment: .top)
-                    .animation(.easeInOut(duration: 0.2), value: micPhase)
+                    .padding(.top, 16)
+                    .padding(.bottom, 48)
             }
             .frame(maxWidth: .infinity)
-
-            // Fixed-height slot so the mic never jumps when Finish appears
-            ZStack {
-                if hasSpoken {
-                    DialGlassActionButton(title: "Finish") {
-                        turnTask?.cancel()
-                        state.hasCompletedDialScene = true
-                        stage = .analysis
-                    }
-                    .padding(.horizontal, 24)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: .center)
-            .frame(height: 56)
-            .padding(.top, 24)
-            .padding(.bottom, 28)
         }
         .onAppear {
             conversationStep = 0
