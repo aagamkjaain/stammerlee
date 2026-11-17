@@ -179,12 +179,6 @@ public struct ContentView: View {
         }
         .environment(\.headerNamespace, headerNamespace)
         .preferredColorScheme(.dark)
-        // Two finger tap anywhere to toggle the quick screen jump bar
-        .onTapGesture(count: 2) {
-            withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
-                showScreenPicker.toggle()
-            }
-        }
         .onChange(of: appState.currentScreen) { oldScreen, newScreen in
             guard oldScreen != newScreen else { return }
 

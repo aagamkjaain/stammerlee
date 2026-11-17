@@ -92,12 +92,12 @@ public struct PrimaryActionButton: View {
                 Button(action: action) { label }
                     .buttonStyle(.glass(.regular.tint(StamerleeTheme.primaryBlue).interactive()))
                     .buttonBorderShape(.capsule)
-                    .frame(width: compact ? 270 : 330, height: compact ? 36 : 42)
+                    .frame(width: compact ? 300 : 356, height: compact ? 36 : 42)
                     .disabled(!isEnabled || isLoading)
             } else {
                 Button(action: action) { label }
                     .buttonStyle(PopSpringButtonStyle(isEnabled: isEnabled && !isLoading))
-                    .frame(width: compact ? 270 : 330, height: compact ? 36 : 42)
+                    .frame(width: compact ? 300 : 356, height: compact ? 36 : 42)
                     .disabled(!isEnabled || isLoading)
             }
         }

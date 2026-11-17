@@ -1540,35 +1540,38 @@ public struct BeatBuddyIntroView: View {
                     }
                 }
             }
-            .padding(.bottom, 22)
+
+            Spacer()
 
             // Swipe prompt matching the practice screen
             VStack(spacing: 8) {
                 HStack(spacing: 8) {
                     Image(systemName: "chevron.left")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.system(size: 13, weight: .semibold))
                         .opacity(currentDemoWordIndex > 0 ? 0.6 : 0.15)
 
                     Text("Swipe for the next word")
                         .font(.system(size: 14, weight: .medium, design: .rounded))
 
                     Image(systemName: "chevron.right")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.system(size: 13, weight: .semibold))
                         .opacity(0.7)
                 }
                 .foregroundStyle(Color(red: 194 / 255, green: 192 / 255, blue: 218 / 255))
             }
-            .padding(.top, 14)
-
-            Spacer()
+            .padding(.bottom, 48)
         }
+        .frame(maxWidth: .infinity)
         .contentShape(Rectangle())
         .gesture(
-            DragGesture(minimumDistance: 25)
+            DragGesture(minimumDistance: 20)
                 .onEnded { value in
-                    if value.translation.width < -30 {
+                    let horizontal = value.translation.width
+                    let vertical = value.translation.height
+                    guard abs(horizontal) > abs(vertical) else { return }
+                    if horizontal < 0 {
                         advanceDemoWord()
-                    } else if value.translation.width > 30 {
+                    } else if currentDemoWordIndex > 0 {
                         regressDemoWord()
                     }
                 }
@@ -1662,7 +1665,7 @@ public struct BeatBuddyIntroView: View {
     private func startMetronome() {
         stopMetronome()
         activeSyllableIndex = 0
-        let interval = 60.0 / 100.0 // 100 BPM for relaxed demonstration
+        let interval = 60.0 / 75.0 // 75 BPM for relaxed demonstration
 
         metronomeTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { _ in
             let syllables = currentSyllables
@@ -1687,7 +1690,7 @@ public struct BeatBuddyIntroView: View {
 
     private func advanceDemoWord() {
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-        withAnimation(.easeInOut(duration: 0.25)) {
+        withAnimation(.easeInOut(duration: 0.55)) {
             if currentDemoWordIndex + 1 < demoWords.count {
                 currentDemoWordIndex += 1
                 activeSyllableIndex = 0
@@ -1701,31 +1704,9 @@ public struct BeatBuddyIntroView: View {
     private func regressDemoWord() {
         guard currentDemoWordIndex > 0 else { return }
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
-        withAnimation(.easeInOut(duration: 0.25)) {
+        withAnimation(.easeInOut(duration: 0.55)) {
             currentDemoWordIndex -= 1
             activeSyllableIndex = 0
-        }
-    }
-
-    private func triggerSpeak() {
-        guard !isListening else { return }
-        isListening = true
-        pulseMic = true
-
-        Task { @MainActor in
-            try? await Task.sleep(nanoseconds: 1_400_000_000)
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
-                isListening = false
-                pulseMic = false
-
-                if currentDemoWordIndex + 1 < demoWords.count {
-                    currentDemoWordIndex += 1
-                    activeSyllableIndex = 0
-                } else {
-                    stopMetronome()
-                    goToStep(.wellDone)
-                }
-            }
         }
     }
 
@@ -1743,21 +1724,24 @@ public struct BeatBuddyIntroView: View {
     @ViewBuilder
     private func cloudsLayer(w: CGFloat, h: CGFloat) -> some View {
         ZStack {
-            assetImage("Drifting cloud-1")
+            // 1. Top-Left Floating Cloud
+            assetImage(step == .encouragement ? "Drifting cloud" : "Cloud-2")
                 .scaledToFit()
-                .frame(width: 155)
+                .frame(width: step == .encouragement ? 150 : 140)
                 .position(topLeftCloudPosition(w: w, h: h))
-                .opacity(step == .wellDone ? 0.0 : 1.0)
-                .offset(y: floatAnim ? -6 : 6)
+                .offset(y: floatAnim ? -4 : 4)
                 .animation(.spring(response: 0.75, dampingFraction: 0.8), value: step)
 
-            assetImage("Drifting cloud-2")
+            // 2. Top-Right Floating Cloud
+            assetImage("Cloud")
                 .scaledToFit()
-                .frame(width: 135)
+                .frame(width: 140)
                 .position(topRightCloudPosition(w: w, h: h))
-                .offset(y: floatAnim ? 5 : -5)
+                .opacity(step == .encouragement ? 0.0 : 1.0)
+                .offset(y: floatAnim ? 3 : -3)
                 .animation(.spring(response: 0.75, dampingFraction: 0.8), value: step)
 
+            // 3. Mid-Right Drifting Cloud
             assetImage("Drifting cloud-3")
                 .scaledToFit()
                 .frame(width: 115)
@@ -1766,6 +1750,16 @@ public struct BeatBuddyIntroView: View {
                 .offset(y: floatAnim ? -5 : 5)
                 .animation(.spring(response: 0.75, dampingFraction: 0.8), value: step)
 
+            // 4. Bottom-Left Drifting Cloud
+            assetImage("Drifting cloud-2")
+                .scaledToFit()
+                .frame(width: 142)
+                .position(x: w * 0.10, y: step == .wellDone ? h * 0.88 : (step == .encouragement ? h * 0.90 : h * 1.25))
+                .opacity((step == .intro || step == .practice) ? 0.0 : 1.0)
+                .offset(y: floatAnim ? 4 : -4)
+                .animation(.spring(response: 0.75, dampingFraction: 0.8), value: step)
+
+            // 5. Bottom Billowing Cloud Bank 1 (Right)
             assetImage("Cloud bank")
                 .scaledToFit()
                 .frame(width: w * 0.70)
@@ -1774,6 +1768,7 @@ public struct BeatBuddyIntroView: View {
                 .offset(y: floatAnim ? -3 : 3)
                 .animation(.spring(response: 0.8, dampingFraction: 0.8), value: step)
 
+            // 6. Bottom Billowing Cloud Bank 2 (Left)
             assetImage("Cloud bank-2")
                 .scaledToFit()
                 .frame(width: w * 0.66)

@@ -520,11 +520,11 @@ public struct GlassActionButton: View {
                 Button(action: action) { content }
                     .buttonStyle(.glass(.regular.tint(StamerleeTheme.primaryBlue).interactive()))
                     .buttonBorderShape(.capsule)
-                    .frame(width: 330, height: 42)
+                    .frame(width: 356, height: 42)
             } else {
                 Button(action: action) { content }
                     .buttonStyle(PopSpringButtonStyle(isEnabled: true))
-                    .frame(width: 330, height: 42)
+                    .frame(width: 356, height: 42)
             }
         }
         .frame(maxWidth: .infinity, alignment: .center)
