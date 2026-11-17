@@ -4,6 +4,7 @@ public struct FluencyLapPracticeView: View {
     @Bindable public var state: AppState
     @State private var showAnalysis: Bool = false
     @State private var scoredWords: Int = 40
+    @State private var spokenWordsCount: Int = 0
 
     private let words = [
         "Wattttter",
@@ -54,19 +55,25 @@ public struct FluencyLapPracticeView: View {
                 }
             } else {
                 SpeakPracticeScreen(
-                    prompts: Array(words.prefix(max(state.fluencyLapWordCount, 1))),
+                    prompts: words,
                     showBackgroundImages: true,
+                    timerDurationSeconds: 60,
+                    showProgressCounter: false,
+                    loopPrompts: true,
                     onBack: {
                         state.navigate(to: .homeDashboard, forward: false)
                     },
                     onFinish: {
-                        let completedCount = 40
+                        let completedCount = spokenWordsCount > 0 ? spokenWordsCount : 40
                         scoredWords = completedCount
                         state.fluencyLapPreviousWordCount = completedCount
                         if completedCount > state.fluencyLapPersonalBest {
                             state.fluencyLapPersonalBest = completedCount
                         }
                         showAnalysis = true
+                    },
+                    onWordsCompletedCount: { count in
+                        spokenWordsCount = count
                     }
                 )
             }
@@ -81,26 +88,41 @@ public struct SpeakPracticeScreen: View {
     let onFinish: () -> Void
     let allowsMultilinePrompt: Bool
     let showBackgroundImages: Bool
+    let timerDurationSeconds: Int?
+    let showProgressCounter: Bool
+    let loopPrompts: Bool
+    let onWordsCompletedCount: ((Int) -> Void)?
 
     @State private var currentWordIndex = 0
     @State private var isListening = false
     @State private var pulse = false
     @State private var advanceTask: Task<Void, Never>?
+    @State private var timeRemaining = 60
+    @State private var sessionTimerTask: Task<Void, Never>?
+    @State private var wordsCompleted = 0
 
     public init(
         prompts: [String],
         instruction: String? = nil,
         allowsMultilinePrompt: Bool = false,
         showBackgroundImages: Bool = false,
+        timerDurationSeconds: Int? = nil,
+        showProgressCounter: Bool = true,
+        loopPrompts: Bool = false,
         onBack: @escaping () -> Void,
-        onFinish: @escaping () -> Void
+        onFinish: @escaping () -> Void,
+        onWordsCompletedCount: ((Int) -> Void)? = nil
     ) {
         self.prompts = prompts
         self.instruction = instruction
         self.allowsMultilinePrompt = allowsMultilinePrompt
         self.showBackgroundImages = showBackgroundImages
+        self.timerDurationSeconds = timerDurationSeconds
+        self.showProgressCounter = showProgressCounter
+        self.loopPrompts = loopPrompts
         self.onBack = onBack
         self.onFinish = onFinish
+        self.onWordsCompletedCount = onWordsCompletedCount
     }
 
     private var promptCount: Int {
@@ -124,6 +146,10 @@ public struct SpeakPracticeScreen: View {
             VStack(spacing: 0) {
                 topBar
 
+                if let duration = timerDurationSeconds {
+                    timerProgressBar(duration: duration)
+                }
+
                 if let instruction, !instruction.isEmpty {
                     Text(instruction)
                         .font(.system(size: 15, weight: .regular, design: .rounded))
@@ -139,8 +165,10 @@ public struct SpeakPracticeScreen: View {
 
                 promptDisplay
 
-                progress
-                    .padding(.top, 22)
+                if showProgressCounter {
+                    progress
+                        .padding(.top, 22)
+                }
 
                 Spacer(minLength: 16)
 
@@ -162,8 +190,25 @@ public struct SpeakPracticeScreen: View {
             .padding(.top, 8)
         }
         .preferredColorScheme(.dark)
+        .onAppear {
+            if let duration = timerDurationSeconds {
+                timeRemaining = duration
+                sessionTimerTask?.cancel()
+                sessionTimerTask = Task { @MainActor in
+                    while timeRemaining > 0 && !Task.isCancelled {
+                        try? await Task.sleep(nanoseconds: 1_000_000_000)
+                        guard !Task.isCancelled else { break }
+                        timeRemaining -= 1
+                    }
+                    if timeRemaining == 0 {
+                        finishPractice()
+                    }
+                }
+            }
+        }
         .onDisappear {
             advanceTask?.cancel()
+            sessionTimerTask?.cancel()
         }
     }
 
@@ -262,9 +307,61 @@ public struct SpeakPracticeScreen: View {
         }
     }
 
+    private func timerProgressBar(duration: Int) -> some View {
+        VStack(spacing: 8) {
+            HStack {
+                HStack(spacing: 6) {
+                    Image(systemName: "stopwatch.fill")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(timeRemaining <= 10 ? Color(red: 255 / 255, green: 110 / 255, blue: 110 / 255) : Color(red: 180 / 255, green: 165 / 255, blue: 255 / 255))
+                    Text("\(timeRemaining)s")
+                        .font(.system(size: 15, weight: .bold, design: .monospaced))
+                        .foregroundStyle(timeRemaining <= 10 ? Color(red: 255 / 255, green: 120 / 255, blue: 120 / 255) : .white)
+                }
+
+                Spacer()
+
+                Text("60s Fluency Lap")
+                    .font(.system(size: 12.5, weight: .medium, design: .rounded))
+                    .foregroundStyle(Color(red: 194 / 255, green: 192 / 255, blue: 218 / 255))
+            }
+
+            GeometryReader { geo in
+                let width = geo.size.width
+                let progress = CGFloat(duration - timeRemaining) / CGFloat(max(duration, 1))
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(Color.white.opacity(0.12))
+                        .frame(height: 6)
+
+                    Capsule()
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    Color(red: 160 / 255, green: 130 / 255, blue: 255 / 255),
+                                    Color(red: 90 / 255, green: 200 / 255, blue: 255 / 255)
+                                ],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .frame(width: max(6, width * progress), height: 6)
+                        .animation(.linear(duration: 1.0), value: timeRemaining)
+                }
+            }
+            .frame(height: 6)
+        }
+        .padding(.top, 10)
+        .padding(.bottom, 6)
+    }
+
     private func advanceWord() {
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-        if currentWordIndex + 1 < promptCount {
+        wordsCompleted += 1
+        onWordsCompletedCount?(wordsCompleted)
+        if loopPrompts {
+            currentWordIndex = (currentWordIndex + 1) % promptCount
+        } else if currentWordIndex + 1 < promptCount {
             currentWordIndex += 1
         } else {
             finishPractice()
@@ -273,6 +370,7 @@ public struct SpeakPracticeScreen: View {
 
     private func finishPractice() {
         advanceTask?.cancel()
+        sessionTimerTask?.cancel()
         isListening = false
         pulse = false
         onFinish()

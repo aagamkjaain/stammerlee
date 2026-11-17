@@ -224,33 +224,53 @@ public struct FluencyLapIntroView: View {
         .frame(maxWidth: .infinity)
     }
 
-    // MARK: - Step 3: Practice with 30-Second Timer & Words
+    // MARK: - Step 3: Practice with 30-Second Timer Progress Bar & Words
     private func practiceContent(w: CGFloat, h: CGFloat) -> some View {
         VStack(spacing: 0) {
-            // Live 30-Second Countdown Timer (Centered at Top Middle)
-            HStack {
-                Spacer()
+            // Live Countdown Timer with Progress Bar
+            VStack(spacing: 8) {
+                HStack {
+                    HStack(spacing: 6) {
+                        Image(systemName: "stopwatch.fill")
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundStyle(timeRemaining <= 5 ? Color(red: 255 / 255, green: 110 / 255, blue: 110 / 255) : Color(red: 180 / 255, green: 165 / 255, blue: 255 / 255))
 
-                HStack(spacing: 6) {
-                    Image(systemName: "stopwatch.fill")
-                        .font(.system(size: 13, weight: .bold))
-                        .foregroundStyle(timeRemaining <= 5 ? Color(red: 255 / 255, green: 110 / 255, blue: 110 / 255) : Color(red: 180 / 255, green: 165 / 255, blue: 255 / 255))
+                        Text("\(timeRemaining)s")
+                            .font(.system(size: 15, weight: .bold, design: .monospaced))
+                            .foregroundStyle(timeRemaining <= 5 ? Color(red: 255 / 255, green: 120 / 255, blue: 120 / 255) : .white)
+                    }
 
-                    Text("\(timeRemaining)s")
-                        .font(.system(size: 17, weight: .bold, design: .monospaced))
-                        .foregroundStyle(timeRemaining <= 5 ? Color(red: 255 / 255, green: 120 / 255, blue: 120 / 255) : .white)
+                    Spacer()
+
+                    Text("Demo Lap")
+                        .font(.system(size: 12.5, weight: .medium, design: .rounded))
+                        .foregroundStyle(Color(red: 194 / 255, green: 192 / 255, blue: 218 / 255))
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(Color.white.opacity(0.10), in: Capsule())
-                .overlay(
-                    Capsule().stroke(
-                        timeRemaining <= 5 ? Color.red.opacity(0.5) : Color.white.opacity(0.18),
-                        lineWidth: 1
-                    )
-                )
 
-                Spacer()
+                GeometryReader { geo in
+                    let width = geo.size.width
+                    let progress = CGFloat(30 - timeRemaining) / 30.0
+                    ZStack(alignment: .leading) {
+                        Capsule()
+                            .fill(Color.white.opacity(0.12))
+                            .frame(height: 6)
+
+                        Capsule()
+                            .fill(
+                                LinearGradient(
+                                    colors: [
+                                        Color(red: 160 / 255, green: 130 / 255, blue: 255 / 255),
+                                        Color(red: 90 / 255, green: 200 / 255, blue: 255 / 255)
+                                    ],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .frame(width: max(6, width * progress), height: 6)
+                            .animation(.linear(duration: 1.0), value: timeRemaining)
+                    }
+                }
+                .frame(height: 6)
             }
             .padding(.horizontal, 24)
             .padding(.top, 8)
@@ -270,12 +290,6 @@ public struct FluencyLapIntroView: View {
                 .shadow(color: StamerleeTheme.primaryBlue.opacity(0.45), radius: 14)
                 .id(currentWordIndex)
                 .transition(.opacity.combined(with: .scale(scale: 0.95)))
-
-            // Word counter progress
-            Text("Word \(min(currentWordIndex + 1, sprintWords.count)) of \(sprintWords.count)")
-                .font(.system(size: 13, weight: .medium, design: .rounded))
-                .foregroundStyle(Color(red: 175 / 255, green: 165 / 255, blue: 215 / 255))
-                .padding(.top, 10)
 
             Spacer()
 
@@ -506,11 +520,7 @@ public struct FluencyLapIntroView: View {
 
     private func advanceWord() {
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-        if currentWordIndex + 1 < sprintWords.count {
-            currentWordIndex += 1
-        } else {
-            completeSprint()
-        }
+        currentWordIndex = (currentWordIndex + 1) % max(sprintWords.count, 1)
     }
 
     private func completeSprint() {
