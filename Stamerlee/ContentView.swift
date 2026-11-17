@@ -150,6 +150,7 @@ public struct ContentView: View {
             if appState.currentScreen == .profile {
                 ProfileView(state: appState)
                     .zIndex(2)
+                    .transition(.opacity)
             }
 
             if avatarHeroVisible, avatarHeroFrame != .zero {

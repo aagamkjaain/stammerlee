@@ -27,11 +27,11 @@ extension View {
     }
 
     func dropIn(_ shown: Bool, index: Int) -> some View {
-        offset(y: shown ? 0 : -48)
+        offset(y: shown ? 0 : 20)
             .opacity(shown ? 1 : 0)
             .animation(
-                .spring(response: 0.52, dampingFraction: 0.84)
-                    .delay(Double(index) * 0.09),
+                .spring(response: 0.48, dampingFraction: 0.84)
+                    .delay(Double(index) * 0.06),
                 value: shown
             )
     }
@@ -129,8 +129,7 @@ public struct ProfileView: View {
     // MARK: - Profile Header
     private var profileHeader: some View {
         ZStack(alignment: .topTrailing) {
-            StamerleeTheme.profileHeaderBase
-                .frame(height: 184)
+            headerBackgroundView
 
             // Top Bar: Back Chevron (left) and Single Edit Pen (right)
             HStack {
@@ -290,6 +289,35 @@ public struct ProfileView: View {
             state.profileAvatarStyle = 0
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         }
+    }
+
+    private var headerBackgroundView: some View {
+        Group {
+            if let uiImage = UIImage(named: "profile") ?? UIImage(named: "ProfileHeader") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "profile", ofType: "png") ?? "") {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                Image("profile")
+                    .resizable()
+                    .scaledToFill()
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 228)
+        .clipped()
+        .overlay(
+            LinearGradient(
+                colors: [
+                    Color.clear,
+                    Color(red: 10 / 255, green: 13 / 255, blue: 31 / 255).opacity(0.15),
+                    Color(red: 10 / 255, green: 13 / 255, blue: 31 / 255).opacity(0.65),
+                    Color(red: 10 / 255, green: 13 / 255, blue: 31 / 255)
+                ],
+                startPoint: .init(x: 0.5, y: 0.45),
+                endPoint: .bottom
+            )
+        )
     }
 
     private func commitName() {
