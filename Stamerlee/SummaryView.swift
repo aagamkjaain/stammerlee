@@ -1,3 +1,4 @@
+
 import SwiftUI
 import UIKit
 
@@ -37,7 +38,7 @@ public struct SummaryView: View {
                 .padding(.bottom, 10)
 
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 20) {
+                    VStack(alignment: .leading, spacing: 32) {
                         practiceStreakCard
                         exerciseBlocksSection
                         Spacer(minLength: 86)
@@ -148,7 +149,7 @@ public struct SummaryView: View {
         let title: String
         let displayTitle: String
         let iconName: String
-        let score: Int
+        let score: Double
         let targetScreen: AppScreen
     }
 
@@ -159,7 +160,7 @@ public struct SummaryView: View {
                 title: "Picture Description",
                 displayTitle: "Picture\nDescription",
                 iconName: "IconPictureDesc",
-                score: 86,
+                score: 8.8,
                 targetScreen: state.hasSeenPictureDescriptionIntro ? .pictureDescriptionPractice : .pictureDescriptionIntro
             ),
             ExerciseHighScoreItem(
@@ -167,7 +168,7 @@ public struct SummaryView: View {
                 title: "Prolonged Speech",
                 displayTitle: "Prolonged\nSpeech",
                 iconName: "IconProlongedSpeech",
-                score: 92,
+                score: 7.9,
                 targetScreen: state.hasSeenProlongedSpeechIntro ? .prolongedSpeechDifficulty : .prolongedSpeechIntro
             ),
             ExerciseHighScoreItem(
@@ -175,7 +176,7 @@ public struct SummaryView: View {
                 title: "Dial Scene",
                 displayTitle: "Dial\nScene",
                 iconName: "IconDialScene",
-                score: 78,
+                score: 6.3,
                 targetScreen: state.hasSeenDialSceneIntro ? .dialScene : .dialSceneIntro
             ),
             ExerciseHighScoreItem(
@@ -183,7 +184,7 @@ public struct SummaryView: View {
                 title: "Narration",
                 displayTitle: "Narration",
                 iconName: "IconMirrorNarration",
-                score: 89,
+                score: 7.2,
                 targetScreen: state.hasSeenNarrationIntro ? .narrationPractice : .narrationIntro
             )
         ]
@@ -191,9 +192,15 @@ public struct SummaryView: View {
 
     private var exerciseBlocksSection: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("Exercises")
-                .font(.system(size: 22, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Smooth Speech Score")
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+                Text("Based on your last attempt, here's your score for words spoken without stuttering.")
+                    .font(.system(size: 14, weight: .regular, design: .rounded))
+                    .foregroundStyle(Color(red: 195 / 255, green: 190 / 255, blue: 220 / 255))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
 
             LazyVGrid(
                 columns: [
@@ -212,36 +219,28 @@ public struct SummaryView: View {
     private func exerciseBlockCard(item: ExerciseHighScoreItem) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             // Top Row: 3D Icon on left, Title on right
-            HStack(alignment: .top) {
-                summaryAssetImage(named: item.iconName, size: 56)
-                Spacer(minLength: 6)
+            HStack(alignment: .center, spacing: 8) {
+                summaryAssetImage(named: item.iconName, size: 48)
                 Text(item.displayTitle)
                     .font(.system(size: 14, weight: .bold, design: .rounded))
                     .foregroundStyle(.black)
                     .multilineTextAlignment(.leading)
-                    .lineSpacing(-1)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.8)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
 
-            Spacer(minLength: 16)
+            Spacer(minLength: 8)
 
-            // Large Score / 100
+            // Large Score / 10
             HStack(alignment: .lastTextBaseline, spacing: 2) {
-                Text("\(item.score)")
+                Text(String(format: "%.1f", item.score))
                     .font(.system(size: 36, weight: .heavy, design: .rounded))
                     .foregroundStyle(.black)
-                Text("/100")
+                Text("/10")
                     .font(.system(size: 18, weight: .medium, design: .rounded))
                     .foregroundStyle(Color(red: 130 / 255, green: 134 / 255, blue: 170 / 255))
             }
-
-            // Subtitle
-            Text("Smooth speech score")
-                .font(.system(size: 12, weight: .bold, design: .rounded))
-                .foregroundStyle(.black)
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-                .padding(.top, 4)
-                .padding(.bottom, 12)
 
             // Gradient Progress Bar
             GeometryReader { geo in
@@ -262,15 +261,16 @@ public struct SummaryView: View {
                             )
                         )
                         .frame(
-                            width: max(geo.size.width * CGFloat(item.score) / 100.0, 8),
+                            width: max(geo.size.width * CGFloat(item.score) / 10.0, 8),
                             height: 8
                         )
                 }
             }
             .frame(height: 8)
+            .padding(.top, 4)
         }
-        .padding(16)
-        .frame(maxWidth: .infinity, minHeight: 184, alignment: .topLeading)
+        .padding(14)
+        .frame(maxWidth: .infinity, minHeight: 138, alignment: .topLeading)
         .background(
             Color(red: 242 / 255, green: 243 / 255, blue: 252 / 255),
             in: RoundedRectangle(cornerRadius: 24, style: .continuous)
@@ -391,3 +391,4 @@ private struct NativePracticeCalendar: UIViewRepresentable {
         }
     }
 }
+
