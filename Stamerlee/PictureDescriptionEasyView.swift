@@ -57,7 +57,7 @@ public struct PictureDescriptionEasyView: View {
                 .padding(.horizontal, 24)
                 .padding(.top, 20)
 
-            Text(description)
+            Text("Describe the picture shown below")
                 .font(.system(size: 14, design: .rounded))
                 .foregroundStyle(.white)
                 .padding(.horizontal, 24)
@@ -150,16 +150,5 @@ public struct PictureDescriptionEasyView: View {
 
     private func completeCurrentDifficulty() {
         state.completePictureDescription()
-    }
-
-    private var description: String {
-        switch difficulty {
-        case "Hard":
-            return "Describe pictures with connected ideas,\ncomplete sentences, and natural detail"
-        case "Medium":
-            return "Describe pictures using longer phrases\nand clear sentence connections"
-        default:
-            return "Describe simple pictures using words and\nshort sentences"
-        }
     }
 }
