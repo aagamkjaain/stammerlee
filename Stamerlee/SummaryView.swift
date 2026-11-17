@@ -199,77 +199,72 @@ public struct SummaryView: View {
     }
 
     private func exerciseBlockCard(item: ExerciseHighScoreItem) -> some View {
-        Button {
-            state.navigate(to: item.targetScreen)
-        } label: {
-            VStack(alignment: .leading, spacing: 0) {
-                // Top Row: 3D Icon on left, Title on right
-                HStack(alignment: .top) {
-                    summaryAssetImage(named: item.iconName, size: 56)
-                    Spacer(minLength: 6)
-                    Text(item.displayTitle)
-                        .font(.system(size: 14, weight: .bold, design: .rounded))
-                        .foregroundStyle(.black)
-                        .multilineTextAlignment(.leading)
-                        .lineSpacing(-1)
-                }
-
-                Spacer(minLength: 16)
-
-                // Large Score / 100
-                HStack(alignment: .lastTextBaseline, spacing: 2) {
-                    Text("\(item.score)")
-                        .font(.system(size: 36, weight: .heavy, design: .rounded))
-                        .foregroundStyle(.black)
-                    Text("/100")
-                        .font(.system(size: 18, weight: .medium, design: .rounded))
-                        .foregroundStyle(Color(red: 130 / 255, green: 134 / 255, blue: 170 / 255))
-                }
-
-                // Subtitle
-                Text("Smooth speech score")
-                    .font(.system(size: 12, weight: .bold, design: .rounded))
+        VStack(alignment: .leading, spacing: 0) {
+            // Top Row: 3D Icon on left, Title on right
+            HStack(alignment: .top) {
+                summaryAssetImage(named: item.iconName, size: 56)
+                Spacer(minLength: 6)
+                Text(item.displayTitle)
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
                     .foregroundStyle(.black)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
-                    .padding(.top, 4)
-                    .padding(.bottom, 12)
-
-                // Gradient Progress Bar
-                GeometryReader { geo in
-                    ZStack(alignment: .leading) {
-                        Capsule()
-                            .fill(Color(red: 222 / 255, green: 224 / 255, blue: 242 / 255))
-                            .frame(height: 8)
-
-                        Capsule()
-                            .fill(
-                                LinearGradient(
-                                    colors: [
-                                        Color(red: 88 / 255, green: 44 / 255, blue: 204 / 255),
-                                        Color(red: 168 / 255, green: 110 / 255, blue: 255 / 255)
-                                    ],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .frame(
-                                width: max(geo.size.width * CGFloat(item.score) / 100.0, 8),
-                                height: 8
-                            )
-                    }
-                }
-                .frame(height: 8)
+                    .multilineTextAlignment(.leading)
+                    .lineSpacing(-1)
             }
-            .padding(16)
-            .frame(maxWidth: .infinity, minHeight: 184, alignment: .topLeading)
-            .background(
-                Color(red: 242 / 255, green: 243 / 255, blue: 252 / 255),
-                in: RoundedRectangle(cornerRadius: 16, style: .continuous)
-            )
-            .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
+
+            Spacer(minLength: 16)
+
+            // Large Score / 100
+            HStack(alignment: .lastTextBaseline, spacing: 2) {
+                Text("\(item.score)")
+                    .font(.system(size: 36, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.black)
+                Text("/100")
+                    .font(.system(size: 18, weight: .medium, design: .rounded))
+                    .foregroundStyle(Color(red: 130 / 255, green: 134 / 255, blue: 170 / 255))
+            }
+
+            // Subtitle
+            Text("Smooth speech score")
+                .font(.system(size: 12, weight: .bold, design: .rounded))
+                .foregroundStyle(.black)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+                .padding(.top, 4)
+                .padding(.bottom, 12)
+
+            // Gradient Progress Bar
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(Color(red: 222 / 255, green: 224 / 255, blue: 242 / 255))
+                        .frame(height: 8)
+
+                    Capsule()
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    Color(red: 88 / 255, green: 44 / 255, blue: 204 / 255),
+                                    Color(red: 168 / 255, green: 110 / 255, blue: 255 / 255)
+                                ],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .frame(
+                            width: max(geo.size.width * CGFloat(item.score) / 100.0, 8),
+                            height: 8
+                        )
+                }
+            }
+            .frame(height: 8)
         }
-        .buttonStyle(.haptic)
+        .padding(16)
+        .frame(maxWidth: .infinity, minHeight: 184, alignment: .topLeading)
+        .background(
+            Color(red: 242 / 255, green: 243 / 255, blue: 252 / 255),
+            in: RoundedRectangle(cornerRadius: 16, style: .continuous)
+        )
+        .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
     }
 
     private func summaryAssetImage(named name: String, size: CGFloat = 52) -> some View {

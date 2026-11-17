@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2352B30A30A7221700195DEF /* prolongedvideo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 2352B30930A7221700195DEF /* prolongedvideo.mp4 */; };
 		2352B30D30A727A400195DEF /* pop.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2352B30C30A727A400195DEF /* pop.mp3 */; };
 		2352B30D30AA3B5000195DEF /* pictures/bottomimage.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B30C30AA3B5000195DEF /* pictures/bottomimage.png */; };
 		2352B30F30AA3CFE00195DEF /* pictures/topimage.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B30E30AA3CFE00195DEF /* pictures/topimage.png */; };
@@ -57,7 +56,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		2352B30930A7221700195DEF /* prolongedvideo.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = prolongedvideo.mp4; sourceTree = "<group>"; };
 		2352B30C30A727A400195DEF /* pop.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = pop.mp3; sourceTree = "<group>"; };
 		2352B30C30AA3B5000195DEF /* pictures/bottomimage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pictures/bottomimage.png; sourceTree = "<group>"; };
 		2352B30E30AA3CFE00195DEF /* pictures/topimage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pictures/topimage.png; sourceTree = "<group>"; };
@@ -171,7 +169,6 @@
 				2352B31630AA5AEA00195DEF /* pictures/Cloud-2.png */,
 				2352B31730AA5AEA00195DEF /* pictures/Sparkle.png */,
 				AA000002038 /* LaunchView.swift */,
-				2352B30930A7221700195DEF /* prolongedvideo.mp4 */,
 				2352B30C30A727A400195DEF /* pop.mp3 */,
 				2352B33230AB061300195DEF /* pictures/header.png */,
 				2352B30E30AA3CFE00195DEF /* pictures/topimage.png */,
@@ -262,7 +259,6 @@
 				2352B33530AB106900195DEF /* pictures/hey1.png in Resources */,
 				AA000001012 /* Assets.xcassets in Resources */,
 				2352B30D30AA3B5000195DEF /* pictures/bottomimage.png in Resources */,
-				2352B30A30A7221700195DEF /* prolongedvideo.mp4 in Resources */,
 				2352B30D30A727A400195DEF /* pop.mp3 in Resources */,
 				2352B33730AB169300195DEF /* picturedesintro.png in Resources */,
 				2352B33330AB061300195DEF /* pictures/header.png in Resources */,
