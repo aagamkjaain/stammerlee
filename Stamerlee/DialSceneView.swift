@@ -262,32 +262,27 @@ public struct DialSceneIntroView: View {
                     }
                     .padding(.horizontal, 24)
                     .padding(.vertical, 8)
+                    .padding(.bottom, 16)
                 }
-                .frame(maxHeight: 260)
+                .frame(maxHeight: min(340, h * 0.44))
                 .onChange(of: convoTurn) { _, newTurn in
-                    withAnimation {
+                    withAnimation(.easeInOut(duration: 0.3)) {
                         proxy.scrollTo(newTurn + 1, anchor: .bottom)
                     }
                 }
             }
-            .padding(.bottom, 20)
 
-            // Dynamic Microphone Prompt & Button or Continue Button
+            Spacer()
+
+            // Dynamic Microphone Prompt & Button or Continue Button (Constant bottom position)
             if convoTurn >= 4 {
-                VStack(spacing: 12) {
-                    Text("Call completed! Good job.")
-                        .font(.system(size: 14, weight: .medium, design: .rounded))
-                        .foregroundStyle(Color(red: 215 / 255, green: 210 / 255, blue: 245 / 255))
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 24)
-                        .frame(height: 22)
-
+                VStack(spacing: 16) {
                     DialGlassActionButton(title: "Continue") {
                         goToStep(.wellDone)
                     }
-                    .padding(.horizontal, 24)
                 }
-                .padding(.bottom, 24)
+                .padding(.horizontal, 24)
+                .padding(.bottom, 36)
             } else {
                 VStack(spacing: 12) {
                     // Instructions cue
@@ -350,10 +345,8 @@ public struct DialSceneIntroView: View {
                     .buttonStyle(.plain)
                     .disabled(isListening || convoTurn == 1 || convoTurn == 3)
                 }
-                .padding(.bottom, 24)
+                .padding(.bottom, 36)
             }
-
-            Spacer()
         }
     }
 
