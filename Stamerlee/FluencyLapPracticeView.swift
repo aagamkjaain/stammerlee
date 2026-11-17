@@ -197,53 +197,9 @@ public struct SpeakPracticeScreen: View {
     }
 
     private var microphoneControl: some View {
-        Button {
+        UniversalMicrophoneButton(isListening: isListening, disabled: isListening) {
             startListening()
-        } label: {
-            ZStack {
-                Circle()
-                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
-                    .frame(width: 148, height: 148)
-                    .scaleEffect(isListening && pulse ? 1.12 : 1)
-                    .opacity(isListening ? (pulse ? 0.35 : 0.9) : 1)
-
-                Circle()
-                    .stroke(StamerleeTheme.primaryPurple.opacity(isListening ? 0.45 : 0.25), lineWidth: 12)
-                    .frame(width: 126, height: 126)
-                    .scaleEffect(isListening && pulse ? 1.08 : 1)
-                    .opacity(isListening ? (pulse ? 0.55 : 1) : 1)
-
-                Circle()
-                    .fill(
-                        RadialGradient(
-                            colors: [StamerleeTheme.accentPurpleLight, StamerleeTheme.primaryPurpleDark],
-                            center: .topLeading,
-                            startRadius: 2,
-                            endRadius: 75
-                        )
-                    )
-                    .frame(width: 96, height: 96)
-                    .shadow(color: StamerleeTheme.primaryPurple.opacity(isListening ? 0.95 : 0.7), radius: isListening ? 22 : 16)
-                    .scaleEffect(isListening && pulse ? 1.05 : 1)
-
-                Image(systemName: "mic.fill")
-                    .font(.system(size: 34, weight: .medium))
-                    .foregroundStyle(.white)
-                    .scaleEffect(isListening && pulse ? 1.08 : 1)
-            }
-            .frame(width: 168, height: 168)
-            .contentShape(Circle())
-            .animation(
-                isListening
-                    ? .easeInOut(duration: 0.75).repeatForever(autoreverses: true)
-                    : .easeOut(duration: 0.2),
-                value: pulse
-            )
         }
-        .buttonStyle(.haptic(weight: .medium, pressedScale: 0.96))
-        .disabled(isListening)
-        .accessibilityLabel(isListening ? "Listening" : "Speak word")
-        .sensoryFeedback(.impact(weight: .medium), trigger: isListening)
     }
 
     private func startListening() {

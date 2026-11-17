@@ -901,53 +901,13 @@ public struct BeatBuddyPracticeView: View {
     }
 
     private var microphoneControl: some View {
-        Button {
+        UniversalMicrophoneButton(
+            isListening: isListening,
+            isBeating: isBeating && isMetronomeActive,
+            disabled: isListening
+        ) {
             startListening()
-        } label: {
-            ZStack {
-                Circle()
-                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
-                    .frame(width: 98, height: 98)
-                    .scaleEffect(isListening && pulse ? 1.08 : ((isBeating && isMetronomeActive) ? 1.03 : 1))
-                    .opacity(isListening ? (pulse ? 0.35 : 0.9) : 1)
-
-                Circle()
-                    .stroke(StamerleeTheme.primaryPurple.opacity(isListening ? 0.45 : ((isBeating && isMetronomeActive) ? 0.35 : 0.25)), lineWidth: 8)
-                    .frame(width: 84, height: 84)
-                    .scaleEffect(isListening && pulse ? 1.05 : ((isBeating && isMetronomeActive) ? 1.02 : 1))
-                    .opacity(isListening ? (pulse ? 0.55 : 1) : 1)
-
-                Circle()
-                    .fill(
-                        RadialGradient(
-                            colors: [StamerleeTheme.accentPurpleLight, StamerleeTheme.primaryPurpleDark],
-                            center: .topLeading,
-                            startRadius: 2,
-                            endRadius: 48
-                        )
-                    )
-                    .frame(width: 64, height: 64)
-                    .shadow(color: StamerleeTheme.primaryPurple.opacity(isListening ? 0.9 : 0.6), radius: isListening ? 14 : 10)
-                    .scaleEffect(isListening && pulse ? 1.04 : 1)
-
-                Image(systemName: "mic.fill")
-                    .font(.system(size: 24, weight: .medium))
-                    .foregroundStyle(.white)
-                    .scaleEffect(isListening && pulse ? 1.05 : 1)
-            }
-            .frame(width: 108, height: 108)
-            .contentShape(Circle())
-            .animation(
-                isListening
-                    ? .easeInOut(duration: 0.75).repeatForever(autoreverses: true)
-                    : .easeOut(duration: 0.2),
-                value: pulse
-            )
         }
-        .buttonStyle(.haptic(weight: .medium, pressedScale: 0.96))
-        .disabled(isListening)
-        .accessibilityLabel(isListening ? "Listening" : "Speak with the beat")
-        .sensoryFeedback(.impact(weight: .medium), trigger: isListening)
     }
 
     private func startListening() {
@@ -1553,56 +1513,14 @@ public struct BeatBuddyIntroView: View {
             }
             .padding(.bottom, 28)
 
-            // Purple Glass Microphone Control
-            Button {
+            // Universal Purple Glass Microphone Control
+            UniversalMicrophoneButton(
+                isListening: isListening,
+                isBeating: isBeating,
+                disabled: isListening
+            ) {
                 triggerSpeak()
-            } label: {
-                ZStack {
-                    Circle()
-                        .stroke(StamerleeTheme.primaryBlue.opacity(isListening ? 0.5 : ((isBeating) ? 0.35 : 0.18)), lineWidth: 1.5)
-                        .frame(width: 120, height: 120)
-                        .scaleEffect(isListening && pulseMic ? 1.18 : (isBeating ? 1.05 : 1.0))
-
-                    Circle()
-                        .fill(Color(red: 32 / 255, green: 26 / 255, blue: 58 / 255))
-                        .frame(width: 90, height: 90)
-                        .scaleEffect(isListening && pulseMic ? 1.08 : (isBeating ? 1.03 : 1.0))
-
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    Color(red: 160 / 255, green: 130 / 255, blue: 255 / 255),
-                                    StamerleeTheme.primaryBlueDark
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 68, height: 68)
-                        .overlay(
-                            Circle()
-                                .stroke(
-                                    LinearGradient(
-                                        colors: [Color.white.opacity(0.7), Color.white.opacity(0.1)],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    ),
-                                    lineWidth: 1.2
-                                )
-                        )
-                        .shadow(
-                            color: StamerleeTheme.primaryBlue.opacity(isListening ? 0.9 : 0.5),
-                            radius: isListening ? 16 : 10
-                        )
-
-                    Image(systemName: isListening ? "waveform" : "mic.fill")
-                        .font(.system(size: 26, weight: .semibold))
-                        .foregroundStyle(.white)
-                }
             }
-            .buttonStyle(.plain)
-            .disabled(isListening)
 
             Text(isListening ? "Listening..." : "Tap and speak with the beat")
                 .font(.system(size: 14, weight: .regular, design: .rounded))

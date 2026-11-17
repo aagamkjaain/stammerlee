@@ -226,60 +226,10 @@ public struct ProlongedSpeechIntroView: View {
                 .padding(.top, 8)
                 .padding(.bottom, 36)
 
-            // Purple Glass Microphone Control
-            Button {
+            // Universal Purple Glass Microphone Control
+            UniversalMicrophoneButton(isListening: isListening, disabled: isListening) {
                 triggerSpeak()
-            } label: {
-                ZStack {
-                    // Outer audio wave ripple
-                    Circle()
-                        .stroke(StamerleeTheme.primaryBlue.opacity(isListening ? 0.5 : 0.22), lineWidth: 1.5)
-                        .frame(width: 120, height: 120)
-                        .scaleEffect(isListening && pulseMic ? 1.18 : 1.0)
-
-                    // Deep navy purple back ring
-                    Circle()
-                        .fill(Color(red: 32 / 255, green: 26 / 255, blue: 58 / 255))
-                        .frame(width: 90, height: 90)
-                        .scaleEffect(isListening && pulseMic ? 1.08 : 1.0)
-
-                    // Core Purple Glass Button
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    Color(red: 160 / 255, green: 130 / 255, blue: 255 / 255),
-                                    StamerleeTheme.primaryBlueDark
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 68, height: 68)
-                        .overlay(
-                            Circle()
-                                .stroke(
-                                    LinearGradient(
-                                        colors: [Color.white.opacity(0.7), Color.white.opacity(0.1)],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    ),
-                                    lineWidth: 1.2
-                                )
-                        )
-                        .shadow(
-                            color: StamerleeTheme.primaryBlue.opacity(isListening ? 0.9 : 0.5),
-                            radius: isListening ? 16 : 10
-                        )
-
-                    Image(systemName: isListening ? "waveform" : "mic.fill")
-                        .font(.system(size: 26, weight: .semibold))
-                        .foregroundStyle(.white)
-                }
-                .animation(.easeInOut(duration: 0.6).repeatForever(autoreverses: true), value: pulseMic)
             }
-            .buttonStyle(.plain)
-            .disabled(isListening)
 
             Text(isListening ? "Listening" : "Tap and hold to speak")
                 .font(.system(size: 14, weight: .regular, design: .rounded))
@@ -571,11 +521,11 @@ public struct GlassActionButton: View {
                 Button(action: action) { content }
                     .buttonStyle(.glass(.regular.tint(StamerleeTheme.primaryBlue).interactive()))
                     .buttonBorderShape(.capsule)
-                    .frame(width: 290)
+                    .frame(width: 330, height: 42)
             } else {
                 Button(action: action) { content }
                     .buttonStyle(PopSpringButtonStyle(isEnabled: true))
-                    .frame(width: 290)
+                    .frame(width: 330, height: 42)
             }
         }
         .frame(maxWidth: .infinity, alignment: .center)
@@ -585,25 +535,25 @@ public struct GlassActionButton: View {
         HStack(spacing: 8) {
             if let icon {
                 Image(systemName: icon)
-                    .font(.system(size: 16, weight: .bold))
+                    .font(.system(size: 14.5, weight: .bold))
             }
             Text(title)
-                .font(.system(size: 16.5, weight: .bold, design: .rounded))
+                .font(.system(size: 15.5, weight: .bold, design: .rounded))
         }
         .foregroundStyle(.white)
         .frame(maxWidth: .infinity, alignment: .center)
-        .frame(height: 48)
+        .frame(height: 42)
         .background {
             if #available(iOS 26.0, *) {
                 Color.clear
             } else {
                 ZStack {
                     // Ultra thin translucent material blur
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    RoundedRectangle(cornerRadius: 21, style: .continuous)
                         .fill(.ultraThinMaterial)
 
                     // Purple glass tint
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    RoundedRectangle(cornerRadius: 21, style: .continuous)
                         .fill(
                             LinearGradient(
                                 colors: [
@@ -616,7 +566,7 @@ public struct GlassActionButton: View {
                         )
 
                     // Gloss shine highlight on top rim
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    RoundedRectangle(cornerRadius: 21, style: .continuous)
                         .stroke(
                             LinearGradient(
                                 colors: [
@@ -632,7 +582,7 @@ public struct GlassActionButton: View {
                 }
             }
         }
-        .shadow(color: StamerleeTheme.primaryBlue.opacity(0.4), radius: 12, x: 0, y: 5)
+        .shadow(color: StamerleeTheme.primaryBlue.opacity(0.35), radius: 10, x: 0, y: 4)
     }
 }
 

@@ -248,60 +248,10 @@ public struct PictureDescriptionIntroView: View {
             .shadow(color: StamerleeTheme.primaryBlue.opacity(0.35), radius: 14, x: 0, y: 6)
             .padding(.bottom, 24)
 
-            // Purple Glass Microphone Control
-            Button {
+            // Universal Purple Glass Microphone Control
+            UniversalMicrophoneButton(isListening: isListening, disabled: isListening) {
                 triggerSpeak()
-            } label: {
-                ZStack {
-                    // Outer audio wave ripple
-                    Circle()
-                        .stroke(StamerleeTheme.primaryBlue.opacity(isListening ? 0.5 : 0.22), lineWidth: 1.5)
-                        .frame(width: 104, height: 104)
-                        .scaleEffect(isListening && pulseMic ? 1.18 : 1.0)
-
-                    // Deep navy purple back ring
-                    Circle()
-                        .fill(Color(red: 32 / 255, green: 26 / 255, blue: 58 / 255))
-                        .frame(width: 78, height: 78)
-                        .scaleEffect(isListening && pulseMic ? 1.08 : 1.0)
-
-                    // Core Purple Glass Button
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    Color(red: 160 / 255, green: 130 / 255, blue: 255 / 255),
-                                    StamerleeTheme.primaryBlueDark
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 58, height: 58)
-                        .overlay(
-                            Circle()
-                                .stroke(
-                                    LinearGradient(
-                                        colors: [Color.white.opacity(0.7), Color.white.opacity(0.1)],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    ),
-                                    lineWidth: 1.2
-                                )
-                        )
-                        .shadow(
-                            color: StamerleeTheme.primaryBlue.opacity(isListening ? 0.9 : 0.5),
-                            radius: isListening ? 16 : 10
-                        )
-
-                    Image(systemName: isListening ? "waveform" : "mic.fill")
-                        .font(.system(size: 22, weight: .semibold))
-                        .foregroundStyle(.white)
-                }
-                .animation(.easeInOut(duration: 0.6).repeatForever(autoreverses: true), value: pulseMic)
             }
-            .buttonStyle(.plain)
-            .disabled(isListening)
 
             Text(isListening ? "Listening" : "Tap and hold to speak")
                 .font(.system(size: 13.5, weight: .regular, design: .rounded))

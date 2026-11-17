@@ -92,12 +92,12 @@ public struct PrimaryActionButton: View {
                 Button(action: action) { label }
                     .buttonStyle(.glass(.regular.tint(StamerleeTheme.primaryBlue).interactive()))
                     .buttonBorderShape(.capsule)
-                    .frame(width: compact ? 240 : 290)
+                    .frame(width: compact ? 270 : 330, height: compact ? 36 : 42)
                     .disabled(!isEnabled || isLoading)
             } else {
                 Button(action: action) { label }
                     .buttonStyle(PopSpringButtonStyle(isEnabled: isEnabled && !isLoading))
-                    .frame(width: compact ? 240 : 290)
+                    .frame(width: compact ? 270 : 330, height: compact ? 36 : 42)
                     .disabled(!isEnabled || isLoading)
             }
         }
@@ -109,28 +109,28 @@ public struct PrimaryActionButton: View {
             if isLoading {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                    .scaleEffect(compact ? 0.8 : 0.9)
+                    .scaleEffect(compact ? 0.75 : 0.85)
             } else {
                 if let icon = icon {
                     Image(systemName: icon)
-                        .font(.system(size: compact ? 13 : 16, weight: .bold))
+                        .font(.system(size: compact ? 12 : 14.5, weight: .bold))
                 }
                 Text(title)
-                    .font(.system(size: compact ? 15 : 16.5, weight: .bold, design: .rounded))
+                    .font(.system(size: compact ? 14 : 15.5, weight: .bold, design: .rounded))
             }
         }
         .foregroundStyle(.white)
         .frame(maxWidth: .infinity, alignment: .center)
-        .frame(height: compact ? 42 : 48)
+        .frame(height: compact ? 36 : 42)
         .background {
             if #available(iOS 26.0, *) {
                 Color.clear
             } else {
                 ZStack {
-                    RoundedRectangle(cornerRadius: compact ? 21 : 24, style: .continuous)
+                    RoundedRectangle(cornerRadius: compact ? 18 : 21, style: .continuous)
                         .fill(.ultraThinMaterial)
 
-                    RoundedRectangle(cornerRadius: compact ? 21 : 24, style: .continuous)
+                    RoundedRectangle(cornerRadius: compact ? 18 : 21, style: .continuous)
                         .fill(
                             LinearGradient(
                                 colors: [
@@ -142,7 +142,7 @@ public struct PrimaryActionButton: View {
                             )
                         )
 
-                    RoundedRectangle(cornerRadius: compact ? 21 : 24, style: .continuous)
+                    RoundedRectangle(cornerRadius: compact ? 18 : 21, style: .continuous)
                         .stroke(
                             LinearGradient(
                                 colors: [
@@ -158,7 +158,7 @@ public struct PrimaryActionButton: View {
                 }
             }
         }
-        .shadow(color: isEnabled ? StamerleeTheme.primaryBlue.opacity(0.4) : .clear, radius: 12, x: 0, y: 5)
+        .shadow(color: isEnabled ? StamerleeTheme.primaryBlue.opacity(0.35) : .clear, radius: 10, x: 0, y: 4)
     }
 }
 
@@ -503,65 +503,119 @@ public struct ExerciseIntroSkeletonView: View {
     }
 }
 
-// MARK: - Pulsing Microphone Button
-public struct PulsingMicrophoneButton: View {
-    @Binding public var isListening: Bool
+// MARK: - Universal Microphone Button (Matches Prolonged Speech Reference)
+public struct UniversalMicrophoneButton: View {
+    public let isListening: Bool
+    public var isBeating: Bool = false
+    public var disabled: Bool = false
     public let action: () -> Void
 
-    @State private var pulse = false
+    @State private var pulseMic: Bool = false
 
-    public init(isListening: Binding<Bool>, action: @escaping () -> Void) {
-        self._isListening = isListening
+    public init(
+        isListening: Bool,
+        isBeating: Bool = false,
+        disabled: Bool = false,
+        action: @escaping () -> Void
+    ) {
+        self.isListening = isListening
+        self.isBeating = isBeating
+        self.disabled = disabled
         self.action = action
     }
 
     public var body: some View {
         Button(action: action) {
             ZStack {
+                // Outer audio wave ripple
                 Circle()
-                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
-                    .frame(width: 148, height: 148)
-                    .scaleEffect(isListening && pulse ? 1.12 : 1)
-                    .opacity(isListening ? (pulse ? 0.35 : 0.9) : 1)
+                    .stroke(StamerleeTheme.primaryBlue.opacity(isListening ? 0.5 : (isBeating ? 0.35 : 0.22)), lineWidth: 1.5)
+                    .frame(width: 120, height: 120)
+                    .scaleEffect(isListening && pulseMic ? 1.18 : (isBeating ? 1.05 : 1.0))
 
+                // Deep navy purple back ring
                 Circle()
-                    .stroke(StamerleeTheme.primaryPurple.opacity(isListening ? 0.45 : 0.25), lineWidth: 12)
-                    .frame(width: 126, height: 126)
-                    .scaleEffect(isListening && pulse ? 1.08 : 1)
-                    .opacity(isListening ? (pulse ? 0.55 : 1) : 1)
+                    .fill(Color(red: 32 / 255, green: 26 / 255, blue: 58 / 255))
+                    .frame(width: 90, height: 90)
+                    .scaleEffect(isListening && pulseMic ? 1.08 : (isBeating ? 1.03 : 1.0))
 
+                // Core Purple Glass Button
                 Circle()
                     .fill(
-                        RadialGradient(
-                            colors: [StamerleeTheme.accentPurpleLight, StamerleeTheme.primaryPurpleDark],
-                            center: .topLeading,
-                            startRadius: 2,
-                            endRadius: 75
+                        LinearGradient(
+                            colors: [
+                                Color(red: 160 / 255, green: 130 / 255, blue: 255 / 255),
+                                StamerleeTheme.primaryBlueDark
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
                         )
                     )
-                    .frame(width: 96, height: 96)
-                    .shadow(color: StamerleeTheme.primaryPurple.opacity(isListening ? 0.95 : 0.7), radius: isListening ? 22 : 16)
-                    .scaleEffect(isListening && pulse ? 1.05 : 1)
+                    .frame(width: 68, height: 68)
+                    .overlay(
+                        Circle()
+                            .stroke(
+                                LinearGradient(
+                                    colors: [Color.white.opacity(0.7), Color.white.opacity(0.1)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 1.2
+                            )
+                    )
+                    .shadow(
+                        color: StamerleeTheme.primaryBlue.opacity(isListening ? 0.9 : (isBeating ? 0.7 : 0.5)),
+                        radius: isListening ? 16 : 10
+                    )
 
-                Image(systemName: "mic.fill")
-                    .font(.system(size: 34, weight: .medium))
+                Image(systemName: isListening ? "waveform" : "mic.fill")
+                    .font(.system(size: 26, weight: .semibold))
                     .foregroundStyle(.white)
-                    .scaleEffect(isListening && pulse ? 1.08 : 1)
             }
-            .frame(width: 168, height: 168)
+            .frame(width: 124, height: 124)
             .contentShape(Circle())
-            .animation(
-                isListening
-                    ? .easeInOut(duration: 0.75).repeatForever(autoreverses: true)
-                    : .easeOut(duration: 0.2),
-                value: pulse
-            )
+            .animation(.easeInOut(duration: 0.6).repeatForever(autoreverses: true), value: pulseMic)
         }
         .buttonStyle(.haptic(weight: .medium, pressedScale: 0.96))
-        .accessibilityLabel(isListening ? "Stop listening" : "Tap to speak")
-        .onChange(of: isListening) { _, listening in
-            pulse = listening
+        .disabled(disabled)
+        .accessibilityLabel(isListening ? "Listening" : "Tap to speak")
+        .onAppear {
+            if isListening {
+                pulseMic = true
+            }
         }
+        .onChange(of: isListening) { _, listening in
+            pulseMic = listening
+        }
+    }
+}
+
+// MARK: - Pulsing Microphone Button
+public struct PulsingMicrophoneButton: View {
+    @Binding public var isListening: Bool
+    public var isBeating: Bool = false
+    public var disabled: Bool = false
+    public let action: () -> Void
+
+    public init(
+        isListening: Binding<Bool>,
+        isBeating: Bool = false,
+        disabled: Bool = false,
+        action: @escaping () -> Void
+    ) {
+        self._isListening = isListening
+        self.isBeating = isBeating
+        self.disabled = disabled
+        self.action = action
+    }
+
+    public var body: some View {
+        UniversalMicrophoneButton(
+            isListening: isListening,
+            isBeating: isBeating,
+            disabled: disabled,
+            action: action
+        )
     }
 }
 

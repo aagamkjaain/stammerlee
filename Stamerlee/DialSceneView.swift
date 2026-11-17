@@ -287,57 +287,13 @@ public struct DialSceneIntroView: View {
                         .padding(.horizontal, 24)
                         .frame(height: 22)
 
-                    // Purple Glass Microphone Control
-                    Button {
+                    // Universal Purple Glass Microphone Control
+                    UniversalMicrophoneButton(
+                        isListening: isListening,
+                        disabled: isListening || convoTurn == 1 || convoTurn == 3
+                    ) {
                         triggerUserTurn()
-                    } label: {
-                        ZStack {
-                            Circle()
-                                .stroke(StamerleeTheme.primaryBlue.opacity(isListening ? 0.5 : 0.22), lineWidth: 1.5)
-                                .frame(width: 96, height: 96)
-                                .scaleEffect(isListening && pulseMic ? 1.18 : 1.0)
-
-                            Circle()
-                                .fill(Color(red: 32 / 255, green: 26 / 255, blue: 58 / 255))
-                                .frame(width: 72, height: 72)
-                                .scaleEffect(isListening && pulseMic ? 1.08 : 1.0)
-
-                            Circle()
-                                .fill(
-                                    LinearGradient(
-                                        colors: [
-                                            Color(red: 160 / 255, green: 130 / 255, blue: 255 / 255),
-                                            StamerleeTheme.primaryBlueDark
-                                        ],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    )
-                                )
-                                .frame(width: 54, height: 54)
-                                .overlay(
-                                    Circle()
-                                        .stroke(
-                                            LinearGradient(
-                                                colors: [Color.white.opacity(0.7), Color.white.opacity(0.1)],
-                                                startPoint: .topLeading,
-                                                endPoint: .bottomTrailing
-                                            ),
-                                            lineWidth: 1.2
-                                        )
-                                )
-                                .shadow(
-                                    color: StamerleeTheme.primaryBlue.opacity(isListening ? 0.9 : 0.5),
-                                    radius: isListening ? 16 : 10
-                                )
-
-                            Image(systemName: isListening ? "waveform" : "mic.fill")
-                                .font(.system(size: 20, weight: .semibold))
-                                .foregroundStyle(.white)
-                        }
-                        .animation(.easeInOut(duration: 0.6).repeatForever(autoreverses: true), value: pulseMic)
                     }
-                    .buttonStyle(.plain)
-                    .disabled(isListening || convoTurn == 1 || convoTurn == 3)
                 }
                 .padding(.bottom, 36)
             }
@@ -905,7 +861,7 @@ public struct DialSceneView: View {
 
             // Mic only. Animates while listening; Finish appears once the user has spoken.
             VStack(spacing: 14) {
-                DialMicButton(phase: micPhase, action: micTapped)
+                UniversalMicrophoneButton(isListening: micPhase != .idle, disabled: false, action: micTapped)
 
                 Text(micHint)
                     .font(.system(size: 14, weight: .regular, design: .rounded))
@@ -1090,103 +1046,10 @@ public struct DialSceneView: View {
 }
 
 
-// MARK: - Dial Mic Button Style
-private struct DialMicButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .scaleEffect(configuration.isPressed ? 0.94 : 1.0)
-            .animation(.spring(response: 0.25, dampingFraction: 0.7), value: configuration.isPressed)
-            .sensoryFeedback(trigger: configuration.isPressed) { _, isPressed in
-                isPressed ? .impact(weight: .light) : nil
-            }
-    }
-}
-
-// MARK: - Dial Mic Button (iOS-native size & feedback, animated while live)
+// MARK: - Dial Mic Phase
 enum DialMicPhase: Equatable {
     case idle
     case listening
-}
-
-private struct DialMicButton: View {
-    let phase: DialMicPhase
-    let action: () -> Void
-
-    private var isActive: Bool { phase != .idle }
-
-    var body: some View {
-        Button(action: action) {
-            // Always animating: a calm idle pulse, a faster/stronger one while live
-            TimelineView(.animation(minimumInterval: 1.0 / 60.0)) { context in
-                let t = context.date.timeIntervalSinceReferenceDate
-                let pulse = (sin(t * (isActive ? 3.0 : 1.8)) + 1) / 2
-
-                ZStack {
-                    // Expanding ripples (soft when idle, stronger when live)
-                    ForEach(0..<2, id: \.self) { k in
-                        let speed = isActive ? 0.7 : 0.35
-                        let p = (t * speed + Double(k) * 0.5).truncatingRemainder(dividingBy: 1.0)
-                        Circle()
-                            .stroke(StamerleeTheme.primaryBlue.opacity((1 - p) * (isActive ? 0.45 : 0.20)), lineWidth: 1.5)
-                            .frame(width: 96, height: 96)
-                            .scaleEffect(1.0 + p * 0.35)
-                    }
-
-                    // Faint static outer ring
-                    Circle()
-                        .stroke(Color.white.opacity(0.08), lineWidth: 1)
-                        .frame(width: 104, height: 104)
-                        .scaleEffect(1.0 + 0.04 * pulse)
-
-                    // Deep navy back ring
-                    Circle()
-                        .fill(Color(red: 32 / 255, green: 26 / 255, blue: 58 / 255))
-                        .frame(width: 78, height: 78)
-                        .scaleEffect(1.0 + (isActive ? 0.06 : 0.03) * pulse)
-
-                    // Core purple glass button
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    Color(red: 160 / 255, green: 130 / 255, blue: 255 / 255),
-                                    StamerleeTheme.primaryBlueDark
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 60, height: 60)
-                        .scaleEffect(1.0 + (isActive ? 0.03 : 0.015) * pulse)
-                        .overlay(
-                            Circle().stroke(
-                                LinearGradient(
-                                    colors: [Color.white.opacity(0.7), Color.white.opacity(0.15)],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: 1.2
-                            )
-                        )
-                        .shadow(
-                            color: StamerleeTheme.primaryBlue.opacity(isActive ? 0.85 : 0.45),
-                            radius: isActive ? 12 : 8
-                        )
-
-                    // Same mic icon always; the pulse alone shows it's live
-                    Image(systemName: "mic.fill")
-                        .font(.system(size: 24, weight: .semibold))
-                        .foregroundStyle(.white)
-                }
-                .frame(width: 120, height: 120)
-                .contentShape(Circle())
-                .animation(.easeInOut(duration: 0.25), value: isActive)
-            }
-        }
-        .buttonStyle(DialMicButtonStyle())
-        .accessibilityLabel(isActive ? "Stop microphone" : "Start microphone")
-        .accessibilityAddTraits(.isButton)
-    }
 }
 
 #Preview("Dial Scene") {
