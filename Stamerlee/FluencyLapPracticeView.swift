@@ -130,6 +130,7 @@ public struct SpeakPracticeScreen: View {
                 PrimaryActionButton(title: "Finish") {
                     finishPractice()
                 }
+                .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.top, 16)
                 .padding(.bottom, 12)
             }

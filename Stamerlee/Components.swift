@@ -87,17 +87,21 @@ public struct PrimaryActionButton: View {
     }
 
     public var body: some View {
-        if #available(iOS 26.0, *) {
-            Button(action: action) { label }
-                .buttonStyle(.glass(.regular.tint(StamerleeTheme.primaryBlue).interactive()))
-                .buttonBorderShape(.capsule)
-                .frame(maxWidth: compact ? 240 : 290)
-                .disabled(!isEnabled || isLoading)
-        } else {
-            Button(action: action) { label }
-                .buttonStyle(PopSpringButtonStyle(isEnabled: isEnabled && !isLoading))
-                .disabled(!isEnabled || isLoading)
+        Group {
+            if #available(iOS 26.0, *) {
+                Button(action: action) { label }
+                    .buttonStyle(.glass(.regular.tint(StamerleeTheme.primaryBlue).interactive()))
+                    .buttonBorderShape(.capsule)
+                    .frame(width: compact ? 240 : 290)
+                    .disabled(!isEnabled || isLoading)
+            } else {
+                Button(action: action) { label }
+                    .buttonStyle(PopSpringButtonStyle(isEnabled: isEnabled && !isLoading))
+                    .frame(width: compact ? 240 : 290)
+                    .disabled(!isEnabled || isLoading)
+            }
         }
+        .frame(maxWidth: .infinity, alignment: .center)
     }
 
     private var label: some View {
@@ -116,7 +120,7 @@ public struct PrimaryActionButton: View {
             }
         }
         .foregroundStyle(.white)
-        .frame(maxWidth: compact ? 240 : 290)
+        .frame(maxWidth: .infinity, alignment: .center)
         .frame(height: compact ? 42 : 48)
         .background {
             if #available(iOS 26.0, *) {
@@ -488,6 +492,7 @@ public struct ExerciseIntroSkeletonView: View {
                 VStack {
                     PrimaryActionButton(title: continueButtonTitle, action: onContinue)
                 }
+                .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
             }
@@ -765,6 +770,7 @@ public struct ExerciseAnalysisSkeletonView: View {
 
                 // Bottom CTA Button ("Done")
                 PrimaryActionButton(title: "Done", action: onDone)
+                    .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.horizontal, 24)
                     .padding(.bottom, 24)
             }

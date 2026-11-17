@@ -71,6 +71,7 @@ public struct FluencyLapView: View {
                         state.navigate(to: .fluencyLapPractice)
                     }
                 }
+                .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
             }

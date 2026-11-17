@@ -566,15 +566,19 @@ public struct GlassActionButton: View {
     }
 
     public var body: some View {
-        if #available(iOS 26.0, *) {
-            Button(action: action) { content }
-                .buttonStyle(.glass(.regular.tint(StamerleeTheme.primaryBlue).interactive()))
-                .buttonBorderShape(.capsule)
-                .frame(maxWidth: 290)
-        } else {
-            Button(action: action) { content }
-                .buttonStyle(PopSpringButtonStyle(isEnabled: true))
+        Group {
+            if #available(iOS 26.0, *) {
+                Button(action: action) { content }
+                    .buttonStyle(.glass(.regular.tint(StamerleeTheme.primaryBlue).interactive()))
+                    .buttonBorderShape(.capsule)
+                    .frame(width: 290)
+            } else {
+                Button(action: action) { content }
+                    .buttonStyle(PopSpringButtonStyle(isEnabled: true))
+                    .frame(width: 290)
+            }
         }
+        .frame(maxWidth: .infinity, alignment: .center)
     }
 
     private var content: some View {
@@ -587,7 +591,7 @@ public struct GlassActionButton: View {
                 .font(.system(size: 16.5, weight: .bold, design: .rounded))
         }
         .foregroundStyle(.white)
-        .frame(maxWidth: 290)
+        .frame(maxWidth: .infinity, alignment: .center)
         .frame(height: 48)
         .background {
             if #available(iOS 26.0, *) {

@@ -293,6 +293,7 @@ public struct BeatBuddyWordsView: View {
                         }
                     }
                 }
+                .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
             }
@@ -582,6 +583,7 @@ public struct BeatBuddyBPMView: View {
                         startSession()
                     }
                 }
+                .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
             }
@@ -749,6 +751,7 @@ public struct BeatBuddyPracticeView: View {
                 PrimaryActionButton(title: "Finish") {
                     finishPractice()
                 }
+                .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.bottom, 14)
             }
             .padding(.horizontal, 24)

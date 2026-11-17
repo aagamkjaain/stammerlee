@@ -83,6 +83,7 @@ public struct PictureDescriptionEasyView: View {
                     isAnalysisVisible = true
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .center)
             .padding(.horizontal, 24)
             .padding(.bottom, 24)
         }

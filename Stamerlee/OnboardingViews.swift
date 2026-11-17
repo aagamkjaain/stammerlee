@@ -437,6 +437,7 @@ public struct DailyGoalView: View {
                 ) {
                     state.navigate(to: .exploreActivities, forward: true)
                 }
+                .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
             }
@@ -533,6 +534,7 @@ public struct ExploreActivitiesView: View {
                     PrimaryActionButton(title: "Begin", compact: false) {
                         state.navigate(to: .homeDashboard, forward: true)
                     }
+                    .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.horizontal, 24)
                     .padding(.bottom, 24)
                 }

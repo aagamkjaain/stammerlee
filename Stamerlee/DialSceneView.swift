@@ -930,6 +930,7 @@ public struct DialSceneView: View {
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .center)
             .frame(height: 56)
             .padding(.top, 24)
             .padding(.bottom, 28)

@@ -77,6 +77,7 @@ public struct NarrationPracticeView: View {
             .padding(.bottom, 26)
 
             PrimaryActionButton(title: "Finish") { complete() }
+                .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
         }
