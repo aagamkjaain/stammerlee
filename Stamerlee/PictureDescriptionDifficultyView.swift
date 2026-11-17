@@ -321,29 +321,12 @@ public struct PictureDescriptionIntroView: View {
 
             ZStack {
                 VStack(spacing: 12) {
-                    // Celebration Starburst: Hero Star + 2 Angled Burst Rays
-                    ZStack {
-                        HStack(spacing: 24) {
-                            Capsule()
-                                .fill(Color(red: 255 / 255, green: 220 / 255, blue: 100 / 255))
-                                .frame(width: 3.5, height: 14)
-                                .rotationEffect(.degrees(-26))
-                                .offset(y: -14)
-
-                            Capsule()
-                                .fill(Color(red: 255 / 255, green: 220 / 255, blue: 100 / 255))
-                                .frame(width: 3.5, height: 14)
-                                .rotationEffect(.degrees(26))
-                                .offset(y: -14)
-                        }
-                        .scaleEffect(wellDoneBurst ? 1.0 : 0.4)
+                    // Celebration Sparkle Asset
+                    assetImage("celebration")
+                        .frame(width: 68, height: 62)
+                        .scaleEffect(wellDoneBurst ? 1.0 : 0.3)
                         .opacity(wellDoneBurst ? 1.0 : 0.0)
-
-                        // Center 4-Point Golden Star
-                        assetImage("Sparkle-2")
-                            .frame(width: 44, height: 44)
-                            .shadow(color: Color(red: 255 / 255, green: 215 / 255, blue: 100 / 255).opacity(0.9), radius: 14)
-                    }
+                        .shadow(color: Color(red: 255 / 255, green: 215 / 255, blue: 100 / 255).opacity(0.6), radius: 12)
 
                     // Bold "Well done!" Headline
                     Text("Well done!")

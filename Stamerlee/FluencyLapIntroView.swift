@@ -383,26 +383,12 @@ public struct FluencyLapIntroView: View {
 
             ZStack {
                 VStack(spacing: 12) {
-                    // Celebration Starburst
-                    ZStack {
-                        HStack(spacing: 24) {
-                            Capsule()
-                                .fill(Color(red: 255 / 255, green: 220 / 255, blue: 100 / 255))
-                                .frame(width: 3.5, height: 16)
-                                .rotationEffect(.degrees(-32))
-                                .offset(x: -8, y: -16)
-
-                            Capsule()
-                                .fill(Color(red: 255 / 255, green: 220 / 255, blue: 100 / 255))
-                                .frame(width: 3.5, height: 16)
-                                .rotationEffect(.degrees(32))
-                                .offset(x: 8, y: -16)
-                        }
-
-                        TwinklingStarView(assetName: "Sparkle", size: 40, delay: 0.0, duration: 1.2)
-                    }
-                    .frame(height: 52)
-                    .scaleEffect(wellDoneBurst ? 1.08 : 0.94)
+                    // Celebration Sparkle Asset
+                    assetImage("celebration")
+                        .frame(width: 68, height: 62)
+                        .scaleEffect(wellDoneBurst ? 1.0 : 0.3)
+                        .opacity(wellDoneBurst ? 1.0 : 0.0)
+                        .shadow(color: Color(red: 255 / 255, green: 215 / 255, blue: 100 / 255).opacity(0.6), radius: 12)
 
                     Text("Well done!")
                         .font(.system(size: 32, weight: .bold, design: .rounded))
@@ -417,6 +403,30 @@ public struct FluencyLapIntroView: View {
                         .padding(.horizontal, 32)
                         .padding(.top, 4)
                 }
+
+                // Decorative Accent Motes & Stars
+                assetImage("Sparkle")
+                    .frame(width: 22, height: 22)
+                    .offset(x: -w * 0.32, y: -8)
+
+                Circle()
+                    .stroke(Color(red: 90 / 255, green: 210 / 255, blue: 255 / 255), lineWidth: 2)
+                    .frame(width: 8, height: 8)
+                    .offset(x: -w * 0.34, y: 24)
+
+                Circle()
+                    .stroke(Color(red: 90 / 255, green: 210 / 255, blue: 255 / 255), lineWidth: 2)
+                    .frame(width: 8, height: 8)
+                    .offset(x: w * 0.33, y: -18)
+
+                assetImage("Sparkle")
+                    .frame(width: 20, height: 20)
+                    .offset(x: w * 0.31, y: 16)
+
+                Circle()
+                    .fill(Color(red: 120 / 255, green: 215 / 255, blue: 255 / 255))
+                    .frame(width: 4.5, height: 4.5)
+                    .offset(x: w * 0.26, y: 44)
             }
 
             Spacer()
