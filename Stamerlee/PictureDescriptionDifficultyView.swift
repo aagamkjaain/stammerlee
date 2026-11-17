@@ -566,7 +566,7 @@ public struct PictureDescriptionIntroView: View {
 // MARK: - Glass Action Button
 private struct PicGlassActionButton: View {
     let title: String
-    let icon: String?
+    var icon: String? = nil
     let action: () -> Void
 
     init(title: String, icon: String? = nil, action: @escaping () -> Void) {
@@ -576,53 +576,7 @@ private struct PicGlassActionButton: View {
     }
 
     var body: some View {
-        Button(action: action) {
-            HStack(spacing: 8) {
-                if let icon {
-                    Image(systemName: icon)
-                        .font(.system(size: 16, weight: .bold))
-                }
-                Text(title)
-                    .font(.system(size: 16.5, weight: .bold, design: .rounded))
-            }
-            .foregroundStyle(.white)
-            .frame(maxWidth: .infinity)
-            .frame(height: 52)
-            .background {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 26, style: .continuous)
-                        .fill(.ultraThinMaterial)
-
-                    RoundedRectangle(cornerRadius: 26, style: .continuous)
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    Color(red: 155 / 255, green: 125 / 255, blue: 255 / 255).opacity(0.88),
-                                    StamerleeTheme.primaryBlueDark.opacity(0.92)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-
-                    RoundedRectangle(cornerRadius: 26, style: .continuous)
-                        .stroke(
-                            LinearGradient(
-                                colors: [
-                                    Color.white.opacity(0.70),
-                                    Color.white.opacity(0.20),
-                                    StamerleeTheme.primaryBlue.opacity(0.40)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1.2
-                        )
-                }
-            }
-            .shadow(color: StamerleeTheme.primaryBlue.opacity(0.4), radius: 12, x: 0, y: 5)
-        }
-        .buttonStyle(.plain)
+        GlassActionButton(title: title, icon: icon, action: action)
     }
 }
 

@@ -121,6 +121,9 @@ public struct ContentView: View {
                 case .narrationDifficulty, .narrationPractice:
                     NarrationPracticeView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
+                case .beatBuddyIntro:
+                    BeatBuddyIntroView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
                 case .beatBuddyBPM:
                     BeatBuddyBPMView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
@@ -273,6 +276,8 @@ public struct ContentView: View {
                     jumpButton(title: "Pic Intro", screen: .pictureDescriptionIntro)
                     jumpButton(title: "Dial Intro", screen: .dialSceneIntro)
                     jumpButton(title: "Narr Intro", screen: .narrationIntro)
+                    jumpButton(title: "Beat Intro", screen: .beatBuddyIntro)
+                    jumpButton(title: "Beat BPM", screen: .beatBuddyBPM)
                     jumpButton(title: "Dial Scene", screen: .dialScene)
                     jumpButton(title: "Difficulty", screen: .prolongedSpeechDifficulty)
                     jumpButton(title: "Practice", screen: .prolongedPractice)

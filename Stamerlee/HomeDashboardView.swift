@@ -149,7 +149,11 @@ public struct HomeDashboardView: View {
                                 isLocked: false,
                                 iconName: "BeatBuddyLogo"
                             ) {
-                                state.navigate(to: .beatBuddyBPM)
+                                state.navigate(
+                                    to: state.hasSeenBeatBuddyIntro
+                                        ? .beatBuddyBPM
+                                        : .beatBuddyIntro
+                                )
                             }
                         }
                         .offset(y: cardsAppeared ? 0 : 44)

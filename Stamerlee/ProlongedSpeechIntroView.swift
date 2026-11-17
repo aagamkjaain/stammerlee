@@ -554,7 +554,7 @@ public struct ProlongedSpeechIntroView: View {
 }
 
 // MARK: - Glass Action Button
-// Frosted translucent acrylic background with crisp gloss highlight & rich purple glow
+// Frosted translucent acrylic background with crisp gloss highlight, #available glass style, and pop spring effect
 public struct GlassActionButton: View {
     public let title: String
     public let icon: String?
@@ -567,19 +567,33 @@ public struct GlassActionButton: View {
     }
 
     public var body: some View {
-        Button(action: action) {
-            HStack(spacing: 8) {
-                if let icon {
-                    Image(systemName: icon)
-                        .font(.system(size: 16, weight: .bold))
-                }
-                Text(title)
-                    .font(.system(size: 16.5, weight: .bold, design: .rounded))
+        if #available(iOS 26.0, *) {
+            Button(action: action) { content }
+                .buttonStyle(.glass(.regular.tint(StamerleeTheme.primaryBlue).interactive()))
+                .buttonBorderShape(.capsule)
+                .frame(maxWidth: .infinity)
+        } else {
+            Button(action: action) { content }
+                .buttonStyle(PopSpringButtonStyle(isEnabled: true))
+        }
+    }
+
+    private var content: some View {
+        HStack(spacing: 8) {
+            if let icon {
+                Image(systemName: icon)
+                    .font(.system(size: 16, weight: .bold))
             }
-            .foregroundStyle(.white)
-            .frame(maxWidth: .infinity)
-            .frame(height: 52)
-            .background {
+            Text(title)
+                .font(.system(size: 16.5, weight: .bold, design: .rounded))
+        }
+        .foregroundStyle(.white)
+        .frame(maxWidth: .infinity)
+        .frame(height: 52)
+        .background {
+            if #available(iOS 26.0, *) {
+                Color.clear
+            } else {
                 ZStack {
                     // Ultra thin translucent material blur
                     RoundedRectangle(cornerRadius: 26, style: .continuous)
@@ -614,9 +628,8 @@ public struct GlassActionButton: View {
                         )
                 }
             }
-            .shadow(color: StamerleeTheme.primaryBlue.opacity(0.4), radius: 12, x: 0, y: 5)
         }
-        .buttonStyle(.plain)
+        .shadow(color: StamerleeTheme.primaryBlue.opacity(0.4), radius: 12, x: 0, y: 5)
     }
 }
 

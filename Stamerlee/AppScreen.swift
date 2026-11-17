@@ -54,6 +54,7 @@ public enum AppScreen: Hashable, CaseIterable {
     case narrationIntro
     case narrationDifficulty
     case narrationPractice
+    case beatBuddyIntro
     case beatBuddyBPM
     case beatBuddyPractice
 }
@@ -122,6 +123,7 @@ public final class AppState {
     public var customDialScenarios: [CustomDialScenario] = []
     public var hasSeenDialSceneIntro: Bool = false
     public var hasSeenNarrationIntro: Bool = false
+    public var hasSeenBeatBuddyIntro: Bool = false
     public var selectedNarrationDifficulty: String = "Easy"
     public var completedNarrationDifficulties: Set<String> = []
     public var beatBuddySelectedWords: Set<String> = ["Water", "University"]

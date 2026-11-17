@@ -127,7 +127,7 @@ public struct SummaryView: View {
         .padding(.vertical, 18)
         .background(
             streakCardBackground,
-            in: RoundedRectangle(cornerRadius: 26, style: .continuous)
+            in: RoundedRectangle(cornerRadius: 16, style: .continuous)
         )
         .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
     }
@@ -265,7 +265,7 @@ public struct SummaryView: View {
             .frame(maxWidth: .infinity, minHeight: 184, alignment: .topLeading)
             .background(
                 Color(red: 242 / 255, green: 243 / 255, blue: 252 / 255),
-                in: RoundedRectangle(cornerRadius: 26, style: .continuous)
+                in: RoundedRectangle(cornerRadius: 16, style: .continuous)
             )
             .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
         }

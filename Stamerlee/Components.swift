@@ -32,8 +32,36 @@ public extension ButtonStyle where Self == HapticButtonStyle {
     }
 }
 
+// MARK: - Pop Spring Button Style
+/// Tactile bouncy button style that scales down on press with a spring animation and haptic feedback
+public struct PopSpringButtonStyle: ButtonStyle {
+    public var isEnabled: Bool
+    public var pressedScale: CGFloat
+
+    public init(isEnabled: Bool = true, pressedScale: CGFloat = 0.96) {
+        self.isEnabled = isEnabled
+        self.pressedScale = pressedScale
+    }
+
+    public func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed && isEnabled ? pressedScale : 1.0)
+            .animation(.spring(response: 0.26, dampingFraction: 0.58), value: configuration.isPressed)
+            .sensoryFeedback(trigger: configuration.isPressed) { _, isPressed in
+                isPressed && isEnabled ? .impact(weight: .medium) : nil
+            }
+    }
+}
+
+public extension ButtonStyle where Self == PopSpringButtonStyle {
+    static var popSpring: PopSpringButtonStyle { PopSpringButtonStyle() }
+    static func popSpring(isEnabled: Bool = true, pressedScale: CGFloat = 0.96) -> PopSpringButtonStyle {
+        PopSpringButtonStyle(isEnabled: isEnabled, pressedScale: pressedScale)
+    }
+}
+
 // MARK: - Primary Action Button
-/// Vibrant blue pill button used for "Begin" and "Continue" actions across screens.
+/// Vibrant purple pill button with glass effect, availability-awareness (#available), and spring pop effect.
 public struct PrimaryActionButton: View {
     public let title: String
     public let icon: String?
@@ -59,9 +87,17 @@ public struct PrimaryActionButton: View {
     }
 
     public var body: some View {
-        Button(action: action) { label }
-            .buttonStyle(.haptic(weight: .medium, pressedScale: 0.97))
-            .disabled(!isEnabled || isLoading)
+        if #available(iOS 26.0, *) {
+            Button(action: action) { label }
+                .buttonStyle(.glass(.regular.tint(StamerleeTheme.primaryBlue).interactive()))
+                .buttonBorderShape(.capsule)
+                .frame(maxWidth: .infinity)
+                .disabled(!isEnabled || isLoading)
+        } else {
+            Button(action: action) { label }
+                .buttonStyle(PopSpringButtonStyle(isEnabled: isEnabled && !isLoading))
+                .disabled(!isEnabled || isLoading)
+        }
     }
 
     private var label: some View {
@@ -83,35 +119,39 @@ public struct PrimaryActionButton: View {
         .frame(maxWidth: .infinity)
         .frame(height: compact ? 44 : 52)
         .background {
-            ZStack {
-                RoundedRectangle(cornerRadius: compact ? 22 : 26, style: .continuous)
-                    .fill(.ultraThinMaterial)
+            if #available(iOS 26.0, *) {
+                Color.clear
+            } else {
+                ZStack {
+                    RoundedRectangle(cornerRadius: compact ? 22 : 26, style: .continuous)
+                        .fill(.ultraThinMaterial)
 
-                RoundedRectangle(cornerRadius: compact ? 22 : 26, style: .continuous)
-                    .fill(
-                        LinearGradient(
-                            colors: [
-                                Color(red: 155 / 255, green: 125 / 255, blue: 255 / 255).opacity(isEnabled ? 0.88 : 0.35),
-                                StamerleeTheme.primaryBlueDark.opacity(isEnabled ? 0.92 : 0.40)
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
+                    RoundedRectangle(cornerRadius: compact ? 22 : 26, style: .continuous)
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    Color(red: 155 / 255, green: 125 / 255, blue: 255 / 255).opacity(isEnabled ? 0.88 : 0.35),
+                                    StamerleeTheme.primaryBlueDark.opacity(isEnabled ? 0.92 : 0.40)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
                         )
-                    )
 
-                RoundedRectangle(cornerRadius: compact ? 22 : 26, style: .continuous)
-                    .stroke(
-                        LinearGradient(
-                            colors: [
-                                Color.white.opacity(isEnabled ? 0.70 : 0.25),
-                                Color.white.opacity(isEnabled ? 0.20 : 0.08),
-                                StamerleeTheme.primaryBlue.opacity(isEnabled ? 0.40 : 0.15)
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 1.2
-                    )
+                    RoundedRectangle(cornerRadius: compact ? 22 : 26, style: .continuous)
+                        .stroke(
+                            LinearGradient(
+                                colors: [
+                                    Color.white.opacity(isEnabled ? 0.70 : 0.25),
+                                    Color.white.opacity(isEnabled ? 0.20 : 0.08),
+                                    StamerleeTheme.primaryBlue.opacity(isEnabled ? 0.40 : 0.15)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1.2
+                        )
+                }
             }
         }
         .shadow(color: isEnabled ? StamerleeTheme.primaryBlue.opacity(0.4) : .clear, radius: 12, x: 0, y: 5)
