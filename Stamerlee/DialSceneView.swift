@@ -152,10 +152,12 @@ public struct DialSceneIntroView: View {
     }
 
     // MARK: - Step 1: Intro Screen
+    // MARK: - Step 1: Intro Screen (Text near middle, cloud lowered & glass button)
     private func introContent(w: CGFloat, h: CGFloat) -> some View {
         VStack(spacing: 0) {
             Spacer()
 
+            // Heading positioned near the middle of the screen
             VStack(spacing: 8) {
                 Text("Let's start with")
                     .font(.system(size: 24, weight: .bold, design: .rounded))
@@ -170,47 +172,15 @@ public struct DialSceneIntroView: View {
 
             Spacer()
 
-            // Lowered Card & Glass Button inside the lower cloud
+            // CTA Button
             VStack(spacing: 16) {
-                // Glass-effect Instruction Pill Card
-                HStack(spacing: 14) {
-                    ZStack {
-                        Circle()
-                            .fill(Color(red: 236 / 255, green: 230 / 255, blue: 255 / 255))
-                            .frame(width: 42, height: 42)
-
-                        Image(systemName: "phone.bubble.fill")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundStyle(StamerleeTheme.primaryBlue)
-                    }
-
-                    Text("Practice real-life conversations to build confidence and fluency during calls")
-                        .font(.system(size: 13.5, weight: .regular, design: .rounded))
-                        .foregroundStyle(Color(red: 88 / 255, green: 78 / 255, blue: 124 / 255))
-                        .lineSpacing(2.5)
-                        .fixedSize(horizontal: false, vertical: true)
-
-                    Spacer(minLength: 0)
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 14)
-                .background(
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 22, style: .continuous)
-                            .fill(Color.white.opacity(0.92))
-                        RoundedRectangle(cornerRadius: 22, style: .continuous)
-                            .stroke(Color.white.opacity(0.8), lineWidth: 1)
-                    }
-                )
-                .shadow(color: Color(red: 120 / 255, green: 90 / 255, blue: 180 / 255).opacity(0.12), radius: 10, x: 0, y: 4)
-
                 // Purple Glass Effect CTA Button
                 DialGlassActionButton(title: "Begin") {
                     goToStep(.encouragement)
                 }
             }
             .padding(.horizontal, 24)
-            .padding(.bottom, 32)
+            .padding(.bottom, 36)
         }
     }
 
@@ -594,11 +564,11 @@ public struct DialSceneIntroView: View {
         }
     }
 
-    // MARK: - Animated Clouds Layer
+    // MARK: - Animated Clouds Layer (Edge-to-Edge with Lowered Screen 1 Cloud)
     @ViewBuilder
     private func cloudsLayer(w: CGFloat, h: CGFloat) -> some View {
         ZStack {
-            // 1. Top-Left Floating Cloud
+            // 1. Top-Left Floating Cloud (Hugging left edge cleanly)
             assetImage(step == .encouragement ? "Drifting cloud" : "Cloud-2")
                 .scaledToFit()
                 .frame(width: step == .encouragement ? 150 : 140)
@@ -606,7 +576,7 @@ public struct DialSceneIntroView: View {
                 .offset(y: floatAnim ? -4 : 4)
                 .animation(.spring(response: 0.75, dampingFraction: 0.8), value: step)
 
-            // 2. Top-Right Floating Cloud
+            // 2. Top-Right Floating Cloud (Hugging right edge cleanly)
             assetImage("Cloud")
                 .scaledToFit()
                 .frame(width: 140)
@@ -615,94 +585,90 @@ public struct DialSceneIntroView: View {
                 .offset(y: floatAnim ? 3 : -3)
                 .animation(.spring(response: 0.75, dampingFraction: 0.8), value: step)
 
-            // 3. Mid-Right Drifting Cloud
+            // 3. Mid-Right Drifting Cloud (Offsets 18px transparent margin)
             assetImage("Drifting cloud-3")
                 .scaledToFit()
                 .frame(width: 115)
                 .position(midRightCloudPosition(w: w, h: h))
-                .opacity((step == .encouragement || step == .conversation) ? 1.0 : 0.0)
+                .opacity((step == .intro || step == .encouragement || step == .conversation) ? 1.0 : 0.0)
                 .offset(y: floatAnim ? -5 : 5)
                 .animation(.spring(response: 0.75, dampingFraction: 0.8), value: step)
 
-            // 4. Bottom-Left Drifting Cloud
+            // 4. Bottom-Left Drifting Cloud (Bleeds off left edge)
             assetImage("Drifting cloud-2")
                 .scaledToFit()
                 .frame(width: 142)
                 .position(x: w * 0.10, y: step == .wellDone ? h * 0.88 : (step == .encouragement ? h * 0.90 : h * 1.25))
-                .opacity(step == .intro ? 0.0 : 1.0)
+                .opacity((step == .intro || step == .conversation) ? 0.0 : 1.0)
                 .offset(y: floatAnim ? 4 : -4)
                 .animation(.spring(response: 0.75, dampingFraction: 0.8), value: step)
 
-            // 5. Cloud Landscape Bank (Screen 1 lowered)
+            // 5. Cloud Landscape Bank
             assetImage("Cloud landscape")
                 .scaledToFill()
                 .frame(width: w * 1.08)
-                .position(x: w * 0.5, y: step == .intro ? (h * 0.93) : (h + 350))
-                .opacity(step == .intro ? 1.0 : 0.0)
+                .position(x: w * 0.5, y: h + 350)
+                .opacity(0.0)
                 .animation(.spring(response: 0.82, dampingFraction: 0.82), value: step)
 
-            // 6. Bottom Billowing Cloud Bank 1
+            // 6. Bottom Billowing Cloud Bank 1 (Screen 1, Screen 3 & Screen 4: Hugs bottom-right edge)
             assetImage("Cloud bank")
                 .scaledToFit()
                 .frame(width: w * 0.70)
                 .position(bottomBankRightPosition(w: w, h: h))
-                .opacity((step == .conversation || step == .wellDone) ? 1.0 : 0.0)
+                .opacity((step == .intro || step == .conversation || step == .wellDone) ? 1.0 : 0.0)
                 .offset(y: floatAnim ? -3 : 3)
                 .animation(.spring(response: 0.8, dampingFraction: 0.8), value: step)
 
-            // 7. Bottom Billowing Cloud Bank 2
+            // 7. Bottom Billowing Cloud Bank 2 (Screen 1, Screen 3 & Screen 4: Hugs bottom-left edge)
             assetImage("Cloud bank-2")
                 .scaledToFit()
                 .frame(width: w * 0.66)
                 .position(bottomBankLeftPosition(w: w, h: h))
-                .opacity((step == .conversation || step == .wellDone) ? 1.0 : 0.0)
+                .opacity((step == .intro || step == .conversation || step == .wellDone) ? 1.0 : 0.0)
                 .offset(y: floatAnim ? 3 : -3)
                 .animation(.spring(response: 0.8, dampingFraction: 0.8), value: step)
         }
         .allowsHitTesting(false)
     }
 
+    // Dynamic Cloud Positions for each step
     private func topLeftCloudPosition(w: CGFloat, h: CGFloat) -> CGPoint {
         switch step {
-        case .intro: return CGPoint(x: w * 0.06, y: h * 0.055)
+        case .intro, .conversation: return CGPoint(x: w * 0.06, y: h * 0.08)
         case .encouragement: return CGPoint(x: w * 0.06, y: h * 0.08)
-        case .conversation: return CGPoint(x: w * 0.06, y: h * 0.08)
         case .wellDone: return CGPoint(x: w * -0.06, y: h * 0.08)
         }
     }
 
     private func topRightCloudPosition(w: CGFloat, h: CGFloat) -> CGPoint {
         switch step {
-        case .intro: return CGPoint(x: w * 0.94, y: h * 0.065)
+        case .intro, .conversation: return CGPoint(x: w * 0.94, y: h * 0.18)
         case .encouragement: return CGPoint(x: w * 1.15, y: h * 0.065)
-        case .conversation: return CGPoint(x: w * 0.94, y: h * 0.18)
         case .wellDone: return CGPoint(x: w * 1.06, y: h * 0.10)
         }
     }
 
     private func midRightCloudPosition(w: CGFloat, h: CGFloat) -> CGPoint {
         switch step {
-        case .intro: return CGPoint(x: w * 1.25, y: h * 0.32)
+        case .intro, .conversation: return CGPoint(x: w * 1.08, y: h * 0.26)
         case .encouragement: return CGPoint(x: w * 0.96, y: h * 0.28)
-        case .conversation: return CGPoint(x: w * 0.94, y: h * 0.26)
         case .wellDone: return CGPoint(x: w * 1.25, y: h * 0.30)
         }
     }
 
     private func bottomBankLeftPosition(w: CGFloat, h: CGFloat) -> CGPoint {
         switch step {
-        case .intro: return CGPoint(x: w * 0.2, y: h * 1.25)
+        case .intro, .conversation: return CGPoint(x: w * 0.20, y: h * 0.88)
         case .encouragement: return CGPoint(x: w * 0.1, y: h * 1.25)
-        case .conversation: return CGPoint(x: w * 0.20, y: h * 0.88)
         case .wellDone: return CGPoint(x: w * 0.05, y: h * 0.88)
         }
     }
 
     private func bottomBankRightPosition(w: CGFloat, h: CGFloat) -> CGPoint {
         switch step {
-        case .intro: return CGPoint(x: w * 0.8, y: h * 1.25)
+        case .intro, .conversation: return CGPoint(x: w * 0.82, y: h * 0.86)
         case .encouragement: return CGPoint(x: w * 0.9, y: h * 1.25)
-        case .conversation: return CGPoint(x: w * 0.82, y: h * 0.86)
         case .wellDone: return CGPoint(x: w * 0.95, y: h * 0.86)
         }
     }
@@ -1083,9 +1049,9 @@ public struct DialSceneView: View {
 
     private var micHint: String {
         switch micPhase {
-        case .listening: return "Listening... tap the mic when you're done"
+        case .listening: return "Listening"
         case .idle:
-            if let line = nextUserLine { return "Tap the mic and say: \"\(line)\"" }
+            if let line = nextUserLine { return "Tap and hold to speak" }
             return "Great job! Tap Finish when you're ready"
         }
     }
