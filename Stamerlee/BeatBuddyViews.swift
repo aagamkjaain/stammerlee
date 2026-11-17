@@ -293,7 +293,6 @@ public struct BeatBuddyWordsView: View {
                         }
                     }
                 }
-                .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
             }
@@ -467,11 +466,8 @@ public struct ArcBPMDialView: View {
 // MARK: - 3. Select BPM Screen
 public struct BeatBuddyBPMView: View {
     @Bindable public var state: AppState
-    @Environment(\.headerNamespace) private var headerNamespace
     public var onBack: (() -> Void)? = nil
     public var onStartPractice: (() -> Void)? = nil
-    @State private var soundEnabled: Bool = true
-    @State private var vibrationEnabled: Bool = true
     @State private var selectedCategory: BeatBuddySoundCategory = .randomized
 
     public init(state: AppState, onBack: (() -> Void)? = nil, onStartPractice: (() -> Void)? = nil) {
@@ -486,12 +482,11 @@ public struct BeatBuddyBPMView: View {
             StamerleeTheme.backgroundDark
                 .ignoresSafeArea()
 
-            VStack(alignment: .leading, spacing: 0) {
-                // Top Header Banner
-                headerImageView
+            BackgroundImagesDecorationView()
 
-                // Header Bar with Back Button & Beat Buddy name on top of the image
-                HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 0) {
+                // Top Navigation Bar
+                HStack {
                     BackNavButton {
                         if let onBack {
                             onBack()
@@ -499,58 +494,24 @@ public struct BeatBuddyBPMView: View {
                             state.navigate(to: .homeDashboard, forward: false)
                         }
                     }
+                    Spacer()
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 16)
 
+                // Headings
+                VStack(alignment: .leading, spacing: 10) {
                     Text("Beat Buddy")
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .font(.system(size: 30, weight: .bold, design: .rounded))
+                        .foregroundStyle(StamerleeTheme.textPrimaryDark)
+
+                    Text("Speak with the steady beat")
+                        .font(.system(size: 14.5, weight: .regular, design: .rounded))
                         .foregroundStyle(.white)
-                        .shadow(color: Color.black.opacity(0.45), radius: 6, x: 0, y: 2)
-
-                    Spacer()
+                        .lineSpacing(3)
                 }
                 .padding(.horizontal, 24)
-                .padding(.top, -48)
-                .padding(.bottom, 6)
-
-                // Subtitle
-                Text("Speak with the steady beat")
-                    .font(.system(size: 14, weight: .regular, design: .rounded))
-                    .foregroundStyle(StamerleeTheme.textSecondaryDark)
-                    .padding(.horizontal, 24)
-                    .padding(.top, 2)
-
-                // Randomized Practice Words Card (indicates random words in practice)
-                HStack(spacing: 12) {
-                    ZStack {
-                        Circle()
-                            .fill(Color(red: 228 / 255, green: 220 / 255, blue: 255 / 255))
-                            .frame(width: 40, height: 40)
-                        Image(systemName: "shuffle")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundStyle(StamerleeTheme.primaryBlue)
-                    }
-
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Randomized Practice Words")
-                            .font(.system(size: 14.5, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
-
-                        Text("Practice will automatically cycle through random words with the beat")
-                            .font(.system(size: 12, weight: .regular, design: .rounded))
-                            .foregroundStyle(StamerleeTheme.textSecondaryDark)
-                            .lineLimit(2)
-                    }
-
-                    Spacer()
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-                .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .stroke(Color.white.opacity(0.12), lineWidth: 1)
-                )
-                .padding(.horizontal, 24)
-                .padding(.top, 14)
+                .padding(.top, 24)
 
                 Spacer(minLength: 12)
 
@@ -563,13 +524,13 @@ public struct BeatBuddyBPMView: View {
 
                 Spacer(minLength: 14)
 
-                // Sound & Vibration Toggles
+                // Sound & Vibration (select only one at a time)
                 HStack(spacing: 12) {
                     toggleButton(title: "Sound", icon: "speaker.wave.2.fill", isOn: state.beatBuddySoundEnabled) {
-                        state.beatBuddySoundEnabled.toggle()
+                        selectSound()
                     }
                     toggleButton(title: "Vibration", icon: "iphone.radiowaves.left.and.right", isOn: state.beatBuddyVibrationEnabled) {
-                        state.beatBuddyVibrationEnabled.toggle()
+                        selectVibration()
                     }
                 }
                 .padding(.horizontal, 24)
@@ -579,11 +540,10 @@ public struct BeatBuddyBPMView: View {
 
                 // Primary Start Button
                 VStack {
-                    PrimaryActionButton(title: "▶ Start Metronome") {
+                    PrimaryActionButton(title: "Start") {
                         startSession()
                     }
                 }
-                .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
             }
@@ -594,29 +554,30 @@ public struct BeatBuddyBPMView: View {
             } else {
                 selectedCategory = .randomized
             }
-        }
-        .sensoryFeedback(.selection, trigger: state.beatBuddyBPM)
-        .sensoryFeedback(.selection, trigger: selectedCategory)
-    }
-
-    @ViewBuilder
-    private var headerImageView: some View {
-        Group {
-            if let uiImage = UIImage(named: "header") ?? UIImage(named: "Header") {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: .infinity)
-                    .ignoresSafeArea(edges: .top)
-            } else {
-                Image("Header")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: .infinity)
-                    .ignoresSafeArea(edges: .top)
+            // Only one of Sound / Vibration can be active at a time (prefer Sound by default)
+            if state.beatBuddySoundEnabled && state.beatBuddyVibrationEnabled {
+                state.beatBuddyVibrationEnabled = false
+            }
+            if !state.beatBuddySoundEnabled && !state.beatBuddyVibrationEnabled {
+                state.beatBuddySoundEnabled = true
             }
         }
-        .matchedGeometryEffectIfPresent(id: "headerBanner", in: headerNamespace)
+        .sensoryFeedback(.selection, trigger: state.beatBuddyBPM)
+    }
+
+    // MARK: - Mutual exclusion between Sound and Vibration
+    private func selectSound() {
+        state.beatBuddySoundEnabled.toggle()
+        if state.beatBuddySoundEnabled {
+            state.beatBuddyVibrationEnabled = false
+        }
+    }
+
+    private func selectVibration() {
+        state.beatBuddyVibrationEnabled.toggle()
+        if state.beatBuddyVibrationEnabled {
+            state.beatBuddySoundEnabled = false
+        }
     }
 
     private func startSession() {
@@ -672,12 +633,9 @@ public struct BeatBuddyPracticeView: View {
     @State private var currentWordIndex = 0
     @State private var activeSyllableIndex = 0
     @State private var isMetronomeActive = true
-    @State private var isListening = false
-    @State private var pulse = false
     @State private var isBeating = false
 
     @State private var metronomeTask: Task<Void, Never>?
-    @State private var advanceTask: Task<Void, Never>?
 
     private let popPlayer = BeatMetronomePlayer.shared
 
@@ -688,13 +646,17 @@ public struct BeatBuddyPracticeView: View {
     }
 
     private var words: [String] {
+        let base: [String]
         if !state.beatBuddyPracticeWords.isEmpty {
-            return state.beatBuddyPracticeWords
+            base = state.beatBuddyPracticeWords
+        } else if !state.beatBuddySelectedWords.isEmpty {
+            base = Array(state.beatBuddySelectedWords)
+        } else {
+            base = BeatBuddySoundCategory.randomized.words
         }
-        if !state.beatBuddySelectedWords.isEmpty {
-            return Array(state.beatBuddySelectedWords)
-        }
-        return BeatBuddySoundCategory.randomized.words
+        // Only show words that break into at least 2 syllables
+        let filtered = base.filter { SyllableHelper.split($0).count >= 2 }
+        return filtered.isEmpty ? base : filtered
     }
 
     private var wordCount: Int {
@@ -720,39 +682,50 @@ public struct BeatBuddyPracticeView: View {
             VStack(spacing: 0) {
                 topBar
 
+                // Heading matching the Prolonged Speech screens (left-aligned)
+                Text("Beat Buddy")
+                    .font(.system(size: 30, weight: .bold, design: .rounded))
+                    .foregroundStyle(StamerleeTheme.textPrimaryDark)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.top, 14)
+
                 Text("Speak each syllable with the metronome beat. Stay relaxed and let the rhythm guide your pace.")
                     .font(.system(size: 14, weight: .regular, design: .rounded))
-                    .foregroundStyle(.white)
                     .foregroundStyle(Color(red: 220 / 255, green: 215 / 255, blue: 245 / 255))
                     .lineSpacing(3.5)
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, 10)
+                    .padding(.top, 8)
 
-                Spacer(minLength: 8)
+                Spacer(minLength: 14)
 
                 promptDisplay
 
                 progress
-                    .padding(.top, 12)
+                    .padding(.top, 16)
 
-                Spacer(minLength: 8)
 
-                microphoneControl
-
-                Text("Tap and speak with the beat")
+                Text("Swipe for the next word")
                     .font(.system(size: 13, weight: .medium, design: .rounded))
                     .foregroundStyle(Color(red: 194 / 255, green: 192 / 255, blue: 218 / 255))
-                    .padding(.top, 6)
+                    .padding(.top, 8)
 
-                Spacer(minLength: 8)
+                Spacer(minLength: 12)
 
-                PrimaryActionButton(title: "Finish") {
+                Button {
                     finishPractice()
+                } label: {
+                    HStack(spacing: 10) {
+                        Text("Finish")
+                            .font(.system(size: 17, weight: .semibold, design: .rounded))
+                    }
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 50)
                 }
-                .frame(maxWidth: .infinity, alignment: .center)
-                .padding(.bottom, 14)
+                .buttonStyle(BeatBuddyFinishButtonStyle())
+                .padding(.bottom, 16)
             }
             .padding(.horizontal, 24)
             .padding(.top, 8)
@@ -866,9 +839,19 @@ public struct BeatBuddyPracticeView: View {
         }
         .frame(maxWidth: .infinity)
         .contentShape(Rectangle())
-        .onTapGesture {
-            advanceWord()
-        }
+        .gesture(
+            DragGesture(minimumDistance: 20)
+                .onEnded { value in
+                    let horizontal = value.translation.width
+                    let vertical = value.translation.height
+                    guard abs(horizontal) > abs(vertical) else { return }
+                    if horizontal < 0 {
+                        advanceWord()
+                    } else if currentWordIndex > 0 {
+                        goBackWord()
+                    }
+                }
+        )
     }
 
     private func syllableFontSize(for syllables: [String]) -> CGFloat {
@@ -900,35 +883,6 @@ public struct BeatBuddyPracticeView: View {
         }
     }
 
-    private var microphoneControl: some View {
-        UniversalMicrophoneButton(
-            isListening: isListening,
-            isBeating: isBeating && isMetronomeActive,
-            disabled: isListening
-        ) {
-            startListening()
-        }
-    }
-
-    private func startListening() {
-        guard !isListening else { return }
-
-        advanceTask?.cancel()
-        isListening = true
-        pulse = true
-
-        advanceTask = Task { @MainActor in
-            try? await Task.sleep(for: .seconds(2))
-            guard !Task.isCancelled else { return }
-
-            withAnimation(.easeInOut(duration: 0.22)) {
-                pulse = false
-                isListening = false
-                advanceWord()
-            }
-        }
-    }
-
     private func advanceWord() {
         withAnimation(.easeInOut(duration: 0.22)) {
             if currentWordIndex + 1 < wordCount {
@@ -941,20 +895,35 @@ public struct BeatBuddyPracticeView: View {
         }
     }
 
+    private func goBackWord() {
+        guard currentWordIndex > 0 else { return }
+        withAnimation(.easeInOut(duration: 0.22)) {
+            currentWordIndex -= 1
+            activeSyllableIndex = 0
+            startMetronome()
+        }
+    }
+
     private func startMetronome() {
         metronomeTask?.cancel()
         guard isMetronomeActive else { return }
 
         let bpm = max(40, min(state.beatBuddyBPM, 200))
         let intervalSeconds = 60.0 / Double(bpm)
-        let intervalNanos = UInt64(intervalSeconds * 1_000_000_000)
+        let intervalNanos = Int64(intervalSeconds * 1_000_000_000)
         let pulseDurationNanos = min(intervalNanos / 3, 160_000_000)
 
         metronomeTask = Task { @MainActor in
             let impactGenerator = UIImpactFeedbackGenerator(style: .medium)
             impactGenerator.prepare()
 
+            // Deadline-based scheduling keeps beats locked to the BPM (no drift from sleep jitter)
+            let clock = ContinuousClock()
+            var nextBeat = clock.now
+
             while !Task.isCancelled && isMetronomeActive {
+                nextBeat = nextBeat + .nanoseconds(intervalNanos)
+
                 // Play sound effect on each syllable beat if enabled
                 if state.beatBuddySoundEnabled {
                     popPlayer.playPop()
@@ -972,20 +941,23 @@ public struct BeatBuddyPracticeView: View {
                     isBeating = true
                 }
 
-                try? await Task.sleep(nanoseconds: pulseDurationNanos)
+                try? await Task.sleep(nanoseconds: UInt64(pulseDurationNanos))
                 guard !Task.isCancelled else { break }
 
                 withAnimation(.easeOut(duration: 0.18)) {
                     isBeating = false
                 }
 
-                let remainingNanos = intervalNanos > pulseDurationNanos ? (intervalNanos - pulseDurationNanos) : (intervalNanos / 2)
-                try? await Task.sleep(nanoseconds: remainingNanos)
-                guard !Task.isCancelled else { break }
-
                 // Advance to next syllable for the next beat
                 withAnimation(.easeInOut(duration: 0.16)) {
                     activeSyllableIndex = (activeSyllableIndex + 1) % count
+                }
+
+                // Sleep exactly until the next deadline so beats stay at the BPM rate
+                let now = clock.now
+                let remaining = nextBeat - now
+                if remaining > .zero {
+                    try? await clock.sleep(until: nextBeat, tolerance: .zero)
                 }
             }
         }
@@ -1000,10 +972,7 @@ public struct BeatBuddyPracticeView: View {
 
     private func stopAll() {
         stopMetronome()
-        advanceTask?.cancel()
-        advanceTask = nil
-        isListening = false
-        pulse = false
+        isBeating = false
     }
 
     private func finishPractice() {
@@ -1193,621 +1162,44 @@ final class BeatMetronomePlayer {
     }
 }
 
+private struct BeatBuddyFinishButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .background {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 26, style: .continuous)
+                        .fill(.ultraThinMaterial)
 
-// MARK: - Beat Buddy Intro View (Interactive Cloud Demo with Metronome Beats)
-public enum BeatBuddyFlowStep: Int, CaseIterable {
-    case intro = 1
-    case encouragement = 2
-    case practice = 3
-    case wellDone = 4
-}
+                    RoundedRectangle(cornerRadius: 26, style: .continuous)
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    Color(red: 155 / 255, green: 125 / 255, blue: 255 / 255).opacity(0.88),
+                                    StamerleeTheme.primaryBlueDark.opacity(0.92)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
 
-public struct BeatBuddyIntroView: View {
-    @Bindable public var state: AppState
-
-    @State private var step: BeatBuddyFlowStep = .intro
-    @State private var currentDemoWordIndex = 0
-    @State private var activeSyllableIndex = 0
-    @State private var isListening = false
-    @State private var pulseMic = false
-    @State private var floatAnim = false
-    @State private var confettiCounter = 0
-    @State private var wellDoneBurst = false
-    @State private var isBeating = false
-    @State private var metronomeTimer: Timer?
-
-    private let demoWords = ["Water", "Coffee"]
-    private let popPlayer = BeatMetronomePlayer.shared
-
-    private let yellowConfettiColors: [Color] = [
-        Color.yellow,
-        Color(red: 255 / 255, green: 215 / 255, blue: 0 / 255),
-        Color(red: 255 / 255, green: 238 / 255, blue: 88 / 255),
-        Color(red: 255 / 255, green: 249 / 255, blue: 196 / 255),
-        Color(red: 255 / 255, green: 179 / 255, blue: 0 / 255)
-    ]
-
-    public init(state: AppState) {
-        self.state = state
-    }
-
-    private var currentWord: String {
-        demoWords[min(currentDemoWordIndex, demoWords.count - 1)]
-    }
-
-    private var currentSyllables: [String] {
-        SyllableHelper.split(currentWord)
-    }
-
-    public var body: some View {
-        GeometryReader { geo in
-            let w = geo.size.width
-            let h = geo.size.height
-
-            ZStack {
-                // Midnight Sky Background (#0A0D1F)
-                Color(red: 10 / 255, green: 13 / 255, blue: 31 / 255)
-                    .ignoresSafeArea()
-
-                // Twinkling Starfield & Motes Layer
-                twinklingStarsLayer(w: w, h: h)
-                    .allowsHitTesting(false)
-
-                // Animated Clouds Layer with Edge-to-Edge Bleed
-                cloudsLayer(w: w, h: h)
-                    .allowsHitTesting(false)
-
-                // Subtle Yellow Confetti Effect using ConfettiSwiftUI (Step 4: Well done!)
-                Color.clear
-                    .frame(width: 1, height: 1)
-                    .confettiCannon(
-                        counter: $confettiCounter,
-                        num: 26,
-                        confettis: [
-                            .shape(.circle),
-                            .shape(.triangle),
-                            .shape(.square)
-                        ],
-                        colors: yellowConfettiColors,
-                        confettiSize: 7.5,
-                        rainHeight: 480.0,
-                        opacity: 0.85,
-                        openingAngle: .degrees(0),
-                        closingAngle: .degrees(360),
-                        radius: 200.0
-                    )
-                    .position(x: w * 0.5, y: h * 0.44)
-                    .allowsHitTesting(false)
-                    .zIndex(10)
-
-                // Foreground Content for Active Step
-                VStack(spacing: 0) {
-                    topBar
-                        .padding(.horizontal, 24)
-                        .padding(.top, 14)
-
-                    Spacer(minLength: 0)
-
-                    Group {
-                        switch step {
-                        case .intro:
-                            introContent(w: w, h: h)
-                        case .encouragement:
-                            encouragementContent(w: w, h: h)
-                        case .practice:
-                            practiceContent(w: w, h: h)
-                        case .wellDone:
-                            wellDoneContent(w: w, h: h)
-                        }
-                    }
-                    .transition(.opacity.combined(with: .scale(scale: 0.97)))
-
-                    Spacer(minLength: 0)
-                }
-                .zIndex(20)
-            }
-        }
-        .preferredColorScheme(.dark)
-        .onAppear {
-            withAnimation(.easeInOut(duration: 2.8).repeatForever(autoreverses: true)) {
-                floatAnim = true
-            }
-        }
-        .onDisappear {
-            stopMetronome()
-        }
-    }
-
-    // MARK: - Top Navigation Bar
-    private var topBar: some View {
-        HStack {
-            if step != .wellDone {
-                BackNavButton {
-                    stopMetronome()
-                    state.navigate(to: .homeDashboard, forward: false)
+                    RoundedRectangle(cornerRadius: 26, style: .continuous)
+                        .stroke(
+                            LinearGradient(
+                                colors: [
+                                    Color.white.opacity(0.70),
+                                    Color.white.opacity(0.20),
+                                    StamerleeTheme.primaryBlue.opacity(0.40)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1.2
+                        )
                 }
             }
-            Spacer()
-
-            GlassCloseButton {
-                stopMetronome()
-                redirectToPractice()
-            }
-            .accessibilityLabel("Skip Demo")
-        }
-    }
-
-    // MARK: - Step 1: Intro Screen
-    private func introContent(w: CGFloat, h: CGFloat) -> some View {
-        VStack(spacing: 0) {
-            Spacer()
-
-            VStack(spacing: 8) {
-                Text("Let's start with")
-                    .font(.system(size: 24, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
-
-                Text("Beat Buddy")
-                    .font(.system(size: 33, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
-            }
-            .multilineTextAlignment(.center)
-            .padding(.bottom, h * 0.12)
-
-            Spacer()
-
-            VStack(spacing: 16) {
-                GlassActionButton(title: "Begin") {
-                    goToStep(.encouragement)
-                }
-            }
-            .padding(.horizontal, 24)
-            .padding(.bottom, 36)
-        }
-    }
-
-    // MARK: - Step 2: Encouragement & Explanation Screen
-    private func encouragementContent(w: CGFloat, h: CGFloat) -> some View {
-        VStack(spacing: 16) {
-            Spacer()
-            TwinklingStarView(assetName: "Sparkle-2", size: 28, delay: 0.1, duration: 1.0)
-
-            Text("Quick Demo")
-                .font(.system(size: 28, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
-
-            Text("Pacing Your Speech Flow")
-                .font(.system(size: 21, weight: .medium, design: .rounded))
-                .foregroundStyle(.white)
-                .multilineTextAlignment(.center)
-                .lineSpacing(4)
-
-            Text("Speaking in rhythm with a metronome guides your pacing, reduces tension, and creates a steady, effortless speech flow.")
-                .font(.system(size: 15.5, weight: .regular, design: .rounded))
-                .foregroundStyle(Color(red: 195 / 255, green: 185 / 255, blue: 230 / 255))
-                .multilineTextAlignment(.center)
-                .lineSpacing(4.5)
-                .padding(.horizontal, 28)
-                .padding(.top, 4)
-
-            Text("We'll try saying 2 words to the metronome rhythm")
-                .font(.system(size: 14.5, weight: .medium, design: .rounded))
-                .foregroundStyle(Color(red: 165 / 255, green: 155 / 255, blue: 215 / 255))
-                .padding(.top, 8)
-
-            Spacer()
-
-            GlassActionButton(title: "Try 2 Words") {
-                goToStep(.practice)
-            }
-            .padding(.horizontal, 24)
-            .padding(.bottom, 36)
-        }
-        .frame(maxWidth: .infinity)
-        .contentShape(Rectangle())
-        .onTapGesture {
-            goToStep(.practice)
-        }
-    }
-
-    // MARK: - Step 3: Interactive Practice Demo (2 words with metronome beats)
-    private func practiceContent(w: CGFloat, h: CGFloat) -> some View {
-        let syllables = currentSyllables
-
-        return VStack(spacing: 0) {
-            Spacer()
-
-            Text("Speak each syllable with the metronome beat. Stay relaxed and let the rhythm guide your pace.")
-                .font(.system(size: 14, weight: .regular, design: .rounded))
-                .foregroundStyle(Color(red: 215 / 255, green: 210 / 255, blue: 245 / 255))
-                .lineSpacing(3.5)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 28)
-                .padding(.bottom, 24)
-
-            // Full original word caption
-            Text(currentWord)
-                .font(.system(size: 15, weight: .medium, design: .rounded))
-                .foregroundStyle(Color(red: 185 / 255, green: 180 / 255, blue: 225 / 255))
-                .opacity(0.85)
-                .padding(.bottom, 6)
-
-            // Syllables broken with hyphens and animated to the metronome beat
-            HStack(spacing: 6) {
-                ForEach(Array(syllables.enumerated()), id: \.offset) { index, syllable in
-                    let isActive = (index == activeSyllableIndex)
-
-                    HStack(spacing: 6) {
-                        VStack(spacing: 6) {
-                            Text(syllable)
-                                .font(.system(size: 34, weight: .bold, design: .rounded))
-                                .foregroundStyle(
-                                    isActive
-                                        ? AnyShapeStyle(
-                                            LinearGradient(
-                                                colors: [
-                                                    Color(red: 175 / 255, green: 145 / 255, blue: 255 / 255),
-                                                    Color(red: 100 / 255, green: 225 / 255, blue: 255 / 255)
-                                                ],
-                                                startPoint: .topLeading,
-                                                endPoint: .bottomTrailing
-                                            )
-                                        )
-                                        : AnyShapeStyle(Color.white.opacity(0.35))
-                                )
-                                .scaleEffect(isActive ? (isBeating ? 1.08 : 1.04) : 1.0)
-                                .shadow(
-                                    color: isActive
-                                        ? Color(red: 139 / 255, green: 92 / 255, blue: 246 / 255).opacity(isBeating ? 0.8 : 0.4)
-                                        : .clear,
-                                    radius: isBeating ? 12 : 6
-                                )
-
-                            // Glowing beat indicator capsule beneath active syllable
-                            Capsule()
-                                .fill(
-                                    isActive
-                                        ? LinearGradient(
-                                            colors: [StamerleeTheme.primaryBlue, Color.cyan],
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        )
-                                        : LinearGradient(
-                                            colors: [Color.white.opacity(0.12), Color.white.opacity(0.12)],
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        )
-                                )
-                                .frame(width: isActive ? 24 : 10, height: 3.5)
-                                .shadow(color: isActive ? Color.cyan.opacity(0.7) : .clear, radius: 4)
-                        }
-                        .animation(.spring(response: 0.22, dampingFraction: 0.6), value: isActive)
-                        .animation(.spring(response: 0.18, dampingFraction: 0.5), value: isBeating)
-
-                        if index < syllables.count - 1 {
-                            Text("-")
-                                .font(.system(size: 22, weight: .bold, design: .rounded))
-                                .foregroundStyle(Color.white.opacity(0.25))
-                                .padding(.horizontal, 2)
-                                .padding(.bottom, 8)
-                        }
-                    }
-                }
-            }
-            .id(currentDemoWordIndex)
-            .padding(.bottom, 16)
-
-            // Progress Indicator (e.g., 1 of 2)
-            HStack(spacing: 8) {
-                Text("\(currentDemoWordIndex + 1) of \(demoWords.count)")
-                    .font(.system(size: 13, weight: .medium, design: .rounded))
-                    .foregroundStyle(Color(red: 165 / 255, green: 160 / 255, blue: 200 / 255))
-
-                HStack(spacing: 6) {
-                    ForEach(0..<demoWords.count, id: \.self) { idx in
-                        Circle()
-                            .fill(idx == currentDemoWordIndex ? Color.white : Color.white.opacity(0.25))
-                            .frame(width: 6, height: 6)
-                    }
-                }
-            }
-            .padding(.bottom, 28)
-
-            // Universal Purple Glass Microphone Control
-            UniversalMicrophoneButton(
-                isListening: isListening,
-                isBeating: isBeating,
-                disabled: isListening
-            ) {
-                triggerSpeak()
-            }
-
-            Text(isListening ? "Listening..." : "Tap and speak with the beat")
-                .font(.system(size: 14, weight: .regular, design: .rounded))
-                .foregroundStyle(Color(red: 195 / 255, green: 190 / 255, blue: 220 / 255))
-                .padding(.top, 16)
-                .padding(.bottom, 36)
-
-            Spacer()
-        }
-        .onAppear {
-            startMetronome()
-        }
-        .onDisappear {
-            stopMetronome()
-        }
-    }
-
-    // MARK: - Step 4: Well Done! Screen with Confetti & Direct Redirection
-    private func wellDoneContent(w: CGFloat, h: CGFloat) -> some View {
-        VStack(spacing: 0) {
-            Spacer()
-
-            ZStack {
-                VStack(spacing: 12) {
-                    // Celebration Sparkle Asset
-                    assetImage("celebration")
-                        .frame(width: 68, height: 62)
-                        .scaleEffect(wellDoneBurst ? 1.0 : 0.3)
-                        .opacity(wellDoneBurst ? 1.0 : 0.0)
-                        .shadow(color: Color(red: 255 / 255, green: 215 / 255, blue: 100 / 255).opacity(0.6), radius: 12)
-
-                    // Bold "Well done!" Headline
-                    Text("Well done!")
-                        .font(.system(size: 34, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
-
-                    Text("Let's start practicing")
-                        .font(.system(size: 15, weight: .medium, design: .rounded))
-                        .foregroundStyle(Color(red: 195 / 255, green: 185 / 255, blue: 230 / 255))
-                        .multilineTextAlignment(.center)
-                        .padding(.top, 4)
-                }
-
-                // Decorative Accent Motes & Stars
-                assetImage("Sparkle")
-                    .frame(width: 22, height: 22)
-                    .offset(x: -w * 0.32, y: -8)
-
-                Circle()
-                    .stroke(Color(red: 90 / 255, green: 210 / 255, blue: 255 / 255), lineWidth: 2)
-                    .frame(width: 8, height: 8)
-                    .offset(x: -w * 0.34, y: 24)
-
-                Circle()
-                    .stroke(Color(red: 90 / 255, green: 210 / 255, blue: 255 / 255), lineWidth: 2)
-                    .frame(width: 8, height: 8)
-                    .offset(x: w * 0.33, y: -18)
-
-                assetImage("Sparkle")
-                    .frame(width: 20, height: 20)
-                    .offset(x: w * 0.31, y: 16)
-
-                Circle()
-                    .fill(Color(red: 120 / 255, green: 215 / 255, blue: 255 / 255))
-                    .frame(width: 4.5, height: 4.5)
-                    .offset(x: w * 0.26, y: 44)
-            }
-
-            Spacer()
-
-            GlassActionButton(title: "Continue") {
-                redirectToPractice()
-            }
-            .padding(.horizontal, 24)
-            .padding(.bottom, 36)
-        }
-        .contentShape(Rectangle())
-        .onTapGesture {
-            redirectToPractice()
-        }
-        .onAppear {
-            confettiCounter += 1
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
-                wellDoneBurst = true
-            }
-        }
-    }
-
-    private func redirectToPractice() {
-        stopMetronome()
-        state.hasSeenBeatBuddyIntro = true
-        state.navigate(to: .beatBuddyBPM)
-    }
-
-    // MARK: - Metronome Logic
-    private func startMetronome() {
-        stopMetronome()
-        activeSyllableIndex = 0
-        let interval = 60.0 / 100.0 // 100 BPM for relaxed demonstration
-
-        metronomeTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { _ in
-            let syllables = currentSyllables
-            guard !syllables.isEmpty else { return }
-
-            activeSyllableIndex = (activeSyllableIndex + 1) % syllables.count
-            isBeating = true
-            popPlayer.playPop()
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
-
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) {
-                isBeating = false
-            }
-        }
-    }
-
-    private func stopMetronome() {
-        metronomeTimer?.invalidate()
-        metronomeTimer = nil
-        isBeating = false
-    }
-
-    private func triggerSpeak() {
-        guard !isListening else { return }
-        isListening = true
-        pulseMic = true
-
-        Task { @MainActor in
-            try? await Task.sleep(nanoseconds: 1_400_000_000)
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
-                isListening = false
-                pulseMic = false
-
-                if currentDemoWordIndex + 1 < demoWords.count {
-                    currentDemoWordIndex += 1
-                    activeSyllableIndex = 0
-                } else {
-                    stopMetronome()
-                    goToStep(.wellDone)
-                }
-            }
-        }
-    }
-
-    private func goToStep(_ next: BeatBuddyFlowStep) {
-        withAnimation(.spring(response: 0.72, dampingFraction: 0.8)) {
-            step = next
-        }
-        if next == .wellDone {
-            stopMetronome()
-            confettiCounter += 1
-        }
-    }
-
-    // MARK: - Animated Clouds Layer (Edge-to-Edge with Lowered Screen 1 Cloud)
-    @ViewBuilder
-    private func cloudsLayer(w: CGFloat, h: CGFloat) -> some View {
-        ZStack {
-            // 1. Top-Left Floating Cloud (Hugging left edge cleanly)
-            assetImage(step == .encouragement ? "Drifting cloud" : "Cloud-2")
-                .scaledToFit()
-                .frame(width: step == .encouragement ? 150 : 140)
-                .position(topLeftCloudPosition(w: w, h: h))
-                .offset(y: floatAnim ? -4 : 4)
-                .animation(.spring(response: 0.75, dampingFraction: 0.8), value: step)
-
-            // 2. Top-Right Floating Cloud (Hugging right edge cleanly)
-            assetImage("Cloud")
-                .scaledToFit()
-                .frame(width: 140)
-                .position(topRightCloudPosition(w: w, h: h))
-                .opacity(step == .encouragement ? 0.0 : 1.0)
-                .offset(y: floatAnim ? 3 : -3)
-                .animation(.spring(response: 0.75, dampingFraction: 0.8), value: step)
-
-            // 3. Mid-Right Drifting Cloud (Offsets 18px transparent margin)
-            assetImage("Drifting cloud-3")
-                .scaledToFit()
-                .frame(width: 115)
-                .position(midRightCloudPosition(w: w, h: h))
-                .opacity((step == .intro || step == .encouragement || step == .practice) ? 1.0 : 0.0)
-                .offset(y: floatAnim ? -5 : 5)
-                .animation(.spring(response: 0.75, dampingFraction: 0.8), value: step)
-
-            // 4. Bottom-Left Drifting Cloud (Bleeds off left edge)
-            assetImage("Drifting cloud-2")
-                .scaledToFit()
-                .frame(width: 142)
-                .position(x: w * 0.10, y: step == .wellDone ? h * 0.88 : (step == .encouragement ? h * 0.90 : h * 1.25))
-                .opacity((step == .intro || step == .practice) ? 0.0 : 1.0)
-                .offset(y: floatAnim ? 4 : -4)
-                .animation(.spring(response: 0.75, dampingFraction: 0.8), value: step)
-
-            // 5. Bottom Billowing Cloud Bank 1 (Screen 1, Screen 3 & Screen 4: Hugs bottom-right edge)
-            assetImage("Cloud bank")
-                .scaledToFit()
-                .frame(width: w * 0.70)
-                .position(bottomBankRightPosition(w: w, h: h))
-                .opacity((step == .intro || step == .practice || step == .wellDone) ? 1.0 : 0.0)
-                .offset(y: floatAnim ? -3 : 3)
-                .animation(.spring(response: 0.8, dampingFraction: 0.8), value: step)
-
-            // 6. Bottom Billowing Cloud Bank 2 (Screen 1, Screen 3 & Screen 4: Hugs bottom-left edge)
-            assetImage("Cloud bank-2")
-                .scaledToFit()
-                .frame(width: w * 0.66)
-                .position(bottomBankLeftPosition(w: w, h: h))
-                .opacity((step == .intro || step == .practice || step == .wellDone) ? 1.0 : 0.0)
-                .offset(y: floatAnim ? 3 : -3)
-                .animation(.spring(response: 0.8, dampingFraction: 0.8), value: step)
-        }
-        .allowsHitTesting(false)
-    }
-
-    private func topLeftCloudPosition(w: CGFloat, h: CGFloat) -> CGPoint {
-        switch step {
-        case .intro, .practice: return CGPoint(x: w * 0.06, y: h * 0.08)
-        case .encouragement: return CGPoint(x: w * 0.06, y: h * 0.08)
-        case .wellDone: return CGPoint(x: w * -0.06, y: h * 0.08)
-        }
-    }
-
-    private func topRightCloudPosition(w: CGFloat, h: CGFloat) -> CGPoint {
-        switch step {
-        case .intro, .practice: return CGPoint(x: w * 0.94, y: h * 0.18)
-        case .encouragement: return CGPoint(x: w * 1.15, y: h * 0.065)
-        case .wellDone: return CGPoint(x: w * 1.06, y: h * 0.10)
-        }
-    }
-
-    private func midRightCloudPosition(w: CGFloat, h: CGFloat) -> CGPoint {
-        switch step {
-        case .intro, .practice: return CGPoint(x: w * 1.08, y: h * 0.26)
-        case .encouragement: return CGPoint(x: w * 0.96, y: h * 0.28)
-        case .wellDone: return CGPoint(x: w * 1.25, y: h * 0.30)
-        }
-    }
-
-    private func bottomBankLeftPosition(w: CGFloat, h: CGFloat) -> CGPoint {
-        switch step {
-        case .intro, .practice: return CGPoint(x: w * 0.20, y: h * 0.88)
-        case .encouragement: return CGPoint(x: w * 0.1, y: h * 1.25)
-        case .wellDone: return CGPoint(x: w * 0.05, y: h * 0.88)
-        }
-    }
-
-    private func bottomBankRightPosition(w: CGFloat, h: CGFloat) -> CGPoint {
-        switch step {
-        case .intro, .practice: return CGPoint(x: w * 0.82, y: h * 0.86)
-        case .encouragement: return CGPoint(x: w * 0.9, y: h * 1.25)
-        case .wellDone: return CGPoint(x: w * 0.95, y: h * 0.86)
-        }
-    }
-
-    // MARK: - Twinkling Stars Layer
-    @ViewBuilder
-    private func twinklingStarsLayer(w: CGFloat, h: CGFloat) -> some View {
-        ZStack {
-            TwinklingStarView(assetName: "Sparkle", size: 28, delay: 0.0, duration: 1.1)
-                .position(x: w * 0.32, y: h * 0.07)
-
-            if step != .intro && step != .wellDone {
-                TwinklingStarView(assetName: "Sparkle", size: 24, delay: 0.4, duration: 1.35)
-                    .position(x: w * 0.74, y: h * 0.14)
-
-                TwinklingStarView(assetName: "Floating mote", size: 10, delay: 0.2, duration: 0.95)
-                    .position(x: w * 0.18, y: h * 0.58)
-
-                TwinklingStarView(assetName: "Sparkle-2", size: 26, delay: 0.6, duration: 1.2)
-                    .position(x: w * 0.84, y: h * 0.62)
-
-                TwinklingStarView(assetName: "Floating mote", size: 10, delay: 0.8, duration: 1.4)
-                    .position(x: w * 0.35, y: h * 0.68)
-            }
-        }
-        .allowsHitTesting(false)
-    }
-
-    // MARK: - Asset Image Helper
-    @ViewBuilder
-    private func assetImage(_ name: String) -> some View {
-        if let uiImage = UIImage(named: name) ?? UIImage(contentsOfFile: Bundle.main.path(forResource: name, ofType: "png") ?? "") {
-            Image(uiImage: uiImage)
-                .resizable()
-        } else {
-            Image(name)
-                .resizable()
-        }
+            .shadow(color: StamerleeTheme.primaryBlue.opacity(0.4), radius: 12, x: 0, y: 5)
+            .scaleEffect(configuration.isPressed ? 0.97 : 1)
+            .animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
     }
 }
 
