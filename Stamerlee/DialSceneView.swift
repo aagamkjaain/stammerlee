@@ -813,7 +813,7 @@ private struct DialGlassActionButton: View {
             }
             .shadow(color: StamerleeTheme.primaryBlue.opacity(0.4), radius: 12, x: 0, y: 5)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.haptic(weight: .medium, pressedScale: 0.97))
     }
 }
 
@@ -1048,7 +1048,7 @@ public struct DialSceneView: View {
             // Fixed-height slot so the mic never jumps when Finish appears
             ZStack {
                 if hasSpoken {
-                    PrimaryActionButton(title: "Finish") {
+                    DialGlassActionButton(title: "Finish") {
                         turnTask?.cancel()
                         state.hasCompletedDialScene = true
                         stage = .analysis
@@ -1216,7 +1216,19 @@ public struct DialSceneView: View {
 }
 
 
-// MARK: - Dial Mic Button (same purple glass mic as the other screens, animated while live)
+// MARK: - Dial Mic Button Style
+private struct DialMicButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.94 : 1.0)
+            .animation(.spring(response: 0.25, dampingFraction: 0.7), value: configuration.isPressed)
+            .sensoryFeedback(trigger: configuration.isPressed) { _, isPressed in
+                isPressed ? .impact(weight: .light) : nil
+            }
+    }
+}
+
+// MARK: - Dial Mic Button (iOS-native size & feedback, animated while live)
 enum DialMicPhase: Equatable {
     case idle
     case listening
@@ -1241,22 +1253,22 @@ private struct DialMicButton: View {
                         let speed = isActive ? 0.7 : 0.35
                         let p = (t * speed + Double(k) * 0.5).truncatingRemainder(dividingBy: 1.0)
                         Circle()
-                            .stroke(StamerleeTheme.primaryBlue.opacity((1 - p) * (isActive ? 0.5 : 0.28)), lineWidth: 1.5)
-                            .frame(width: 140, height: 140)
-                            .scaleEffect(1.0 + p * 0.5)
+                            .stroke(StamerleeTheme.primaryBlue.opacity((1 - p) * (isActive ? 0.45 : 0.20)), lineWidth: 1.5)
+                            .frame(width: 96, height: 96)
+                            .scaleEffect(1.0 + p * 0.35)
                     }
 
                     // Faint static outer ring
                     Circle()
                         .stroke(Color.white.opacity(0.08), lineWidth: 1)
-                        .frame(width: 150, height: 150)
-                        .scaleEffect(1.0 + 0.06 * pulse)
+                        .frame(width: 104, height: 104)
+                        .scaleEffect(1.0 + 0.04 * pulse)
 
                     // Deep navy back ring
                     Circle()
                         .fill(Color(red: 32 / 255, green: 26 / 255, blue: 58 / 255))
-                        .frame(width: 112, height: 112)
-                        .scaleEffect(1.0 + (isActive ? 0.08 : 0.04) * pulse)
+                        .frame(width: 78, height: 78)
+                        .scaleEffect(1.0 + (isActive ? 0.06 : 0.03) * pulse)
 
                     // Core purple glass button
                     Circle()
@@ -1270,32 +1282,36 @@ private struct DialMicButton: View {
                                 endPoint: .bottomTrailing
                             )
                         )
-                        .frame(width: 88, height: 88)
+                        .frame(width: 60, height: 60)
                         .scaleEffect(1.0 + (isActive ? 0.03 : 0.015) * pulse)
                         .overlay(
                             Circle().stroke(
                                 LinearGradient(
-                                    colors: [Color.white.opacity(0.7), Color.white.opacity(0.1)],
+                                    colors: [Color.white.opacity(0.7), Color.white.opacity(0.15)],
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
                                 ),
                                 lineWidth: 1.2
                             )
                         )
-                        .shadow(color: StamerleeTheme.primaryBlue.opacity(isActive ? 0.9 : 0.5),
-                                radius: isActive ? 16 : 10)
+                        .shadow(
+                            color: StamerleeTheme.primaryBlue.opacity(isActive ? 0.85 : 0.45),
+                            radius: isActive ? 12 : 8
+                        )
 
                     // Same mic icon always; the pulse alone shows it's live
                     Image(systemName: "mic.fill")
-                        .font(.system(size: 32, weight: .semibold))
+                        .font(.system(size: 24, weight: .semibold))
                         .foregroundStyle(.white)
                 }
-                .frame(width: 200, height: 200)
+                .frame(width: 120, height: 120)
+                .contentShape(Circle())
                 .animation(.easeInOut(duration: 0.25), value: isActive)
             }
         }
-        .buttonStyle(.plain)
+        .buttonStyle(DialMicButtonStyle())
         .accessibilityLabel(isActive ? "Stop microphone" : "Start microphone")
+        .accessibilityAddTraits(.isButton)
     }
 }
 

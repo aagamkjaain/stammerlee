@@ -59,17 +59,9 @@ public struct PrimaryActionButton: View {
     }
 
     public var body: some View {
-        if #available(iOS 26.0, *) {
-            Button(action: action) { label }
-                .buttonStyle(.glass(.regular.tint(StamerleeTheme.primaryBlue).interactive()))
-                .buttonBorderShape(.capsule)
-                .frame(maxWidth: .infinity)
-                .disabled(!isEnabled || isLoading)
-        } else {
-            Button(action: action) { label }
-                .buttonStyle(.haptic(weight: .medium, pressedScale: 0.97))
-                .disabled(!isEnabled || isLoading)
-        }
+        Button(action: action) { label }
+            .buttonStyle(.haptic(weight: .medium, pressedScale: 0.97))
+            .disabled(!isEnabled || isLoading)
     }
 
     private var label: some View {
@@ -84,27 +76,45 @@ public struct PrimaryActionButton: View {
                         .font(.system(size: compact ? 13 : 16, weight: .bold))
                 }
                 Text(title)
-                    .font(.system(size: compact ? 15 : 16, weight: .semibold, design: .rounded))
+                    .font(.system(size: compact ? 15 : 16.5, weight: .bold, design: .rounded))
             }
         }
         .foregroundStyle(.white)
-        .frame(maxWidth: .infinity, minHeight: compact ? 44 : 52)
+        .frame(maxWidth: .infinity)
+        .frame(height: compact ? 44 : 52)
         .background {
-            if #available(iOS 26.0, *) {
-                // glass style owns the background
-                Color.clear
-            } else {
-                Group {
-                    if isEnabled {
-                        StamerleeTheme.primaryBlue
-                    } else {
-                        StamerleeTheme.primaryBlue.opacity(0.4)
-                    }
-                }
-                .clipShape(Capsule())
-                .shadow(color: isEnabled ? StamerleeTheme.primaryBlue.opacity(0.3) : .clear, radius: 10, x: 0, y: 5)
+            ZStack {
+                RoundedRectangle(cornerRadius: compact ? 22 : 26, style: .continuous)
+                    .fill(.ultraThinMaterial)
+
+                RoundedRectangle(cornerRadius: compact ? 22 : 26, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color(red: 155 / 255, green: 125 / 255, blue: 255 / 255).opacity(isEnabled ? 0.88 : 0.35),
+                                StamerleeTheme.primaryBlueDark.opacity(isEnabled ? 0.92 : 0.40)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+
+                RoundedRectangle(cornerRadius: compact ? 22 : 26, style: .continuous)
+                    .stroke(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(isEnabled ? 0.70 : 0.25),
+                                Color.white.opacity(isEnabled ? 0.20 : 0.08),
+                                StamerleeTheme.primaryBlue.opacity(isEnabled ? 0.40 : 0.15)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1.2
+                    )
             }
         }
+        .shadow(color: isEnabled ? StamerleeTheme.primaryBlue.opacity(0.4) : .clear, radius: 12, x: 0, y: 5)
     }
 }
 

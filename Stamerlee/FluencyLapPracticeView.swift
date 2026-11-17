@@ -287,7 +287,39 @@ public struct SpeakPracticeScreen: View {
 private struct FluencyFinishButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .background(StamerleeTheme.primaryPurple, in: Capsule())
+            .background {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 26, style: .continuous)
+                        .fill(.ultraThinMaterial)
+
+                    RoundedRectangle(cornerRadius: 26, style: .continuous)
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    Color(red: 155 / 255, green: 125 / 255, blue: 255 / 255).opacity(0.88),
+                                    StamerleeTheme.primaryBlueDark.opacity(0.92)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+
+                    RoundedRectangle(cornerRadius: 26, style: .continuous)
+                        .stroke(
+                            LinearGradient(
+                                colors: [
+                                    Color.white.opacity(0.70),
+                                    Color.white.opacity(0.20),
+                                    StamerleeTheme.primaryBlue.opacity(0.40)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1.2
+                        )
+                }
+            }
+            .shadow(color: StamerleeTheme.primaryBlue.opacity(0.4), radius: 12, x: 0, y: 5)
             .scaleEffect(configuration.isPressed ? 0.97 : 1)
             .animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
     }
