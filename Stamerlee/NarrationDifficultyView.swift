@@ -216,9 +216,9 @@ public struct NarrationIntroView: View {
                 SelfieCameraPreview()
                     .frame(width: min(w * 0.78, 270), height: 180)
                     .background(Color(red: 25 / 255, green: 22 / 255, blue: 48 / 255))
-                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        RoundedRectangle(cornerRadius: 24, style: .continuous)
                             .stroke(Color.white.opacity(0.32), lineWidth: 1.2)
                     )
                     .shadow(color: StamerleeTheme.primaryBlue.opacity(0.38), radius: 14, x: 0, y: 6)
@@ -237,7 +237,8 @@ public struct NarrationIntroView: View {
                 .background(Color.black.opacity(0.60), in: Capsule())
                 .padding(10)
             }
-            .padding(.bottom, 22)
+
+            Spacer()
 
             // Universal Purple Glass Microphone Control
             UniversalMicrophoneButton(isListening: isListening, disabled: isListening) {
@@ -248,9 +249,7 @@ public struct NarrationIntroView: View {
                 .font(.system(size: 13.5, weight: .regular, design: .rounded))
                 .foregroundStyle(Color(red: 195 / 255, green: 190 / 255, blue: 220 / 255))
                 .padding(.top, 14)
-                .padding(.bottom, 28)
-
-            Spacer()
+                .padding(.bottom, 48)
         }
     }
 

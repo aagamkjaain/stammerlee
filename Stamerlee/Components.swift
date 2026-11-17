@@ -402,7 +402,7 @@ public struct DifficultyCard: View {
             .padding(.horizontal, 14)
             .frame(height: 72)
             .background(Color(red: 238 / 255, green: 240 / 255, blue: 250 / 255))
-            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
             .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 2)
         }
         .buttonStyle(.haptic)
@@ -510,8 +510,6 @@ public struct UniversalMicrophoneButton: View {
     public var disabled: Bool = false
     public let action: () -> Void
 
-    @State private var pulseMic: Bool = false
-
     public init(
         isListening: Bool,
         isBeating: Bool = false,
@@ -531,13 +529,11 @@ public struct UniversalMicrophoneButton: View {
                 Circle()
                     .stroke(StamerleeTheme.primaryBlue.opacity(isListening ? 0.5 : (isBeating ? 0.35 : 0.22)), lineWidth: 1.5)
                     .frame(width: 120, height: 120)
-                    .scaleEffect(isListening && pulseMic ? 1.18 : (isBeating ? 1.05 : 1.0))
 
                 // Deep navy purple back ring
                 Circle()
                     .fill(Color(red: 32 / 255, green: 26 / 255, blue: 58 / 255))
                     .frame(width: 90, height: 90)
-                    .scaleEffect(isListening && pulseMic ? 1.08 : (isBeating ? 1.03 : 1.0))
 
                 // Core Purple Glass Button
                 Circle()
@@ -581,19 +577,10 @@ public struct UniversalMicrophoneButton: View {
             }
             .frame(width: 124, height: 124)
             .contentShape(Circle())
-            .animation(.easeInOut(duration: 0.6).repeatForever(autoreverses: true), value: pulseMic)
         }
         .buttonStyle(.haptic(weight: .medium, pressedScale: 0.96))
         .disabled(disabled)
         .accessibilityLabel(isListening ? "Stop recording" : "Record")
-        .onAppear {
-            if isListening {
-                pulseMic = true
-            }
-        }
-        .onChange(of: isListening) { _, listening in
-            pulseMic = listening
-        }
     }
 }
 

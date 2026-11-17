@@ -240,13 +240,14 @@ public struct PictureDescriptionIntroView: View {
                 .background(Color.black.opacity(0.65))
             }
             .frame(width: min(w * 0.78, 280), height: 165)
-            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
                     .stroke(Color.white.opacity(0.28), lineWidth: 1)
             )
             .shadow(color: StamerleeTheme.primaryBlue.opacity(0.35), radius: 14, x: 0, y: 6)
-            .padding(.bottom, 24)
+
+            Spacer()
 
             // Universal Purple Glass Microphone Control
             UniversalMicrophoneButton(isListening: isListening, disabled: isListening) {
@@ -257,9 +258,7 @@ public struct PictureDescriptionIntroView: View {
                 .font(.system(size: 13.5, weight: .regular, design: .rounded))
                 .foregroundStyle(Color(red: 195 / 255, green: 190 / 255, blue: 220 / 255))
                 .padding(.top, 14)
-                .padding(.bottom, 28)
-
-            Spacer()
+                .padding(.bottom, 48)
         }
     }
 

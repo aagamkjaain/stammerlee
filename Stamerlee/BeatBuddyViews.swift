@@ -122,7 +122,7 @@ private struct PracticeOptionCard: View {
             .frame(maxWidth: .infinity, minHeight: 104)
             .background(
                 ZStack(alignment: .topTrailing) {
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    RoundedRectangle(cornerRadius: 24, style: .continuous)
                         .fill(Color(red: 243 / 255, green: 240 / 255, blue: 254 / 255))
 
                     // Soft ambient highlight
@@ -133,7 +133,7 @@ private struct PracticeOptionCard: View {
                         .blur(radius: 8)
                 }
             )
-            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
             .shadow(color: Color.black.opacity(0.10), radius: 6, x: 0, y: 3)
         }
         .buttonStyle(.haptic(weight: .medium, pressedScale: 0.98))
@@ -716,19 +716,11 @@ public struct BeatBuddyPracticeView: View {
 
                 Spacer(minLength: 12)
 
-                Button {
+                PrimaryActionButton(title: "Finish") {
                     finishPractice()
-                } label: {
-                    HStack(spacing: 10) {
-                        Text("Finish")
-                            .font(.system(size: 17, weight: .semibold, design: .rounded))
-                    }
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 50)
                 }
-                .buttonStyle(BeatBuddyFinishButtonStyle())
-                .padding(.bottom, 16)
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.bottom, 24)
             }
             .padding(.horizontal, 24)
             .padding(.top, 8)
@@ -1548,25 +1540,39 @@ public struct BeatBuddyIntroView: View {
                     }
                 }
             }
-            .padding(.bottom, 28)
+            .padding(.bottom, 22)
 
-            // Universal Purple Microphone Control
-            UniversalMicrophoneButton(
-                isListening: isListening,
-                isBeating: isBeating,
-                disabled: isListening
-            ) {
-                triggerSpeak()
+            // Swipe prompt matching the practice screen
+            VStack(spacing: 8) {
+                HStack(spacing: 8) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 12, weight: .semibold))
+                        .opacity(currentDemoWordIndex > 0 ? 0.6 : 0.15)
+
+                    Text("Swipe for the next word")
+                        .font(.system(size: 14, weight: .medium, design: .rounded))
+
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 12, weight: .semibold))
+                        .opacity(0.7)
+                }
+                .foregroundStyle(Color(red: 194 / 255, green: 192 / 255, blue: 218 / 255))
             }
-
-            Text(isListening ? "Listening..." : "Tap and speak with the beat")
-                .font(.system(size: 14, weight: .regular, design: .rounded))
-                .foregroundStyle(Color(red: 195 / 255, green: 190 / 255, blue: 220 / 255))
-                .padding(.top, 16)
-                .padding(.bottom, 36)
+            .padding(.top, 14)
 
             Spacer()
         }
+        .contentShape(Rectangle())
+        .gesture(
+            DragGesture(minimumDistance: 25)
+                .onEnded { value in
+                    if value.translation.width < -30 {
+                        advanceDemoWord()
+                    } else if value.translation.width > 30 {
+                        regressDemoWord()
+                    }
+                }
+        )
         .onAppear {
             startMetronome()
         }
@@ -1677,6 +1683,28 @@ public struct BeatBuddyIntroView: View {
         metronomeTimer?.invalidate()
         metronomeTimer = nil
         isBeating = false
+    }
+
+    private func advanceDemoWord() {
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        withAnimation(.easeInOut(duration: 0.25)) {
+            if currentDemoWordIndex + 1 < demoWords.count {
+                currentDemoWordIndex += 1
+                activeSyllableIndex = 0
+            } else {
+                stopMetronome()
+                goToStep(.wellDone)
+            }
+        }
+    }
+
+    private func regressDemoWord() {
+        guard currentDemoWordIndex > 0 else { return }
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        withAnimation(.easeInOut(duration: 0.25)) {
+            currentDemoWordIndex -= 1
+            activeSyllableIndex = 0
+        }
     }
 
     private func triggerSpeak() {

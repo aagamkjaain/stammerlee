@@ -307,14 +307,14 @@ private struct ExerciseRowCard: View {
             // .tint(cardColor) preserves the existing lavender look
             Button(action: action) { cardContent }
                 .buttonStyle(.glass(.regular.tint(cardColor).interactive()))
-                .buttonBorderShape(.roundedRectangle(radius: 16))
+                .buttonBorderShape(.roundedRectangle(radius: 24))
                 .frame(maxWidth: .infinity)
-                .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .contentShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         } else {
             Button(action: action) { cardContent }
                 .buttonStyle(BouncyCardButtonStyle())
                 .frame(maxWidth: .infinity)
-                .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .contentShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         }
     }
 
@@ -372,13 +372,13 @@ private struct ExerciseRowCard: View {
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
         .frame(maxWidth: .infinity, minHeight: 84, alignment: .leading)
-        .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .contentShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         // On iOS < 26 draw the card background manually; on iOS 26 the glass style owns rendering
         .background {
             if #available(iOS 26.0, *) {
                 Color.clear
             } else {
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
                     .fill(cardColor)
                     .shadow(color: Color.black.opacity(0.04), radius: 5, x: 0, y: 2)
             }

@@ -812,8 +812,8 @@ public struct DialSceneView: View {
                             .padding(.horizontal, 14)
                             .frame(height: 72)
                             .background(Color.white.opacity(0.07))
-                            .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Color.white.opacity(0.08)))
-                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            .overlay(RoundedRectangle(cornerRadius: 24, style: .continuous).stroke(Color.white.opacity(0.08)))
+                            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
                         }
                         .buttonStyle(.haptic)
                     }

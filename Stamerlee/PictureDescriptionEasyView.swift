@@ -140,9 +140,9 @@ public struct PictureDescriptionEasyView: View {
             .scaledToFit()
             .frame(maxWidth: .infinity)
             .frame(maxHeight: 280)
-            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
                     .stroke(Color.white.opacity(0.12), lineWidth: 1)
             )
             .shadow(color: Color.black.opacity(0.3), radius: 10, x: 0, y: 4)

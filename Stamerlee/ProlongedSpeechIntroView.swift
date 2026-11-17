@@ -224,7 +224,8 @@ public struct ProlongedSpeechIntroView: View {
                 .font(.system(size: 14, weight: .medium, design: .monospaced))
                 .foregroundStyle(Color(red: 175 / 255, green: 165 / 255, blue: 215 / 255))
                 .padding(.top, 8)
-                .padding(.bottom, 36)
+
+            Spacer()
 
             // Universal Purple Glass Microphone Control
             UniversalMicrophoneButton(isListening: isListening, disabled: isListening) {
@@ -236,8 +237,6 @@ public struct ProlongedSpeechIntroView: View {
                 .foregroundStyle(Color(red: 195 / 255, green: 190 / 255, blue: 220 / 255))
                 .padding(.top, 16)
                 .padding(.bottom, 48)
-
-            Spacer()
         }
     }
 

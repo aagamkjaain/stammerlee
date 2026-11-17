@@ -315,7 +315,8 @@ public struct FluencyLapIntroView: View {
                 .font(.system(size: 13, weight: .medium, design: .rounded))
                 .foregroundStyle(Color(red: 175 / 255, green: 165 / 255, blue: 215 / 255))
                 .padding(.top, 10)
-                .padding(.bottom, 32)
+
+            Spacer()
 
             // Universal Purple Glass Microphone Button
             UniversalMicrophoneButton(isListening: isListening, disabled: isListening) {
@@ -326,9 +327,7 @@ public struct FluencyLapIntroView: View {
                 .font(.system(size: 14, weight: .regular, design: .rounded))
                 .foregroundStyle(Color(red: 195 / 255, green: 190 / 255, blue: 220 / 255))
                 .padding(.top, 16)
-                .padding(.bottom, 36)
-
-            Spacer()
+                .padding(.bottom, 48)
         }
     }
 
