@@ -51,14 +51,20 @@ public struct ContentView: View {
                                 removal: .opacity.combined(with: .scale(scale: 1.04))
                             )
                         )
+                case .welcome:
+                    WelcomeView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
                 case .login:
-                    LoginView(state: appState)
+                    LoginView(state: appState, blurBackground: false)
                         .transition(
                             .asymmetric(
                                 insertion: .opacity,
                                 removal: slideTransition(for: appState.navigationDirection)
                             )
                         )
+                case .nameInput:
+                    OnboardingNameView(state: appState)
+                        .transition(slideTransition(for: appState.navigationDirection))
                 case .onboarding1:
                     OnboardingStepOneView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))

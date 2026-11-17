@@ -32,9 +32,11 @@ public enum AppTab: Int, CaseIterable, Hashable {
 // MARK: - Navigation Screens
 public enum AppScreen: Hashable, CaseIterable {
     case launch
-    case login
+    case welcome
     case onboarding1
     case onboarding2
+    case login
+    case nameInput
     case dailyGoal
     case exploreActivities
     case homeDashboard
@@ -105,6 +107,9 @@ public final class AppState {
     public var dailyPracticeMinutes: Int = 10
     public var currentStreakDays: Int = 3
     public var profileName: String = "Tanvi Nema"
+    public var userName: String = ""
+    /// Drives the glass sign-in overlay that pops up over Onboarding 2.
+    public var isSigningIn: Bool = false
     public var profileAvatarStyle: Int = 0
     public var profileAvatarData: Data?
     

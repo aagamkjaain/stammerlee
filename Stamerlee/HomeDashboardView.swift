@@ -75,7 +75,7 @@ public struct HomeDashboardView: View {
                             // 1. Prolonged Speech (UNLOCKED - Primary action)
                             exerciseRow(
                                 title: "Prolonged Speech",
-                                subtitle: "Practice gently stretching sounds while speaking slowly.",
+                                subtitle: "Gently stretch sounds while speaking slowly.",
                                 isLocked: false,
                                 iconName: "IconProlongedSpeech"
                             ) {
@@ -89,7 +89,7 @@ public struct HomeDashboardView: View {
                             // 2. Picture Description
                             exerciseRow(
                                 title: "Picture Description",
-                                subtitle: "Describe real-world scenes in detail to practice spontaneous speech flow",
+                                subtitle: "Practice by describing pictures in detail",
                                 isLocked: false,
                                 iconName: "IconPictureDesc"
                             ) {
@@ -103,7 +103,7 @@ public struct HomeDashboardView: View {
                             // 3. Dial Scene
                             exerciseRow(
                                 title: "Dial Scene",
-                                subtitle: "Practice interactive scenario-based phone calls and service counter chats",
+                                subtitle: "Mimic speaking in different scenarios through interactive phone calls",
                                 isLocked: false,
                                 iconName: "IconDialScene"
                             ) {
@@ -117,7 +117,7 @@ public struct HomeDashboardView: View {
                             // 4. Narration
                             exerciseRow(
                                 title: "Narration",
-                                subtitle: "Practice reading and telling longer stories while watching yourself in the mirror",
+                                subtitle: "Speak about different topics infront of the mirror",
                                 isLocked: false,
                                 iconName: "IconMirrorNarration"
                             ) {
@@ -145,7 +145,7 @@ public struct HomeDashboardView: View {
                             // Beat Buddy
                             exerciseRow(
                                 title: "Beat Buddy",
-                                subtitle: "Practice speaking to a steady, rhythmic beat using an interactive metronome",
+                                subtitle: "Build your pace by speaking at every beat",
                                 isLocked: false,
                                 iconName: "BeatBuddyLogo"
                             ) {
@@ -224,7 +224,7 @@ public struct HomeDashboardView: View {
                         .font(.system(size: 20, weight: .bold, design: .rounded))
                         .foregroundStyle(Color(red: 20 / 255, green: 22 / 255, blue: 35 / 255))
 
-                    Text("A short, focused practice session to build fluency and confidence in your speech.")
+                    Text("Challenge yourself with a timed session and beat your score")
                         .font(.system(size: 13, weight: .medium, design: .rounded))
                         .foregroundStyle(StamerleeTheme.textSecondaryLight)
                         .lineSpacing(2)

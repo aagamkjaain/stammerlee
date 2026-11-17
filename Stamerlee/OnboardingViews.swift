@@ -11,6 +11,11 @@ import SwiftUI
 public struct LoginView: View {
     @Bindable public var state: AppState
 
+    /// When shown as an overlay over the onboarding screen, blur the content behind
+    /// with a glass material. When shown standalone (e.g. after logging out), use a
+    /// solid dark background instead.
+    public var blurBackground: Bool = true
+
     @State private var emailInput: String = ""
     @State private var passwordInput: String = ""
     @State private var activeSheet: ActiveSheet? = nil
@@ -21,26 +26,22 @@ public struct LoginView: View {
         var id: Int { hashValue }
     }
 
-    public init(state: AppState) {
+    public init(state: AppState, blurBackground: Bool = true) {
         self.state = state
+        self.blurBackground = blurBackground
     }
 
     public var body: some View {
         ZStack(alignment: .bottom) {
-            StamerleeTheme.backgroundDark.ignoresSafeArea()
-
-            // Logo — slides up from center in sync with the sheet rising from below
-            VStack {
-                Spacer()
-                Text("Stamerlee")
-                    .font(.system(size: 44, weight: .bold, design: .rounded))
-                    .foregroundStyle(StamerleeTheme.textPrimaryDark)
-                    .shadow(color: Color.white.opacity(0.15), radius: 16, x: 0, y: 0)
-                Spacer()
+            if blurBackground {
+                // Glass blur over the onboarding screen behind, plus a dark tint
+                Rectangle()
+                    .fill(.ultraThinMaterial)
+                    .background(StamerleeTheme.backgroundDark.opacity(0.35))
+                    .ignoresSafeArea()
+            } else {
+                StamerleeTheme.backgroundDark.ignoresSafeArea()
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .offset(y: sheetAppeared ? -190 : 0)
-            .animation(.spring(response: 0.65, dampingFraction: 0.82), value: sheetAppeared)
 
             // "Get started" tab/sheet — slides up from below
             VStack(alignment: .leading, spacing: 20) {
@@ -127,7 +128,9 @@ public struct LoginView: View {
 
     private func handleAuth(provider: String) {
         state.signIn(method: provider)
-        state.navigate(to: .onboarding1, forward: true)
+        state.isSigningIn = false
+        activeSheet = nil
+        state.navigate(to: .nameInput, forward: true)
     }
 
     @ViewBuilder
@@ -177,7 +180,8 @@ public struct LoginView: View {
                 state.signIn(method: "Email", email: emailInput.isEmpty ? "user@stamerlee.com" : emailInput)
                 passwordInput = ""
                 activeSheet = nil
-                state.navigate(to: .onboarding1, forward: true)
+                state.isSigningIn = false
+                state.navigate(to: .nameInput, forward: true)
             }
             .padding(.top, 8)
             Spacer()
@@ -215,7 +219,7 @@ public struct OnboardingStepOneView: View {
                     // Top Navigation Bar
                     HStack {
                         BackNavButton {
-                            state.navigate(to: .login, forward: false)
+                            state.navigate(to: .welcome, forward: false)
                         }
                         Spacer()
                     }
@@ -323,9 +327,9 @@ public struct OnboardingStepTwoView: View {
 
                     Spacer(minLength: 8)
 
-                    // Signature Purple Action Button
+                    // Signature Purple Action Button — pops the glass sign-in up over this screen
                     PrimaryActionButton(title: "Next", compact: false) {
-                        state.navigate(to: .exploreActivities, forward: true)
+                        state.isSigningIn = true
                     }
                     .padding(.horizontal, 24)
                     .padding(.bottom, 24)
@@ -333,6 +337,146 @@ public struct OnboardingStepTwoView: View {
                 .frame(width: geo.size.width)
             }
             .frame(width: geo.size.width, height: geo.size.height)
+
+            // Glass sign-in sheet overlaying Onboarding 2
+            if state.isSigningIn {
+                LoginView(state: state, blurBackground: true)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .zIndex(20)
+            }
+        }
+        .animation(.spring(response: 0.65, dampingFraction: 0.82), value: state.isSigningIn)
+    }
+}
+
+// MARK: - 4b. Sign-in name capture (asked after the sign-in sheet)
+public struct OnboardingNameView: View {
+    @Bindable public var state: AppState
+
+    @State private var nameInput: String = ""
+    @State private var showWelcome: Bool = false
+    @State private var welcomeRevealed: Bool = false
+    @State private var welcomeText: String = ""
+    @State private var hasCommitted: Bool = false
+
+    public init(state: AppState) {
+        self.state = state
+    }
+
+    public var body: some View {
+        ZStack {
+            StamerleeTheme.backgroundDark.ignoresSafeArea()
+
+            if showWelcome {
+                // Animated welcome interstitial
+                ZStack {
+                    BackgroundImagesDecorationView()
+                        .opacity(0.7)
+
+                    HStack(spacing: 12) {
+                        Text("Welcome \(welcomeText)")
+                            .font(.system(size: 40, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
+
+                        Image(systemName: "hand.wave.fill")
+                            .font(.system(size: 30, weight: .bold))
+                            .foregroundStyle(StamerleeTheme.accentPurple)
+                    }
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.6)
+                    .padding(.horizontal, 32)
+                    .opacity(welcomeRevealed ? 1 : 0)
+                    .scaleEffect(welcomeRevealed ? 1.0 : 0.6)
+                    .offset(y: welcomeRevealed ? 0 : 20)
+                }
+                .transition(.opacity)
+                .animation(.spring(response: 0.7, dampingFraction: 0.85), value: welcomeRevealed)
+            } else {
+                VStack(spacing: 0) {
+                    Text("What should we\ncall you?")
+                        .font(.system(size: 32, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(3)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.top, 96)
+
+                    Text("Enter your name so we can personalize your practice.")
+                        .font(.system(size: 14.5, weight: .regular, design: .rounded))
+                        .foregroundStyle(Color(red: 218 / 255, green: 222 / 255, blue: 245 / 255).opacity(0.88))
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(3)
+                        .padding(.top, 14)
+                        .padding(.horizontal, 48)
+
+                    // Underline input (no white box)
+                    TextField("Your name", text: $nameInput)
+                        .font(.system(size: 22, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .tint(StamerleeTheme.primaryBlue)
+                        .keyboardType(.default)
+                        .autocapitalization(.words)
+                        .submitLabel(.continue)
+                        .onSubmit { commitName() }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 28)
+                        .padding(.top, 40)
+                        .padding(.bottom, 10)
+                        .overlay(alignment: .bottom) {
+                            Rectangle()
+                                .fill(nameInput.isEmpty ? Color.white.opacity(0.35) : StamerleeTheme.accentPurple)
+                                .frame(height: nameInput.isEmpty ? 1.5 : 3)
+                                .animation(.easeInOut(duration: 0.25), value: nameInput.isEmpty)
+                        }
+                        .padding(.horizontal, 24)
+
+                    Spacer()
+
+                    PrimaryActionButton(title: "Continue") {
+                        commitName()
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 28)
+                }
+            }
+        }
+        .onAppear {
+            nameInput = state.userName
+        }
+    }
+
+    /// Saves the entered name to the profile, then shows the animated
+    /// "Welcome {name}" card before moving on to the explore screen.
+    private func commitName() {
+        guard !hasCommitted else { return }
+
+        let trimmed = nameInput.trimmingCharacters(in: .whitespacesAndNewlines)
+        // Nothing entered yet — keep them on this screen and refocus the field.
+        guard !trimmed.isEmpty else {
+            nameInput = ""
+            return
+        }
+
+        hasCommitted = true
+        state.userName = trimmed
+        state.profileName = trimmed      // used later in the profile
+        welcomeText = trimmed
+
+        withAnimation {
+            showWelcome = true
+        }
+        // Reveal the text once the welcome card is mounted, so it pops in.
+        DispatchQueue.main.async {
+            withAnimation(.spring(response: 0.7, dampingFraction: 0.85)) {
+                welcomeRevealed = true
+            }
+        }
+
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(2.4))
+            guard !Task.isCancelled else { return }
+            state.navigate(to: .exploreActivities, forward: true)
         }
     }
 }
@@ -496,7 +640,7 @@ public struct ExploreActivitiesView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     HStack {
                         BackNavButton {
-                            state.navigate(to: .onboarding2, forward: false)
+                            state.navigate(to: .nameInput, forward: false)
                         }
                         Spacer()
                     }

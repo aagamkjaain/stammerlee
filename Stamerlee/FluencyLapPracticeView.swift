@@ -69,6 +69,7 @@ public struct FluencyLapPracticeView: View {
                     showBackgroundImages: true,
                     timerDurationSeconds: 60,
                     showProgressCounter: false,
+                    showMicrophonePrompt: false,
                     loopPrompts: true,
                     onBack: {
                         state.navigate(to: .homeDashboard, forward: false)
@@ -100,6 +101,7 @@ public struct SpeakPracticeScreen: View {
     let showBackgroundImages: Bool
     let timerDurationSeconds: Int?
     let showProgressCounter: Bool
+    let showMicrophonePrompt: Bool
     let loopPrompts: Bool
     let onWordsCompletedCount: ((Int) -> Void)?
 
@@ -118,6 +120,7 @@ public struct SpeakPracticeScreen: View {
         showBackgroundImages: Bool = false,
         timerDurationSeconds: Int? = nil,
         showProgressCounter: Bool = true,
+        showMicrophonePrompt: Bool = true,
         loopPrompts: Bool = false,
         onBack: @escaping () -> Void,
         onFinish: @escaping () -> Void,
@@ -129,6 +132,7 @@ public struct SpeakPracticeScreen: View {
         self.showBackgroundImages = showBackgroundImages
         self.timerDurationSeconds = timerDurationSeconds
         self.showProgressCounter = showProgressCounter
+        self.showMicrophonePrompt = showMicrophonePrompt
         self.loopPrompts = loopPrompts
         self.onBack = onBack
         self.onFinish = onFinish
@@ -184,10 +188,12 @@ public struct SpeakPracticeScreen: View {
 
                 microphoneControl
 
-                Text(allowsMultilinePrompt ? "Tap and speak the prompt" : "Tap and speak the word")
-                    .font(.system(size: 14, weight: .regular, design: .rounded))
-                    .foregroundStyle(Color(red: 194 / 255, green: 192 / 255, blue: 218 / 255))
-                    .padding(.top, 8)
+                if showMicrophonePrompt {
+                    Text(allowsMultilinePrompt ? "Tap and speak the prompt" : "Tap and speak the word")
+                        .font(.system(size: 14, weight: .regular, design: .rounded))
+                        .foregroundStyle(Color(red: 194 / 255, green: 192 / 255, blue: 218 / 255))
+                        .padding(.top, 8)
+                }
 
                 PrimaryActionButton(title: "Finish") {
                     finishPractice()
