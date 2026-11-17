@@ -696,6 +696,8 @@ public struct GlassCloseButton: View {
 public struct ExerciseAnalysisSkeletonView: View {
     public let scoreText: String
     public let maxScoreText: String
+    public let scoreUnitText: String?
+    public let highScoreText: String?
     public let subtitle: String
     public let affirmation: String?
     public let wordsList: [String]
@@ -708,6 +710,8 @@ public struct ExerciseAnalysisSkeletonView: View {
     public init(
         scoreText: String,
         maxScoreText: String = "/ 10",
+        scoreUnitText: String? = nil,
+        highScoreText: String? = nil,
         subtitle: String = "Tap words you want Beat Buddy to revisit",
         affirmation: String? = nil,
         wordsList: [String],
@@ -716,6 +720,8 @@ public struct ExerciseAnalysisSkeletonView: View {
     ) {
         self.scoreText = scoreText
         self.maxScoreText = maxScoreText
+        self.scoreUnitText = scoreUnitText
+        self.highScoreText = highScoreText
         self.subtitle = subtitle
         self.affirmation = affirmation
         self.wordsList = wordsList
@@ -726,6 +732,8 @@ public struct ExerciseAnalysisSkeletonView: View {
     public init(
         scoreText: String,
         maxScoreText: String = "/ 10",
+        scoreUnitText: String? = nil,
+        highScoreText: String? = nil,
         subtitle: String = "Here's a summary of this exercise.",
         affirmation: String? = nil,
         onDone: @escaping () -> Void
@@ -733,6 +741,8 @@ public struct ExerciseAnalysisSkeletonView: View {
         self.init(
             scoreText: scoreText,
             maxScoreText: maxScoreText,
+            scoreUnitText: scoreUnitText,
+            highScoreText: highScoreText,
             subtitle: subtitle,
             affirmation: affirmation,
             wordsList: [],
@@ -795,19 +805,38 @@ public struct ExerciseAnalysisSkeletonView: View {
                         .tracking(1.5)
                         .padding(.top, 14)
 
-                    // Score Display ("8.8 /10")
-                    HStack(alignment: .firstTextBaseline, spacing: 4) {
-                        Text(scoreText)
-                            .font(.system(size: 64, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
+                    if let scoreUnitText = scoreUnitText, !scoreUnitText.isEmpty {
+                        // Custom Score Display (e.g. "40 WORDS" with optional "HIGH SCORE: 56 WORDS")
+                        VStack(spacing: 12) {
+                            Text("\(scoreText) \(scoreUnitText)")
+                                .font(.system(size: 44, weight: .bold, design: .rounded))
+                                .foregroundStyle(.white)
+                                .textCase(.uppercase)
 
-                        if !maxScoreText.isEmpty {
-                            Text(maxScoreText.trimmingCharacters(in: .whitespaces))
-                                .font(.system(size: 26, weight: .bold, design: .rounded))
-                                .foregroundStyle(Color(red: 200 / 255, green: 195 / 255, blue: 230 / 255))
+                            if let highScoreText = highScoreText, !highScoreText.isEmpty {
+                                Text(highScoreText)
+                                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                                    .foregroundStyle(Color(red: 220 / 255, green: 215 / 255, blue: 245 / 255))
+                                    .textCase(.uppercase)
+                                    .tracking(0.8)
+                            }
                         }
+                        .padding(.top, 10)
+                    } else {
+                        // Score Display ("8.8 /10")
+                        HStack(alignment: .firstTextBaseline, spacing: 4) {
+                            Text(scoreText)
+                                .font(.system(size: 64, weight: .bold, design: .rounded))
+                                .foregroundStyle(.white)
+
+                            if !maxScoreText.isEmpty {
+                                Text(maxScoreText.trimmingCharacters(in: .whitespaces))
+                                    .font(.system(size: 26, weight: .bold, design: .rounded))
+                                    .foregroundStyle(Color(red: 200 / 255, green: 195 / 255, blue: 230 / 255))
+                            }
+                        }
+                        .padding(.top, 6)
                     }
-                    .padding(.top, 6)
 
                     // Instructions / Subtitle ("Great job completing your prolonged speech session!")
                     if !subtitle.isEmpty {

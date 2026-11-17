@@ -2,6 +2,8 @@ import SwiftUI
 
 public struct FluencyLapPracticeView: View {
     @Bindable public var state: AppState
+    @State private var showAnalysis: Bool = false
+    @State private var scoredWords: Int = 40
 
     private let words = [
         "Wattttter",
@@ -31,22 +33,44 @@ public struct FluencyLapPracticeView: View {
     }
 
     public var body: some View {
-        SpeakPracticeScreen(
-            prompts: Array(words.prefix(max(state.fluencyLapWordCount, 1))),
-            showBackgroundImages: true,
-            onBack: {
-                state.navigate(to: .fluencyLap, forward: false)
-            },
-            onFinish: {
-                state.hasCompletedFluencyLap = true
-                let completedCount = max(state.fluencyLapWordCount, 18)
-                state.fluencyLapPreviousWordCount = completedCount
-                if completedCount > state.fluencyLapPersonalBest {
-                    state.fluencyLapPersonalBest = completedCount
+        Group {
+            if showAnalysis {
+                ZStack(alignment: .top) {
+                    StamerleeTheme.backgroundDark.ignoresSafeArea()
+
+                    BackgroundImagesDecorationView()
+
+                    ExerciseAnalysisSkeletonView(
+                        scoreText: "\(scoredWords)",
+                        scoreUnitText: "WORDS",
+                        highScoreText: "HIGH SCORE: \(state.fluencyLapPersonalBest > 0 ? state.fluencyLapPersonalBest : 56) WORDS",
+                        subtitle: "Great job completing your fluency lap session!",
+                        affirmation: "You did great today!!",
+                        onDone: {
+                            state.hasCompletedFluencyLap = true
+                            state.navigate(to: .fluencyLap, forward: false)
+                        }
+                    )
                 }
-                state.navigate(to: .fluencyLap, forward: false)
+            } else {
+                SpeakPracticeScreen(
+                    prompts: Array(words.prefix(max(state.fluencyLapWordCount, 1))),
+                    showBackgroundImages: true,
+                    onBack: {
+                        state.navigate(to: .fluencyLap, forward: false)
+                    },
+                    onFinish: {
+                        let completedCount = 40
+                        scoredWords = completedCount
+                        state.fluencyLapPreviousWordCount = completedCount
+                        if completedCount > state.fluencyLapPersonalBest {
+                            state.fluencyLapPersonalBest = completedCount
+                        }
+                        showAnalysis = true
+                    }
+                )
             }
-        )
+        }
     }
 }
 
