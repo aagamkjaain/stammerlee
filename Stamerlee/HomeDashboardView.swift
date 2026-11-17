@@ -204,60 +204,55 @@ public struct HomeDashboardView: View {
 
     // MARK: - Fluency Lap Card
     private var fluencyLapCard: some View {
-        Button(action: {
-            if state.hasCompletedFluencyLapIntro {
-                state.fluencyLapWordCount = 20
-                state.navigate(to: .fluencyLapPractice)
-            } else {
-                state.navigate(to: .fluencyLapIntro)
-            }
-        }) {
-            VStack(alignment: .leading, spacing: 14) {
-                HStack(alignment: .center, spacing: 16) {
-                    Group {
-                        if let uiImage = UIImage(named: "hey1") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "hey1", ofType: "png") ?? "") {
-                            Image(uiImage: uiImage)
-                                .resizable()
-                                .scaledToFit()
-                        } else {
-                            Image("hey1")
-                                .resizable()
-                                .scaledToFit()
-                        }
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .center, spacing: 16) {
+                Group {
+                    if let uiImage = UIImage(named: "hey1") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "hey1", ofType: "png") ?? "") {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .scaledToFit()
+                    } else {
+                        Image("hey1")
+                            .resizable()
+                            .scaledToFit()
                     }
-                    .frame(width: 76, height: 76)
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Fluency Lap")
-                            .font(.system(size: 20, weight: .bold, design: .rounded))
-                            .foregroundStyle(Color(red: 20 / 255, green: 22 / 255, blue: 35 / 255))
-
-                        Text("A short, focused practice session to build fluency and confidence in your speech.")
-                            .font(.system(size: 13, weight: .medium, design: .rounded))
-                            .foregroundStyle(StamerleeTheme.textSecondaryLight)
-                            .lineSpacing(2)
-                            .lineLimit(3)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
+                .frame(width: 76, height: 76)
 
-                HStack(spacing: 8) {
-                    Text("Start Fluency Lap")
-                        .font(.system(size: 15, weight: .bold, design: .rounded))
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 12, weight: .bold))
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Fluency Lap")
+                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color(red: 20 / 255, green: 22 / 255, blue: 35 / 255))
+
+                    Text("A short, focused practice session to build fluency and confidence in your speech.")
+                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .foregroundStyle(StamerleeTheme.textSecondaryLight)
+                        .lineSpacing(2)
+                        .lineLimit(3)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity)
-                .frame(height: 46)
-                .background(Color(red: 35 / 255, green: 37 / 255, blue: 62 / 255))
-                .clipShape(Capsule())
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
+
+            Button {
+                if state.hasCompletedFluencyLapIntro {
+                    state.fluencyLapWordCount = 20
+                    state.navigate(to: .fluencyLapPractice)
+                } else {
+                    state.navigate(to: .fluencyLapIntro)
+                }
+            } label: {
+                Text("Start")
+                    .font(.system(size: 15.5, weight: .bold, design: .rounded))
+                    .foregroundStyle(StamerleeTheme.textPrimaryDark)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 38)
+                    .background(StamerleeTheme.backgroundDark, in: Capsule())
+            }
+            .buttonStyle(.popSpring)
         }
-        .buttonStyle(.plain)
         .padding(18)
-        .background(Color(red: 238 / 255, green: 240 / 255, blue: 250 / 255), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .background(Color(red: 238 / 255, green: 240 / 255, blue: 250 / 255), in: RoundedRectangle(cornerRadius: 30, style: .continuous))
         .shadow(color: Color.black.opacity(0.06), radius: 7, x: 0, y: 3)
     }
     

@@ -1,23 +1,21 @@
 import SwiftUI
 
 // MARK: - Fluency Lap Onboarding & 30-Second Sprint Experience
-// 4-Step Animated Flow matching the Prolonged Speech Onboarding Design:
-// 1. "Let's start with Fluency Lap" with midnight sky, drifting clouds & glass button
-// 2. "30-Second Sprint" preparation
-// 3. Live 30-Second Countdown Timer with spoken word set & purple mic
-// 4. "Well done!" celebration with yellow Confetti explosion & navigation to Fluency Lap
+// 3-Step Animated Flow:
+// 1. "Daily challenge" preparation
+// 2. Timed warm-up with spoken word set and purple mic
+// 3. "Well done!" celebration and navigation to Fluency Lap
 
 public enum FluencyLapFlowStep: Int, CaseIterable {
-    case intro = 1
-    case encouragement = 2
-    case practice = 3
-    case wellDone = 4
+    case encouragement = 1
+    case practice = 2
+    case wellDone = 3
 }
 
 public struct FluencyLapIntroView: View {
     @Bindable public var state: AppState
 
-    @State private var step: FluencyLapFlowStep = .intro
+    @State private var step: FluencyLapFlowStep = .encouragement
     @State private var timeRemaining: Int = 30
     @State private var timerTask: Task<Void, Never>? = nil
     @State private var currentWordIndex: Int = 0
@@ -74,7 +72,7 @@ public struct FluencyLapIntroView: View {
                 // Animated Clouds Layer with Edge-to-Edge Bleed
                 cloudsLayer(w: w, h: h)
 
-                // Subtle Yellow Confetti Effect using ConfettiSwiftUI (Step 4: Well done!)
+                // Subtle Yellow Confetti Effect using ConfettiSwiftUI (Step 3: Well done!)
                 Color.clear
                     .frame(width: 1, height: 1)
                     .confettiCannon(
@@ -109,8 +107,6 @@ public struct FluencyLapIntroView: View {
                     // Step Content
                     Group {
                         switch step {
-                        case .intro:
-                            introContent(w: w, h: h)
                         case .encouragement:
                             encouragementContent(w: w, h: h)
                         case .practice:
@@ -140,13 +136,6 @@ public struct FluencyLapIntroView: View {
     // MARK: - Top Navigation Bar
     private var topBar: some View {
         HStack {
-            if step != .wellDone {
-                BackNavButton {
-                    timerTask?.cancel()
-                    state.navigate(to: .homeDashboard, forward: false)
-                }
-            }
-
             Spacer()
 
             GlassCloseButton {
@@ -156,52 +145,14 @@ public struct FluencyLapIntroView: View {
         }
     }
 
-    // MARK: - Step 1: Intro Screen
-    private func introContent(w: CGFloat, h: CGFloat) -> some View {
-        VStack(spacing: 0) {
-            Spacer()
-
-            // Heading positioned near the middle
-            VStack(spacing: 8) {
-                Text("Let's start with")
-                    .font(.system(size: 24, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
-
-                Text("Fluency Lap")
-                    .font(.system(size: 34, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
-
-                Text("A 30-second lap designed to build speed, smoothness, and speech confidence under time pressure.")
-                    .font(.system(size: 15, weight: .regular, design: .rounded))
-                    .foregroundStyle(Color(red: 200 / 255, green: 195 / 255, blue: 230 / 255))
-                    .multilineTextAlignment(.center)
-                    .lineSpacing(4)
-                    .padding(.horizontal, 32)
-                    .padding(.top, 12)
-            }
-            .padding(.bottom, h * 0.10)
-
-            Spacer()
-
-            // CTA Button
-            VStack(spacing: 16) {
-                GlassActionButton(title: "Begin") {
-                    goToStep(.encouragement)
-                }
-            }
-            .padding(.horizontal, 24)
-            .padding(.bottom, 36)
-        }
-    }
-
-    // MARK: - Step 2: Encouragement & Prep Screen
+    // MARK: - Step 1: Encouragement & Prep Screen
     private func encouragementContent(w: CGFloat, h: CGFloat) -> some View {
         VStack(spacing: 16) {
             Spacer()
 
             TwinklingStarView(assetName: "Sparkle-2", size: 30, delay: 0.1, duration: 1.0)
 
-            Text("30-Second Lap")
+            Text("Daily challenge")
                 .font(.system(size: 28, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
 
@@ -213,8 +164,8 @@ public struct FluencyLapIntroView: View {
 
             Spacer()
 
-            VStack(spacing: 16) {
-                GlassActionButton(title: "Ready!") {
+            VStack {
+                GlassActionButton(title: "Begin") {
                     startSprint()
                 }
             }
@@ -224,7 +175,7 @@ public struct FluencyLapIntroView: View {
         .frame(maxWidth: .infinity)
     }
 
-    // MARK: - Step 3: Practice with 30-Second Timer Progress Bar & Words
+    // MARK: - Step 2: Practice with 30-Second Timer Progress Bar & Words
     private func practiceContent(w: CGFloat, h: CGFloat) -> some View {
         VStack(spacing: 0) {
             // Live Countdown Timer with Progress Bar
@@ -277,12 +228,6 @@ public struct FluencyLapIntroView: View {
 
             Spacer()
 
-            // Instructions text
-            Text("Speak the word with steady airflow")
-                .font(.system(size: 14.5, weight: .medium, design: .rounded))
-                .foregroundStyle(Color(red: 210 / 255, green: 205 / 255, blue: 240 / 255))
-                .padding(.bottom, 22)
-
             // Current Word Display
             Text(currentWord)
                 .font(.system(size: 52, weight: .bold, design: .rounded))
@@ -306,7 +251,7 @@ public struct FluencyLapIntroView: View {
         }
     }
 
-    // MARK: - Step 4: Well Done! Screen with Yellow Confetti & Redirection
+    // MARK: - Step 3: Well Done! Screen with Yellow Confetti & Redirection
     private func wellDoneContent(w: CGFloat, h: CGFloat) -> some View {
         VStack(spacing: 0) {
             Spacer()
@@ -325,7 +270,7 @@ public struct FluencyLapIntroView: View {
                         .foregroundStyle(.white)
                         .padding(.top, 4)
 
-                    Text("You completed your warm-up sprint!\nYou're ready to start the 30-second Fluency Lap.")
+                    Text("You're ready to start the 30-second Fluency Lap.")
                         .font(.system(size: 16, weight: .regular, design: .rounded))
                         .foregroundStyle(Color(red: 200 / 255, green: 195 / 255, blue: 230 / 255))
                         .multilineTextAlignment(.center)
@@ -362,7 +307,7 @@ public struct FluencyLapIntroView: View {
             Spacer()
 
             VStack(spacing: 16) {
-                GlassActionButton(title: "Start 30s Practice") {
+                GlassActionButton(title: "Continue") {
                     redirectToFluencyLap()
                 }
             }
