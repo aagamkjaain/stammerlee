@@ -7,6 +7,7 @@ import SwiftUI
 // 3. "Well done!" celebration and navigation to Fluency Lap
 
 public enum FluencyLapFlowStep: Int, CaseIterable {
+    case countdown = 0
     case encouragement = 1
     case practice = 2
     case wellDone = 3
@@ -15,9 +16,12 @@ public enum FluencyLapFlowStep: Int, CaseIterable {
 public struct FluencyLapIntroView: View {
     @Bindable public var state: AppState
 
-    @State private var step: FluencyLapFlowStep = .encouragement
+    @State private var step: FluencyLapFlowStep
     @State private var timeRemaining: Int = 30
     @State private var timerTask: Task<Void, Never>? = nil
+    @State private var countdownTask: Task<Void, Never>? = nil
+    @State private var countdownValue = 3
+    @State private var isCountdownNumberVisible = false
     @State private var currentWordIndex: Int = 0
     @State private var isListening: Bool = false
     @State private var pulseMic: Bool = false
@@ -47,8 +51,9 @@ public struct FluencyLapIntroView: View {
         Color(red: 255 / 255, green: 179 / 255, blue: 0 / 255)     // Warm Amber Gold
     ]
 
-    public init(state: AppState) {
+    public init(state: AppState, startsWithCountdown: Bool = false) {
         self.state = state
+        _step = State(initialValue: startsWithCountdown ? .countdown : .encouragement)
     }
 
     private var currentWord: String {
@@ -97,16 +102,20 @@ public struct FluencyLapIntroView: View {
 
                 // Foreground Content for Active Step
                 VStack(spacing: 0) {
-                    // Top Navigation Bar (Glass close button only, no back button)
-                    topBar
-                        .padding(.horizontal, 24)
-                        .padding(.top, 14)
+                    if step != .countdown {
+                        // Top Navigation Bar (Glass close button only, no back button)
+                        topBar
+                            .padding(.horizontal, 24)
+                            .padding(.top, 14)
+                    }
 
                     Spacer(minLength: 0)
 
                     // Step Content
                     Group {
                         switch step {
+                        case .countdown:
+                            countdownContent
                         case .encouragement:
                             encouragementContent(w: w, h: h)
                         case .practice:
@@ -126,9 +135,13 @@ public struct FluencyLapIntroView: View {
             withAnimation(.easeInOut(duration: 2.8).repeatForever(autoreverses: true)) {
                 floatAnim = true
             }
+            if step == .countdown {
+                startCountdown()
+            }
         }
         .onDisappear {
             timerTask?.cancel()
+            countdownTask?.cancel()
             speakTask?.cancel()
         }
     }
@@ -143,6 +156,21 @@ public struct FluencyLapIntroView: View {
             }
             .accessibilityLabel("Close")
         }
+    }
+
+    private var countdownContent: some View {
+        VStack(spacing: 12) {
+            Text("Starting in")
+                .font(.system(size: 22, weight: .medium, design: .rounded))
+                .foregroundStyle(Color(red: 194 / 255, green: 192 / 255, blue: 218 / 255))
+
+            Text("\(countdownValue)")
+                .font(.system(size: 96, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
+                .scaleEffect(isCountdownNumberVisible ? 1 : 0.55)
+                .opacity(isCountdownNumberVisible ? 1 : 0)
+        }
+        .frame(maxWidth: .infinity)
     }
 
     // MARK: - Step 1: Encouragement & Prep Screen
@@ -417,6 +445,30 @@ public struct FluencyLapIntroView: View {
     private func startSprint() {
         goToStep(.practice)
         startTimer()
+    }
+
+    private func startCountdown() {
+        countdownTask?.cancel()
+        countdownTask = Task { @MainActor in
+            for value in stride(from: 3, through: 1, by: -1) {
+                countdownValue = value
+                withAnimation(.spring(response: 0.42, dampingFraction: 0.56)) {
+                    isCountdownNumberVisible = true
+                }
+
+                try? await Task.sleep(nanoseconds: 820_000_000)
+                guard !Task.isCancelled else { return }
+
+                withAnimation(.easeOut(duration: 0.18)) {
+                    isCountdownNumberVisible = false
+                }
+
+                try? await Task.sleep(nanoseconds: 180_000_000)
+                guard !Task.isCancelled else { return }
+            }
+
+            state.navigate(to: .fluencyLapPractice)
+        }
     }
 
     private func startTimer() {

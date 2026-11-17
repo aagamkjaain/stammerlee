@@ -88,6 +88,9 @@ public struct ContentView: View {
                 case .fluencyLap:
                     FluencyLapView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
+                case .fluencyLapCountdown:
+                    FluencyLapIntroView(state: appState, startsWithCountdown: true)
+                        .transition(.opacity)
                 case .fluencyLapPractice:
                     FluencyLapPracticeView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))

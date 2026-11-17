@@ -220,7 +220,7 @@ public struct HomeDashboardView: View {
                 .frame(width: 76, height: 76)
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Fluency Lap")
+                    Text("Daily Challenge")
                         .font(.system(size: 20, weight: .bold, design: .rounded))
                         .foregroundStyle(Color(red: 20 / 255, green: 22 / 255, blue: 35 / 255))
 
@@ -237,7 +237,7 @@ public struct HomeDashboardView: View {
             Button {
                 if state.hasCompletedFluencyLapIntro {
                     state.fluencyLapWordCount = 20
-                    state.navigate(to: .fluencyLapPractice)
+                    state.navigate(to: .fluencyLapCountdown)
                 } else {
                     state.navigate(to: .fluencyLapIntro)
                 }

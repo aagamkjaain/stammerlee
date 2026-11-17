@@ -891,15 +891,6 @@ public struct DialSceneView: View {
             // Mic only. Standardized position matching other views
             VStack(spacing: 0) {
                 UniversalMicrophoneButton(isListening: micPhase != .idle, disabled: false, action: micTapped)
-
-                Text(micHint)
-                    .font(.system(size: 14, weight: .regular, design: .rounded))
-                    .foregroundStyle(Color(red: 195 / 255, green: 190 / 255, blue: 220 / 255))
-                    .multilineTextAlignment(.center)
-                    .lineLimit(2)
-                    .padding(.horizontal, 28)
-                    .padding(.top, 16)
-                    .padding(.bottom, 48)
             }
             .frame(maxWidth: .infinity)
         }
@@ -921,15 +912,6 @@ public struct DialSceneView: View {
 
     private var nextUserLine: String? {
         userHasNextLine ? conversationMessages[conversationStep + 1].text : nil
-    }
-
-    private var micHint: String {
-        switch micPhase {
-        case .listening: return "Listening"
-        case .idle:
-            if nextUserLine != nil { return "Tap and hold to speak" }
-            return "Great job! Tap Finish when you're ready"
-        }
     }
 
     private func micTapped() {

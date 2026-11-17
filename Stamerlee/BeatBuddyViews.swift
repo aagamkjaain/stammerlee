@@ -1404,17 +1404,13 @@ public struct BeatBuddyIntroView: View {
             Spacer()
             TwinklingStarView(assetName: "Sparkle-2", size: 28, delay: 0.1, duration: 1.0)
 
-            Text("Quick Demo")
-                .font(.system(size: 28, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
-
-            Text("Pacing Your Speech Flow")
+            Text("Pace your speech with Beat Buddy")
                 .font(.system(size: 21, weight: .medium, design: .rounded))
                 .foregroundStyle(.white)
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
 
-            Text("Speaking in rhythm with a metronome guides your pacing, reduces tension, and creates a steady, effortless speech flow.")
+            Text("Speak in rhythm with a metronome beat that guides your pacing and creates an effortless speech flow.")
                 .font(.system(size: 15.5, weight: .regular, design: .rounded))
                 .foregroundStyle(Color(red: 195 / 255, green: 185 / 255, blue: 230 / 255))
                 .multilineTextAlignment(.center)
@@ -1422,21 +1418,18 @@ public struct BeatBuddyIntroView: View {
                 .padding(.horizontal, 28)
                 .padding(.top, 4)
 
-            Text("We'll try saying 2 words to the metronome rhythm")
+            Text("Let's give it a try")
                 .font(.system(size: 14.5, weight: .medium, design: .rounded))
                 .foregroundStyle(Color(red: 165 / 255, green: 155 / 255, blue: 215 / 255))
                 .padding(.top, 8)
 
             Spacer()
-
-            GlassActionButton(title: "Try 2 Words") {
-                goToStep(.practice)
-            }
-            .padding(.horizontal, 24)
-            .padding(.bottom, 36)
         }
         .frame(maxWidth: .infinity)
         .contentShape(Rectangle())
+        .onTapGesture {
+            goToStep(.practice)
+        }
     }
 
     // MARK: - Step 3: Interactive Practice Demo (2 words with metronome beats)

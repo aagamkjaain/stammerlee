@@ -41,6 +41,7 @@ public enum AppScreen: Hashable, CaseIterable {
     case profile
     case fluencyLapIntro
     case fluencyLap
+    case fluencyLapCountdown
     case fluencyLapPractice
     case prolongedSpeechIntro
     case prolongedSpeechDifficulty
