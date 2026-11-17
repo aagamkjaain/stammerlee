@@ -3,8 +3,8 @@ import SwiftUI
 // MARK: - Fluency Lap Onboarding & 30-Second Sprint Experience
 // 4-Step Animated Flow matching the Prolonged Speech Onboarding Design:
 // 1. "Let's start with Fluency Lap" with midnight sky, drifting clouds & glass button
-// 2. "30-Second Sprint" preparation & airflow rhythm tips
-// 3. Live 30-Second Countdown Timer with spoken word set, purple mic & Skip button
+// 2. "30-Second Sprint" preparation
+// 3. Live 30-Second Countdown Timer with spoken word set & purple mic
 // 4. "Well done!" celebration with yellow Confetti explosion & navigation to Fluency Lap
 
 public enum FluencyLapFlowStep: Int, CaseIterable {
@@ -169,7 +169,7 @@ public struct FluencyLapIntroView: View {
                     .font(.system(size: 34, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
 
-                Text("A 60-second lap designed to build speed, smoothness, and speech confidence under time pressure.")
+                Text("A 30-second lap designed to build speed, smoothness, and speech confidence under time pressure.")
                     .font(.system(size: 15, weight: .regular, design: .rounded))
                     .foregroundStyle(Color(red: 200 / 255, green: 195 / 255, blue: 230 / 255))
                     .multilineTextAlignment(.center)
@@ -199,46 +199,22 @@ public struct FluencyLapIntroView: View {
 
             TwinklingStarView(assetName: "Sparkle-2", size: 30, delay: 0.1, duration: 1.0)
 
-            Text("60-Second Lap")
+            Text("30-Second Lap")
                 .font(.system(size: 28, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
 
-            Text("Speak as many words as you comfortably can\nwithin 60 seconds.")
+            Text("Speak as many words as you comfortably can\nwithin 30 seconds.")
                 .font(.system(size: 19, weight: .medium, design: .rounded))
                 .foregroundStyle(.white)
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
 
-            // Tip badge
-            HStack(spacing: 8) {
-                Image(systemName: "sparkles")
-                    .font(.system(size: 13, weight: .bold))
-                    .foregroundStyle(Color(red: 255 / 255, green: 215 / 255, blue: 0 / 255))
-                Text("Tip: Maintain continuous airflow and a steady pace during the 60s lap")
-                    .font(.system(size: 13, weight: .medium, design: .rounded))
-                    .foregroundStyle(Color(red: 220 / 255, green: 215 / 255, blue: 245 / 255))
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
-            .background(Color.white.opacity(0.08), in: Capsule())
-            .overlay(Capsule().stroke(Color.white.opacity(0.14), lineWidth: 1))
-            .padding(.top, 8)
-
             Spacer()
 
-            VStack(spacing: 12) {
+            VStack(spacing: 16) {
                 GlassActionButton(title: "Ready!") {
                     startSprint()
                 }
-
-                Button {
-                    redirectToFluencyLap()
-                } label: {
-                    Text("Skip Warm-up")
-                        .font(.system(size: 14, weight: .semibold, design: .rounded))
-                        .foregroundStyle(Color(red: 185 / 255, green: 180 / 255, blue: 220 / 255))
-                }
-                .padding(.top, 4)
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 36)
@@ -246,12 +222,13 @@ public struct FluencyLapIntroView: View {
         .frame(maxWidth: .infinity)
     }
 
-    // MARK: - Step 3: Practice with 30-Second Timer, Words & Skip Button
+    // MARK: - Step 3: Practice with 30-Second Timer & Words
     private func practiceContent(w: CGFloat, h: CGFloat) -> some View {
         VStack(spacing: 0) {
-            // Live 30-Second Countdown Timer & Word Progress Bar
+            // Live 30-Second Countdown Timer (Centered at Top Middle)
             HStack {
-                // Countdown Pill
+                Spacer()
+
                 HStack(spacing: 6) {
                     Image(systemName: "stopwatch.fill")
                         .font(.system(size: 13, weight: .bold))
@@ -261,8 +238,8 @@ public struct FluencyLapIntroView: View {
                         .font(.system(size: 17, weight: .bold, design: .monospaced))
                         .foregroundStyle(timeRemaining <= 5 ? Color(red: 255 / 255, green: 120 / 255, blue: 120 / 255) : .white)
                 }
-                .padding(.horizontal, 14)
-                .padding(.vertical, 7)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
                 .background(Color.white.opacity(0.10), in: Capsule())
                 .overlay(
                     Capsule().stroke(
@@ -272,24 +249,6 @@ public struct FluencyLapIntroView: View {
                 )
 
                 Spacer()
-
-                // Explicit Skip Button
-                Button {
-                    completeSprint()
-                } label: {
-                    HStack(spacing: 5) {
-                        Text("Skip")
-                            .font(.system(size: 13.5, weight: .semibold, design: .rounded))
-                        Image(systemName: "forward.fill")
-                            .font(.system(size: 10, weight: .bold))
-                    }
-                    .foregroundStyle(Color.white.opacity(0.9))
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 7)
-                    .background(Color.white.opacity(0.12), in: Capsule())
-                    .overlay(Capsule().stroke(Color.white.opacity(0.24), lineWidth: 1))
-                }
-                .buttonStyle(.haptic(weight: .light))
             }
             .padding(.horizontal, 24)
             .padding(.top, 8)
@@ -350,7 +309,7 @@ public struct FluencyLapIntroView: View {
                         .foregroundStyle(.white)
                         .padding(.top, 4)
 
-                    Text("You completed your warm-up sprint!\nYou're ready to start the 60-second Fluency Lap.")
+                    Text("You completed your warm-up sprint!\nYou're ready to start the 30-second Fluency Lap.")
                         .font(.system(size: 16, weight: .regular, design: .rounded))
                         .foregroundStyle(Color(red: 200 / 255, green: 195 / 255, blue: 230 / 255))
                         .multilineTextAlignment(.center)
@@ -387,7 +346,7 @@ public struct FluencyLapIntroView: View {
             Spacer()
 
             VStack(spacing: 16) {
-                GlassActionButton(title: "Start 60s Practice") {
+                GlassActionButton(title: "Start 30s Practice") {
                     redirectToFluencyLap()
                 }
             }
