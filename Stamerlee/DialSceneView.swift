@@ -217,12 +217,6 @@ public struct DialSceneIntroView: View {
         .onTapGesture {
             goToStep(.conversation)
         }
-        .task {
-            try? await Task.sleep(nanoseconds: 2_400_000_000)
-            if step == .encouragement {
-                goToStep(.conversation)
-            }
-        }
     }
 
     // MARK: - Step 3: Interactive Call Conversation Demo
@@ -278,70 +272,86 @@ public struct DialSceneIntroView: View {
             }
             .padding(.bottom, 20)
 
-            // Dynamic Microphone Prompt & Button
-            VStack(spacing: 12) {
-                // Instructions cue
-                Text(micPromptText)
-                    .font(.system(size: 14, weight: .medium, design: .rounded))
-                    .foregroundStyle(Color(red: 215 / 255, green: 210 / 255, blue: 245 / 255))
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 24)
-                    .frame(height: 22)
+            // Dynamic Microphone Prompt & Button or Continue Button
+            if convoTurn >= 4 {
+                VStack(spacing: 12) {
+                    Text("Call completed! Good job.")
+                        .font(.system(size: 14, weight: .medium, design: .rounded))
+                        .foregroundStyle(Color(red: 215 / 255, green: 210 / 255, blue: 245 / 255))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 24)
+                        .frame(height: 22)
 
-                // Purple Glass Microphone Control
-                Button {
-                    triggerUserTurn()
-                } label: {
-                    ZStack {
-                        Circle()
-                            .stroke(StamerleeTheme.primaryBlue.opacity(isListening ? 0.5 : 0.22), lineWidth: 1.5)
-                            .frame(width: 96, height: 96)
-                            .scaleEffect(isListening && pulseMic ? 1.18 : 1.0)
-
-                        Circle()
-                            .fill(Color(red: 32 / 255, green: 26 / 255, blue: 58 / 255))
-                            .frame(width: 72, height: 72)
-                            .scaleEffect(isListening && pulseMic ? 1.08 : 1.0)
-
-                        Circle()
-                            .fill(
-                                LinearGradient(
-                                    colors: [
-                                        Color(red: 160 / 255, green: 130 / 255, blue: 255 / 255),
-                                        StamerleeTheme.primaryBlueDark
-                                    ],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
-                            .frame(width: 54, height: 54)
-                            .overlay(
-                                Circle()
-                                    .stroke(
-                                        LinearGradient(
-                                            colors: [Color.white.opacity(0.7), Color.white.opacity(0.1)],
-                                            startPoint: .topLeading,
-                                            endPoint: .bottomTrailing
-                                        ),
-                                        lineWidth: 1.2
-                                    )
-                            )
-                            .shadow(
-                                color: StamerleeTheme.primaryBlue.opacity(isListening ? 0.9 : 0.5),
-                                radius: isListening ? 16 : 10
-                            )
-
-                        Image(systemName: isListening ? "waveform" : "mic.fill")
-                            .font(.system(size: 20, weight: .semibold))
-                            .foregroundStyle(.white)
+                    DialGlassActionButton(title: "Continue") {
+                        goToStep(.wellDone)
                     }
-                    .animation(.easeInOut(duration: 0.6).repeatForever(autoreverses: true), value: pulseMic)
+                    .padding(.horizontal, 24)
                 }
-                .buttonStyle(.plain)
-                .disabled(isListening || convoTurn == 1 || convoTurn == 3 || convoTurn >= 4)
-                .opacity((convoTurn >= 4) ? 0.5 : 1.0)
+                .padding(.bottom, 24)
+            } else {
+                VStack(spacing: 12) {
+                    // Instructions cue
+                    Text(micPromptText)
+                        .font(.system(size: 14, weight: .medium, design: .rounded))
+                        .foregroundStyle(Color(red: 215 / 255, green: 210 / 255, blue: 245 / 255))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 24)
+                        .frame(height: 22)
+
+                    // Purple Glass Microphone Control
+                    Button {
+                        triggerUserTurn()
+                    } label: {
+                        ZStack {
+                            Circle()
+                                .stroke(StamerleeTheme.primaryBlue.opacity(isListening ? 0.5 : 0.22), lineWidth: 1.5)
+                                .frame(width: 96, height: 96)
+                                .scaleEffect(isListening && pulseMic ? 1.18 : 1.0)
+
+                            Circle()
+                                .fill(Color(red: 32 / 255, green: 26 / 255, blue: 58 / 255))
+                                .frame(width: 72, height: 72)
+                                .scaleEffect(isListening && pulseMic ? 1.08 : 1.0)
+
+                            Circle()
+                                .fill(
+                                    LinearGradient(
+                                        colors: [
+                                            Color(red: 160 / 255, green: 130 / 255, blue: 255 / 255),
+                                            StamerleeTheme.primaryBlueDark
+                                        ],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .frame(width: 54, height: 54)
+                                .overlay(
+                                    Circle()
+                                        .stroke(
+                                            LinearGradient(
+                                                colors: [Color.white.opacity(0.7), Color.white.opacity(0.1)],
+                                                startPoint: .topLeading,
+                                                endPoint: .bottomTrailing
+                                            ),
+                                            lineWidth: 1.2
+                                        )
+                                )
+                                .shadow(
+                                    color: StamerleeTheme.primaryBlue.opacity(isListening ? 0.9 : 0.5),
+                                    radius: isListening ? 16 : 10
+                                )
+
+                            Image(systemName: isListening ? "waveform" : "mic.fill")
+                                .font(.system(size: 20, weight: .semibold))
+                                .foregroundStyle(.white)
+                        }
+                        .animation(.easeInOut(duration: 0.6).repeatForever(autoreverses: true), value: pulseMic)
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(isListening || convoTurn == 1 || convoTurn == 3)
+                }
+                .padding(.bottom, 24)
             }
-            .padding(.bottom, 24)
 
             Spacer()
         }
@@ -432,9 +442,6 @@ public struct DialSceneIntroView: View {
                 withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
                     convoTurn = 4
                 }
-                // Wrap up and transition to Well Done after 1.8s
-                try? await Task.sleep(nanoseconds: 1_800_000_000)
-                goToStep(.wellDone)
             }
         }
     }
@@ -480,17 +487,6 @@ public struct DialSceneIntroView: View {
                         .foregroundStyle(Color(red: 195 / 255, green: 185 / 255, blue: 230 / 255))
                         .multilineTextAlignment(.center)
                         .padding(.top, 4)
-
-                    // 3-4s gap indicator before real practice starts
-                    HStack(spacing: 8) {
-                        ProgressView()
-                            .tint(Color(red: 195 / 255, green: 175 / 255, blue: 255 / 255))
-                            .scaleEffect(0.85)
-                        Text("Starting real call in a moment...")
-                            .font(.system(size: 13, weight: .medium, design: .rounded))
-                            .foregroundStyle(Color(red: 210 / 255, green: 205 / 255, blue: 240 / 255))
-                    }
-                    .padding(.top, 10)
                 }
 
                 // Decorative Accent Motes & Stars
@@ -520,8 +516,8 @@ public struct DialSceneIntroView: View {
 
             Spacer()
 
-            // Glass Action Button to proceed immediately (or auto-redirects after celebration)
-            DialGlassActionButton(title: "Start Call Now") {
+            // Glass Action Button to proceed immediately
+            DialGlassActionButton(title: "Continue") {
                 redirectToRealPractice()
             }
             .padding(.horizontal, 24)
@@ -536,19 +532,6 @@ public struct DialSceneIntroView: View {
             withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
                 wellDoneBurst = true
             }
-            Task { @MainActor in
-                try? await Task.sleep(nanoseconds: 3_500_000_000)
-                if step == .wellDone {
-                    redirectToRealPractice()
-                }
-            }
-        }
-        // .task is cancelled automatically when this step disappears, so the
-        // auto-redirect can never fire after the user has already moved on.
-        .task {
-            try? await Task.sleep(nanoseconds: 3_500_000_000)
-            guard !Task.isCancelled, step == .wellDone else { return }
-            redirectToRealPractice()
         }
     }
 
