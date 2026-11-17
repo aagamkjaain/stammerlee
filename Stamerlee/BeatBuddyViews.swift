@@ -760,20 +760,20 @@ public struct BeatBuddyPracticeView: View {
     private var promptDisplay: some View {
         let syllables = currentSyllables
 
-        return VStack(spacing: 12) {
+        return VStack(spacing: 16) {
             // Full original word caption
             Text(currentWord)
-                .font(.system(size: 15, weight: .medium, design: .rounded))
+                .font(.system(size: 19, weight: .semibold, design: .rounded))
                 .foregroundStyle(StamerleeTheme.textSecondaryDark)
-                .opacity(0.85)
+                .opacity(0.9)
 
             // Syllables broken with hyphens and animated to the metronome beat
-            HStack(spacing: 6) {
+            HStack(spacing: 8) {
                 ForEach(Array(syllables.enumerated()), id: \.offset) { index, syllable in
                     let isActive = (index == activeSyllableIndex) && isMetronomeActive
 
-                    HStack(spacing: 6) {
-                        VStack(spacing: 6) {
+                    HStack(spacing: 8) {
+                        VStack(spacing: 8) {
                             Text(syllable)
                                 .font(.system(size: syllableFontSize(for: syllables), weight: .bold, design: .rounded))
                                 .foregroundStyle(
@@ -795,7 +795,7 @@ public struct BeatBuddyPracticeView: View {
                                     color: isActive
                                         ? Color(red: 139 / 255, green: 92 / 255, blue: 246 / 255).opacity(isBeating ? 0.8 : 0.4)
                                         : .clear,
-                                    radius: isBeating ? 12 : 6
+                                    radius: isBeating ? 14 : 7
                                 )
 
                             // Glowing beat indicator capsule beneath active syllable
@@ -813,7 +813,7 @@ public struct BeatBuddyPracticeView: View {
                                             endPoint: .trailing
                                         )
                                 )
-                                .frame(width: isActive ? 24 : 10, height: 3.5)
+                                .frame(width: isActive ? 32 : 14, height: 4.5)
                                 .shadow(color: isActive ? Color.cyan.opacity(0.7) : .clear, radius: 4)
                         }
                         .animation(.spring(response: 0.22, dampingFraction: 0.6), value: isActive)
@@ -821,10 +821,10 @@ public struct BeatBuddyPracticeView: View {
 
                         if index < syllables.count - 1 {
                             Text("-")
-                                .font(.system(size: 22, weight: .bold, design: .rounded))
-                                .foregroundStyle(Color.white.opacity(0.25))
+                                .font(.system(size: 32, weight: .bold, design: .rounded))
+                                .foregroundStyle(Color.white.opacity(0.30))
                                 .padding(.horizontal, 2)
-                                .padding(.bottom, 8)
+                                .padding(.bottom, 10)
                         }
                     }
                 }
@@ -852,27 +852,27 @@ public struct BeatBuddyPracticeView: View {
     private func syllableFontSize(for syllables: [String]) -> CGFloat {
         let totalChars = syllables.reduce(0) { $0 + $1.count } + (syllables.count - 1) * 2
         if totalChars > 16 {
-            return 22
-        } else if totalChars > 12 {
-            return 26
-        } else if totalChars > 8 {
-            return 30
-        } else {
             return 34
+        } else if totalChars > 12 {
+            return 40
+        } else if totalChars > 8 {
+            return 46
+        } else {
+            return 52
         }
     }
 
     private var progress: some View {
         VStack(spacing: 8) {
             Text("\(currentWordIndex + 1) of \(wordCount)")
-                .font(.system(size: 13, weight: .regular, design: .rounded))
-                .foregroundStyle(Color(red: 147 / 255, green: 145 / 255, blue: 175 / 255))
+                .font(.system(size: 14, weight: .medium, design: .rounded))
+                .foregroundStyle(Color(red: 165 / 255, green: 160 / 255, blue: 200 / 255))
 
-            HStack(spacing: 7) {
+            HStack(spacing: 8) {
                 ForEach(0..<min(wordCount, 8), id: \.self) { idx in
                     Circle()
                         .fill(idx == currentWordIndex % min(wordCount, 8) ? .white : Color(red: 80 / 255, green: 79 / 255, blue: 111 / 255))
-                        .frame(width: 7, height: 7)
+                        .frame(width: 8, height: 8)
                 }
             }
         }
@@ -1456,20 +1456,20 @@ public struct BeatBuddyIntroView: View {
 
             // Full original word caption
             Text(currentWord)
-                .font(.system(size: 15, weight: .medium, design: .rounded))
+                .font(.system(size: 19, weight: .semibold, design: .rounded))
                 .foregroundStyle(Color(red: 185 / 255, green: 180 / 255, blue: 225 / 255))
-                .opacity(0.85)
+                .opacity(0.9)
                 .padding(.bottom, 6)
 
             // Syllables broken with hyphens and animated to the metronome beat
-            HStack(spacing: 6) {
+            HStack(spacing: 8) {
                 ForEach(Array(syllables.enumerated()), id: \.offset) { index, syllable in
                     let isActive = (index == activeSyllableIndex)
 
-                    HStack(spacing: 6) {
-                        VStack(spacing: 6) {
+                    HStack(spacing: 8) {
+                        VStack(spacing: 8) {
                             Text(syllable)
-                                .font(.system(size: 34, weight: .bold, design: .rounded))
+                                .font(.system(size: 50, weight: .bold, design: .rounded))
                                 .foregroundStyle(
                                     isActive
                                         ? AnyShapeStyle(
@@ -1489,7 +1489,7 @@ public struct BeatBuddyIntroView: View {
                                     color: isActive
                                         ? Color(red: 139 / 255, green: 92 / 255, blue: 246 / 255).opacity(isBeating ? 0.8 : 0.4)
                                         : .clear,
-                                    radius: isBeating ? 12 : 6
+                                    radius: isBeating ? 14 : 7
                                 )
 
                             // Glowing beat indicator capsule beneath active syllable
@@ -1507,7 +1507,7 @@ public struct BeatBuddyIntroView: View {
                                             endPoint: .trailing
                                         )
                                 )
-                                .frame(width: isActive ? 24 : 10, height: 3.5)
+                                .frame(width: isActive ? 32 : 14, height: 4.5)
                                 .shadow(color: isActive ? Color.cyan.opacity(0.7) : .clear, radius: 4)
                         }
                         .animation(.spring(response: 0.22, dampingFraction: 0.6), value: isActive)
@@ -1515,10 +1515,10 @@ public struct BeatBuddyIntroView: View {
 
                         if index < syllables.count - 1 {
                             Text("-")
-                                .font(.system(size: 22, weight: .bold, design: .rounded))
-                                .foregroundStyle(Color.white.opacity(0.25))
+                                .font(.system(size: 32, weight: .bold, design: .rounded))
+                                .foregroundStyle(Color.white.opacity(0.30))
                                 .padding(.horizontal, 2)
-                                .padding(.bottom, 8)
+                                .padding(.bottom, 10)
                         }
                     }
                 }

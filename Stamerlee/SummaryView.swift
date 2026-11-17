@@ -113,7 +113,7 @@ public struct SummaryView: View {
                         if index < completedDays {
                             ZStack {
                                 Circle()
-                                    .fill(streakAccent)
+                                    .fill(Color(red: 76/255, green: 175/255, blue: 80/255))
                                     .frame(width: 28, height: 28)
                                 Image(systemName: "checkmark")
                                     .font(.system(size: 12, weight: .bold))
