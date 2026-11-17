@@ -310,6 +310,7 @@ public struct ProfileView: View {
             }
         }
         .frame(maxWidth: .infinity)
+        .clipped()
         .overlay(
             LinearGradient(
                 colors: [
@@ -436,47 +437,27 @@ public struct ProfileView: View {
         .clipShape(RoundedRectangle(cornerRadius: 17, style: .continuous))
     }
 
-    // MARK: - Account Section (Log Out & Delete Account)
+    // MARK: - Account Section (Log Out & Delete Account Buttons)
     private var accountSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             sectionTitle("Account")
 
-            VStack(spacing: 10) {
+            VStack(spacing: 12) {
                 // Log Out Button
                 Button {
                     showLogoutConfirmation = true
                 } label: {
-                    HStack(spacing: 14) {
-                        ZStack {
-                            Circle()
-                                .fill(StamerleeTheme.primaryBlue.opacity(0.12))
-                                .frame(width: 40, height: 40)
-
-                            Image(systemName: "rectangle.portrait.and.arrow.right")
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundStyle(StamerleeTheme.primaryBlue)
-                        }
-
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text("Log Out")
-                                .font(.system(size: 15.5, weight: .bold, design: .rounded))
-                                .foregroundStyle(StamerleeTheme.textPrimaryLight)
-                            Text(state.userEmail.isEmpty ? "Sign out of your active session" : "Signed in as \(state.userEmail)")
-                                .font(.system(size: 12, weight: .regular, design: .rounded))
-                                .foregroundStyle(StamerleeTheme.textSecondaryLight)
-                                .lineLimit(1)
-                        }
-
-                        Spacer()
-
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 13, weight: .bold))
-                            .foregroundStyle(StamerleeTheme.textSecondaryLight.opacity(0.55))
+                    HStack(spacing: 8) {
+                        Image(systemName: "rectangle.portrait.and.arrow.right")
+                            .font(.system(size: 15, weight: .bold))
+                        Text("Log Out")
+                            .font(.system(size: 15.5, weight: .bold, design: .rounded))
                     }
-                    .padding(.horizontal, 16)
-                    .frame(height: 66)
+                    .foregroundStyle(StamerleeTheme.textPrimaryLight)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 52)
                     .background(StamerleeTheme.profileCard)
-                    .clipShape(RoundedRectangle(cornerRadius: 17, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
                 .buttonStyle(.haptic)
 
@@ -484,41 +465,21 @@ public struct ProfileView: View {
                 Button {
                     showDeleteConfirmation = true
                 } label: {
-                    HStack(spacing: 14) {
-                        ZStack {
-                            Circle()
-                                .fill(Color.red.opacity(0.12))
-                                .frame(width: 40, height: 40)
-
-                            Image(systemName: "trash.fill")
-                                .font(.system(size: 15, weight: .semibold))
-                                .foregroundStyle(Color.red)
-                        }
-
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text("Delete Account")
-                                .font(.system(size: 15.5, weight: .bold, design: .rounded))
-                                .foregroundStyle(Color(red: 220 / 255, green: 50 / 255, blue: 50 / 255))
-                            Text("Permanently erase your account and all data")
-                                .font(.system(size: 12, weight: .regular, design: .rounded))
-                                .foregroundStyle(Color.red.opacity(0.7))
-                                .lineLimit(1)
-                        }
-
-                        Spacer()
-
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 13, weight: .bold))
-                            .foregroundStyle(Color.red.opacity(0.45))
+                    HStack(spacing: 8) {
+                        Image(systemName: "trash")
+                            .font(.system(size: 15, weight: .semibold))
+                        Text("Delete Account")
+                            .font(.system(size: 15.5, weight: .bold, design: .rounded))
                     }
-                    .padding(.horizontal, 16)
-                    .frame(height: 66)
-                    .background(StamerleeTheme.profileCard)
+                    .foregroundStyle(Color(red: 235 / 255, green: 70 / 255, blue: 70 / 255))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 52)
+                    .background(Color.red.opacity(0.10))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 17, style: .continuous)
-                            .stroke(Color.red.opacity(0.18), lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .stroke(Color.red.opacity(0.24), lineWidth: 1)
                     )
-                    .clipShape(RoundedRectangle(cornerRadius: 17, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
                 .buttonStyle(.haptic)
             }
