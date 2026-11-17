@@ -282,7 +282,7 @@ public struct ProlongedSpeechIntroView: View {
             .buttonStyle(.plain)
             .disabled(isListening)
 
-            Text(isListening ? "Listening... stretching smoothly" : "Tap and hold to speak")
+            Text(isListening ? "Listening" : "Tap and hold to speak")
                 .font(.system(size: 14, weight: .regular, design: .rounded))
                 .foregroundStyle(Color(red: 195 / 255, green: 190 / 255, blue: 220 / 255))
                 .padding(.top, 16)
