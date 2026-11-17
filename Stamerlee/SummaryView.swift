@@ -67,14 +67,25 @@ public struct SummaryView: View {
         }
     }
 
+    // MARK: - Streak Fire Asset Image
+    @ViewBuilder
+    private var fireImageView: some View {
+        if let uiImage = UIImage(named: "fire") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "fire", ofType: "png") ?? "") {
+            Image(uiImage: uiImage)
+                .resizable()
+                .scaledToFit()
+        } else {
+            Image("fire")
+                .resizable()
+                .scaledToFit()
+        }
+    }
+
     private var practiceStreakCard: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack(spacing: 12) {
-                Image(systemName: "flame")
-                    .font(.system(size: 22, weight: .semibold))
-                    .foregroundStyle(streakAccent)
+                fireImageView
                     .frame(width: 48, height: 48)
-                    .background(streakAccent.opacity(0.12), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Daily Practice")
