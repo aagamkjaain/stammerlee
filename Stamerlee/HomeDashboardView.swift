@@ -206,7 +206,8 @@ public struct HomeDashboardView: View {
     private var fluencyLapCard: some View {
         Button(action: {
             if state.hasCompletedFluencyLapIntro {
-                state.navigate(to: .fluencyLap)
+                state.fluencyLapWordCount = 20
+                state.navigate(to: .fluencyLapPractice)
             } else {
                 state.navigate(to: .fluencyLapIntro)
             }

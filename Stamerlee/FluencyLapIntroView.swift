@@ -135,9 +135,16 @@ public struct FluencyLapIntroView: View {
         }
     }
 
-    // MARK: - Top Navigation Bar (Glass close button only, no back button)
+    // MARK: - Top Navigation Bar
     private var topBar: some View {
         HStack {
+            if step != .wellDone {
+                BackNavButton {
+                    timerTask?.cancel()
+                    state.navigate(to: .homeDashboard, forward: false)
+                }
+            }
+
             Spacer()
 
             GlassCloseButton {

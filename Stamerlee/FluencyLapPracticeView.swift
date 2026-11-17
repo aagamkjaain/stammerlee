@@ -48,7 +48,7 @@ public struct FluencyLapPracticeView: View {
                         affirmation: "You did great today!!",
                         onDone: {
                             state.hasCompletedFluencyLap = true
-                            state.navigate(to: .fluencyLap, forward: false)
+                            state.navigate(to: .homeDashboard, forward: false)
                         }
                     )
                 }
@@ -57,7 +57,7 @@ public struct FluencyLapPracticeView: View {
                     prompts: Array(words.prefix(max(state.fluencyLapWordCount, 1))),
                     showBackgroundImages: true,
                     onBack: {
-                        state.navigate(to: .fluencyLap, forward: false)
+                        state.navigate(to: .homeDashboard, forward: false)
                     },
                     onFinish: {
                         let completedCount = 40
