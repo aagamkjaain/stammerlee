@@ -41,7 +41,6 @@ extension View {
 /// Personal progress and settings screen presented from the dashboard's Profile tab.
 public struct ProfileView: View {
     @Bindable public var state: AppState
-    @Environment(\.profileAvatarFrameReporter) private var reportAvatarFrame
     @State private var isEditingName = false
     @State private var tempName = ""
     @FocusState private var isNameFieldFocused: Bool
@@ -76,8 +75,6 @@ public struct ProfileView: View {
                     profileHeader
 
                     VStack(alignment: .leading, spacing: 22) {
-//                        statsSection
-
                         dailyGoalCard
                             .dropIn(didAppearContent, index: 0)
 
@@ -307,51 +304,6 @@ public struct ProfileView: View {
         }
     }
 
-//    // MARK: - Stats Section
-//    private var statsSection: some View {
-//        VStack(alignment: .leading, spacing: 12) {
-//            HStack {
-//                sectionTitle("Stats")
-//
-//                Spacer()
-//
-//                Button {
-//                    withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
-//                        isEditingProfile.toggle()
-//                    }
-//                } label: {
-//                    HStack(spacing: 5) {
-//                        Image(systemName: isEditingProfile ? "checkmark" : "pencil")
-//                            .font(.system(size: 11, weight: .bold))
-//                        Text(isEditingProfile ? "Done" : "Edit")
-//                            .font(.system(size: 13, weight: .bold, design: .rounded))
-//                    }
-//                    .foregroundStyle(isEditingProfile ? Color.white : StamerleeTheme.primaryBlue)
-//                    .padding(.horizontal, 12)
-//                    .padding(.vertical, 6)
-//                    .background(
-//                        isEditingProfile
-//                            ? StamerleeTheme.primaryBlue
-//                            : StamerleeTheme.profileCard,
-//                        in: Capsule()
-//                    )
-//                }
-//                .buttonStyle(.plain)
-//                .accessibilityLabel(isEditingProfile ? "Done editing profile" : "Edit name and avatar")
-//            }
-//
-//            VStack(alignment: .leading, spacing: 15) {
-//                stat(title: "8 minutes", subtitle: "Average session length")
-//                stat(title: "2 sessions", subtitle: "Sessions completed")
-//            }
-//            .padding(.horizontal, 16)
-//            .padding(.vertical, 16)
-//            .frame(maxWidth: .infinity, alignment: .leading)
-//            .background(StamerleeTheme.profileCard)
-//            .clipShape(RoundedRectangle(cornerRadius: 17, style: .continuous))
-//        }
-//    }
-
     // MARK: - Daily Goal Card
     private var dailyGoalCard: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -484,7 +436,7 @@ public struct ProfileView: View {
                             .foregroundStyle(StamerleeTheme.textSecondaryLight)
                     }
                     .padding(.horizontal, 16)
-                    .frame(height: 58)
+                    .frame(height: 60)
                 }
                 .buttonStyle(.haptic)
 
@@ -505,7 +457,9 @@ public struct ProfileView: View {
                             Text("Delete Account")
                                 .font(.system(size: 15, weight: .bold, design: .rounded))
                                 .foregroundStyle(Color.red)
-                            
+                            Text("Permanently erase your account and all data")
+                                .font(.system(size: 12, weight: .regular, design: .rounded))
+                                .foregroundStyle(Color.red.opacity(0.75))
                         }
 
                         Spacer()
@@ -515,7 +469,7 @@ public struct ProfileView: View {
                             .foregroundStyle(Color.red.opacity(0.6))
                     }
                     .padding(.horizontal, 16)
-                    .frame(height: 58)
+                    .frame(height: 60)
                 }
                 .buttonStyle(.haptic)
             }
@@ -627,17 +581,6 @@ public struct ProfileView: View {
             .font(.system(size: 18, weight: .bold, design: .rounded))
             .foregroundStyle(.white.opacity(0.9))
     }
-
-    private func stat(title: String, subtitle: String) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(title)
-                .font(.system(size: 17, weight: .semibold, design: .rounded))
-                .foregroundStyle(StamerleeTheme.textPrimaryLight)
-            Text(subtitle)
-                .font(.system(size: 13, weight: .regular, design: .rounded))
-                .foregroundStyle(StamerleeTheme.textSecondaryLight)
-        }
-    }
 }
 
 // MARK: - Legal Document Viewer Sheet
@@ -683,23 +626,5 @@ private struct LegalDocumentSheet: View {
             }
         }
         .presentationBackground(StamerleeTheme.backgroundDark)
-    }
-}
-
-private struct StreakSpark: View {
-    var body: some View {
-        ZStack {
-            Image(systemName: "sparkle")
-                .font(.system(size: 42, weight: .bold))
-                .foregroundStyle(.yellow)
-            Image(systemName: "sparkle")
-                .font(.system(size: 12, weight: .bold))
-                .foregroundStyle(.yellow)
-                .offset(x: 25, y: -22)
-            Image(systemName: "sparkle")
-                .font(.system(size: 10, weight: .bold))
-                .foregroundStyle(.yellow)
-                .offset(x: 27, y: 25)
-        }
     }
 }
