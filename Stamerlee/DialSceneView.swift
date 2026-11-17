@@ -761,38 +761,6 @@ public struct DialSceneView: View {
                 state.navigate(to: .homeDashboard, forward: false)
             }
             Spacer()
-
-            if hasSpoken && stage == .conversation {
-                Button {
-                    turnTask?.cancel()
-                    state.hasCompletedDialScene = true
-                    stage = .analysis
-                } label: {
-                    HStack(spacing: 6) {
-                        Text("Finish")
-                            .font(.system(size: 14.5, weight: .bold, design: .rounded))
-                        Image(systemName: "checkmark")
-                            .font(.system(size: 12, weight: .bold))
-                    }
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(
-                        LinearGradient(
-                            colors: [
-                                Color(red: 155 / 255, green: 125 / 255, blue: 255 / 255).opacity(0.9),
-                                StamerleeTheme.primaryBlueDark.opacity(0.95)
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        in: Capsule()
-                    )
-                    .overlay(Capsule().stroke(Color.white.opacity(0.4), lineWidth: 1))
-                    .shadow(color: StamerleeTheme.primaryBlue.opacity(0.4), radius: 6, x: 0, y: 2)
-                }
-                .transition(.opacity.combined(with: .scale(scale: 0.9)))
-            }
         }
         .padding(.horizontal, 24)
         .padding(.top, 16)
@@ -888,9 +856,23 @@ public struct DialSceneView: View {
                 }
             }
 
-            // Mic only. Standardized position matching other views
             VStack(spacing: 0) {
                 UniversalMicrophoneButton(isListening: micPhase != .idle, disabled: false, action: micTapped)
+
+                ZStack {
+                    if hasSpoken {
+                        PrimaryActionButton(title: "Finish") {
+                            turnTask?.cancel()
+                            state.hasCompletedDialScene = true
+                            stage = .analysis
+                        }
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 58)
+                .padding(.top, 16)
+                .padding(.bottom, 12)
             }
             .frame(maxWidth: .infinity)
         }
