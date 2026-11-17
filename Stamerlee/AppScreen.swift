@@ -125,6 +125,19 @@ public enum ExerciseDetailType: String, CaseIterable, Identifiable, Hashable {
         }
     }
 
+    public var monthlyWeekScores: [Double] {
+        switch self {
+        case .pictureDescription:
+            return [7.4, 8.2, 9.6, 8.8]
+        case .prolongedSpeech:
+            return [7.0, 7.8, 8.5, 8.2]
+        case .dialScene:
+            return [6.2, 7.0, 7.8, 7.4]
+        case .narration:
+            return [7.8, 8.6, 9.1, 8.9]
+        }
+    }
+
     public var overviewTitle: String {
         switch self {
         case .pictureDescription: return "Great effort this month!"
@@ -144,6 +157,120 @@ public enum ExerciseDetailType: String, CaseIterable, Identifiable, Hashable {
             return "Responses are flowing faster with fewer hesitations during scenario prompts."
         case .narration:
             return "Story pacing and rhythmic cadence are in sync across your readings."
+        }
+    }
+
+    public func aiInsight(forWeekIndex weekIndex: Int) -> (title: String, insight: String, tip: String) {
+        let week = weekIndex + 1
+        switch self {
+        case .pictureDescription:
+            switch week {
+            case 1:
+                return (
+                    "Initial Image Parsing",
+                    "AI vocal analysis detected brief hesitations before complex scene vocabulary. Pacing remained consistent at 112 WPM.",
+                    "Breathe gently into vowel-starting words to maintain smooth momentum."
+                )
+            case 2:
+                return (
+                    "Descriptive Fluency Gain",
+                    "Acoustic tracking observed a 16% reduction in syllable repetitions during object descriptions.",
+                    "Anchor your breath before switching between foreground and background details."
+                )
+            case 3:
+                return (
+                    "Peak Visual Narration",
+                    "Exceptional speech flow! AI detected zero hard block episodes and 94% fluid phonation across descriptive sentences.",
+                    "Keep this relaxed jaw position when expanding descriptions in real life."
+                )
+            default:
+                return (
+                    "Steady Cadence Maintained",
+                    "Linguistic fluency metrics show 91% smooth speech transitions with steady diaphragmatic breath support.",
+                    "Maintain your calm pre-speech visualization before complex phrases."
+                )
+            }
+        case .prolongedSpeech:
+            switch week {
+            case 1:
+                return (
+                    "Airflow Foundation",
+                    "Acoustic model recorded steady vowel elongations with initial tension on plosive consonants.",
+                    "Focus on continuous voicing across word boundaries."
+                )
+            case 2:
+                return (
+                    "Continuous Phonation",
+                    "Vocal fold vibration sensors detected smooth transitions with block durations dropping by 0.35s.",
+                    "Use light articulatory contacts on 'b', 'd', and 'p' sounds."
+                )
+            case 3:
+                return (
+                    "Peak Glottal Flow",
+                    "Outstanding vowel stretching! Neural speech analyzer recorded 93% airflow continuity and zero involuntary arrests.",
+                    "Carry this relaxed airflow naturally into regular-tempo conversations."
+                )
+            default:
+                return (
+                    "Sustained Phonation Control",
+                    "Airflow sensors indicate relaxed laryngeal tension and smooth voluntary sound stretching.",
+                    "Practice transitioning from 2-second stretches into spontaneous conversation."
+                )
+            }
+        case .dialScene:
+            switch week {
+            case 1:
+                return (
+                    "Call Scenario Baseline",
+                    "AI speech monitor noted natural greeting cadence with mild hesitation on unexpected question turns.",
+                    "Take a silent diaphragmatic pause before answering scenario questions."
+                )
+            case 2:
+                return (
+                    "Turn-Taking Confidence",
+                    "Response latency decreased by 24%. Acoustic pacing held steady at 120 WPM throughout the scenario.",
+                    "Speak at your own chosen pace without rushing to fill the silence."
+                )
+            case 3:
+                return (
+                    "Simulated Phone Mastery",
+                    "Conversational fluency score peaked at 7.8! AI detected clean articulatory onsets under scenario pressure.",
+                    "Apply this confident cadence when placing real-life phone calls."
+                )
+            default:
+                return (
+                    "Consistent Call Flow",
+                    "Dialogue exchange shows smooth communicative flow and 88% block-free speech during phone simulation.",
+                    "Keep steady vocal energy from the opening greeting to the call sign-off."
+                )
+            }
+        case .narration:
+            switch week {
+            case 1:
+                return (
+                    "Mirror Cadence Baseline",
+                    "AI detected consistent syllable timing with mild vocal cord tension on opening paragraph phrases.",
+                    "Maintain eye contact with your reflection to foster speech confidence."
+                )
+            case 2:
+                return (
+                    "Cadence Stabilization",
+                    "Rhythm analysis shows an 18% improvement in syllable pacing and smoother breath resets between sentences.",
+                    "Soften your articulators on starting words like 'where' and 'that'."
+                )
+            case 3:
+                return (
+                    "Peak Expressive Fluency",
+                    "Flawless narrative delivery! Neural audio evaluation verified zero stuttering blocks and a remarkable 9.1 fluency score.",
+                    "Celebrate this peak! Your vocal cords were completely relaxed and in rhythm."
+                )
+            default:
+                return (
+                    "Mastered Narrative Delivery",
+                    "Story cadence analysis confirms excellent rhythmic symmetry, natural pausing, and steady pitch modulation.",
+                    "Use this smooth, expressive storytelling cadence in daily conversations."
+                )
+            }
         }
     }
 

@@ -157,14 +157,14 @@ public struct SummaryView: View {
     private var exerciseHighScoreItems: [ExerciseHighScoreItem] {
         [
             ExerciseHighScoreItem(
-                type: .pictureDescription,
-                displayTitle: "Picture\nDescription",
-                score: 8.8
-            ),
-            ExerciseHighScoreItem(
                 type: .prolongedSpeech,
                 displayTitle: "Prolonged\nSpeech",
                 score: state.prolongedEasyScore ?? 7.9
+            ),
+            ExerciseHighScoreItem(
+                type: .pictureDescription,
+                displayTitle: "Picture\nDescription",
+                score: 8.8
             ),
             ExerciseHighScoreItem(
                 type: .dialScene,
