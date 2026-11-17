@@ -915,7 +915,7 @@ public struct DialSceneView: View {
         switch micPhase {
         case .listening: return "Listening"
         case .idle:
-            if let line = nextUserLine { return "Tap and hold to speak" }
+            if nextUserLine != nil { return "Tap and hold to speak" }
             return "Great job! Tap Finish when you're ready"
         }
     }

@@ -1113,12 +1113,12 @@ public enum SyllableHelper {
 }
 
 // MARK: - Metronome Audio Player for pop.mp3
-@MainActor
-final class BeatMetronomePlayer {
+final class BeatMetronomePlayer: @unchecked Sendable {
     static let shared = BeatMetronomePlayer()
 
     private var players: [AVAudioPlayer] = []
     private var playerIndex = 0
+    private let lock = NSLock()
 
     private init() {
         setup()
@@ -1149,6 +1149,9 @@ final class BeatMetronomePlayer {
     }
 
     func playPop() {
+        lock.lock()
+        defer { lock.unlock() }
+
         if players.isEmpty {
             setup()
         }
@@ -1161,6 +1164,9 @@ final class BeatMetronomePlayer {
     }
 
     func stop() {
+        lock.lock()
+        defer { lock.unlock() }
+
         for player in players {
             player.stop()
         }
