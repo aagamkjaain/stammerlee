@@ -127,20 +127,10 @@ public struct SpeakPracticeScreen: View {
                     .foregroundStyle(Color(red: 194 / 255, green: 192 / 255, blue: 218 / 255))
                     .padding(.top, 8)
 
-                Button {
+                PrimaryActionButton(title: "Finish") {
                     finishPractice()
-                } label: {
-                    HStack(spacing: 10) {
-                        Text("Finish")
-                            .font(.system(size: 17, weight: .semibold, design: .rounded))
-
-                    }
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 52)
                 }
-                .buttonStyle(FluencyFinishButtonStyle())
-                .padding(.top, 22)
+                .padding(.top, 16)
                 .padding(.bottom, 12)
             }
             .padding(.horizontal, 24)

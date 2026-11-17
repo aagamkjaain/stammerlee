@@ -570,7 +570,7 @@ public struct GlassActionButton: View {
             Button(action: action) { content }
                 .buttonStyle(.glass(.regular.tint(StamerleeTheme.primaryBlue).interactive()))
                 .buttonBorderShape(.capsule)
-                .frame(maxWidth: .infinity)
+                .frame(maxWidth: 290)
         } else {
             Button(action: action) { content }
                 .buttonStyle(PopSpringButtonStyle(isEnabled: true))
@@ -587,19 +587,19 @@ public struct GlassActionButton: View {
                 .font(.system(size: 16.5, weight: .bold, design: .rounded))
         }
         .foregroundStyle(.white)
-        .frame(maxWidth: .infinity)
-        .frame(height: 52)
+        .frame(maxWidth: 290)
+        .frame(height: 48)
         .background {
             if #available(iOS 26.0, *) {
                 Color.clear
             } else {
                 ZStack {
                     // Ultra thin translucent material blur
-                    RoundedRectangle(cornerRadius: 26, style: .continuous)
+                    RoundedRectangle(cornerRadius: 24, style: .continuous)
                         .fill(.ultraThinMaterial)
 
                     // Purple glass tint
-                    RoundedRectangle(cornerRadius: 26, style: .continuous)
+                    RoundedRectangle(cornerRadius: 24, style: .continuous)
                         .fill(
                             LinearGradient(
                                 colors: [
@@ -612,7 +612,7 @@ public struct GlassActionButton: View {
                         )
 
                     // Gloss shine highlight on top rim
-                    RoundedRectangle(cornerRadius: 26, style: .continuous)
+                    RoundedRectangle(cornerRadius: 24, style: .continuous)
                         .stroke(
                             LinearGradient(
                                 colors: [

@@ -726,39 +726,30 @@ public struct BeatBuddyPracticeView: View {
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, 14)
+                    .padding(.top, 10)
 
-                Spacer(minLength: 14)
+                Spacer(minLength: 8)
 
                 promptDisplay
 
                 progress
-                    .padding(.top, 16)
+                    .padding(.top, 12)
 
-                Spacer(minLength: 16)
+                Spacer(minLength: 8)
 
                 microphoneControl
 
                 Text("Tap and speak with the beat")
                     .font(.system(size: 13, weight: .medium, design: .rounded))
                     .foregroundStyle(Color(red: 194 / 255, green: 192 / 255, blue: 218 / 255))
-                    .padding(.top, 8)
+                    .padding(.top, 6)
 
-                Spacer(minLength: 12)
+                Spacer(minLength: 8)
 
-                Button {
+                PrimaryActionButton(title: "Finish") {
                     finishPractice()
-                } label: {
-                    HStack(spacing: 10) {
-                        Text("Finish")
-                            .font(.system(size: 17, weight: .semibold, design: .rounded))
-                    }
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 50)
                 }
-                .buttonStyle(BeatBuddyFinishButtonStyle())
-                .padding(.bottom, 16)
+                .padding(.bottom, 14)
             }
             .padding(.horizontal, 24)
             .padding(.top, 8)
@@ -913,14 +904,14 @@ public struct BeatBuddyPracticeView: View {
             ZStack {
                 Circle()
                     .stroke(Color.white.opacity(0.08), lineWidth: 1)
-                    .frame(width: 118, height: 118)
-                    .scaleEffect(isListening && pulse ? 1.10 : ((isBeating && isMetronomeActive) ? 1.04 : 1))
+                    .frame(width: 98, height: 98)
+                    .scaleEffect(isListening && pulse ? 1.08 : ((isBeating && isMetronomeActive) ? 1.03 : 1))
                     .opacity(isListening ? (pulse ? 0.35 : 0.9) : 1)
 
                 Circle()
-                    .stroke(StamerleeTheme.primaryPurple.opacity(isListening ? 0.45 : ((isBeating && isMetronomeActive) ? 0.35 : 0.25)), lineWidth: 9)
-                    .frame(width: 100, height: 100)
-                    .scaleEffect(isListening && pulse ? 1.06 : ((isBeating && isMetronomeActive) ? 1.03 : 1))
+                    .stroke(StamerleeTheme.primaryPurple.opacity(isListening ? 0.45 : ((isBeating && isMetronomeActive) ? 0.35 : 0.25)), lineWidth: 8)
+                    .frame(width: 84, height: 84)
+                    .scaleEffect(isListening && pulse ? 1.05 : ((isBeating && isMetronomeActive) ? 1.02 : 1))
                     .opacity(isListening ? (pulse ? 0.55 : 1) : 1)
 
                 Circle()
@@ -929,19 +920,19 @@ public struct BeatBuddyPracticeView: View {
                             colors: [StamerleeTheme.accentPurpleLight, StamerleeTheme.primaryPurpleDark],
                             center: .topLeading,
                             startRadius: 2,
-                            endRadius: 55
+                            endRadius: 48
                         )
                     )
-                    .frame(width: 76, height: 76)
-                    .shadow(color: StamerleeTheme.primaryPurple.opacity(isListening ? 0.9 : 0.6), radius: isListening ? 18 : 12)
+                    .frame(width: 64, height: 64)
+                    .shadow(color: StamerleeTheme.primaryPurple.opacity(isListening ? 0.9 : 0.6), radius: isListening ? 14 : 10)
                     .scaleEffect(isListening && pulse ? 1.04 : 1)
 
                 Image(systemName: "mic.fill")
-                    .font(.system(size: 28, weight: .medium))
+                    .font(.system(size: 24, weight: .medium))
                     .foregroundStyle(.white)
-                    .scaleEffect(isListening && pulse ? 1.06 : 1)
+                    .scaleEffect(isListening && pulse ? 1.05 : 1)
             }
-            .frame(width: 134, height: 134)
+            .frame(width: 108, height: 108)
             .contentShape(Circle())
             .animation(
                 isListening
@@ -1239,55 +1230,6 @@ final class BeatMetronomePlayer {
     }
 }
 
-private struct BeatBuddyFinishButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        if #available(iOS 26.0, *) {
-            configuration.label
-                .buttonStyle(.glass(.regular.tint(StamerleeTheme.primaryBlue).interactive()))
-                .buttonBorderShape(.capsule)
-        } else {
-            configuration.label
-                .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
-                .animation(.spring(response: 0.26, dampingFraction: 0.58), value: configuration.isPressed)
-                .sensoryFeedback(trigger: configuration.isPressed) { _, isPressed in
-                    isPressed ? .impact(weight: .medium) : nil
-                }
-                .background {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 26, style: .continuous)
-                            .fill(.ultraThinMaterial)
-
-                        RoundedRectangle(cornerRadius: 26, style: .continuous)
-                            .fill(
-                                LinearGradient(
-                                    colors: [
-                                        Color(red: 155 / 255, green: 125 / 255, blue: 255 / 255).opacity(0.88),
-                                        StamerleeTheme.primaryBlueDark.opacity(0.92)
-                                    ],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
-
-                        RoundedRectangle(cornerRadius: 26, style: .continuous)
-                            .stroke(
-                                LinearGradient(
-                                    colors: [
-                                        Color.white.opacity(0.70),
-                                        Color.white.opacity(0.20),
-                                        StamerleeTheme.primaryBlue.opacity(0.40)
-                                    ],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: 1.2
-                            )
-                    }
-                }
-                .shadow(color: StamerleeTheme.primaryBlue.opacity(0.4), radius: 12, x: 0, y: 5)
-        }
-    }
-}
 
 // MARK: - Beat Buddy Intro View (Interactive Cloud Demo with Metronome Beats)
 public enum BeatBuddyFlowStep: Int, CaseIterable {

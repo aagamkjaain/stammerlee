@@ -91,7 +91,7 @@ public struct PrimaryActionButton: View {
             Button(action: action) { label }
                 .buttonStyle(.glass(.regular.tint(StamerleeTheme.primaryBlue).interactive()))
                 .buttonBorderShape(.capsule)
-                .frame(maxWidth: .infinity)
+                .frame(maxWidth: compact ? 240 : 290)
                 .disabled(!isEnabled || isLoading)
         } else {
             Button(action: action) { label }
@@ -116,17 +116,17 @@ public struct PrimaryActionButton: View {
             }
         }
         .foregroundStyle(.white)
-        .frame(maxWidth: .infinity)
-        .frame(height: compact ? 44 : 52)
+        .frame(maxWidth: compact ? 240 : 290)
+        .frame(height: compact ? 42 : 48)
         .background {
             if #available(iOS 26.0, *) {
                 Color.clear
             } else {
                 ZStack {
-                    RoundedRectangle(cornerRadius: compact ? 22 : 26, style: .continuous)
+                    RoundedRectangle(cornerRadius: compact ? 21 : 24, style: .continuous)
                         .fill(.ultraThinMaterial)
 
-                    RoundedRectangle(cornerRadius: compact ? 22 : 26, style: .continuous)
+                    RoundedRectangle(cornerRadius: compact ? 21 : 24, style: .continuous)
                         .fill(
                             LinearGradient(
                                 colors: [
@@ -138,7 +138,7 @@ public struct PrimaryActionButton: View {
                             )
                         )
 
-                    RoundedRectangle(cornerRadius: compact ? 22 : 26, style: .continuous)
+                    RoundedRectangle(cornerRadius: compact ? 21 : 24, style: .continuous)
                         .stroke(
                             LinearGradient(
                                 colors: [
@@ -580,7 +580,7 @@ public struct SpeechMicrophoneButton: View {
                     .font(.system(size: 16, weight: .semibold, design: .rounded))
             }
             .foregroundStyle(.white)
-            .frame(maxWidth: .infinity, minHeight: 52)
+            .frame(maxWidth: 290, minHeight: 48)
             .background(StamerleeTheme.primaryBlue)
             .clipShape(Capsule())
         }
