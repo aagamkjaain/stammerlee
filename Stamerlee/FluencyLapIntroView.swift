@@ -26,6 +26,7 @@ public struct FluencyLapIntroView: View {
     @State private var floatAnim: Bool = false
     @State private var confettiCounter: Int = 0
     @State private var wellDoneBurst: Bool = false
+    @State private var speakTask: Task<Void, Never>? = nil
 
     // Curated warm-up sprint words
     private let sprintWords: [String] = [
@@ -132,6 +133,7 @@ public struct FluencyLapIntroView: View {
         }
         .onDisappear {
             timerTask?.cancel()
+            speakTask?.cancel()
         }
     }
 
@@ -278,8 +280,8 @@ public struct FluencyLapIntroView: View {
             Spacer()
 
             // Universal Purple Glass Microphone Button
-            UniversalMicrophoneButton(isListening: isListening, disabled: isListening) {
-                triggerSpeak()
+            UniversalMicrophoneButton(isListening: isListening, disabled: false) {
+                toggleListening()
             }
 
             Text(isListening ? "Listening... great pace!" : "Tap microphone to speak word")
@@ -475,25 +477,39 @@ public struct FluencyLapIntroView: View {
         }
     }
 
-    private func triggerSpeak() {
-        guard !isListening else { return }
-        isListening = true
-        pulseMic = true
-
-        Task { @MainActor in
-            try? await Task.sleep(nanoseconds: 1_200_000_000)
-            guard !Task.isCancelled else { return }
-
+    private func toggleListening() {
+        if isListening {
+            speakTask?.cancel()
             withAnimation(.easeInOut(duration: 0.25)) {
                 isListening = false
                 pulseMic = false
+                advanceWord()
+            }
+        } else {
+            isListening = true
+            pulseMic = true
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
 
-                if currentWordIndex + 1 < sprintWords.count {
-                    currentWordIndex += 1
-                } else {
-                    completeSprint()
+            speakTask?.cancel()
+            speakTask = Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 4_000_000_000)
+                guard !Task.isCancelled else { return }
+
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    isListening = false
+                    pulseMic = false
+                    advanceWord()
                 }
             }
+        }
+    }
+
+    private func advanceWord() {
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        if currentWordIndex + 1 < sprintWords.count {
+            currentWordIndex += 1
+        } else {
+            completeSprint()
         }
     }
 

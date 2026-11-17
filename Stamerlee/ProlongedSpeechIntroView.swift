@@ -23,6 +23,7 @@ public struct ProlongedSpeechIntroView: View {
     @State private var floatAnim: Bool = false
     @State private var confettiCounter: Int = 0
     @State private var wellDoneBurst: Bool = false
+    @State private var speakTask: Task<Void, Never>? = nil
 
     // Pure yellow palette for ConfettiSwiftUI celebration particles
     private let yellowConfettiColors: [Color] = [
@@ -116,6 +117,9 @@ public struct ProlongedSpeechIntroView: View {
             withAnimation(.easeInOut(duration: 2.8).repeatForever(autoreverses: true)) {
                 floatAnim = true
             }
+        }
+        .onDisappear {
+            speakTask?.cancel()
         }
     }
 
@@ -228,11 +232,11 @@ public struct ProlongedSpeechIntroView: View {
             Spacer()
 
             // Universal Purple Glass Microphone Control
-            UniversalMicrophoneButton(isListening: isListening, disabled: isListening) {
-                triggerSpeak()
+            UniversalMicrophoneButton(isListening: isListening, disabled: false) {
+                toggleListening()
             }
 
-            Text(isListening ? "Listening" : "Tap and hold to speak")
+            Text(isListening ? "Listening" : "Tap to speak")
                 .font(.system(size: 14, weight: .regular, design: .rounded))
                 .foregroundStyle(Color(red: 195 / 255, green: 190 / 255, blue: 220 / 255))
                 .padding(.top, 16)
@@ -485,17 +489,28 @@ public struct ProlongedSpeechIntroView: View {
         }
     }
 
-    private func triggerSpeak() {
-        guard !isListening else { return }
-        isListening = true
-        pulseMic = true
-
-        Task { @MainActor in
-            try? await Task.sleep(nanoseconds: 2_200_000_000)
+    private func toggleListening() {
+        if isListening {
+            speakTask?.cancel()
             withAnimation(.spring(response: 0.65, dampingFraction: 0.8)) {
                 isListening = false
                 pulseMic = false
                 goToStep(.wellDone)
+            }
+        } else {
+            isListening = true
+            pulseMic = true
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+
+            speakTask?.cancel()
+            speakTask = Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 5_000_000_000)
+                guard !Task.isCancelled else { return }
+                withAnimation(.spring(response: 0.65, dampingFraction: 0.8)) {
+                    isListening = false
+                    pulseMic = false
+                    goToStep(.wellDone)
+                }
             }
         }
     }

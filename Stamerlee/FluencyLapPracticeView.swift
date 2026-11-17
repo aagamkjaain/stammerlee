@@ -228,10 +228,12 @@ public struct SpeakPracticeScreen: View {
 
     private func toggleListening() {
         if isListening {
+            // Person hits mic again: stop recording & advance to next word immediately
             advanceTask?.cancel()
-            withAnimation(.easeInOut(duration: 0.22)) {
+            withAnimation(.easeInOut(duration: 0.25)) {
                 pulse = false
                 isListening = false
+                advanceWord()
             }
         } else {
             startListening()
@@ -242,20 +244,30 @@ public struct SpeakPracticeScreen: View {
         guard !isListening else { return }
 
         advanceTask?.cancel()
-        isListening = true
-        pulse = true
+        withAnimation(.easeInOut(duration: 0.22)) {
+            isListening = true
+            pulse = true
+        }
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
 
         advanceTask = Task { @MainActor in
-            try? await Task.sleep(for: .seconds(2))
+            try? await Task.sleep(for: .seconds(5))
             guard !Task.isCancelled else { return }
 
-            withAnimation(.easeInOut(duration: 0.22)) {
+            withAnimation(.easeInOut(duration: 0.25)) {
                 pulse = false
                 isListening = false
-                if currentWordIndex + 1 < promptCount {
-                    currentWordIndex += 1
-                }
+                advanceWord()
             }
+        }
+    }
+
+    private func advanceWord() {
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        if currentWordIndex + 1 < promptCount {
+            currentWordIndex += 1
+        } else {
+            finishPractice()
         }
     }
 
