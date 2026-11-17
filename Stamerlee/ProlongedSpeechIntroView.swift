@@ -59,25 +59,24 @@ public struct ProlongedSpeechIntroView: View {
                 cloudsLayer(w: w, h: h)
                     .allowsHitTesting(false)
 
-                // Yellow Confetti Effect using ConfettiSwiftUI (Step 4: Well done!)
+                // Subtle Yellow Confetti Effect using ConfettiSwiftUI (Step 4: Well done!)
                 Color.clear
                     .frame(width: 1, height: 1)
                     .confettiCannon(
                         counter: $confettiCounter,
-                        num: 60,
+                        num: 26,
                         confettis: [
                             .shape(.circle),
                             .shape(.triangle),
-                            .shape(.square),
-                            .shape(.slimRectangle),
-                            .shape(.roundedCross)
+                            .shape(.square)
                         ],
                         colors: yellowConfettiColors,
-                        confettiSize: 11.0,
-                        rainHeight: 700.0,
+                        confettiSize: 7.5,
+                        rainHeight: 480.0,
+                        opacity: 0.85,
                         openingAngle: .degrees(0),
                         closingAngle: .degrees(360),
-                        radius: 280.0
+                        radius: 200.0
                     )
                     .position(x: w * 0.5, y: h * 0.44)
                     .allowsHitTesting(false)

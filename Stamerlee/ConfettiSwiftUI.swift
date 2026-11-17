@@ -96,11 +96,11 @@ public struct ConfettiCannon<T: Equatable>: View {
             for color in colors{
                 switch confetti {
                 case .shape(_):
-                    shapes.append(AnyView(confetti.view.foregroundColor(color).frame(width: confettiSize, height: confettiSize, alignment: .center)))
+                    shapes.append(AnyView(confetti.view.foregroundStyle(color).frame(width: confettiSize, height: confettiSize, alignment: .center)))
                 case .image(_):
                     shapes.append(AnyView(confetti.view.frame(maxWidth:confettiSize, maxHeight: confettiSize)))
                 default:
-                    shapes.append(AnyView(confetti.view.foregroundColor(color).font(.system(size: confettiSize))))
+                    shapes.append(AnyView(confetti.view.foregroundStyle(color).font(.system(size: confettiSize))))
                 }
             }
         }
@@ -134,7 +134,7 @@ public struct ConfettiCannon<T: Equatable>: View {
         .onAppear(){
             firstAppear = true
         }
-        .onChange(of: trigger){value in
+        .onChange(of: trigger) { _, _ in
             if firstAppear{
                 for i in 0..<confettiConfig.repetitions{
                     DispatchQueue.main.asyncAfter(deadline: .now() + confettiConfig.repetitionInterval * Double(i)) {
@@ -271,7 +271,7 @@ struct ConfettiAnimationView: View {
     
     var body: some View {
         shape
-            .foregroundColor(color)
+            .foregroundStyle(color)
             .rotation3DEffect(.degrees(move ? 360:0), axis: (x: spinDirX, y: 0, z: 0))
             .animation(Animation.linear(duration: xSpeed).repeatCount(10, autoreverses: false), value: move)
             .rotation3DEffect(.degrees(move ? 360:0), axis: (x: 0, y: 0, z: spinDirZ), anchor: UnitPoint(x: anchor, y: anchor))

@@ -1352,25 +1352,24 @@ public struct BeatBuddyIntroView: View {
                 cloudsLayer(w: w, h: h)
                     .allowsHitTesting(false)
 
-                // Yellow Confetti Effect using ConfettiSwiftUI (Step 4: Well done!)
+                // Subtle Yellow Confetti Effect using ConfettiSwiftUI (Step 4: Well done!)
                 Color.clear
                     .frame(width: 1, height: 1)
                     .confettiCannon(
                         counter: $confettiCounter,
-                        num: 60,
+                        num: 26,
                         confettis: [
                             .shape(.circle),
                             .shape(.triangle),
-                            .shape(.square),
-                            .shape(.slimRectangle),
-                            .shape(.roundedCross)
+                            .shape(.square)
                         ],
                         colors: yellowConfettiColors,
-                        confettiSize: 11.0,
-                        rainHeight: 700.0,
+                        confettiSize: 7.5,
+                        rainHeight: 480.0,
+                        opacity: 0.85,
                         openingAngle: .degrees(0),
                         closingAngle: .degrees(360),
-                        radius: 280.0
+                        radius: 200.0
                     )
                     .position(x: w * 0.5, y: h * 0.44)
                     .allowsHitTesting(false)
@@ -1501,6 +1500,9 @@ public struct BeatBuddyIntroView: View {
         }
         .frame(maxWidth: .infinity)
         .contentShape(Rectangle())
+        .onTapGesture {
+            goToStep(.practice)
+        }
     }
 
     // MARK: - Step 3: Interactive Practice Demo (2 words with metronome beats)
@@ -1809,25 +1811,28 @@ public struct BeatBuddyIntroView: View {
         }
     }
 
-    // MARK: - Animated Clouds Layer
+    // MARK: - Animated Clouds Layer (Edge-to-Edge with Lowered Screen 1 Cloud)
     @ViewBuilder
     private func cloudsLayer(w: CGFloat, h: CGFloat) -> some View {
         ZStack {
-            assetImage("Drifting cloud-1")
+            // 1. Top-Left Floating Cloud (Hugging left edge cleanly)
+            assetImage(step == .encouragement ? "Drifting cloud" : "Cloud-2")
                 .scaledToFit()
-                .frame(width: 155)
+                .frame(width: step == .encouragement ? 150 : 140)
                 .position(topLeftCloudPosition(w: w, h: h))
-                .opacity(step == .wellDone ? 0.0 : 1.0)
-                .offset(y: floatAnim ? -6 : 6)
+                .offset(y: floatAnim ? -4 : 4)
                 .animation(.spring(response: 0.75, dampingFraction: 0.8), value: step)
 
-            assetImage("Drifting cloud-2")
+            // 2. Top-Right Floating Cloud (Hugging right edge cleanly)
+            assetImage("Cloud")
                 .scaledToFit()
-                .frame(width: 135)
+                .frame(width: 140)
                 .position(topRightCloudPosition(w: w, h: h))
-                .offset(y: floatAnim ? 5 : -5)
+                .opacity(step == .encouragement ? 0.0 : 1.0)
+                .offset(y: floatAnim ? 3 : -3)
                 .animation(.spring(response: 0.75, dampingFraction: 0.8), value: step)
 
+            // 3. Mid-Right Drifting Cloud (Offsets 18px transparent margin)
             assetImage("Drifting cloud-3")
                 .scaledToFit()
                 .frame(width: 115)
@@ -1836,6 +1841,16 @@ public struct BeatBuddyIntroView: View {
                 .offset(y: floatAnim ? -5 : 5)
                 .animation(.spring(response: 0.75, dampingFraction: 0.8), value: step)
 
+            // 4. Bottom-Left Drifting Cloud (Bleeds off left edge)
+            assetImage("Drifting cloud-2")
+                .scaledToFit()
+                .frame(width: 142)
+                .position(x: w * 0.10, y: step == .wellDone ? h * 0.88 : (step == .encouragement ? h * 0.90 : h * 1.25))
+                .opacity((step == .intro || step == .practice) ? 0.0 : 1.0)
+                .offset(y: floatAnim ? 4 : -4)
+                .animation(.spring(response: 0.75, dampingFraction: 0.8), value: step)
+
+            // 5. Bottom Billowing Cloud Bank 1 (Screen 1, Screen 3 & Screen 4: Hugs bottom-right edge)
             assetImage("Cloud bank")
                 .scaledToFit()
                 .frame(width: w * 0.70)
@@ -1844,6 +1859,7 @@ public struct BeatBuddyIntroView: View {
                 .offset(y: floatAnim ? -3 : 3)
                 .animation(.spring(response: 0.8, dampingFraction: 0.8), value: step)
 
+            // 6. Bottom Billowing Cloud Bank 2 (Screen 1, Screen 3 & Screen 4: Hugs bottom-left edge)
             assetImage("Cloud bank-2")
                 .scaledToFit()
                 .frame(width: w * 0.66)

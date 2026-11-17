@@ -784,32 +784,18 @@ public struct ExerciseAnalysisSkeletonView: View {
         }
     }
 
-    // MARK: - One Main Yellow Star, Two Small Yellow Stars & Blots
+    // MARK: - Celebration Star, Small Yellow Stars & Blots
     private var starsAndBlotsView: some View {
         let starYellow = Color(red: 255 / 255, green: 218 / 255, blue: 60 / 255)
         let blotYellow = Color(red: 255 / 255, green: 220 / 255, blue: 90 / 255)
 
         return ZStack {
-            // Radiating Ray Blots from center star
-            HStack(spacing: 24) {
-                Capsule()
-                    .fill(blotYellow)
-                    .frame(width: 3.5, height: 14)
-                    .rotationEffect(.degrees(-26))
-                    .offset(y: -14)
-
-                Capsule()
-                    .fill(blotYellow)
-                    .frame(width: 3.5, height: 14)
-                    .rotationEffect(.degrees(26))
-                    .offset(y: -14)
-            }
-            .scaleEffect(starAppeared ? 1.0 : 0.4)
-            .opacity(starAppeared ? 1.0 : 0.0)
-
-            // 1. One Main Yellow Center Star (without glowing effect, fully yellow)
-            starAssetOrShape("Sparkle-2", size: 42, color: starYellow)
-                .scaleEffect(starAppeared ? 1.0 : 0.75)
+            // 1. Main Celebration Star (celebration.png)
+            Image("celebration")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 68, height: 62)
+                .scaleEffect(starAppeared ? 1.0 : 0.4)
                 .opacity(starAppeared ? 1.0 : 0.0)
 
             // 2. Left Small Yellow Star (without glowing effect)
@@ -846,7 +832,7 @@ public struct ExerciseAnalysisSkeletonView: View {
                 .scaleEffect(starAppeared ? 1.0 : 0.2)
                 .opacity(starAppeared ? 0.8 : 0.0)
         }
-        .frame(height: 52)
+        .frame(height: 64)
     }
 
     // MARK: - Word Selection Section in Middle

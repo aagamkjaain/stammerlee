@@ -9,7 +9,7 @@ public struct HomeDashboardView: View {
     
     @State private var showLockedAlert: Bool = false
     @State private var lockedAlertMessage: String = ""
-    @State private var cardsAppeared: Bool = false
+    @State private var cardsAppeared: Bool = true
     
     public init(state: AppState) {
         self.state = state
@@ -164,27 +164,15 @@ public struct HomeDashboardView: View {
                             value: cardsAppeared
                         )
                         
-                        // Extra bottom padding for floating tab bar
-                        Spacer().frame(height: 90)
                     }
                     .padding(.horizontal, 20)
+                    .padding(.bottom, 110)
                 }
                 .scrollIndicators(.hidden)
             }
         }
         .onAppear {
-            cardsAppeared = false
-            withAnimation {
-                cardsAppeared = true
-            }
-        }
-        .onChange(of: state.currentScreen) { _, newScreen in
-            if newScreen == .homeDashboard {
-                cardsAppeared = false
-                withAnimation {
-                    cardsAppeared = true
-                }
-            }
+            cardsAppeared = true
         }
         .alert("Module Locked", isPresented: $showLockedAlert) {
             Button("OK", role: .cancel) {}
@@ -320,10 +308,12 @@ private struct ExerciseRowCard: View {
                 .buttonStyle(.glass(.regular.tint(cardColor).interactive()))
                 .buttonBorderShape(.roundedRectangle(radius: 16))
                 .frame(maxWidth: .infinity)
+                .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         } else {
             Button(action: action) { cardContent }
                 .buttonStyle(BouncyCardButtonStyle())
                 .frame(maxWidth: .infinity)
+                .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
     }
 
@@ -372,6 +362,7 @@ private struct ExerciseRowCard: View {
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
         .frame(maxWidth: .infinity, minHeight: 84, alignment: .leading)
+        .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         // On iOS < 26 draw the card background manually; on iOS 26 the glass style owns rendering
         .background {
             if #available(iOS 26.0, *) {
