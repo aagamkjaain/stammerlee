@@ -8,6 +8,8 @@ public struct ExerciseProgressDetailView: View {
     @Bindable public var state: AppState
     @State private var didAppearContent = false
     @State private var selectedWeekIndex: Int? = 2 // Default to Week 3 (highest, matching reference)
+    @State private var selectedMonth: Int = min(Calendar.current.component(.month, from: Date()), 11) // 1–11 (Jan–Nov)
+    @State private var prolongedCategory: String = "Words" // Only for Prolonged Speech
     
     public init(state: AppState) {
         self.state = state
@@ -17,22 +19,131 @@ public struct ExerciseProgressDetailView: View {
         state.selectedExerciseDetail
     }
     
+    // MARK: - Month & category–aware data
+    
+    /// Overall highest score so far across all recorded months in the graph
     private var highScore: Double {
-        if exercise == .prolongedSpeech, let score = state.prolongedEasyScore, score > 0 {
-            return max(score, exercise.defaultHighScore)
+        let allScores: [Double]
+        if exercise == .prolongedSpeech {
+            allScores = (Self.prolongedMonthlyData[prolongedCategory] ?? []).flatMap { $0 }
+        } else {
+            allScores = (Self.exerciseMonthlyData[exercise] ?? []).flatMap { $0 }
         }
-        return exercise.defaultHighScore
+        return allScores.max() ?? exercise.defaultHighScore
     }
     
+    /// Week scores for the selected month (and category for Prolonged Speech)
     private var monthlyScores: [Double] {
-        var scores = exercise.monthlyWeekScores
-        if exercise == .prolongedSpeech, let score = state.prolongedEasyScore, score > 0 {
-            scores[scores.count - 1] = score
-        }
-        return scores
+        currentMonthScores
     }
+    
+    /// Look up 4-week scores for the current exercise + month + category
+    private var currentMonthScores: [Double] {
+        let monthIdx = min(max(selectedMonth - 1, 0), 10)
+        if exercise == .prolongedSpeech {
+            return Self.prolongedMonthlyData[prolongedCategory]?[monthIdx] ?? [7.0, 7.0, 7.0, 7.0]
+        }
+        return Self.exerciseMonthlyData[exercise]?[monthIdx] ?? [7.0, 7.0, 7.0, 7.0]
+    }
+    
+    // MARK: - Static score tables (11 months: Jan–Nov × 4 weeks each)
+    
+    /// Per-exercise, per-month scores (all exercises except Prolonged Speech categories)
+    private static let exerciseMonthlyData: [ExerciseDetailType: [[Double]]] = [
+        .pictureDescription: [
+            [6.2, 6.5, 6.8, 7.0],  // Jan
+            [6.8, 7.0, 7.2, 7.4],  // Feb
+            [7.0, 7.3, 7.1, 7.5],  // Mar
+            [7.2, 7.6, 7.8, 7.4],  // Apr
+            [7.5, 7.8, 8.0, 7.9],  // May
+            [7.8, 8.1, 8.3, 8.0],  // Jun
+            [8.0, 8.2, 8.5, 8.3],  // Jul
+            [8.1, 8.4, 8.6, 8.5],  // Aug
+            [8.3, 8.6, 8.8, 8.7],  // Sep
+            [8.5, 8.8, 9.2, 9.0],  // Oct
+            [7.4, 8.2, 9.6, 8.8],  // Nov (current) - High score is 9.6
+        ],
+        .dialScene: [
+            [5.0, 5.2, 5.5, 5.3],  // Jan
+            [5.4, 5.6, 5.8, 5.7],  // Feb
+            [5.8, 6.0, 6.2, 6.1],  // Mar
+            [6.0, 6.3, 6.5, 6.4],  // Apr
+            [6.2, 6.5, 6.8, 6.6],  // May
+            [6.4, 6.7, 7.0, 6.8],  // Jun
+            [6.6, 6.9, 7.2, 7.0],  // Jul
+            [6.8, 7.1, 7.4, 7.2],  // Aug
+            [7.0, 7.3, 7.5, 7.4],  // Sep
+            [7.1, 7.4, 7.6, 7.5],  // Oct
+            [6.2, 7.0, 7.8, 7.4],  // Nov (current) - High score is 7.8
+        ],
+        .narration: [
+            [6.0, 6.3, 6.5, 6.4],  // Jan
+            [6.5, 6.8, 7.0, 6.9],  // Feb
+            [7.0, 7.2, 7.4, 7.3],  // Mar
+            [7.2, 7.5, 7.8, 7.6],  // Apr
+            [7.5, 7.8, 8.0, 7.9],  // May
+            [7.8, 8.0, 8.3, 8.1],  // Jun
+            [8.0, 8.3, 8.5, 8.4],  // Jul
+            [8.2, 8.5, 8.7, 8.6],  // Aug
+            [8.4, 8.6, 8.8, 8.7],  // Sep
+            [8.5, 8.7, 8.8, 8.7],  // Oct
+            [7.8, 8.4, 8.9, 8.6],  // Nov (current) - High score is 8.9
+        ],
+    ]
+    
+    /// Prolonged Speech: per-category, per-month scores
+    private static let prolongedMonthlyData: [String: [[Double]]] = [
+        "Words": [
+            [6.0, 6.3, 6.5, 6.4],  // Jan
+            [6.5, 6.8, 7.0, 6.9],  // Feb
+            [6.8, 7.0, 7.2, 7.1],  // Mar
+            [7.0, 7.3, 7.5, 7.4],  // Apr
+            [7.2, 7.5, 7.8, 7.6],  // May
+            [7.4, 7.7, 8.0, 7.8],  // Jun
+            [7.6, 7.9, 8.2, 8.0],  // Jul
+            [7.8, 8.1, 8.3, 8.2],  // Aug
+            [8.0, 8.2, 8.4, 8.3],  // Sep
+            [8.1, 8.3, 8.4, 8.3],  // Oct
+            [7.0, 7.8, 8.5, 8.2],  // Nov (current) - High score is 8.5
+        ],
+        "Sentences": [
+            [5.5, 5.8, 6.0, 5.9],  // Jan
+            [6.0, 6.3, 6.5, 6.4],  // Feb
+            [6.3, 6.5, 6.8, 6.6],  // Mar
+            [6.5, 6.8, 7.0, 6.9],  // Apr
+            [6.8, 7.0, 7.3, 7.1],  // May
+            [7.0, 7.3, 7.5, 7.4],  // Jun
+            [7.2, 7.5, 7.7, 7.6],  // Jul
+            [7.4, 7.6, 7.8, 7.7],  // Aug
+            [7.5, 7.7, 7.8, 7.7],  // Sep
+            [7.6, 7.8, 7.9, 7.8],  // Oct
+            [6.5, 7.2, 8.0, 7.6],  // Nov (current) - High score is 8.0
+        ],
+        "Paragraphs": [
+            [5.0, 5.3, 5.5, 5.4],  // Jan
+            [5.5, 5.8, 6.0, 5.9],  // Feb
+            [5.8, 6.0, 6.2, 6.1],  // Mar
+            [6.0, 6.3, 6.4, 6.3],  // Apr
+            [6.3, 6.5, 6.7, 6.6],  // May
+            [6.5, 6.7, 6.9, 6.8],  // Jun
+            [6.7, 6.9, 7.1, 7.0],  // Jul
+            [6.9, 7.1, 7.3, 7.2],  // Aug
+            [7.0, 7.2, 7.4, 7.3],  // Sep
+            [7.1, 7.3, 7.4, 7.3],  // Oct
+            [6.0, 6.8, 7.5, 7.0],  // Nov (current) - High score is 7.5
+        ],
+    ]
     
     private let weekLabels = ["Week 1", "Week 2", "Week 3", "Week 4"]
+    
+    private let monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November"
+    ]
+    private let monthShort = [
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov"
+    ]
     
     public var body: some View {
         ZStack(alignment: .top) {
@@ -54,7 +165,14 @@ public struct ExerciseProgressDetailView: View {
                     headerSection
                         .padding(.horizontal, 24)
                         .padding(.top, 16)
-                        .padding(.bottom, 22)
+                        .padding(.bottom, exercise == .prolongedSpeech ? 14 : 22)
+                    
+                    // Prolonged Speech category picker (affects entire screen)
+                    if exercise == .prolongedSpeech {
+                        prolongedCategoryPicker
+                            .padding(.horizontal, 24)
+                            .padding(.bottom, 18)
+                    }
                     
                     // Content Cards
                     VStack(spacing: 20) {
@@ -72,6 +190,7 @@ public struct ExerciseProgressDetailView: View {
         }
         .preferredColorScheme(.dark)
         .onAppear {
+            updateSelectedWeek()
             withAnimation(.spring(response: 0.52, dampingFraction: 0.82)) {
                 didAppearContent = true
             }
@@ -150,6 +269,40 @@ public struct ExerciseProgressDetailView: View {
         }
     }
     
+    // MARK: - Prolonged Speech Category Picker
+    private var prolongedCategoryPicker: some View {
+        HStack(spacing: 0) {
+            ForEach(["Words", "Sentences", "Paragraphs"], id: \.self) { category in
+                Button {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        prolongedCategory = category
+                        updateSelectedWeek()
+                    }
+                } label: {
+                    Text(category)
+                        .font(.system(size: 14, weight: prolongedCategory == category ? .bold : .medium, design: .rounded))
+                        .foregroundStyle(
+                            prolongedCategory == category
+                            ? .white
+                            : Color(red: 195 / 255, green: 190 / 255, blue: 220 / 255)
+                        )
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(
+                            prolongedCategory == category
+                            ? Color(red: 139 / 255, green: 112 / 255, blue: 245 / 255)
+                            : Color.clear
+                        )
+                        .clipShape(Capsule())
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(3)
+        .background(Color.white.opacity(0.08))
+        .clipShape(Capsule())
+    }
+    
     // MARK: - 1. High Score Card
     private var highScoreCard: some View {
         HStack(alignment: .center, spacing: 14) {
@@ -183,6 +336,13 @@ public struct ExerciseProgressDetailView: View {
         .background(glassCardBackground(cornerRadius: 22))
     }
     
+    private func updateSelectedWeek() {
+        let scores = currentMonthScores
+        if let maxVal = scores.max(), let idx = scores.firstIndex(of: maxVal) {
+            selectedWeekIndex = idx
+        }
+    }
+
     @ViewBuilder
     private var trophyIconView: some View {
         if let uiImage = loadTrophyImage() {
@@ -233,7 +393,7 @@ public struct ExerciseProgressDetailView: View {
     // MARK: - 2. Exercise Progress Card (Bar Chart)
     private var exerciseProgressCard: some View {
         VStack(alignment: .leading, spacing: 16) {
-            // Top Row: Title + Weekly Pill
+            // Top Row: Title + Month Picker
             HStack {
                 Text("Exercise Progress")
                     .font(.system(size: 18, weight: .bold, design: .rounded))
@@ -241,13 +401,33 @@ public struct ExerciseProgressDetailView: View {
                 
                 Spacer()
                 
-                Text("weekly")
-                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                Menu {
+                    ForEach(1...11, id: \.self) { month in
+                        Button {
+                            selectedMonth = month
+                            updateSelectedWeek()
+                        } label: {
+                            HStack {
+                                Text(monthNames[month - 1])
+                                if month == selectedMonth {
+                                    Image(systemName: "checkmark")
+                                }
+                            }
+                        }
+                    }
+                } label: {
+                    HStack(spacing: 4) {
+                        Text(monthShort[selectedMonth - 1])
+                            .font(.system(size: 12, weight: .semibold, design: .rounded))
+                        Image(systemName: "chevron.down")
+                            .font(.system(size: 9, weight: .bold))
+                    }
                     .foregroundStyle(Color(red: 125 / 255, green: 90 / 255, blue: 230 / 255))
                     .padding(.horizontal, 12)
                     .padding(.vertical, 5)
                     .background(Color(red: 238 / 255, green: 232 / 255, blue: 254 / 255))
                     .clipShape(Capsule())
+                }
             }
             
             // Static Bar Chart matching screenshot
@@ -287,7 +467,7 @@ public struct ExerciseProgressDetailView: View {
 }
     
     
-// MARK: - Weekly Bar Chart (Static)
+// MARK: - Weekly Bar Chart (Dynamic score-based gradient intensity)
 private struct WeeklyBarChart: View {
     let scores: [Double]
     let labels: [String]
@@ -303,34 +483,29 @@ private struct WeeklyBarChart: View {
                 let barHeight = computeBarHeight(score: score)
                 
                 VStack(spacing: 8) {
-                    // 1. Score above bar (Static)
+                    // 1. Score above bar
                     Text(String(format: "%.1f", score))
                         .font(.system(size: 16, weight: isSelected ? .heavy : .bold, design: .rounded))
                         .foregroundStyle(Color(red: 25 / 255, green: 22 / 255, blue: 45 / 255))
                     
-                    // 2. Rounded Vertical Bar (Static)
+                    // 2. Rounded Vertical Bar (color intensity scales low to high according to the score)
                     ZStack(alignment: .bottom) {
                         RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .fill(
-                                isSelected
-                                ? LinearGradient(
-                                    colors: [
-                                        Color(red: 172 / 255, green: 104 / 255, blue: 255 / 255),
-                                        Color(red: 133 / 255, green: 54 / 255, blue: 242 / 255)
-                                    ],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                                : LinearGradient(
-                                    colors: [
-                                        Color(red: 216 / 255, green: 196 / 255, blue: 254 / 255),
-                                        Color(red: 198 / 255, green: 175 / 255, blue: 252 / 255)
-                                    ],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            )
+                            .fill(barGradient(for: score))
                             .frame(height: barHeight)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                    .stroke(
+                                        Color.white.opacity(isSelected ? 0.5 : 0),
+                                        lineWidth: 1.5
+                                    )
+                            )
+                            .shadow(
+                                color: Color(red: 130 / 255, green: 50 / 255, blue: 240 / 255).opacity(isSelected ? 0.3 : 0),
+                                radius: 8,
+                                x: 0,
+                                y: 3
+                            )
                     }
                     .frame(height: maxBarHeight, alignment: .bottom)
                     .frame(maxWidth: .infinity)
@@ -356,10 +531,41 @@ private struct WeeklyBarChart: View {
         }
     }
     
+    /// Maps score from light lavender (low score) to deep vibrant purple (high score)
+    private func barGradient(for score: Double) -> LinearGradient {
+        let minScore = scores.min() ?? 5.0
+        let maxScore = scores.max() ?? 10.0
+        let scoreRange = max(maxScore - minScore, 0.4)
+        
+        let relFactor = CGFloat(max(0.0, min(1.0, (score - minScore) / scoreRange)))
+        let absFactor = CGFloat(max(0.0, min(1.0, (score - 5.0) / 4.8)))
+        
+        // Blend 65% relative (to ensure distinct shades within the month) and 35% absolute
+        let t = 0.35 * absFactor + 0.65 * relFactor
+        
+        // Light (t = 0.0): gentle soft lavender
+        // Dark  (t = 1.0): rich deep violet purple
+        let topR = 230.0 + (168.0 - 230.0) * Double(t)
+        let topG = 220.0 + (96.0 - 220.0) * Double(t)
+        let topB = 255.0 + (255.0 - 255.0) * Double(t)
+        
+        let botR = 212.0 + (130.0 - 212.0) * Double(t)
+        let botG = 196.0 + (48.0 - 196.0) * Double(t)
+        let botB = 252.0 + (242.0 - 252.0) * Double(t)
+        
+        return LinearGradient(
+            colors: [
+                Color(red: topR / 255, green: topG / 255, blue: topB / 255),
+                Color(red: botR / 255, green: botG / 255, blue: botB / 255)
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    }
+    
     private func computeBarHeight(score: Double) -> CGFloat {
-        let clamped = max(6.5, min(10.0, score))
-        let minH: CGFloat = 84
-        let factor = CGFloat(max(0.0, min(1.0, (clamped - 7.0) / 2.3)))
+        let minH: CGFloat = 58
+        let factor = CGFloat(max(0.0, min(1.0, (score - 5.0) / 4.8)))
         return minH + (maxBarHeight - minH) * factor
     }
 }
