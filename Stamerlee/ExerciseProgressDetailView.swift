@@ -152,12 +152,6 @@ public struct ExerciseProgressDetailView: View {
                 Text(exercise.title)
                     .font(.system(size: 24, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
-                
-                Text(exercise.subtitle)
-                    .font(.system(size: 13.5, weight: .regular, design: .rounded))
-                    .foregroundStyle(Color(red: 175 / 255, green: 170 / 255, blue: 215 / 255))
-                    .lineLimit(2)
-                    .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
