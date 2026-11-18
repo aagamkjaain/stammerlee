@@ -78,17 +78,14 @@ public struct ProfileView: View {
                     profileHeader
 
                     VStack(alignment: .leading, spacing: 22) {
-                        dailyGoalCard
+                        reminderCard
                             .dropIn(didAppearContent, index: 0)
 
-                        reminderCard
+                        accountSection
                             .dropIn(didAppearContent, index: 1)
 
-                        accountSection
-                            .dropIn(didAppearContent, index: 2)
-
                         legalHypertextSection
-                            .dropIn(didAppearContent, index: 3)
+                            .dropIn(didAppearContent, index: 2)
                     }
                     .padding(.horizontal, 24)
                     .padding(.top, 22)
@@ -335,34 +332,6 @@ public struct ProfileView: View {
             isEditingName = false
             isNameFieldFocused = false
         }
-    }
-
-    // MARK: - Daily Goal Card
-    private var dailyGoalCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Daily goal")
-                .font(.system(size: 18, weight: .bold, design: .rounded))
-                .foregroundStyle(StamerleeTheme.textPrimaryLight)
-
-            Picker("Daily practice time", selection: $state.dailyPracticeMinutes) {
-                ForEach([5, 10, 15, 20], id: \.self) { minutes in
-                    Text("\(minutes) minutes")
-                        .tag(minutes)
-                }
-            }
-            .pickerStyle(.menu)
-            .tint(StamerleeTheme.textSecondaryLight)
-            .font(.system(size: 15, weight: .semibold, design: .rounded))
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 12)
-            .frame(height: 40)
-            .background(Color.white.opacity(0.72))
-            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-        }
-        .padding(.horizontal, 18)
-        .padding(.vertical, 16)
-        .background(StamerleeTheme.profileCard)
-        .clipShape(RoundedRectangle(cornerRadius: 17, style: .continuous))
     }
 
     // MARK: - Practice Reminder Card
