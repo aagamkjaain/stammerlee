@@ -60,16 +60,9 @@ public struct ExerciseProgressDetailView: View {
                     VStack(spacing: 20) {
                         // 1. High Score Card
                         highScoreCard
-                        
+
                         // 2. Exercise Progress Card (Line Chart)
                         exerciseProgressCard
-                        
-                        // 3. Progress Overview Section
-                        progressOverviewSection
-                        
-                        // 4. Practice Again Button
-                        practiceAgainButton
-                            .padding(.top, 6)
                     }
                     .padding(.horizontal, 24)
                     .padding(.bottom, 36)
@@ -269,85 +262,6 @@ public struct ExerciseProgressDetailView: View {
         .padding(20)
         .frame(maxWidth: .infinity)
         .background(glassCardBackground(cornerRadius: 22))
-    }
-    
-    // MARK: - 3. Progress Overview Section
-    private var progressOverviewSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Progress overview")
-                .font(.system(size: 22, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
-
-            HStack(spacing: 16) {
-                // Purple Circular Star Badge
-                ZStack {
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    Color(red: 135 / 255, green: 80 / 255, blue: 245 / 255),
-                                    Color(red: 95 / 255, green: 45 / 255, blue: 215 / 255)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 44, height: 44)
-                        .shadow(color: Color(red: 135 / 255, green: 80 / 255, blue: 245 / 255).opacity(0.4), radius: 8, x: 0, y: 3)
-
-                    Image(systemName: "star.fill")
-                        .font(.system(size: 18, weight: .bold))
-                        .foregroundStyle(.white)
-                }
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(exercise.overviewTitle)
-                        .font(.system(size: 16, weight: .bold, design: .rounded))
-                        .foregroundStyle(Color(red: 25 / 255, green: 20 / 255, blue: 45 / 255))
-
-                    Text(exercise.overviewSubtitle)
-                        .font(.system(size: 13.5, weight: .regular, design: .rounded))
-                        .foregroundStyle(Color(red: 110 / 255, green: 90 / 255, blue: 180 / 255))
-                        .lineSpacing(2)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .padding(18)
-            .frame(maxWidth: .infinity)
-            .background(glassCardBackground(cornerRadius: 22))
-        }
-    }
-    
-    // MARK: - 4. Practice Again Button
-    private var practiceAgainButton: some View {
-        Button {
-            state.navigate(to: exercise.targetScreen(for: state))
-        } label: {
-            HStack(spacing: 8) {
-                Image(systemName: "play.fill")
-                    .font(.system(size: 15, weight: .bold))
-                Text("Practice Again")
-                    .font(.system(size: 17, weight: .bold, design: .rounded))
-            }
-            .foregroundStyle(.white)
-            .frame(maxWidth: .infinity)
-            .frame(height: 54)
-            .background(
-                LinearGradient(
-                    colors: [
-                        Color(red: 172 / 255, green: 125 / 255, blue: 255 / 255),
-                        Color(red: 138 / 255, green: 78 / 255, blue: 242 / 255)
-                    ],
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            )
-            .clipShape(Capsule())
-            .shadow(color: Color(red: 138 / 255, green: 78 / 255, blue: 242 / 255).opacity(0.42), radius: 10, x: 0, y: 4)
-        }
-        .buttonStyle(PopSpringButtonStyle(pressedScale: 0.96))
-        .accessibilityLabel("Practice \(exercise.title) again")
     }
     
     // MARK: - Glass Card Styling Helper
