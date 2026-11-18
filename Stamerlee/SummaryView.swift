@@ -14,10 +14,6 @@ public struct SummaryView: View {
     private let streakRing = Color(red: 205 / 255, green: 200 / 255, blue: 232 / 255)
     private let selectedDayBackground = Color(red: 228 / 255, green: 222 / 255, blue: 252 / 255)
 
-    @State private var showLockedAlert = false
-    @State private var lockedAlertTitle = "Exercise Locked"
-    @State private var lockedAlertMessage = ""
-
     public init(state: AppState) {
         self.state = state
     }
@@ -51,11 +47,6 @@ public struct SummaryView: View {
                 }
                 .scrollIndicators(.hidden)
             }
-        }
-        .alert(lockedAlertTitle, isPresented: $showLockedAlert) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text(lockedAlertMessage)
         }
     }
 
@@ -208,114 +199,67 @@ public struct SummaryView: View {
                 spacing: 14
             ) {
                 ForEach(exerciseHighScoreItems) { item in
-                    let isLocked = isExerciseLocked(item.type)
+                    let isPerformed = isExercisePerformed(item.type)
                     Button {
-                        if isLocked {
-                            triggerLockedAlert(for: item.type)
-                        } else {
-                            state.selectedExerciseDetail = item.type
-                            state.navigate(to: .exerciseProgressDetail)
-                        }
+                        state.selectedExerciseDetail = item.type
+                        state.navigate(to: .exerciseProgressDetail)
                     } label: {
-                        exerciseBlockCard(item: item, isLocked: isLocked)
+                        exerciseBlockCard(item: item, isPerformed: isPerformed)
                     }
                     .buttonStyle(PopSpringButtonStyle(pressedScale: 0.94))
-                    .accessibilityLabel(isLocked ? "\(item.title), locked" : "\(item.title) card, score \(String(format: "%.1f", item.score)) of 10")
+                    .accessibilityLabel("\(item.title) card, score \(isPerformed ? String(format: "%.1f", item.score) : "not performed") of 10")
                 }
             }
         }
     }
 
-    private func isExerciseLocked(_ type: ExerciseDetailType) -> Bool {
+    private func isExercisePerformed(_ type: ExerciseDetailType) -> Bool {
         switch type {
         case .prolongedSpeech:
-            return !state.isProlongedSpeechUnlocked
+            return true
         case .pictureDescription:
-            return !state.isPictureDescriptionUnlocked
+            return state.hasCompletedPictureDescription || !state.completedPictureDescriptionDifficulties.isEmpty
         case .dialScene:
-            return !state.isDialSceneUnlocked
+            return state.hasCompletedDialScene
         case .narration:
-            return !state.isNarrationUnlocked
+            return !state.completedNarrationDifficulties.isEmpty
         }
     }
 
-    private func triggerLockedAlert(for type: ExerciseDetailType) {
-        let generator = UINotificationFeedbackGenerator()
-        generator.notificationOccurred(.warning)
-        lockedAlertTitle = "\(type.title) Locked"
-        switch type {
-        case .prolongedSpeech:
-            lockedAlertMessage = "Prolonged Speech is unlocked and ready to practice!"
-        case .pictureDescription:
-            lockedAlertMessage = "Complete a Prolonged Speech session first to unlock Picture Description!"
-        case .dialScene:
-            lockedAlertMessage = "Complete a Beat Buddy session first to unlock Dial Scene!"
-        case .narration:
-            lockedAlertMessage = "Complete a Dial Scene exercise first to unlock Narration!"
-        }
-        showLockedAlert = true
-    }
-
-    private func exerciseBlockCard(item: ExerciseHighScoreItem, isLocked: Bool) -> some View {
+    private func exerciseBlockCard(item: ExerciseHighScoreItem, isPerformed: Bool) -> some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Top Row: 3D Icon on left, Title on right
+            // Top Row: 3D Icon on left, Title on right (no locks)
             HStack(alignment: .center, spacing: 8) {
-                ZStack {
-                    summaryAssetImage(named: item.iconName, size: 48)
-                        .opacity(isLocked ? 0.35 : 1.0)
-                        .grayscale(isLocked ? 0.85 : 0.0)
-
-                    if isLocked {
-                        Circle()
-                            .fill(
-                                LinearGradient(
-                                    colors: [
-                                        Color(red: 35 / 255, green: 30 / 255, blue: 65 / 255).opacity(0.92),
-                                        Color(red: 20 / 255, green: 18 / 255, blue: 45 / 255).opacity(0.98)
-                                    ],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
-                            .frame(width: 26, height: 26)
-                            .overlay(
-                                Image(systemName: "lock.fill")
-                                    .font(.system(size: 12, weight: .bold))
-                                    .foregroundStyle(Color(red: 255 / 255, green: 215 / 255, blue: 90 / 255))
-                            )
-                    }
-                }
+                summaryAssetImage(named: item.iconName, size: 48)
 
                 Text(item.displayTitle)
                     .font(.system(size: 14, weight: .bold, design: .rounded))
-                    .foregroundStyle(isLocked ? Color(red: 120 / 255, green: 115 / 255, blue: 140 / 255) : Color(red: 22 / 255, green: 18 / 255, blue: 40 / 255))
+                    .foregroundStyle(Color(red: 22 / 255, green: 18 / 255, blue: 40 / 255))
                     .multilineTextAlignment(.leading)
                     .lineLimit(2)
                     .minimumScaleFactor(0.8)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
+            .frame(minHeight: 48)
 
             Spacer(minLength: 8)
 
-            // Large Score / 10 OR Locked Status
-            if isLocked {
-                HStack(alignment: .center, spacing: 6) {
-                    Image(systemName: "lock.fill")
-                        .font(.system(size: 15, weight: .bold))
-                        .foregroundStyle(Color(red: 139 / 255, green: 112 / 255, blue: 245 / 255))
-                    Text("Locked")
-                        .font(.system(size: 19, weight: .bold, design: .rounded))
-                        .foregroundStyle(Color(red: 120 / 255, green: 115 / 255, blue: 140 / 255))
-                }
-                .frame(height: 42)
-            } else {
-                HStack(alignment: .lastTextBaseline, spacing: 2) {
+            // Large Score / 10 (or hyphen when not performed yet)
+            HStack(alignment: .lastTextBaseline, spacing: 2) {
+                if isPerformed {
                     Text(String(format: "%.1f", item.score))
                         .font(.system(size: 36, weight: .heavy, design: .rounded))
                         .foregroundStyle(Color(red: 22 / 255, green: 18 / 255, blue: 40 / 255))
                     Text("/10")
                         .font(.system(size: 17, weight: .bold, design: .rounded))
                         .foregroundStyle(Color(red: 125 / 255, green: 110 / 255, blue: 180 / 255))
+                } else {
+                    Text("—")
+                        .font(.system(size: 36, weight: .heavy, design: .rounded))
+                        .foregroundStyle(Color(red: 120 / 255, green: 115 / 255, blue: 140 / 255))
+                    Text("/10")
+                        .font(.system(size: 17, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color(red: 160 / 255, green: 155 / 255, blue: 180 / 255))
                 }
             }
 
@@ -326,7 +270,7 @@ public struct SummaryView: View {
                         .fill(Color(red: 222 / 255, green: 224 / 255, blue: 242 / 255))
                         .frame(height: 8)
 
-                    if !isLocked {
+                    if isPerformed {
                         Capsule()
                             .fill(
                                 LinearGradient(
@@ -351,10 +295,7 @@ public struct SummaryView: View {
         .padding(14)
         .frame(maxWidth: .infinity, minHeight: 138, alignment: .topLeading)
         .background(
-            (isLocked
-                ? Color(red: 236 / 255, green: 238 / 255, blue: 246 / 255).opacity(0.85)
-                : Color(red: 246 / 255, green: 247 / 255, blue: 254 / 255).opacity(0.92)
-            ),
+            Color(red: 246 / 255, green: 247 / 255, blue: 254 / 255).opacity(0.92),
             in: RoundedRectangle(cornerRadius: 24, style: .continuous)
         )
         .overlay(

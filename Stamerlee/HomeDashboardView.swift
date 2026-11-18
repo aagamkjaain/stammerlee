@@ -326,41 +326,13 @@ private struct ExerciseRowCard: View {
 
     private var cardContent: some View {
         HStack(alignment: .center, spacing: 14) {
-            // Leading Icon — with Lock badge when locked
-            ZStack {
+            // Leading Icon — kept vibrant as it was before
+            Group {
                 if let iconName {
                     Image(iconName)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: iconName == "BeatBuddyLogo" ? 60 : 68, height: iconName == "BeatBuddyLogo" ? 60 : 68)
-                        .opacity(isLocked ? 0.35 : 1.0)
-                        .grayscale(isLocked ? 0.85 : 0.0)
-                }
-
-                if isLocked {
-                    ZStack {
-                        Circle()
-                            .fill(
-                                LinearGradient(
-                                    colors: [
-                                        Color(red: 35 / 255, green: 30 / 255, blue: 65 / 255).opacity(0.92),
-                                        Color(red: 20 / 255, green: 18 / 255, blue: 45 / 255).opacity(0.98)
-                                    ],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
-                            .frame(width: 38, height: 38)
-                            .overlay(
-                                Circle()
-                                    .stroke(Color.white.opacity(0.22), lineWidth: 1)
-                            )
-                            .shadow(color: Color.black.opacity(0.25), radius: 4, x: 0, y: 2)
-
-                        Image(systemName: "lock.fill")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundStyle(Color(red: 195 / 255, green: 175 / 255, blue: 255 / 255))
-                    }
                 }
             }
             .frame(width: 68, height: 68)
@@ -369,22 +341,22 @@ private struct ExerciseRowCard: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(title)
                     .font(.system(size: 16, weight: .bold, design: .rounded))
-                    .foregroundStyle(isLocked ? StamerleeTheme.textPrimaryLight.opacity(0.7) : StamerleeTheme.textPrimaryLight)
+                    .foregroundStyle(StamerleeTheme.textPrimaryLight)
                     .multilineTextAlignment(.leading)
-                Text(isLocked ? "Complete previous level to unlock" : subtitle)
+                Text(subtitle)
                     .font(.system(size: 12.5, weight: .regular, design: .rounded))
-                    .foregroundStyle(isLocked ? StamerleeTheme.textSecondaryLight.opacity(0.7) : StamerleeTheme.textSecondaryLight)
+                    .foregroundStyle(StamerleeTheme.textSecondaryLight)
                     .multilineTextAlignment(.leading)
                     .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            // Trailing Chevron / Lock Icon
+            // Trailing Chevron / Lock Icon — lock ONLY on the trailing side
             if isLocked {
                 Image(systemName: "lock.fill")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(Color(red: 140 / 255, green: 130 / 255, blue: 170 / 255).opacity(0.7))
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(Color.gray.opacity(0.6))
             } else {
                 Image(systemName: "chevron.right")
                     .font(.system(size: 12, weight: .semibold))
@@ -395,13 +367,11 @@ private struct ExerciseRowCard: View {
         .padding(.vertical, 10)
         .frame(maxWidth: .infinity, minHeight: 84, alignment: .leading)
         .background(
-            isLocked
-                ? Color(red: 234 / 255, green: 236 / 255, blue: 246 / 255).opacity(0.88)
-                : cardColor,
+            cardColor,
             in: RoundedRectangle(cornerRadius: 24, style: .continuous)
         )
         .contentShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-        .shadow(color: Color.black.opacity(isLocked ? 0.02 : 0.04), radius: 5, x: 0, y: 2)
+        .shadow(color: Color.black.opacity(0.04), radius: 5, x: 0, y: 2)
     }
 }
 
