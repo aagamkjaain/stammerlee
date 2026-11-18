@@ -8,23 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		2352B30D30A727A400195DEF /* pop.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2352B30C30A727A400195DEF /* pop.mp3 */; };
-		2352B30D30AA3B5000195DEF /* pictures/bottomimage.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B30C30AA3B5000195DEF /* pictures/bottomimage.png */; };
-		2352B30F30AA3CFE00195DEF /* pictures/topimage.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B30E30AA3CFE00195DEF /* pictures/topimage.png */; };
-		2352B31830AA5AEA00195DEF /* pictures/Cloud.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B31430AA5AEA00195DEF /* pictures/Cloud.png */; };
-		2352B31930AA5AEA00195DEF /* pictures/Cloud-2.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B31630AA5AEA00195DEF /* pictures/Cloud-2.png */; };
-		2352B31A30AA5AEA00195DEF /* pictures/Sparkle.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B31730AA5AEA00195DEF /* pictures/Sparkle.png */; };
-		2352B31B30AA5AEA00195DEF /* pictures/Cloud landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B31530AA5AEA00195DEF /* pictures/Cloud landscape.png */; };
-		2352B31D30AA5AEA00195DEF /* pictures/prolonged1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B31C30AA5AEA00195DEF /* pictures/prolonged1.png */; };
-		2352B32330AA5B3D00195DEF /* pictures/Drifting cloud-2.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B31F30AA5B3D00195DEF /* pictures/Drifting cloud-2.png */; };
-		2352B32430AA5B3D00195DEF /* pictures/Cloud bank-2.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B31D30AA5B3D00195DEF /* pictures/Cloud bank-2.png */; };
-		2352B32530AA5B3D00195DEF /* pictures/Drifting cloud.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B31E30AA5B3D00195DEF /* pictures/Drifting cloud.png */; };
-		2352B32630AA5B3D00195DEF /* pictures/Cloud bank.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B31C30AA5B3D00195DEF /* pictures/Cloud bank.png */; };
-		2352B32730AA5B3D00195DEF /* pictures/Drifting cloud-3.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B32030AA5B3D00195DEF /* pictures/Drifting cloud-3.png */; };
-		2352B32830AA5B3D00195DEF /* pictures/Floating mote.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B32130AA5B3D00195DEF /* pictures/Floating mote.png */; };
-		2352B32930AA5B3D00195DEF /* pictures/Sparkle-2.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B32230AA5B3D00195DEF /* pictures/Sparkle-2.png */; };
-		2352B32B30AA70C000195DEF /* pictures/Ilustrations.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B32A30AA70C000195DEF /* pictures/Ilustrations.png */; };
-		2352B32D30AA73CA00195DEF /* pictures/launchfooter.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B32C30AA73CA00195DEF /* pictures/launchfooter.png */; };
-		2352B33330AB061300195DEF /* pictures/header.png in Resources */ = {isa = PBXBuildFile; fileRef = 2352B33230AB061300195DEF /* pictures/header.png */; };
 		AA000001001 /* StamerleeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002001 /* StamerleeApp.swift */; };
 		AA000001002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002002 /* ContentView.swift */; };
 		AA000001003 /* ColorTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002003 /* ColorTheme.swift */; };
@@ -38,14 +21,14 @@
 		AA000001011 /* Illustrations.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002011 /* Illustrations.swift */; };
 		AA000001012 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA000002012 /* Assets.xcassets */; };
 		AA000001021 /* PictureDescriptionEasyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002021 /* PictureDescriptionEasyView.swift */; };
-		AA000001024 /* PictureDescriptionDifficultyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002024 /* PictureDescriptionDifficultyView.swift */; };
+		AA000001024 /* PictureDescriptionIntroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002024 /* PictureDescriptionIntroView.swift */; };
 		AA000001027 /* DialSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002027 /* DialSceneView.swift */; };
-		AA000001028 /* NarrationDifficultyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002028 /* NarrationDifficultyView.swift */; };
+		AA000001028 /* NarrationIntroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002028 /* NarrationIntroView.swift */; };
 		AA000001029 /* NarrationPracticeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002029 /* NarrationPracticeView.swift */; };
 		AA000001031 /* BeatBuddyViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002031 /* BeatBuddyViews.swift */; };
 		AA000001032 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002032 /* ProfileView.swift */; };
 		AA000001033 /* SummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002033 /* SummaryView.swift */; };
-		AA000001034 /* AppTabNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002034 /* AppTabNavigation.swift */; };
+		AA000001034 /* AppTabBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002034 /* AppTabBinding.swift */; };
 		AA000001035 /* FluencyLapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002035 /* FluencyLapView.swift */; };
 		AA000001036 /* FluencyLapPracticeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002036 /* FluencyLapPracticeView.swift */; };
 		AA000001037 /* FluencyLapIntroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002037 /* FluencyLapIntroView.swift */; };
@@ -56,23 +39,6 @@
 
 /* Begin PBXFileReference section */
 		2352B30C30A727A400195DEF /* pop.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = pop.mp3; sourceTree = "<group>"; };
-		2352B30C30AA3B5000195DEF /* pictures/bottomimage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pictures/bottomimage.png; sourceTree = "<group>"; };
-		2352B30E30AA3CFE00195DEF /* pictures/topimage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pictures/topimage.png; sourceTree = "<group>"; };
-		2352B31430AA5AEA00195DEF /* pictures/Cloud.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pictures/Cloud.png; sourceTree = "<group>"; };
-		2352B31530AA5AEA00195DEF /* pictures/Cloud landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pictures/Cloud landscape.png"; sourceTree = "<group>"; };
-		2352B31630AA5AEA00195DEF /* pictures/Cloud-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pictures/Cloud-2.png"; sourceTree = "<group>"; };
-		2352B31730AA5AEA00195DEF /* pictures/Sparkle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pictures/Sparkle.png; sourceTree = "<group>"; };
-		2352B31C30AA5AEA00195DEF /* pictures/prolonged1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pictures/prolonged1.png; sourceTree = "<group>"; };
-		2352B31C30AA5B3D00195DEF /* pictures/Cloud bank.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pictures/Cloud bank.png"; sourceTree = "<group>"; };
-		2352B31D30AA5B3D00195DEF /* pictures/Cloud bank-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pictures/Cloud bank-2.png"; sourceTree = "<group>"; };
-		2352B31E30AA5B3D00195DEF /* pictures/Drifting cloud.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pictures/Drifting cloud.png"; sourceTree = "<group>"; };
-		2352B31F30AA5B3D00195DEF /* pictures/Drifting cloud-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pictures/Drifting cloud-2.png"; sourceTree = "<group>"; };
-		2352B32030AA5B3D00195DEF /* pictures/Drifting cloud-3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pictures/Drifting cloud-3.png"; sourceTree = "<group>"; };
-		2352B32130AA5B3D00195DEF /* pictures/Floating mote.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pictures/Floating mote.png"; sourceTree = "<group>"; };
-		2352B32230AA5B3D00195DEF /* pictures/Sparkle-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pictures/Sparkle-2.png"; sourceTree = "<group>"; };
-		2352B32A30AA70C000195DEF /* pictures/Ilustrations.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pictures/Ilustrations.png; sourceTree = "<group>"; };
-		2352B32C30AA73CA00195DEF /* pictures/launchfooter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pictures/launchfooter.png; sourceTree = "<group>"; };
-		2352B33230AB061300195DEF /* pictures/header.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pictures/header.png; sourceTree = "<group>"; };
 		AA000002001 /* StamerleeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StamerleeApp.swift; sourceTree = "<group>"; };
 		AA000002002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		AA000002003 /* ColorTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorTheme.swift; sourceTree = "<group>"; };
@@ -86,14 +52,14 @@
 		AA000002011 /* Illustrations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Illustrations.swift; sourceTree = "<group>"; };
 		AA000002012 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AA000002021 /* PictureDescriptionEasyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureDescriptionEasyView.swift; sourceTree = "<group>"; };
-		AA000002024 /* PictureDescriptionDifficultyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureDescriptionDifficultyView.swift; sourceTree = "<group>"; };
+		AA000002024 /* PictureDescriptionIntroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureDescriptionIntroView.swift; sourceTree = "<group>"; };
 		AA000002027 /* DialSceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DialSceneView.swift; sourceTree = "<group>"; };
-		AA000002028 /* NarrationDifficultyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NarrationDifficultyView.swift; sourceTree = "<group>"; };
+		AA000002028 /* NarrationIntroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NarrationIntroView.swift; sourceTree = "<group>"; };
 		AA000002029 /* NarrationPracticeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NarrationPracticeView.swift; sourceTree = "<group>"; };
 		AA000002031 /* BeatBuddyViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeatBuddyViews.swift; sourceTree = "<group>"; };
 		AA000002032 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		AA000002033 /* SummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryView.swift; sourceTree = "<group>"; };
-		AA000002034 /* AppTabNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTabNavigation.swift; sourceTree = "<group>"; };
+		AA000002034 /* AppTabBinding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTabBinding.swift; sourceTree = "<group>"; };
 		AA000002035 /* FluencyLapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FluencyLapView.swift; sourceTree = "<group>"; };
 		AA000002036 /* FluencyLapPracticeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FluencyLapPracticeView.swift; sourceTree = "<group>"; };
 		AA000002037 /* FluencyLapIntroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FluencyLapIntroView.swift; sourceTree = "<group>"; };
@@ -128,7 +94,6 @@
 				AA000002012 /* Assets.xcassets */,
 				AA000002001 /* StamerleeApp.swift */,
 				AA000002002 /* ContentView.swift */,
-				2352B30C30AA3B5000195DEF /* pictures/bottomimage.png */,
 				AA000002003 /* ColorTheme.swift */,
 				AA000002004 /* AppScreen.swift */,
 				AA000002005 /* OnboardingViews.swift */,
@@ -137,38 +102,22 @@
 				AA000002008 /* ProlongedSpeechDifficultyView.swift */,
 				AA000002009 /* ProlongedPracticeView.swift */,
 				AA000002010 /* Components.swift */,
-				2352B32C30AA73CA00195DEF /* pictures/launchfooter.png */,
 				AA000002021 /* PictureDescriptionEasyView.swift */,
 				AA000002011 /* Illustrations.swift */,
-				AA000002024 /* PictureDescriptionDifficultyView.swift */,
+				AA000002024 /* PictureDescriptionIntroView.swift */,
 				AA000002027 /* DialSceneView.swift */,
-				AA000002028 /* NarrationDifficultyView.swift */,
+				AA000002028 /* NarrationIntroView.swift */,
 				AA000002029 /* NarrationPracticeView.swift */,
 				AA000002031 /* BeatBuddyViews.swift */,
 				AA000002032 /* ProfileView.swift */,
 				AA000002033 /* SummaryView.swift */,
-				AA000002034 /* AppTabNavigation.swift */,
+				AA000002034 /* AppTabBinding.swift */,
 				AA000002035 /* FluencyLapView.swift */,
 				AA000002036 /* FluencyLapPracticeView.swift */,
 				AA000002037 /* FluencyLapIntroView.swift */,
-				2352B32A30AA70C000195DEF /* pictures/Ilustrations.png */,
-				2352B31430AA5AEA00195DEF /* pictures/Cloud.png */,
-				2352B31C30AA5B3D00195DEF /* pictures/Cloud bank.png */,
-				2352B31D30AA5B3D00195DEF /* pictures/Cloud bank-2.png */,
-				2352B31E30AA5B3D00195DEF /* pictures/Drifting cloud.png */,
-				2352B31F30AA5B3D00195DEF /* pictures/Drifting cloud-2.png */,
-				2352B32030AA5B3D00195DEF /* pictures/Drifting cloud-3.png */,
-				2352B32130AA5B3D00195DEF /* pictures/Floating mote.png */,
-				2352B32230AA5B3D00195DEF /* pictures/Sparkle-2.png */,
-				2352B31530AA5AEA00195DEF /* pictures/Cloud landscape.png */,
-				2352B31C30AA5AEA00195DEF /* pictures/prolonged1.png */,
-				2352B31630AA5AEA00195DEF /* pictures/Cloud-2.png */,
-				2352B31730AA5AEA00195DEF /* pictures/Sparkle.png */,
 				AA000002038 /* LaunchView.swift */,
 				AA000002039 /* ExerciseProgressDetailView.swift */,
 				2352B30C30A727A400195DEF /* pop.mp3 */,
-				2352B33230AB061300195DEF /* pictures/header.png */,
-				2352B30E30AA3CFE00195DEF /* pictures/topimage.png */,
 				B00000001 /* ConfettiSwiftUI.swift */,
 			);
 			path = Stamerlee;
@@ -239,25 +188,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2352B32330AA5B3D00195DEF /* pictures/Drifting cloud-2.png in Resources */,
-				2352B32430AA5B3D00195DEF /* pictures/Cloud bank-2.png in Resources */,
-				2352B32530AA5B3D00195DEF /* pictures/Drifting cloud.png in Resources */,
-				2352B32630AA5B3D00195DEF /* pictures/Cloud bank.png in Resources */,
-				2352B32730AA5B3D00195DEF /* pictures/Drifting cloud-3.png in Resources */,
-				2352B32830AA5B3D00195DEF /* pictures/Floating mote.png in Resources */,
-				2352B32930AA5B3D00195DEF /* pictures/Sparkle-2.png in Resources */,
-				2352B31830AA5AEA00195DEF /* pictures/Cloud.png in Resources */,
-				2352B31930AA5AEA00195DEF /* pictures/Cloud-2.png in Resources */,
-				2352B32B30AA70C000195DEF /* pictures/Ilustrations.png in Resources */,
-				2352B31A30AA5AEA00195DEF /* pictures/Sparkle.png in Resources */,
-				2352B31B30AA5AEA00195DEF /* pictures/Cloud landscape.png in Resources */,
-				2352B32D30AA73CA00195DEF /* pictures/launchfooter.png in Resources */,
-				2352B31D30AA5AEA00195DEF /* pictures/prolonged1.png in Resources */,
 				AA000001012 /* Assets.xcassets in Resources */,
-				2352B30D30AA3B5000195DEF /* pictures/bottomimage.png in Resources */,
 				2352B30D30A727A400195DEF /* pop.mp3 in Resources */,
-				2352B33330AB061300195DEF /* pictures/header.png in Resources */,
-				2352B30F30AA3CFE00195DEF /* pictures/topimage.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -278,16 +210,16 @@
 				AA000001008 /* ProlongedSpeechDifficultyView.swift in Sources */,
 				AA000001009 /* ProlongedPracticeView.swift in Sources */,
 				AA000001021 /* PictureDescriptionEasyView.swift in Sources */,
-				AA000001024 /* PictureDescriptionDifficultyView.swift in Sources */,
+				AA000001024 /* PictureDescriptionIntroView.swift in Sources */,
 				AA000001027 /* DialSceneView.swift in Sources */,
-				AA000001028 /* NarrationDifficultyView.swift in Sources */,
+				AA000001028 /* NarrationIntroView.swift in Sources */,
 				AA000001029 /* NarrationPracticeView.swift in Sources */,
 				AA000001031 /* BeatBuddyViews.swift in Sources */,
 				AA000001010 /* Components.swift in Sources */,
 				AA000001011 /* Illustrations.swift in Sources */,
 				AA000001032 /* ProfileView.swift in Sources */,
 				AA000001033 /* SummaryView.swift in Sources */,
-				AA000001034 /* AppTabNavigation.swift in Sources */,
+				AA000001034 /* AppTabBinding.swift in Sources */,
 				AA000001035 /* FluencyLapView.swift in Sources */,
 				AA000001036 /* FluencyLapPracticeView.swift in Sources */,
 				AA000001037 /* FluencyLapIntroView.swift in Sources */,
