@@ -54,6 +54,9 @@ public struct ProfileView: View {
     @State private var legalSheetTitle = "Terms of Service"
     @State private var legalSheetContent = ""
     @State private var reminderSuccessTrigger = 0
+    @State private var showNotAttemptedAlert = false
+    @State private var notAttemptedAlertTitle = "Exercise Not Attempted"
+    @State private var notAttemptedAlertMessage = "This exercise has not been attempted yet."
 
     public init(state: AppState) {
         self.state = state
@@ -78,14 +81,17 @@ public struct ProfileView: View {
                     profileHeader
 
                     VStack(alignment: .leading, spacing: 22) {
-                        reminderCard
+                        statsSection
                             .dropIn(didAppearContent, index: 0)
 
-                        accountSection
+                        reminderCard
                             .dropIn(didAppearContent, index: 1)
 
-                        legalHypertextSection
+                        accountSection
                             .dropIn(didAppearContent, index: 2)
+
+                        legalHypertextSection
+                            .dropIn(didAppearContent, index: 3)
                     }
                     .padding(.horizontal, 24)
                     .padding(.top, 22)
@@ -99,6 +105,11 @@ public struct ProfileView: View {
             withAnimation(.spring(response: 0.48, dampingFraction: 0.84)) {
                 didAppearContent = true
             }
+        }
+        .alert(notAttemptedAlertTitle, isPresented: $showNotAttemptedAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(notAttemptedAlertMessage)
         }
         .alert("Log Out", isPresented: $showLogoutConfirmation) {
             Button("Cancel", role: .cancel) {}
@@ -557,6 +568,191 @@ public struct ProfileView: View {
         Text(title)
             .font(.system(size: 18, weight: .bold, design: .rounded))
             .foregroundStyle(.white.opacity(0.9))
+    }
+
+    // MARK: - Stats Section (Smooth Speech Score)
+    private struct ExerciseHighScoreItem: Identifiable {
+        let type: ExerciseDetailType
+        let displayTitle: String
+        let score: Double
+
+        var id: String { type.id }
+        var title: String { type.title }
+        var iconName: String { type.iconName }
+    }
+
+    private var exerciseHighScoreItems: [ExerciseHighScoreItem] {
+        [
+            ExerciseHighScoreItem(
+                type: .prolongedSpeech,
+                displayTitle: "Prolonged\nSpeech",
+                score: state.prolongedEasyScore ?? 7.9
+            ),
+            ExerciseHighScoreItem(
+                type: .pictureDescription,
+                displayTitle: "Picture\nDescription",
+                score: 8.8
+            ),
+            ExerciseHighScoreItem(
+                type: .dialScene,
+                displayTitle: "Dial\nScene",
+                score: 6.3
+            ),
+            ExerciseHighScoreItem(
+                type: .narration,
+                displayTitle: "Narration",
+                score: 7.2
+            )
+        ]
+    }
+
+    private func isExercisePerformed(_ type: ExerciseDetailType) -> Bool {
+        switch type {
+        case .prolongedSpeech:
+            return true
+        case .pictureDescription:
+            return state.hasCompletedPictureDescription || !state.completedPictureDescriptionDifficulties.isEmpty || state.hasAttemptedPictureDescription
+        case .dialScene:
+            return state.hasCompletedDialScene || state.hasAttemptedDialScene
+        case .narration:
+            return !state.completedNarrationDifficulties.isEmpty
+        }
+    }
+
+    private var statsSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Stats")
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+                Text("Based on your last attempt, here's your score for words spoken without stuttering.")
+                    .font(.system(size: 13.5, weight: .regular, design: .rounded))
+                    .foregroundStyle(Color(red: 195 / 255, green: 190 / 255, blue: 220 / 255))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            LazyVGrid(
+                columns: [
+                    GridItem(.flexible(), spacing: 14),
+                    GridItem(.flexible(), spacing: 14)
+                ],
+                spacing: 14
+            ) {
+                ForEach(exerciseHighScoreItems) { item in
+                    let isPerformed = isExercisePerformed(item.type)
+                    Button {
+                        if !isPerformed {
+                            notAttemptedAlertTitle = item.title
+                            notAttemptedAlertMessage = "This exercise has not been attempted yet."
+                            showNotAttemptedAlert = true
+                        } else {
+                            state.selectedExerciseDetail = item.type
+                            state.navigate(to: .exerciseProgressDetail)
+                        }
+                    } label: {
+                        exerciseBlockCard(item: item, isPerformed: isPerformed)
+                    }
+                    .buttonStyle(PopSpringButtonStyle(pressedScale: 0.94))
+                    .accessibilityLabel("\(item.title) card, score \(isPerformed ? String(format: "%.1f", item.score) : "not performed") of 10")
+                }
+            }
+        }
+    }
+
+    private func exerciseBlockCard(item: ExerciseHighScoreItem, isPerformed: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            // Top Row: 3D Icon on left, Title on right
+            HStack(alignment: .center, spacing: 8) {
+                summaryAssetImage(named: item.iconName, size: 48)
+
+                Text(item.displayTitle)
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .foregroundStyle(Color(red: 22 / 255, green: 18 / 255, blue: 40 / 255))
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.8)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .frame(minHeight: 48)
+
+            Spacer(minLength: 8)
+
+            // Large Score / 10 (or hyphen when not performed yet)
+            HStack(alignment: .lastTextBaseline, spacing: 2) {
+                if isPerformed {
+                    Text(String(format: "%.1f", item.score))
+                        .font(.system(size: 36, weight: .heavy, design: .rounded))
+                        .foregroundStyle(Color(red: 22 / 255, green: 18 / 255, blue: 40 / 255))
+                    Text("/10")
+                        .font(.system(size: 17, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color(red: 125 / 255, green: 110 / 255, blue: 180 / 255))
+                } else {
+                    Text("—")
+                        .font(.system(size: 36, weight: .heavy, design: .rounded))
+                        .foregroundStyle(Color(red: 120 / 255, green: 115 / 255, blue: 140 / 255))
+                    Text("/10")
+                        .font(.system(size: 17, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color(red: 160 / 255, green: 155 / 255, blue: 180 / 255))
+                }
+            }
+
+            // Gradient Progress Bar
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(Color(red: 222 / 255, green: 224 / 255, blue: 242 / 255))
+                        .frame(height: 8)
+
+                    if isPerformed {
+                        Capsule()
+                            .fill(
+                                LinearGradient(
+                                    colors: [
+                                        Color(red: 88 / 255, green: 44 / 255, blue: 204 / 255),
+                                        Color(red: 168 / 255, green: 110 / 255, blue: 255 / 255)
+                                    ],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .frame(
+                                width: max(geo.size.width * CGFloat(item.score) / 10.0, 8),
+                                height: 8
+                            )
+                    }
+                }
+            }
+            .frame(height: 8)
+            .padding(.top, 4)
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, minHeight: 138, alignment: .topLeading)
+        .background(
+            Color(red: 246 / 255, green: 247 / 255, blue: 254 / 255).opacity(0.92),
+            in: RoundedRectangle(cornerRadius: 24, style: .continuous)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .stroke(
+                    LinearGradient(
+                        colors: [
+                            Color.white,
+                            Color.white.opacity(0.35)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1.2
+                )
+        )
+        .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 3)
+    }
+
+    private func summaryAssetImage(named name: String, size: CGFloat = 48) -> some View {
+        Image(name)
+            .resizable()
+            .scaledToFit()
+            .frame(width: size, height: size)
     }
 }
 

@@ -167,7 +167,7 @@ public struct HomeDashboardView: View {
                         
                     }
                     .padding(.horizontal, 20)
-                    .padding(.bottom, 110)
+                    .padding(.bottom, 36)
                 }
                 .scrollIndicators(.hidden)
             }
@@ -203,10 +203,11 @@ public struct HomeDashboardView: View {
         .matchedGeometryEffectIfPresent(id: "headerBanner", in: headerNamespace)
     }
 
-    // MARK: - Fluency Lap Card
+    // MARK: - Fluency Lap Card (with integrated Streak)
     private var fluencyLapCard: some View {
         VStack(alignment: .leading, spacing: 14) {
-            HStack(alignment: .center, spacing: 16) {
+            // Top Section: Illustration + Title + Streak Badge + Subtitle
+            HStack(alignment: .center, spacing: 14) {
                 Group {
                     if let uiImage = UIImage(named: "hey1") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "hey1", ofType: "png") ?? "") {
                         Image(uiImage: uiImage)
@@ -218,22 +219,82 @@ public struct HomeDashboardView: View {
                             .scaledToFit()
                     }
                 }
-                .frame(width: 76, height: 76)
+                .frame(width: 66, height: 66)
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Daily Challenge")
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
-                        .foregroundStyle(Color(red: 20 / 255, green: 22 / 255, blue: 35 / 255))
+                    HStack(alignment: .center) {
+                        Text("Daily Challenge")
+                            .font(.system(size: 20, weight: .bold, design: .rounded))
+                            .foregroundStyle(Color(red: 20 / 255, green: 22 / 255, blue: 35 / 255))
+
+                        Spacer()
+
+                        // Streak Pill Badge
+                        HStack(spacing: 4) {
+                            if let uiImage = UIImage(named: "fire") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "fire", ofType: "png") ?? "") {
+                                Image(uiImage: uiImage)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 16, height: 16)
+                            } else {
+                                Image(systemName: "flame.fill")
+                                    .font(.system(size: 13, weight: .bold))
+                                    .foregroundStyle(Color(red: 255 / 255, green: 130 / 255, blue: 60 / 255))
+                            }
+                            Text("\(max(state.currentStreakDays, 0)) Days")
+                                .font(.system(size: 13, weight: .bold, design: .rounded))
+                                .foregroundStyle(Color(red: 110 / 255, green: 65 / 255, blue: 215 / 255))
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(Color(red: 236 / 255, green: 228 / 255, blue: 254 / 255), in: Capsule())
+                    }
 
                     Text("Challenge yourself with a timed session and beat your score")
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .font(.system(size: 12.5, weight: .medium, design: .rounded))
                         .foregroundStyle(StamerleeTheme.textSecondaryLight)
-                        .lineSpacing(2)
-                        .lineLimit(3)
+                        .lineLimit(2)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
+
+            // 7-Day Practice Streak Row
+            HStack(spacing: 4) {
+                ForEach(Array(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].enumerated()), id: \.offset) { index, day in
+                    let completedDays = min(max(state.currentStreakDays, 0), 7)
+                    let isCurrent = completedDays > 0 && index == completedDays - 1
+
+                    VStack(spacing: 6) {
+                        Text(day)
+                            .font(.system(size: 12, weight: .semibold, design: .rounded))
+                            .foregroundStyle(Color(red: 35 / 255, green: 30 / 255, blue: 55 / 255))
+
+                        if index < completedDays {
+                            ZStack {
+                                Circle()
+                                    .fill(Color(red: 76 / 255, green: 175 / 255, blue: 80 / 255))
+                                    .frame(width: 24, height: 24)
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 11, weight: .bold))
+                                    .foregroundStyle(.white)
+                            }
+                        } else {
+                            Circle()
+                                .stroke(Color(red: 205 / 255, green: 200 / 255, blue: 232 / 255), lineWidth: 1.8)
+                                .frame(width: 24, height: 24)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 6)
+                    .background(
+                        isCurrent ? Color(red: 228 / 255, green: 222 / 255, blue: 252 / 255) : Color.clear,
+                        in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    )
+                }
+            }
+            .padding(.horizontal, 4)
+            .padding(.vertical, 2)
 
             Button {
                 if state.hasCompletedFluencyLapIntro {
@@ -247,7 +308,7 @@ public struct HomeDashboardView: View {
                     .font(.system(size: 15.5, weight: .bold, design: .rounded))
                     .foregroundStyle(StamerleeTheme.textPrimaryDark)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 38)
+                    .frame(height: 40)
                     .background(StamerleeTheme.backgroundDark, in: Capsule())
             }
             .buttonStyle(.popSpring)
@@ -386,66 +447,7 @@ public struct DashboardTabView: View {
     }
 
     public var body: some View {
-        Group {
-            if #available(iOS 18.0, *) {
-                modernTabView
-            } else {
-                legacyTabView
-            }
-        }
-        .preferredColorScheme(.dark)
-    }
-
-    @available(iOS 18.0, *)
-    private var modernTabView: some View {
-        TabView(selection: state.selectedTabBinding) {
-            Tab(
-                AppTab.home.title,
-                systemImage: AppTab.home.systemImage,
-                value: AppTab.home
-            ) {
-                HomeDashboardView(state: state)
-            }
-
-            Tab(
-                AppTab.summary.title,
-                systemImage: AppTab.summary.systemImage,
-                value: AppTab.summary
-            ) {
-                SummaryView(state: state)
-            }
-        }
-        .tint(StamerleeTheme.primaryBlue)
-        .sensoryFeedback(.selection, trigger: state.selectedTab)
-    }
-
-    private var legacyTabView: some View {
-        TabView(selection: state.selectedTabBinding) {
-            HomeDashboardView(state: state)
-                .tabItem {
-                    Label(
-                        AppTab.home.title,
-                        systemImage: AppTab.home.systemImage
-                    )
-                }
-                .tag(AppTab.home)
-
-            SummaryView(state: state)
-                .tabItem {
-                    Label(
-                        AppTab.summary.title,
-                        systemImage: AppTab.summary.systemImage
-                    )
-                }
-                .tag(AppTab.summary)
-        }
-        .tint(StamerleeTheme.primaryBlue)
-        .toolbarBackground(
-            StamerleeTheme.backgroundDark,
-            for: .tabBar
-        )
-        .toolbarBackground(.visible, for: .tabBar)
-        .toolbarColorScheme(.dark, for: .tabBar)
-        .sensoryFeedback(.selection, trigger: state.selectedTab)
+        HomeDashboardView(state: state)
+            .preferredColorScheme(.dark)
     }
 }

@@ -232,8 +232,7 @@ public struct ExerciseProgressDetailView: View {
     private var topBar: some View {
         HStack {
             Button {
-                state.selectedTab = .summary
-                state.navigate(to: .homeDashboard, forward: false)
+                state.navigate(to: .profile, forward: false)
             } label: {
                 ZStack {
                     Circle()

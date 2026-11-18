@@ -78,14 +78,14 @@ public struct ContentView: View {
                     ExploreActivitiesView(state: appState)
                         .transition(slideTransition(for: appState.navigationDirection))
                 case .homeDashboard:
-                    DashboardTabView(state: appState)
+                    HomeDashboardView(state: appState)
                         .transition(
                             appState.isProfileTransition
                                 ? .identity
                                 : slideTransition(for: appState.navigationDirection)
                         )
                 case .profile:
-                    DashboardTabView(state: appState)
+                    HomeDashboardView(state: appState)
                         .zIndex(1)
                         .transition(.identity)
                 case .fluencyLapIntro:
