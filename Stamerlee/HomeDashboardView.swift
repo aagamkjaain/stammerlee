@@ -8,6 +8,7 @@ public struct HomeDashboardView: View {
     @Environment(\.headerNamespace) private var headerNamespace
     
     @State private var showLockedAlert: Bool = false
+    @State private var lockedAlertTitle: String = "Exercise Locked"
     @State private var lockedAlertMessage: String = ""
     @State private var cardsAppeared: Bool = true
     
@@ -72,11 +73,11 @@ public struct HomeDashboardView: View {
                                 .font(.system(size: 17, weight: .bold, design: .rounded))
                                 .foregroundStyle(StamerleeTheme.textPrimaryDark)
                             
-                            // 1. Prolonged Speech (UNLOCKED - Primary action)
+                            // 1. Prolonged Speech (UNLOCKED from start - Level 1)
                             exerciseRow(
                                 title: "Prolonged Speech",
                                 subtitle: "Gently stretch sounds while speaking slowly.",
-                                isLocked: false,
+                                isLocked: !state.isProlongedSpeechUnlocked,
                                 iconName: "IconProlongedSpeech"
                             ) {
                                 state.navigate(
@@ -86,11 +87,11 @@ public struct HomeDashboardView: View {
                                 )
                             }
                             
-                            // 2. Picture Description
+                            // 2. Picture Description (Level 2 - Unlocks after Prolonged Speech)
                             exerciseRow(
                                 title: "Picture Description",
                                 subtitle: "Practice by describing pictures in detail",
-                                isLocked: false,
+                                isLocked: !state.isPictureDescriptionUnlocked,
                                 iconName: "IconPictureDesc"
                             ) {
                                 state.navigate(
@@ -100,11 +101,11 @@ public struct HomeDashboardView: View {
                                 )
                             }
                             
-                            // 3. Dial Scene
+                            // 3. Dial Scene (Level 4 - Unlocks after Beat Buddy)
                             exerciseRow(
                                 title: "Dial Scene",
                                 subtitle: "Mimic speaking in different scenarios through interactive phone calls",
-                                isLocked: false,
+                                isLocked: !state.isDialSceneUnlocked,
                                 iconName: "IconDialScene"
                             ) {
                                 state.navigate(
@@ -114,11 +115,11 @@ public struct HomeDashboardView: View {
                                 )
                             }
                             
-                            // 4. Narration
+                            // 4. Narration (Level 5 - Unlocks after Dial Scene)
                             exerciseRow(
                                 title: "Narration",
                                 subtitle: "Speak about different topics infront of the mirror",
-                                isLocked: false,
+                                isLocked: !state.isNarrationUnlocked,
                                 iconName: "IconMirrorNarration"
                             ) {
                                 state.navigate(
@@ -142,11 +143,11 @@ public struct HomeDashboardView: View {
                                 .font(.system(size: 17, weight: .bold, design: .rounded))
                                 .foregroundStyle(StamerleeTheme.textPrimaryDark)
                             
-                            // Beat Buddy
+                            // Beat Buddy (Level 3 - Unlocks after Picture Description)
                             exerciseRow(
                                 title: "Beat Buddy",
                                 subtitle: "Build your pace by speaking at every beat",
-                                isLocked: false,
+                                isLocked: !state.isBeatBuddyUnlocked,
                                 iconName: "BeatBuddyLogo"
                             ) {
                                 state.navigate(
@@ -174,7 +175,7 @@ public struct HomeDashboardView: View {
         .onAppear {
             cardsAppeared = true
         }
-        .alert("Module Locked", isPresented: $showLockedAlert) {
+        .alert(lockedAlertTitle, isPresented: $showLockedAlert) {
             Button("OK", role: .cancel) {}
         } message: {
             Text(lockedAlertMessage)
@@ -185,7 +186,7 @@ public struct HomeDashboardView: View {
     @ViewBuilder
     private var headerImageView: some View {
         Group {
-            if let uiImage = UIImage(named: "header") ?? UIImage(named: "Header") {
+            if let uiImage = UIImage(named: "Header") ?? UIImage(named: "header") ?? UIImage(named: "header 1") {
                 Image(uiImage: uiImage)
                     .resizable()
                     .scaledToFit()
@@ -268,15 +269,34 @@ public struct HomeDashboardView: View {
             subtitle: subtitle,
             isLocked: isLocked,
             iconName: iconName,
-            action: action
+            action: {
+                if isLocked {
+                    triggerLockedAlert(title: title)
+                } else {
+                    action()
+                }
+            }
         )
     }
     
     private func triggerLockedAlert(title: String) {
-        if title == "Beat Buddy" {
-            lockedAlertMessage = "Complete Prolonged Speech Easy and receive a score to unlock Beat Buddy!"
-        } else {
-            lockedAlertMessage = "\(title) will unlock as you complete the Prolonged Speech foundation exercises!"
+        UINotificationFeedbackGenerator().notificationOccurred(.warning)
+        switch title {
+        case "Picture Description":
+            lockedAlertTitle = "Picture Description Locked"
+            lockedAlertMessage = "Complete a Prolonged Speech session first to unlock Picture Description!"
+        case "Beat Buddy":
+            lockedAlertTitle = "Beat Buddy Locked"
+            lockedAlertMessage = "Complete a Picture Description exercise first to unlock Beat Buddy!"
+        case "Dial Scene":
+            lockedAlertTitle = "Dial Scene Locked"
+            lockedAlertMessage = "Complete a Beat Buddy session first to unlock Dial Scene!"
+        case "Narration":
+            lockedAlertTitle = "Narration Locked"
+            lockedAlertMessage = "Complete a Dial Scene exercise first to unlock Narration!"
+        default:
+            lockedAlertTitle = "Exercise Locked"
+            lockedAlertMessage = "\(title) will unlock as you progress level by level!"
         }
         showLockedAlert = true
     }
@@ -300,55 +320,72 @@ private struct ExerciseRowCard: View {
         Button(action: action) {
             cardContent
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PopSpringButtonStyle(pressedScale: 0.97))
         .contentShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
     }
 
     private var cardContent: some View {
         HStack(alignment: .center, spacing: 14) {
-            // Leading Icon — fixed width so text always starts at the same X
-            if isLocked {
-                ZStack {
-                    Circle()
-                        .fill(Color(red: 90 / 255, green: 105 / 255, blue: 180 / 255))
-                        .frame(width: 44, height: 44)
-                    Image(systemName: "lock.fill")
-                        .font(.system(size: 17, weight: .bold))
-                        .foregroundStyle(.white)
+            // Leading Icon — with Lock badge when locked
+            ZStack {
+                if let iconName {
+                    Image(iconName)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: iconName == "BeatBuddyLogo" ? 60 : 68, height: iconName == "BeatBuddyLogo" ? 60 : 68)
+                        .opacity(isLocked ? 0.35 : 1.0)
+                        .grayscale(isLocked ? 0.85 : 0.0)
                 }
-                .frame(width: 68, height: 68)
-            } else if let iconName {
-                if iconName == "BeatBuddyLogo" {
-                    Image(iconName)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 60, height: 60)
-                        .frame(width: 68, height: 68)
-                } else {
-                    Image(iconName)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 68, height: 68)
+
+                if isLocked {
+                    ZStack {
+                        Circle()
+                            .fill(
+                                LinearGradient(
+                                    colors: [
+                                        Color(red: 35 / 255, green: 30 / 255, blue: 65 / 255).opacity(0.92),
+                                        Color(red: 20 / 255, green: 18 / 255, blue: 45 / 255).opacity(0.98)
+                                    ],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .frame(width: 38, height: 38)
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.white.opacity(0.22), lineWidth: 1)
+                            )
+                            .shadow(color: Color.black.opacity(0.25), radius: 4, x: 0, y: 2)
+
+                        Image(systemName: "lock.fill")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(Color(red: 195 / 255, green: 175 / 255, blue: 255 / 255))
+                    }
                 }
             }
+            .frame(width: 68, height: 68)
 
             // Title + Subtitle — explicitly left-aligned and expanding
             VStack(alignment: .leading, spacing: 3) {
                 Text(title)
                     .font(.system(size: 16, weight: .bold, design: .rounded))
-                    .foregroundStyle(StamerleeTheme.textPrimaryLight)
+                    .foregroundStyle(isLocked ? StamerleeTheme.textPrimaryLight.opacity(0.7) : StamerleeTheme.textPrimaryLight)
                     .multilineTextAlignment(.leading)
-                Text(subtitle)
+                Text(isLocked ? "Complete previous level to unlock" : subtitle)
                     .font(.system(size: 12.5, weight: .regular, design: .rounded))
-                    .foregroundStyle(StamerleeTheme.textSecondaryLight)
+                    .foregroundStyle(isLocked ? StamerleeTheme.textSecondaryLight.opacity(0.7) : StamerleeTheme.textSecondaryLight)
                     .multilineTextAlignment(.leading)
                     .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            // Chevron
-            if !isLocked {
+            // Trailing Chevron / Lock Icon
+            if isLocked {
+                Image(systemName: "lock.fill")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(Color(red: 140 / 255, green: 130 / 255, blue: 170 / 255).opacity(0.7))
+            } else {
                 Image(systemName: "chevron.right")
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(Color.gray.opacity(0.5))
@@ -357,9 +394,14 @@ private struct ExerciseRowCard: View {
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
         .frame(maxWidth: .infinity, minHeight: 84, alignment: .leading)
-        .background(cardColor, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .background(
+            isLocked
+                ? Color(red: 234 / 255, green: 236 / 255, blue: 246 / 255).opacity(0.88)
+                : cardColor,
+            in: RoundedRectangle(cornerRadius: 24, style: .continuous)
+        )
         .contentShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-        .shadow(color: Color.black.opacity(0.04), radius: 5, x: 0, y: 2)
+        .shadow(color: Color.black.opacity(isLocked ? 0.02 : 0.04), radius: 5, x: 0, y: 2)
     }
 }
 

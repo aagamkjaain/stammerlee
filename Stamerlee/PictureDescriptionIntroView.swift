@@ -212,7 +212,7 @@ public struct PictureDescriptionIntroView: View {
                         Image(uiImage: uiImage)
                             .resizable()
                             .scaledToFill()
-                    } else if let uiImage = UIImage(named: "picturehero") ?? UIImage(named: "PictureHero") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "picturehero", ofType: "png") ?? "") {
+                    } else if let uiImage = UIImage(named: "PictureHero") ?? UIImage(named: "picturehero") ?? UIImage(contentsOfFile: Bundle.main.path(forResource: "picturehero", ofType: "png") ?? "") {
                         Image(uiImage: uiImage)
                             .resizable()
                             .scaledToFill()

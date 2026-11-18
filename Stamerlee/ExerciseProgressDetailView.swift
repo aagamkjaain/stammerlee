@@ -201,7 +201,7 @@ public struct ExerciseProgressDetailView: View {
     @ViewBuilder
     private var headerImageView: some View {
         Group {
-            if let uiImage = UIImage(named: "header") ?? UIImage(named: "Header") {
+            if let uiImage = UIImage(named: "Header") ?? UIImage(named: "header") ?? UIImage(named: "header 1") {
                 Image(uiImage: uiImage)
                     .resizable()
                     .scaledToFit()
@@ -254,11 +254,19 @@ public struct ExerciseProgressDetailView: View {
     // MARK: - Header Info
     private var headerSection: some View {
         HStack(alignment: .center, spacing: 16) {
-            Image(exercise.iconName)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 64, height: 64)
-                .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4)
+            Group {
+                if let uiImage = UIImage(named: exercise.iconName) ?? UIImage(contentsOfFile: Bundle.main.path(forResource: exercise.iconName, ofType: "png") ?? "") {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFit()
+                } else {
+                    Image(exercise.iconName)
+                        .resizable()
+                        .scaledToFit()
+                }
+            }
+            .frame(width: 64, height: 64)
+            .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4)
             
             VStack(alignment: .leading, spacing: 4) {
                 Text(exercise.title)

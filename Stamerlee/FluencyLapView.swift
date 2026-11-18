@@ -82,7 +82,7 @@ public struct FluencyLapView: View {
     @ViewBuilder
     private var headerImageView: some View {
         Group {
-            if let uiImage = UIImage(named: "header") ?? UIImage(named: "Header") {
+            if let uiImage = UIImage(named: "Header") ?? UIImage(named: "header") ?? UIImage(named: "header 1") {
                 Image(uiImage: uiImage)
                     .resizable()
                     .scaledToFit()

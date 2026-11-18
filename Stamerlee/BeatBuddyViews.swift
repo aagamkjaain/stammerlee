@@ -974,6 +974,7 @@ public struct BeatBuddyPracticeView: View {
 
     private func finishPractice() {
         stopAll()
+        state.completeBeatBuddy()
         if let onFinish {
             onFinish()
         } else {
@@ -1710,6 +1711,7 @@ public struct BeatBuddyIntroView: View {
         if next == .wellDone {
             stopMetronome()
             confettiCounter += 1
+            state.completeBeatBuddy()
         }
     }
 

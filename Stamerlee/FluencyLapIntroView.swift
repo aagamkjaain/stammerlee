@@ -354,14 +354,14 @@ public struct FluencyLapIntroView: View {
     private func cloudsLayer(w: CGFloat, h: CGFloat) -> some View {
         ZStack {
             // Top-Left Drifting Cloud
-            assetImage("Drifting cloud-1")
+            assetImage("Drifting cloud")
                 .scaledToFit()
                 .frame(width: 130)
                 .position(x: w * 0.06, y: h * 0.08)
                 .offset(y: floatAnim ? -4 : 4)
 
             // Top-Right Drifting Cloud
-            assetImage("Drifting cloud-4")
+            assetImage("Cloud")
                 .scaledToFit()
                 .frame(width: 125)
                 .position(x: w * 0.94, y: h * 0.16)

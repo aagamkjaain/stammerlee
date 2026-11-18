@@ -356,9 +356,61 @@ public final class AppState {
     public var hasSeenDialSceneIntro: Bool = false
     public var hasSeenNarrationIntro: Bool = false
     public var hasSeenBeatBuddyIntro: Bool = false
+    public var hasCompletedBeatBuddy: Bool = false
     public var selectedNarrationDifficulty: String = "Easy"
     public var completedNarrationDifficulties: Set<String> = []
     public var selectedExerciseDetail: ExerciseDetailType = .pictureDescription
+
+    // MARK: - Progressive Unlock (Level by Level)
+    /// Fluency Lap is always open
+    public var isFluencyLapUnlocked: Bool {
+        true
+    }
+
+    /// Level 1: Prolonged Speech is open from the start
+    public var isProlongedSpeechUnlocked: Bool {
+        true
+    }
+
+    public var isProlongedSpeechCompleted: Bool {
+        !completedProlongedDifficulties.isEmpty || hasAttemptedProlongedEasy || hasReceivedProlongedEasyScore
+    }
+
+    /// Level 2: Picture Description unlocks after completing Prolonged Speech
+    public var isPictureDescriptionUnlocked: Bool {
+        isProlongedSpeechCompleted
+    }
+
+    public var isPictureDescriptionCompleted: Bool {
+        hasCompletedPictureDescription || !completedPictureDescriptionDifficulties.isEmpty
+    }
+
+    /// Level 3: Beat Buddy unlocks after completing Picture Description
+    public var isBeatBuddyUnlocked: Bool {
+        isPictureDescriptionCompleted
+    }
+
+    public var isBeatBuddyCompleted: Bool {
+        hasCompletedBeatBuddy
+    }
+
+    /// Level 4: Dial Scene unlocks after completing Beat Buddy
+    public var isDialSceneUnlocked: Bool {
+        isBeatBuddyCompleted
+    }
+
+    public var isDialSceneCompleted: Bool {
+        hasCompletedDialScene
+    }
+
+    /// Level 5: Narration unlocks after completing Dial Scene
+    public var isNarrationUnlocked: Bool {
+        isDialSceneCompleted
+    }
+
+    public var isNarrationCompleted: Bool {
+        !completedNarrationDifficulties.isEmpty
+    }
     public var beatBuddySelectedWords: Set<String> = ["Water", "University"]
     public var beatBuddyPracticeWords: [String] = []
     public var beatBuddySoundCategory: String = "Randomized"
@@ -402,6 +454,7 @@ public final class AppState {
         completedPictureDescriptionDifficulties.removeAll()
         completedNarrationDifficulties.removeAll()
         hasCompletedDialScene = false
+        hasCompletedBeatBuddy = false
         customDialScenarios.removeAll()
         hasAttemptedProlongedEasy = false
         hasReceivedProlongedEasyScore = false
@@ -458,6 +511,10 @@ public final class AppState {
     public func completePictureDescription() {
         hasCompletedPictureDescription = true
         completedPictureDescriptionDifficulties.insert("Completed")
+    }
+
+    public func completeBeatBuddy() {
+        hasCompletedBeatBuddy = true
     }
 
     public func completeNarration() {
