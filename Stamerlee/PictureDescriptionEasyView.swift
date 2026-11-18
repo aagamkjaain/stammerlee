@@ -38,6 +38,9 @@ public struct PictureDescriptionEasyView: View {
                 practiceView
             }
         }
+        .onAppear {
+            state.attemptPictureDescription()
+        }
     }
 
     private var practiceView: some View {

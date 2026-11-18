@@ -349,9 +349,11 @@ public final class AppState {
     public var hasSeenProlongedSpeechIntro: Bool = false
     public var hasSeenPictureDescriptionIntro: Bool = false
     public var hasCompletedPictureDescription: Bool = false
+    public var hasAttemptedPictureDescription: Bool = false
     public var selectedPictureDescriptionDifficulty: String = "Easy"
     public var completedPictureDescriptionDifficulties: Set<String> = []
     public var hasCompletedDialScene: Bool = false
+    public var hasAttemptedDialScene: Bool = false
     public var customDialScenarios: [CustomDialScenario] = []
     public var hasSeenDialSceneIntro: Bool = false
     public var hasSeenNarrationIntro: Bool = false
@@ -385,22 +387,22 @@ public final class AppState {
         hasCompletedPictureDescription || !completedPictureDescriptionDifficulties.isEmpty
     }
 
-    /// Level 3: Beat Buddy unlocks after completing Picture Description
+    /// Level 3: Beat Buddy unlocks if user has attempted Prolonged Speech even once
     public var isBeatBuddyUnlocked: Bool {
-        isPictureDescriptionCompleted
+        hasAttemptedProlongedEasy || hasReceivedProlongedEasyScore || !completedProlongedDifficulties.isEmpty || isProlongedSpeechCompleted || isPictureDescriptionCompleted || hasCompletedDialScene || !completedNarrationDifficulties.isEmpty || hasCompletedFluencyLap
     }
 
     public var isBeatBuddyCompleted: Bool {
         hasCompletedBeatBuddy
     }
 
-    /// Level 4: Dial Scene unlocks after completing Beat Buddy
+    /// Dial Scene unlocks after an attempt of Picture Description
     public var isDialSceneUnlocked: Bool {
-        isBeatBuddyCompleted
+        hasAttemptedPictureDescription || isPictureDescriptionCompleted
     }
 
     public var isDialSceneCompleted: Bool {
-        hasCompletedDialScene
+        hasCompletedDialScene || hasAttemptedDialScene
     }
 
     /// Level 5: Narration unlocks after completing Dial Scene
@@ -451,9 +453,11 @@ public final class AppState {
         practiceAudioSeconds = 0
         completedProlongedDifficulties.removeAll()
         hasCompletedPictureDescription = false
+        hasAttemptedPictureDescription = false
         completedPictureDescriptionDifficulties.removeAll()
         completedNarrationDifficulties.removeAll()
         hasCompletedDialScene = false
+        hasAttemptedDialScene = false
         hasCompletedBeatBuddy = false
         customDialScenarios.removeAll()
         hasAttemptedProlongedEasy = false
@@ -510,7 +514,12 @@ public final class AppState {
 
     public func completePictureDescription() {
         hasCompletedPictureDescription = true
+        hasAttemptedPictureDescription = true
         completedPictureDescriptionDifficulties.insert("Completed")
+    }
+
+    public func attemptPictureDescription() {
+        hasAttemptedPictureDescription = true
     }
 
     public func completeBeatBuddy() {

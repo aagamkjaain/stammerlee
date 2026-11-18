@@ -338,6 +338,7 @@ public struct PictureDescriptionIntroView: View {
     // Redirect to Picture Description Practice
     private func redirectToPractice() {
         state.hasSeenPictureDescriptionIntro = true
+        state.attemptPictureDescription()
         state.navigate(to: .pictureDescriptionPractice)
     }
 

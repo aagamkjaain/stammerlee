@@ -14,6 +14,10 @@ public struct SummaryView: View {
     private let streakRing = Color(red: 205 / 255, green: 200 / 255, blue: 232 / 255)
     private let selectedDayBackground = Color(red: 228 / 255, green: 222 / 255, blue: 252 / 255)
 
+    @State private var showNotAttemptedAlert = false
+    @State private var notAttemptedAlertTitle = "Exercise Not Attempted"
+    @State private var notAttemptedAlertMessage = "This exercise has not been attempted yet."
+
     public init(state: AppState) {
         self.state = state
     }
@@ -47,6 +51,11 @@ public struct SummaryView: View {
                 }
                 .scrollIndicators(.hidden)
             }
+        }
+        .alert(notAttemptedAlertTitle, isPresented: $showNotAttemptedAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(notAttemptedAlertMessage)
         }
     }
 
@@ -201,8 +210,14 @@ public struct SummaryView: View {
                 ForEach(exerciseHighScoreItems) { item in
                     let isPerformed = isExercisePerformed(item.type)
                     Button {
-                        state.selectedExerciseDetail = item.type
-                        state.navigate(to: .exerciseProgressDetail)
+                        if !isPerformed {
+                            notAttemptedAlertTitle = item.title
+                            notAttemptedAlertMessage = "This exercise has not been attempted yet."
+                            showNotAttemptedAlert = true
+                        } else {
+                            state.selectedExerciseDetail = item.type
+                            state.navigate(to: .exerciseProgressDetail)
+                        }
                     } label: {
                         exerciseBlockCard(item: item, isPerformed: isPerformed)
                     }
@@ -218,9 +233,9 @@ public struct SummaryView: View {
         case .prolongedSpeech:
             return true
         case .pictureDescription:
-            return state.hasCompletedPictureDescription || !state.completedPictureDescriptionDifficulties.isEmpty
+            return state.hasCompletedPictureDescription || !state.completedPictureDescriptionDifficulties.isEmpty || state.hasAttemptedPictureDescription
         case .dialScene:
-            return state.hasCompletedDialScene
+            return state.hasCompletedDialScene || state.hasAttemptedDialScene
         case .narration:
             return !state.completedNarrationDifficulties.isEmpty
         }

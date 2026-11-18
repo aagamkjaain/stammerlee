@@ -287,10 +287,10 @@ public struct HomeDashboardView: View {
             lockedAlertMessage = "Complete a Prolonged Speech session first to unlock Picture Description!"
         case "Beat Buddy":
             lockedAlertTitle = "Beat Buddy Locked"
-            lockedAlertMessage = "Complete a Picture Description exercise first to unlock Beat Buddy!"
+            lockedAlertMessage = "Attempt any one exercise at least once to unlock!"
         case "Dial Scene":
             lockedAlertTitle = "Dial Scene Locked"
-            lockedAlertMessage = "Complete a Beat Buddy session first to unlock Dial Scene!"
+            lockedAlertMessage = "Attempt a Picture Description exercise first to unlock Dial Scene!"
         case "Narration":
             lockedAlertTitle = "Narration Locked"
             lockedAlertMessage = "Complete a Dial Scene exercise first to unlock Narration!"
