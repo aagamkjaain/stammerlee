@@ -241,7 +241,7 @@ public struct HomeDashboardView: View {
                                     .font(.system(size: 13, weight: .bold))
                                     .foregroundStyle(Color(red: 255 / 255, green: 130 / 255, blue: 60 / 255))
                             }
-                            Text("\(max(state.currentStreakDays, 0)) Days")
+                            Text("\(max(state.currentStreakDays, 0))")
                                 .font(.system(size: 13, weight: .bold, design: .rounded))
                                 .foregroundStyle(Color(red: 110 / 255, green: 65 / 255, blue: 215 / 255))
                         }
