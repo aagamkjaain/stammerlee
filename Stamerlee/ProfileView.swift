@@ -622,7 +622,7 @@ public struct ProfileView: View {
     private var statsSection: some View {
         VStack(alignment: .leading, spacing: 14) {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Stats")
+                Text("Summary")
                     .font(.system(size: 20, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
                 Text("Based on your last attempt, here's your score for words spoken without stuttering.")
@@ -763,9 +763,45 @@ private struct LegalDocumentSheet: View {
     @Binding var isPresented: Bool
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                StamerleeTheme.backgroundDark.ignoresSafeArea()
+        ZStack {
+            StamerleeTheme.backgroundDark.ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                // Top Header with perfectly centered title and single clean circular cross button
+                HStack {
+                    // Balance spacer on left matching the close button width
+                    Color.clear
+                        .frame(width: 30, height: 30)
+
+                    Spacer()
+
+                    Text(title)
+                        .font(.system(size: 17, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+
+                    Spacer()
+
+                    Button {
+                        isPresented = false
+                    } label: {
+                        ZStack {
+                            Circle()
+                                .fill(Color(red: 48 / 255, green: 50 / 255, blue: 68 / 255))
+                            Circle()
+                                .stroke(Color.white.opacity(0.24), lineWidth: 1)
+                            Image(systemName: "xmark")
+                                .font(.system(size: 12, weight: .bold))
+                                .foregroundStyle(.white)
+                        }
+                        .frame(width: 30, height: 30)
+                        .contentShape(Circle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Close")
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 22)
+                .padding(.bottom, 12)
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 14) {
@@ -774,28 +810,11 @@ private struct LegalDocumentSheet: View {
                             .lineSpacing(5)
                             .foregroundStyle(Color.white.opacity(0.85))
                             .padding(.horizontal, 24)
-                            .padding(.top, 16)
+                            .padding(.top, 8)
                             .padding(.bottom, 36)
                     }
                 }
                 .scrollIndicators(.hidden)
-            }
-            .navigationTitle(title)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(StamerleeTheme.backgroundDark, for: .navigationBar)
-            .toolbarColorScheme(.dark, for: .navigationBar)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        isPresented = false
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 24))
-                            .symbolRenderingMode(.hierarchical)
-                            .foregroundStyle(Color.white.opacity(0.6))
-                    }
-                    .accessibilityLabel("Close")
-                }
             }
         }
         .presentationBackground(StamerleeTheme.backgroundDark)
